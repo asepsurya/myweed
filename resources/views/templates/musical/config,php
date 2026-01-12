@@ -1,0 +1,14 @@
+<?php
+
+return [
+    'name' => 'love',
+    'thumbnail' => 'love.png',
+    'sections' => [
+        'hero',
+        'couple',
+        'event',
+        'gallery',
+        'rsvp',
+        'music',
+    ],
+];

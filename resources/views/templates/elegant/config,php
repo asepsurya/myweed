@@ -1,0 +1,14 @@
+<?php
+
+return [
+    'name' => 'Elegant Wedding',
+    'thumbnail' => 'elegant.png',
+    'sections' => [
+        'hero',
+        'couple',
+        'event',
+        'gallery',
+        'rsvp',
+        'music',
+    ],
+];
