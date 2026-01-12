@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Music;
 use App\Models\Gallery;
 use App\Models\Template;
 use App\Models\Invitation;
@@ -20,8 +21,9 @@ class UserInvitationController extends Controller
 
     public function create()
     {
+        $music = Music::where('is_active', true)->get();
         $templates = Template::where('is_active', true)->get();
-        return view('dashboard.invitation.create', compact('templates'));
+        return view('dashboard.invitation.create', compact('templates', 'music'));
     }
 
     public function store(Request $request)
@@ -32,8 +34,8 @@ class UserInvitationController extends Controller
             'wedding_date' => 'required|date',
             'location' => 'required',
             'template_id' => 'required|exists:templates,id',
-        'music' => 'nullable',
-            'gallery.*' => 'nullable|image|max:2048',
+            'music' => 'nullable',
+            'gallery.*' => 'nullable|image|max:51200', // Maks 50MB per gambar
         ]);
 
       DB::transaction(function () use ($request) {

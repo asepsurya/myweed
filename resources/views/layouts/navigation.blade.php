@@ -20,13 +20,13 @@
 
                         {{ __('Daftar Pasangan') }}
                     </x-nav-link>
-                    <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard3')">
+                    <x-nav-link :href="route('tempelate.index')" :active="request()->routeIs('tempelate.index')">
 
                         {{ __('Tempelate') }}
                     </x-nav-link>
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard2')">
 
-                        {{ __('Undangan Digital') }}
+                        {{ __('Daftar Pengguna') }}
                     </x-nav-link>
                 </div>
             </div>
