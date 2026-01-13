@@ -9,11 +9,9 @@
 </head>
 <body class="bg-[#faf7f2] text-gray-800 font-serif">
 
-@foreach ($invitation->template->sections as $section)
-    @includeIf('templates.elegant.sections.' . $section)
-@endforeach
-
-@include('templates.elegant.sections.music')
+      @foreach ($invitation->template->sections as $section)
+            @includeIf('templates.' . $invitation->template->slug . '.sections.' . $section)
+        @endforeach
 
 </body>
 </html>

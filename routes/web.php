@@ -44,8 +44,14 @@ Route::middleware(['auth'])->group(function () {
     Route::put('invitation/{invitation}', [UserInvitationController::class, 'update'])
         ->name('invitation.update');
 
-    Route::get('theme', [TempelateController::class, 'index'])
-        ->name('tempelate.index');
+           Route::delete('/gallery/{id}', [UserInvitationController::class, 'destroyGallery'])
+        ->name('gallery.delete');
+
+    Route::get('theme', [TempelateController::class, 'index'])->name('tempelate.index');
+    Route::get('/templates/upload', [TempelateController::class, 'create']);
+    Route::post('/templates/upload', [TempelateController::class, 'store']);
+    Route::delete('/templates/{template}', [TempelateController::class, 'destroy'])->name('templates.destroy');
+
     Route::post('theme/music/store', [MusicController::class, 'store'])->name('music.store');
     Route::delete('theme/music/destroy/{id}', [MusicController::class, 'destroy'])->name('music.destroy');
 

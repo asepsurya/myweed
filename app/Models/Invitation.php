@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Rsvp;
+use App\Models\Music;
 use App\Models\Gallery;
 use App\Models\Template;
 use Illuminate\Database\Eloquent\Model;
@@ -27,5 +28,9 @@ class Invitation extends Model
     public function rsvps()
     {
         return $this->hasMany(Rsvp::class);
+    }
+     public function musicPreset()
+    {
+        return $this->belongsTo(Music::class,'music','id');
     }
 }

@@ -85,21 +85,37 @@
                                             <div class="flex-1 flex flex-col gap-4">
                                                 <div class="flex flex-col">
                                                     <label for="groom_name" class="mb-1 font-medium text-gray-700">Nama Mempelai Pria</label>
-                                                    <input type="text" id="groom_name" name="groom_name" placeholder="Masukkan nama mempelai pria" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                                    <input type="text" id="groom_name" name="groom_name"
+                                                        value="{{ old('groom_name') }}"
+                                                        placeholder="Masukkan nama mempelai pria"
+                                                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                                                 </div>
+
                                                 <div class="flex flex-col">
                                                     <label for="groom_nickname" class="mb-1 font-medium text-gray-700">Nama Panggilan</label>
-                                                    <input type="text" id="groom_nickname" name="groom_nickname" placeholder="Masukkan nama panggilan" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                                    <input type="text" id="groom_nickname" name="groom_nickname"
+                                                        value="{{ old('groom_nickname') }}"
+                                                        placeholder="Masukkan nama panggilan"
+                                                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                                                 </div>
+
                                                 <div class="flex flex-col">
                                                     <label for="groom_father_name" class="mb-1 font-medium text-gray-700">Nama Ayah Kandung</label>
-                                                    <input type="text" id="groom_father_name" name="groom_father_name" placeholder="Masukkan nama lengkap ayah" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                                    <input type="text" id="groom_father_name" name="groom_father_name"
+                                                        value="{{ old('groom_father_name') }}"
+                                                        placeholder="Masukkan nama lengkap ayah"
+                                                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                                                 </div>
+
                                                 <div class="flex flex-col">
                                                     <label for="groom_mother_name" class="mb-1 font-medium text-gray-700">Nama Ibu Kandung</label>
-                                                    <input type="text" id="groom_mother_name" name="groom_mother_name" placeholder="Masukkan nama lengkap ibu" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                                    <input type="text" id="groom_mother_name" name="groom_mother_name"
+                                                        value="{{ old('groom_mother_name') }}"
+                                                        placeholder="Masukkan nama lengkap ibu"
+                                                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                                                 </div>
                                             </div>
+
 
                                             <!-- Kanan -->
                                             <div class="flex-1 bg-green-100 p-6 rounded-lg">
@@ -244,7 +260,7 @@
                                                 <textarea id="love_story" name="love_story" rows="4" placeholder="Ceritakan perjalanan cinta kalian" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"></textarea>
                                             </div>
 
-                                          
+
                                         </div>
                                     </div>
                                 </div>
@@ -258,7 +274,7 @@
                                                 <input type="file" id="gallery_cover" name="gallery_cover" accept="image/*" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                                             </div>
                             <div class="grid grid-cols-2 gap-4">
-                                
+
                                 <div>
                                     <label class="block text-sm font-semibold text-gray-900 mb-2">Pilih Template</label>
                                     <select name="template_id" id="template_id" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent">
@@ -267,31 +283,31 @@
                                         @endforeach
                                     </select>
                                 </div>
-                                
+
                                 <div>
-      
+
 
                                     <label class="block text-sm font-semibold text-gray-900 mb-2">Preview</label>
                                     {{-- <img id="template_preview" src="" alt="Template Preview" class="w-full h-48 object-cover border border-gray-300 rounded-lg"> --}}
                                    <div class="w-64 border border-gray-300 rounded-3xl overflow-y-auto mx-auto shadow-lg bg-black" style="aspect-ratio: 9/15;">
-                                        <img src="{{ asset('tempelate/sample_preview.png') }}" 
-                                            alt="Template Preview" 
+                                        <img src="{{ asset('tempelate/sample_preview.png') }}"
+                                            alt="Template Preview"
                                             class="w-full h-auto object-none">
                                     </div>
 
                                 </div>
                             </div>
-                             
+
                             <div class="mt-6">
                                 <label class="block text-sm font-semibold text-gray-900 mb-2">Pilih Warna Tema</label>
                                 <div class="flex flex-wrap gap-3">
                                     <!-- Contoh 1 -->
                                     <label class="relative flex items-center justify-center cursor-pointer">
                                         <input type="radio" name="theme_color" value="#1a365d" class="sr-only peer">
-                                        <span class="w-8 h-8 rounded-full border-2 border-gray-300 
-                         peer-checked:border-blue-900 
-                         peer-checked:ring-2 
-                         peer-checked:ring-offset-1 
+                                        <span class="w-8 h-8 rounded-full border-2 border-gray-300
+                         peer-checked:border-blue-900
+                         peer-checked:ring-2
+                         peer-checked:ring-offset-1
                          transition-all hover:scale-110 relative" style="background-color: #1a365d;">
                                             <!-- Ceklis -->
                                             <svg class="w-5 h-5 text-white absolute opacity-0 peer-checked:opacity-100" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -303,10 +319,10 @@
                                     <!-- Contoh 2 -->
                                     <label class="relative flex items-center justify-center cursor-pointer">
                                         <input type="radio" name="theme_color" value="#b91c1c" class="sr-only peer">
-                                        <span class="w-8 h-8 rounded-full border-2 border-gray-300 
-                         peer-checked:border-red-700 
-                         peer-checked:ring-2 
-                         peer-checked:ring-offset-1 
+                                        <span class="w-8 h-8 rounded-full border-2 border-gray-300
+                         peer-checked:border-red-700
+                         peer-checked:ring-2
+                         peer-checked:ring-offset-1
                          transition-all hover:scale-110 relative" style="background-color: #b91c1c;">
                                             <svg class="w-5 h-5 text-white absolute opacity-0 peer-checked:opacity-100" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
@@ -317,10 +333,10 @@
                                     <!-- Contoh 3 -->
                                     <label class="relative flex items-center justify-center cursor-pointer">
                                         <input type="radio" name="theme_color" value="#166534" class="sr-only peer">
-                                        <span class="w-8 h-8 rounded-full border-2 border-gray-300 
-                         peer-checked:border-green-700 
-                         peer-checked:ring-2 
-                         peer-checked:ring-offset-1 
+                                        <span class="w-8 h-8 rounded-full border-2 border-gray-300
+                         peer-checked:border-green-700
+                         peer-checked:ring-2
+                         peer-checked:ring-offset-1
                          transition-all hover:scale-110 relative" style="background-color: #166534;">
                                             <svg class="w-5 h-5 text-white absolute opacity-0 peer-checked:opacity-100" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
@@ -406,8 +422,11 @@
                             </div>
                         </div>
                     </div>
+
+
+                </form>
             </div>
-            </form>
+
         </div>
     </div>
     </div>
