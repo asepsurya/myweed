@@ -1,618 +1,595 @@
 <x-app-layout>
+    {{-- HEADER --}}
     <x-slot name="header">
-        <div class="flex justify-between items-center">
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                {{ __('Buat Undangan') }}
-            </h2>
+        <div class="container-fluid mt-4">
+            <div class="row align-items-center">
+                <div class="col">
+                    <h5 class="fw-semibold mb-0">
+                        {{ __('Buat Undangan') }}
+                    </h5>
+                </div>
 
-            <div class="flex gap-2">
-                <a href="{{ route('invitation.create') }}" class="btn-sm inline-flex items-center px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600">
-                    Batal
-                </a>
+                <div class="col-auto d-flex gap-2">
+                    <a href="{{ route('invitation.create') }}"
+                       class="btn btn-outline-secondary btn-sm">
+                        Batal
+                    </a>
 
-                <button type="button" onclick="document.getElementById('myForm').submit()" class="btn-sm inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
-                    Simpan
-                </button>
+                    <button type="button"
+                            onclick="document.getElementById('myForm').submit()"
+                            class="btn btn-primary btn-sm">
+                        Simpan
+                    </button>
+                </div>
             </div>
         </div>
     </x-slot>
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+    {{-- CONTENT --}}
+    <div class="container-fluid mt-4">
+        <div class="card shadow-sm">
+            <div class="card-body">
 
-            <!-- Errors -->
-            @if ($errors->any())
-            <div class="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
-                <ul class="space-y-2">
-                    @foreach ($errors->all() as $error)
-                    <li class="text-red-700 text-sm">{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
-            @endif
-
-            <div class="mx-auto p-6 bg-white rounded-xl">
-                <!-- Main Tabs -->
-                <div class="flex flex-wrap border-b border-gray-200 mb-6">
-                    <button class="tab-btn px-4 py-2 -mb-px font-semibold border-b-2 border-blue-600 text-blue-600" data-tab="1">Data Dasar</button>
-                    <button class="tab-btn px-4 py-2 -mb-px font-semibold border-b-2 border-transparent text-gray-500 hover:text-blue-600 hover:border-blue-600" data-tab="2">Tema & Warna</button>
-                    <button class="tab-btn px-4 py-2 -mb-px font-semibold border-b-2 border-transparent text-gray-500 hover:text-blue-600 hover:border-blue-600" data-tab="3">Galeri Foto</button>
-                    <button class="tab-btn px-4 py-2 -mb-px font-semibold border-b-2 border-transparent text-gray-500 hover:text-blue-600 hover:border-blue-600" data-tab="4">Musik</button>
-                    <button class="tab-btn px-4 py-2 -mb-px font-semibold border-b-2 border-transparent text-gray-500 hover:text-blue-600 hover:border-blue-600" data-tab="5">RSVP</button>
+                <!-- Errors -->
+                @if ($errors->any())
+                <div class="alert alert-danger mb-4">
+                    <ul class="mb-0">
+                        @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
                 </div>
+                @endif
 
-                <form method="POST" action="{{ route('invitation.store') }}" enctype="multipart/form-data" class="" id="myForm">
+                <form id="myForm" method="POST" action="{{ route('invitation.store') }}" enctype="multipart/form-data">
                     @csrf
 
-                    <!-- Tabs Content -->
-                    <div class="p-0 m-0">
-                        <!-- Data Dasar -->
-                        <div class="tab-content" data-content="1">
-                            <div class="flex h-full bg-gray-100">
+                    {{-- MAIN TABS --}}
+                    <ul class="nav nav-tabs mb-4">
+                        <li class="nav-item">
+                            <button type="button" class="nav-link active tab-btn" data-tab="1">Data Dasar</button>
+                        </li>
+                        <li class="nav-item">
+                            <button type="button" class="nav-link tab-btn" data-tab="2">Tema & Warna</button>
+                        </li>
+                        <li class="nav-item">
+                            <button type="button" class="nav-link tab-btn" data-tab="3">Galeri Foto</button>
+                        </li>
+                        <li class="nav-item">
+                            <button type="button" class="nav-link tab-btn" data-tab="4">Musik</button>
+                        </li>
+                        <li class="nav-item">
+                            <button type="button" class="nav-link tab-btn" data-tab="5">RSVP</button>
+                        </li>
+                    </ul>
 
-                                <!-- Sidebar Tabs -->
-                                <div class="w-48 bg-white border-r p-4 text-left">
-                                    <ul class="space-y-2 flex flex-col items-start">
-                                        <li class="w-full">
-                                            <button type="button" class="w-full text-left px-3 py-2 rounded hover:bg-gray-200 focus:bg-gray-200 tab-button active" data-tab="general">
-                                                Mempelai Pria
-                                            </button>
-                                        </li>
-                                        <li class="w-full">
-                                            <button type="button" class="w-full text-left px-3 py-2 rounded hover:bg-gray-200 focus:bg-gray-200 tab-button" data-tab="bride">
-                                                Mempelai Wanita
-                                            </button>
-                                        </li>
-                                        <li class="w-full">
-                                            <button type="button" class="w-full text-left px-3 py-2 rounded hover:bg-gray-200 focus:bg-gray-200 tab-button" data-tab="acara">
-                                                Tempat & Tanggal
-                                            </button>
-                                        </li>
-                                        <li class="w-full">
-                                            <button type="button" class="w-full text-left px-3 py-2 rounded hover:bg-gray-200 focus:bg-gray-200 tab-button" data-tab="other">
-                                                Lainnya
-                                            </button>
-                                        </li>
-                                    </ul>
+                    <div class="row">
+
+                        {{-- SIDEBAR --}}
+                        <div class="col-3 border-end p-3 bg-light">
+                            <button type="button" class="btn btn-light w-100 text-start mb-2 sub-tab-btn active" data-tab="general">
+                                Mempelai Pria
+                            </button>
+                            <button type="button" class="btn btn-light w-100 text-start mb-2 sub-tab-btn" data-tab="bride">
+                                Mempelai Wanita
+                            </button>
+                            <button type="button" class="btn btn-light w-100 text-start mb-2 sub-tab-btn" data-tab="acara">
+                                Tempat & Tanggal
+                            </button>
+                            <button type="button" class="btn btn-light w-100 text-start sub-tab-btn" data-tab="other">
+                                Lainnya
+                            </button>
+                        </div>
+
+                        {{-- CONTENT --}}
+                        <div class="col-9">
+
+                            {{-- DATA DASAR --}}
+                            <div id="1" class="tab-content active">
+
+                                {{-- DATA MEMPELAI PRIA --}}
+                                <div id="general" class="sub-tab-content active">
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <label for="groom_name" class="form-label">Nama Mempelai Pria</label>
+                                            <input type="text" id="groom_name" name="groom_name"
+                                                value="{{ old('groom_name') }}"
+                                                placeholder="Masukkan nama mempelai pria"
+                                                class="form-control">
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <label for="groom_nickname" class="form-label">Nama Panggilan</label>
+                                            <input type="text" id="groom_nickname" name="groom_nickname"
+                                                value="{{ old('groom_nickname') }}"
+                                                placeholder="Masukkan nama panggilan"
+                                                class="form-control">
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <label for="groom_father_name" class="form-label">Nama Ayah Kandung</label>
+                                            <input type="text" id="groom_father_name" name="groom_father_name"
+                                                value="{{ old('groom_father_name') }}"
+                                                placeholder="Masukkan nama lengkap ayah"
+                                                class="form-control">
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <label for="groom_mother_name" class="form-label">Nama Ibu Kandung</label>
+                                            <input type="text" id="groom_mother_name" name="groom_mother_name"
+                                                value="{{ old('groom_mother_name') }}"
+                                                placeholder="Masukkan nama lengkap ibu"
+                                                class="form-control">
+                                        </div>
+
+                                        <div class="col-12">
+                                            <label class="form-label">Foto Mempelai Pria</label>
+                                            <div class="border border-dashed bg-light p-4 text-center rounded">
+                                                <label id="uploadBoxGroom" for="foto_pria" class="cursor-pointer">
+                                                    <div class="mb-2">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" class="d-block mx-auto" width="40" height="40" fill="currentColor" viewBox="0 0 16 16">
+                                                            <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
+                                                            <path d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708l3-3z"/>
+                                                        </svg>
+                                                    </div>
+                                                    <p class="mb-0">Klik atau tarik foto ke sini</p>
+                                                    <input id="foto_pria" type="file" name="foto_pria" class="d-none" onchange="previewGroomImage(event)">
+                                                </label>
+                                            </div>
+
+                                            <!-- Preview & Delete Button -->
+                                            <div id="previewContainerGroom" class="mt-3 d-none">
+                                                <img id="previewGroom" class="img-fluid rounded" alt="Preview Foto">
+                                                <div class="text-center mt-2">
+                                                    <button type="button" onclick="removeGroomPreview()" class="btn btn-danger btn-sm">
+                                                        Hapus
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
 
-                                <!-- Sidebar Content -->
-                                <div class="flex-1 p-6 bg-gray-50">
-                                    <!-- Data Mempelai Pria -->
-                                    <div class="tab-content" id="general">
-                                        <div class="flex gap-6">
-                                            <!-- Kiri -->
-                                            <div class="flex-1 flex flex-col gap-4">
-                                                <div class="flex flex-col">
-                                                    <label for="groom_name" class="mb-1 font-medium text-gray-700">Nama Mempelai Pria</label>
-                                                    <input type="text" id="groom_name" name="groom_name"
-                                                        value="{{ old('groom_name') }}"
-                                                        placeholder="Masukkan nama mempelai pria"
-                                                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                                                </div>
+                                {{-- DATA MEMPELAI WANITA --}}
+                                <div id="bride" class="sub-tab-content d-none">
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <label for="bride_name" class="form-label">Nama Mempelai Wanita</label>
+                                            <input type="text" id="bride_name" name="bride_name" placeholder="Masukkan nama mempelai wanita" class="form-control">
+                                        </div>
 
-                                                <div class="flex flex-col">
-                                                    <label for="groom_nickname" class="mb-1 font-medium text-gray-700">Nama Panggilan</label>
-                                                    <input type="text" id="groom_nickname" name="groom_nickname"
-                                                        value="{{ old('groom_nickname') }}"
-                                                        placeholder="Masukkan nama panggilan"
-                                                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                                                </div>
+                                        <div class="col-md-6">
+                                            <label for="bride_nickname" class="form-label">Nama Panggilan</label>
+                                            <input type="text" id="bride_nickname" name="bride_nickname" placeholder="Masukkan nama panggilan mempelai wanita" class="form-control">
+                                        </div>
 
-                                                <div class="flex flex-col">
-                                                    <label for="groom_father_name" class="mb-1 font-medium text-gray-700">Nama Ayah Kandung</label>
-                                                    <input type="text" id="groom_father_name" name="groom_father_name"
-                                                        value="{{ old('groom_father_name') }}"
-                                                        placeholder="Masukkan nama lengkap ayah"
-                                                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                                                </div>
+                                        <div class="col-md-6">
+                                            <label for="bride_father_name" class="form-label">Nama Ayah Kandung</label>
+                                            <input type="text" id="bride_father_name" name="bride_father_name" placeholder="Masukkan nama lengkap ayah kandung mempelai wanita" class="form-control">
+                                        </div>
 
-                                                <div class="flex flex-col">
-                                                    <label for="groom_mother_name" class="mb-1 font-medium text-gray-700">Nama Ibu Kandung</label>
-                                                    <input type="text" id="groom_mother_name" name="groom_mother_name"
-                                                        value="{{ old('groom_mother_name') }}"
-                                                        placeholder="Masukkan nama lengkap ibu"
-                                                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                                                </div>
-                                            </div>
+                                        <div class="col-md-6">
+                                            <label for="bride_mother_name" class="form-label">Nama Ibu Kandung</label>
+                                            <input type="text" id="bride_mother_name" name="bride_mother_name" placeholder="Masukkan nama lengkap ibu kandung mempelai wanita" class="form-control">
+                                        </div>
 
-
-                                            <!-- Kanan -->
-                                            <div class="flex-1 bg-green-100 p-6 rounded-lg">
-                                                <!-- Upload Box -->
-                                                <center>
-                                                    <label class="font-medium text-gray-700">Foto Mempelai Pria</label>
-                                                </center>
-                                                <label id="uploadBoxGroom" for="foto_pria" class="flex flex-col items-center justify-center w-full h-40 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-green-400 hover:bg-green-50 transition duration-200">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 text-gray-400 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1M12 12v6m0 0l-3-3m3 3l3-3M12 6v6" />
-                                                    </svg>
-                                                    <span class="text-gray-600">Klik atau tarik foto ke sini</span>
-                                                    <input id="foto_pria" type="file" name="foto_pria" class="hidden" onchange="previewGroomImage(event)">
+                                        <div class="col-12">
+                                            <label class="form-label">Foto Mempelai Wanita</label>
+                                            <div class="border border-dashed bg-light p-4 text-center rounded">
+                                                <label id="uploadBoxBride" for="foto_wanita" class="cursor-pointer">
+                                                    <div class="mb-2">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" class="d-block mx-auto" width="40" height="40" fill="currentColor" viewBox="0 0 16 16">
+                                                            <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
+                                                            <path d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708l3-3z"/>
+                                                        </svg>
+                                                    </div>
+                                                    <p class="mb-0">Klik atau tarik foto ke sini</p>
+                                                    <input id="foto_wanita" type="file" name="foto_wanita" class="d-none" onchange="previewBrideImage(event)">
                                                 </label>
+                                            </div>
 
-                                                <!-- Preview & Delete Button -->
-                                                <div id="previewContainerGroom" class="mt-4 hidden relative">
-                                                    <img id="previewGroom" class="w-full max-h-60 object-cover rounded-lg" alt="Preview Foto">
-                                                    <center>
-                                                        <button type="button" onclick="removeGroomPreview()" class="mt-2 btn-sm inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
-                                                            Hapus
-                                                        </button>
-                                                    </center>
+                                            <!-- Preview & Delete Button -->
+                                            <div id="previewContainerBride" class="mt-3 d-none">
+                                                <img id="previewBride" class="img-fluid rounded" alt="Preview Foto">
+                                                <div class="text-center mt-2">
+                                                    <button type="button" onclick="removeBridePreview()" class="btn btn-danger btn-sm">
+                                                        Hapus
+                                                    </button>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
+                                </div>
 
-                                    <!-- Data Mempelai Wanita -->
-                                    <div class="tab-content hidden" id="bride">
-                                        <div class="flex gap-6">
-                                            <div class="flex-1 flex flex-col gap-4">
-                                                <div class="flex flex-col">
-                                                    <label for="bride_name" class="mb-1 font-medium text-gray-700">Nama Mempelai Wanita</label>
-                                                    <input type="text" id="bride_name" name="bride_name" placeholder="Masukkan nama mempelai wanita" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                                                </div>
-                                                <div class="flex flex-col">
-                                                    <label for="bride_nickname" class="mb-1 font-medium text-gray-700">Nama Panggilan</label>
-                                                    <input type="text" id="bride_nickname" name="bride_nickname" placeholder="Masukkan nama panggilan mempelai wanita" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                                                </div>
-                                                <div class="flex flex-col">
-                                                    <label for="bride_father_name" class="mb-1 font-medium text-gray-700">Nama Ayah Kandung</label>
-                                                    <input type="text" id="bride_father_name" name="bride_father_name" placeholder="Masukkan nama lengkap ayah kandung mempelai wanita" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                                                </div>
-                                                <div class="flex flex-col">
-                                                    <label for="bride_mother_name" class="mb-1 font-medium text-gray-700">Nama Ibu Kandung</label>
-                                                    <input type="text" id="bride_mother_name" name="bride_mother_name" placeholder="Masukkan nama lengkap ibu kandung mempelai wanita" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                                                </div>
-                                            </div>
-
-                                            <!-- Kanan -->
-                                            <div class="flex-1 bg-green-100 p-6 rounded-lg">
-                                                <!-- Upload Box -->
-                                                <center>
-                                                    <label class="font-medium text-gray-700">Foto Mempelai Wanita</label>
-                                                </center>
-                                                <label id="uploadBoxBride" for="foto_wanita" class="flex flex-col items-center justify-center w-full h-40 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-green-400 hover:bg-green-50 transition duration-200">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 text-gray-400 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1M12 12v6m0 0l-3-3m3 3l3-3M12 6v6" />
-                                                    </svg>
-                                                    <span class="text-gray-600">Klik atau tarik foto ke sini</span>
-                                                    <input id="foto_wanita" type="file" name="foto_wanita" class="hidden" onchange="previewBrideImage(event)">
-                                                </label>
-
-                                                <!-- Preview & Delete Button -->
-                                                <div id="previewContainerBride" class="mt-4 hidden relative">
-                                                    <img id="previewBride" class="w-full max-h-60 object-cover rounded-lg" alt="Preview Foto">
-                                                    <center>
-                                                        <button type="button" onclick="removeBridePreview()" class="mt-2 btn-sm inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
-                                                            Hapus
-                                                        </button>
-                                                    </center>
-                                                </div>
+                                {{-- TEMPAT & TANGGAL --}}
+                                <div id="acara" class="sub-tab-content d-none">
+                                    <div class="mb-4">
+                                        <h5 class="fw-semibold">Tanggal Pernikahan</h5>
+                                        <div class="row g-3">
+                                            <div class="col-md-6">
+                                                <label for="wedding_date" class="form-label">Tanggal</label>
+                                                <input type="date" id="wedding_date" name="wedding_date" class="form-control">
                                             </div>
                                         </div>
                                     </div>
 
-                                    <!-- Tempat & Tanggal -->
-                                    <div class="tab-content hidden" id="acara">
-                                        <!-- Tanggal Acara -->
-                                        <div class="flex flex-col mb-4">
-                                            <label for="wedding_date" class="mb-2 font-semibold text-gray-700">Tanggal Pernikahan</label>
-                                            <input type="date" id="wedding_date" name="wedding_date" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                                        </div>
-
-                                        <!-- Tempat Akad -->
-                                        <div class="mb-6">
-                                            <h3 class="text-lg font-semibold text-gray-800 mb-2 border-b border-gray-200 pb-1">Tempat Akad</h3>
-
-                                            <div class="flex flex-col mb-3">
-                                                <label for="akad_location" class="mb-1 font-medium text-gray-700">Lokasi Acara</label>
-                                                <input type="text" id="akad_location" name="akad_location" placeholder="Masukkan lokasi akad" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                    <div class="mb-4">
+                                        <h5 class="fw-semibold">Tempat Akad</h5>
+                                        <div class="row g-3">
+                                            <div class="col-md-6">
+                                                <label for="akad_location" class="form-label">Lokasi Acara</label>
+                                                <input type="text" id="akad_location" name="akad_location" placeholder="Masukkan lokasi akad" class="form-control">
                                             </div>
-
-                                            <div class="flex flex-col">
-                                                <label for="akad_time" class="mb-1 font-medium text-gray-700">Waktu Akad</label>
-                                                <input type="time" id="akad_time" name="akad_time" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                            <div class="col-md-6">
+                                                <label for="akad_time" class="form-label">Waktu Akad</label>
+                                                <input type="time" id="akad_time" name="akad_time" class="form-control">
                                             </div>
-
-                                            <div class="flex flex-col mt-3">
-                                                <label for="akad_maps" class="mb-1 font-medium text-gray-700">Link Maps</label>
-                                                <input type="text" id="akad_maps" name="akad_maps" placeholder="Masukkan link Google Maps" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                                            </div>
-                                        </div>
-
-                                        <!-- Tempat Resepsi -->
-                                        <div class="mb-6">
-                                            <h3 class="text-lg font-semibold text-gray-800 mb-2 border-b border-gray-200 pb-1">Tempat Resepsi</h3>
-
-                                            <div class="flex flex-col mb-3">
-                                                <label for="resepsi_location" class="mb-1 font-medium text-gray-700">Lokasi Acara</label>
-                                                <input type="text" id="resepsi_location" name="resepsi_location" placeholder="Masukkan lokasi resepsi" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                                            </div>
-
-                                            <div class="flex flex-col">
-                                                <label for="resepsi_time" class="mb-1 font-medium text-gray-700">Waktu Resepsi</label>
-                                                <input type="time" id="resepsi_time" name="resepsi_time" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                                            </div>
-
-                                            <div class="flex flex-col mt-3">
-                                                <label for="resepsi_maps" class="mb-1 font-medium text-gray-700">Link Maps</label>
-                                                <input type="text" id="resepsi_maps" name="resepsi_maps" placeholder="Masukkan link Google Maps" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                            <div class="col-12">
+                                                <label for="akad_maps" class="form-label">Link Maps</label>
+                                                <input type="text" id="akad_maps" name="akad_maps" placeholder="Masukkan link Google Maps" class="form-control">
                                             </div>
                                         </div>
                                     </div>
 
-                                    <!-- Lainnya -->
-                                    <div class="tab-content hidden" id="other">
-                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                            <div class="flex flex-col">
-                                                <label for="wedding_quote" class="mb-1 font-medium text-gray-700">Kutipan Pernikahan</label>
-                                                <textarea id="wedding_quote" name="wedding_quote" rows="4" placeholder="Masukkan kutipan untuk undangan" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"></textarea>
+                                    <div class="mb-4">
+                                        <h5 class="fw-semibold">Tempat Resepsi</h5>
+                                        <div class="row g-3">
+                                            <div class="col-md-6">
+                                                <label for="resepsi_location" class="form-label">Lokasi Acara</label>
+                                                <input type="text" id="resepsi_location" name="resepsi_location" placeholder="Masukkan lokasi resepsi" class="form-control">
                                             </div>
-
-                                            <div class="flex flex-col">
-                                                <label for="video_link" class="mb-1 font-medium text-gray-700">Link Video Pernikahan</label>
-                                                <input type="text" id="video_link" name="video_link" placeholder="Masukkan link video YouTube" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                            <div class="col-md-6">
+                                                <label for="resepsi_time" class="form-label">Waktu Resepsi</label>
+                                                <input type="time" id="resepsi_time" name="resepsi_time" class="form-control">
                                             </div>
-
-                                            <div class="flex flex-col">
-                                                <label for="love_story" class="mb-1 font-medium text-gray-700">Cerita Cinta</label>
-                                                <textarea id="love_story" name="love_story" rows="4" placeholder="Ceritakan perjalanan cinta kalian" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"></textarea>
+                                            <div class="col-12">
+                                                <label for="resepsi_maps" class="form-label">Link Maps</label>
+                                                <input type="text" id="resepsi_maps" name="resepsi_maps" placeholder="Masukkan link Google Maps" class="form-control">
                                             </div>
+                                        </div>
+                                    </div>
+                                </div>
 
+                                {{-- LAINNYA --}}
+                                <div id="other" class="sub-tab-content d-none">
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <label for="wedding_quote" class="form-label">Kutipan Pernikahan</label>
+                                            <textarea id="wedding_quote" name="wedding_quote" rows="4" placeholder="Masukkan kutipan untuk undangan" class="form-control"></textarea>
+                                        </div>
 
+                                        <div class="col-md-6">
+                                            <label for="video_link" class="form-label">Link Video Pernikahan</label>
+                                            <input type="text" id="video_link" name="video_link" placeholder="Masukkan link video YouTube" class="form-control">
+                                        </div>
+
+                                        <div class="col-12">
+                                            <label for="love_story" class="form-label">Cerita Cinta</label>
+                                            <textarea id="love_story" name="love_story" rows="4" placeholder="Ceritakan perjalanan cinta kalian" class="form-control"></textarea>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <!-- Tema & Warna -->
-                        <div class="tab-content hidden" data-content="2">
-                             <div class="flex flex-col mb-2">
-                                                <label for="gallery_cover" class=" block text-sm font-semibold text-gray-900 mb-2">Cover Galeri</label>
-                                                <input type="file" id="gallery_cover" name="gallery_cover" accept="image/*" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                                            </div>
-                            <div class="grid grid-cols-2 gap-4">
+                            {{-- TEMA & WARNA --}}
+                            <div id="2" class="tab-content d-none">
+                                <div class="mb-4">
+                                    <label for="gallery_cover" class="form-label">Cover Galeri</label>
+                                    <input type="file" id="gallery_cover" name="gallery_cover" accept="image/*" class="form-control">
+                                </div>
 
-                                <div>
-                                    <label class="block text-sm font-semibold text-gray-900 mb-2">Pilih Template</label>
-                                    <select name="template_id" id="template_id" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent">
-                                        @foreach ($templates as $template)
-                                        <option value="{{ $template->id }}" data-image="{{ $template->image }}">{{ $template->name }}</option>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Pilih Template</label>
+                                        <select name="template_id" id="template_id" class="form-select">
+                                            @foreach ($templates as $template)
+                                            <option value="{{ $template->id }}" data-image="{{ $template->image }}">{{ $template->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label">Preview</label>
+                                        <div class="border rounded overflow-hidden" style="max-width: 200px;">
+                                            <img src="{{ asset('tempelate/sample_preview.png') }}" alt="Template Preview" class="img-fluid">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="mt-4">
+                                    <label class="form-label">Pilih Warna Tema</label>
+                                    <div class="d-flex gap-2">
+                                        <!-- Contoh 1 -->
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="theme_color" id="color1" value="#1a365d">
+                                            <label class="form-check-label p-2 border rounded" for="color1" style="background-color: #1a365d; width: 40px; height: 40px; display: block;"></label>
+                                        </div>
+
+                                        <!-- Contoh 2 -->
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="theme_color" id="color2" value="#b91c1c">
+                                            <label class="form-check-label p-2 border rounded" for="color2" style="background-color: #b91c1c; width: 40px; height: 40px; display: block;"></label>
+                                        </div>
+
+                                        <!-- Contoh 3 -->
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="theme_color" id="color3" value="#166534">
+                                            <label class="form-check-label p-2 border rounded" for="color3" style="background-color: #166534; width: 40px; height: 40px; display: block;"></label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {{-- GALERI FOTO --}}
+                            <div id="3" class="tab-content d-none">
+                                <label for="gallery_cover" class="form-label">Galeri Kisah</label>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div id="gallery-dropzone" class="border border-dashed bg-light p-4 text-center rounded cursor-pointer">
+                                            <p class="mb-0">Drag & drop gambar di sini atau klik untuk memilih</p>
+                                            <input type="file" id="gallery-input" name="gallery[]" multiple accept="image/*" class="d-none">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div id="gallery-preview" class="d-flex gap-2 flex-wrap"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {{-- MUSIK --}}
+                            <div id="4" class="tab-content d-none">
+                                <div class="mb-3">
+                                    <label for="music_id" class="form-label">Pilih Lagu Background</label>
+                                    <select name="music_id" id="music_id" class="form-select">
+                                        <option value="">-- Pilih Lagu --</option>
+                                        @if(isset($music))
+                                        @foreach ($music as $music)
+                                        <option value="{{ $music->id }}">{{ $music->title }}</option>
                                         @endforeach
+                                        @endif
                                     </select>
                                 </div>
 
-                                <div>
+                                <div class="mb-3">
+                                    <label for="music_volume" class="form-label">Atur Volume</label>
+                                    <input type="range" name="music_volume" min="0" max="100" value="50" class="form-range">
+                                    <div class="d-flex justify-content-between">
+                                        <small class="text-muted">0</small>
+                                        <small class="text-muted">50</small>
+                                        <small class="text-muted">100</small>
+                                    </div>
+                                </div>
 
+                                <div class="mb-3">
+                                    <label for="custom_music" class="form-label">Upload Lagu Kustom</label>
+                                    <input type="file" name="custom_music" accept="audio/*" class="form-control">
+                                </div>
+                            </div>
 
-                                    <label class="block text-sm font-semibold text-gray-900 mb-2">Preview</label>
-                                    {{-- <img id="template_preview" src="" alt="Template Preview" class="w-full h-48 object-cover border border-gray-300 rounded-lg"> --}}
-                                   <div class="w-64 border border-gray-300 rounded-3xl overflow-y-auto mx-auto shadow-lg bg-black" style="aspect-ratio: 9/15;">
-                                        <img src="{{ asset('tempelate/sample_preview.png') }}"
-                                            alt="Template Preview"
-                                            class="w-full h-auto object-none">
+                            {{-- RSVP --}}
+                            <div id="5" class="tab-content d-none">
+                                <div class="mb-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="enable_rsvp" name="enable_rsvp">
+                                        <label class="form-check-label" for="enable_rsvp">
+                                            Aktifkan RSVP
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div id="rsvp_settings">
+                                    <div class="mb-3">
+                                        <label for="rsvp_deadline" class="form-label">Batas Tanggal RSVP</label>
+                                        <input type="date" name="rsvp_deadline" class="form-control">
                                     </div>
 
-                                </div>
-                            </div>
+                                    <div class="mb-3">
+                                        <label for="rsvp_message" class="form-label">Pesan Konfirmasi</label>
+                                        <textarea name="rsvp_message" rows="4" placeholder="Terima kasih atas konfirmasi kehadiran Anda. Kami sangat menantikan kehadiran Anda di hari bahagia kami." class="form-control"></textarea>
+                                    </div>
 
-                            <div class="mt-6">
-                                <label class="block text-sm font-semibold text-gray-900 mb-2">Pilih Warna Tema</label>
-                                <div class="flex flex-wrap gap-3">
-                                    <!-- Contoh 1 -->
-                                    <label class="relative flex items-center justify-center cursor-pointer">
-                                        <input type="radio" name="theme_color" value="#1a365d" class="sr-only peer">
-                                        <span class="w-8 h-8 rounded-full border-2 border-gray-300
-                         peer-checked:border-blue-900
-                         peer-checked:ring-2
-                         peer-checked:ring-offset-1
-                         transition-all hover:scale-110 relative" style="background-color: #1a365d;">
-                                            <!-- Ceklis -->
-                                            <svg class="w-5 h-5 text-white absolute opacity-0 peer-checked:opacity-100" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
-                                            </svg>
-                                        </span>
-                                    </label>
-
-                                    <!-- Contoh 2 -->
-                                    <label class="relative flex items-center justify-center cursor-pointer">
-                                        <input type="radio" name="theme_color" value="#b91c1c" class="sr-only peer">
-                                        <span class="w-8 h-8 rounded-full border-2 border-gray-300
-                         peer-checked:border-red-700
-                         peer-checked:ring-2
-                         peer-checked:ring-offset-1
-                         transition-all hover:scale-110 relative" style="background-color: #b91c1c;">
-                                            <svg class="w-5 h-5 text-white absolute opacity-0 peer-checked:opacity-100" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
-                                            </svg>
-                                        </span>
-                                    </label>
-
-                                    <!-- Contoh 3 -->
-                                    <label class="relative flex items-center justify-center cursor-pointer">
-                                        <input type="radio" name="theme_color" value="#166534" class="sr-only peer">
-                                        <span class="w-8 h-8 rounded-full border-2 border-gray-300
-                         peer-checked:border-green-700
-                         peer-checked:ring-2
-                         peer-checked:ring-offset-1
-                         transition-all hover:scale-110 relative" style="background-color: #166534;">
-                                            <svg class="w-5 h-5 text-white absolute opacity-0 peer-checked:opacity-100" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
-                                            </svg>
-                                        </span>
-                                    </label>
-
-                                    <!-- Tambahkan warna lain dengan pola sama -->
+                                    <div class="mb-3">
+                                        <label for="rsvp_whatsapp" class="form-label">Nomor WhatsApp untuk Notifikasi</label>
+                                        <input type="text" name="rsvp_whatsapp" placeholder="6281234567890" class="form-control">
+                                    </div>
                                 </div>
                             </div>
 
                         </div>
                     </div>
-
-                    <!-- Galeri Foto -->
-                    <div class="tab-content hidden" data-content="3">
-                            <label for="gallery_cover" class=" block text-sm font-semibold text-gray-900 mb-2">Galeri Kisah</label>
-                        <div class="flex flex-col md:flex-row gap-6">
-                            <div id="gallery-dropzone" class="flex-1 px-4 py-6 border-2 border-dashed border-gray-300 rounded-lg bg-gray-50 cursor-pointer hover:bg-gray-100 transition flex items-center justify-center text-center relative">
-                                <p class="text-gray-600">Drag & drop gambar di sini atau klik untuk memilih</p>
-                                <input type="file" id="gallery-input" name="gallery[]" multiple accept="image/*" class="hidden">
-                            </div>
-
-                            <div id="gallery-preview" class="flex-1 flex overflow-x-auto gap-4 p-2 border rounded-lg bg-gray-50"></div>
-                        </div>
-                    </div>
-
-                    <!-- Musik -->
-                    <div class="tab-content hidden" data-content="4">
-                        <div class="space-y-4">
-                            <div>
-                                <label class="block text-sm font-semibold text-gray-900 mb-2">Pilih Lagu Background</label>
-                                <select name="music_id" id="music_id" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent">
-                                    <option value="">-- Pilih Lagu --</option>
-                                    @if(isset($music))
-                                    @foreach ($music as $music)
-                                    <option value="{{ $music->id }}">{{ $music->title }}</option>
-                                    @endforeach
-                                    @endif
-                                </select>
-                            </div>
-
-                            <div>
-                                <label class="block text-sm font-semibold text-gray-900 mb-2">Atur Volume</label>
-                                <input type="range" name="music_volume" min="0" max="100" value="50" class="w-full">
-                                <div class="flex justify-between text-xs text-gray-500">
-                                    <span>0</span>
-                                    <span>50</span>
-                                    <span>100</span>
-                                </div>
-                            </div>
-
-                            <div>
-                                <label class="block text-sm font-semibold text-gray-900 mb-2">Upload Lagu Kustom</label>
-                                <input type="file" name="custom_music" accept="audio/*" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent">
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- RSVP -->
-                    <div class="tab-content hidden" data-content="5">
-                        <div class="space-y-4">
-                            <div class="flex items-center">
-                                <input type="checkbox" id="enable_rsvp" name="enable_rsvp" class="mr-2">
-                                <label for="enable_rsvp" class="text-sm font-medium text-gray-700">Aktifkan RSVP</label>
-                            </div>
-
-                            <div id="rsvp_settings" class="space-y-4">
-                                <div>
-                                    <label class="block text-sm font-semibold text-gray-900 mb-2">Batas Tanggal RSVP</label>
-                                    <input type="date" name="rsvp_deadline" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent">
-                                </div>
-
-                                <div>
-                                    <label class="block text-sm font-semibold text-gray-900 mb-2">Pesan Konfirmasi</label>
-                                    <textarea name="rsvp_message" rows="4" placeholder="Terima kasih atas konfirmasi kehadiran Anda. Kami sangat menantikan kehadiran Anda di hari bahagia kami." class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"></textarea>
-                                </div>
-
-                                <div>
-                                    <label class="block text-sm font-semibold text-gray-900 mb-2">Nomor WhatsApp untuk Notifikasi</label>
-                                    <input type="text" name="rsvp_whatsapp" placeholder="6281234567890" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
 
                 </form>
-            </div>
 
+            </div>
         </div>
     </div>
-    </div>
-
-    <!-- Main Tabs Script -->
-    <script>
-        // Main tabs functionality
-        const tabs = document.querySelectorAll('.tab-btn');
-        const contents = document.querySelectorAll('.tab-content[data-content]');
-
-        tabs.forEach(tab => {
-            tab.addEventListener('click', () => {
-                tabs.forEach(t => {
-                    t.classList.remove('border-blue-600', 'text-blue-600');
-                    t.classList.add('border-transparent', 'text-gray-500');
-                });
-                contents.forEach(c => c.classList.add('hidden'));
-
-                tab.classList.add('border-blue-600', 'text-blue-600');
-                tab.classList.remove('border-transparent', 'text-gray-500');
-
-                const tabId = tab.dataset.tab;
-                document.querySelector(`.tab-content[data-content="${tabId}"]`).classList.remove('hidden');
-            });
-        });
-
-        // Sidebar Tabs Script
-        const tabButtons = document.querySelectorAll('.tab-button');
-        const tabContents = document.querySelectorAll('.tab-content[id]');
-
-        tabButtons.forEach(btn => {
-            btn.addEventListener('click', () => {
-                tabButtons.forEach(b => b.classList.remove('active', 'bg-gray-200'));
-                btn.classList.add('active', 'bg-gray-200');
-
-                const target = btn.dataset.tab;
-                tabContents.forEach(c => c.classList.add('hidden'));
-                document.getElementById(target).classList.remove('hidden');
-            });
-        });
-
-        // Template preview
-        const templateSelect = document.getElementById('template_id');
-        const templatePreview = document.getElementById('template_preview');
-
-        if (templateSelect && templatePreview) {
-            templateSelect.addEventListener('change', () => {
-                const selectedOption = templateSelect.options[templateSelect.selectedIndex];
-                templatePreview.src = selectedOption.dataset.image;
-            });
-
-            templateSelect.dispatchEvent(new Event('change'));
-        }
-
-        // Gallery functionality
-        const dropzone = document.getElementById('gallery-dropzone');
-        const fileInput = document.getElementById('gallery-input');
-        const preview = document.getElementById('gallery-preview');
-
-        if (dropzone && fileInput && preview) {
-            dropzone.addEventListener('click', () => fileInput.click());
-            dropzone.addEventListener('dragover', e => {
-                e.preventDefault();
-                dropzone.classList.add('bg-blue-50', 'border-blue-400');
-            });
-            dropzone.addEventListener('dragleave', () => {
-                dropzone.classList.remove('bg-blue-50', 'border-blue-400');
-            });
-            dropzone.addEventListener('drop', e => {
-                e.preventDefault();
-                dropzone.classList.remove('bg-blue-50', 'border-blue-400');
-                fileInput.files = e.dataTransfer.files;
-                displayPreview(fileInput.files);
-            });
-
-            fileInput.addEventListener('change', () => displayPreview(fileInput.files));
-
-            function displayPreview(files) {
-                preview.innerHTML = '';
-                Array.from(files).forEach(file => {
-                    const reader = new FileReader();
-                    reader.onload = e => {
-                        const imgContainer = document.createElement('div');
-                        imgContainer.className = 'flex-shrink-0 w-32 h-32 border border-gray-200 rounded-lg overflow-hidden relative';
-                        const img = document.createElement('img');
-                        img.src = e.target.result;
-                        img.className = 'w-full h-full object-cover';
-                        imgContainer.appendChild(img);
-
-                        // Add delete button
-                        const deleteBtn = document.createElement('button');
-                        deleteBtn.type = 'button';
-                        deleteBtn.className = 'absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center';
-                        deleteBtn.innerHTML = '×';
-                        deleteBtn.onclick = function() {
-                            imgContainer.remove();
-                        };
-                        imgContainer.appendChild(deleteBtn);
-
-                        preview.appendChild(imgContainer);
-                    };
-                    reader.readAsDataURL(file);
-                });
-            }
-        }
-
-        // RSVP settings toggle
-        const enableRsvp = document.getElementById('enable_rsvp');
-        const rsvpSettings = document.getElementById('rsvp_settings');
-
-        if (enableRsvp && rsvpSettings) {
-            // Initially hide settings if checkbox is not checked
-            if (!enableRsvp.checked) {
-                rsvpSettings.style.display = 'none';
-            }
-
-            enableRsvp.addEventListener('change', () => {
-                rsvpSettings.style.display = enableRsvp.checked ? 'block' : 'none';
-            });
-        }
-
-        // Image preview functions for groom
-        function previewGroomImage(event) {
-            const preview = document.getElementById('previewGroom');
-            const previewContainer = document.getElementById('previewContainerGroom');
-            const uploadBox = document.getElementById('uploadBoxGroom');
-
-            if (event.target.files && event.target.files[0]) {
-                // Set src preview
-                preview.src = URL.createObjectURL(event.target.files[0]);
-                previewContainer.classList.remove('hidden');
-
-                // Sembunyikan upload box
-                uploadBox.classList.add('hidden');
-            }
-        }
-
-        function removeGroomPreview() {
-            const preview = document.getElementById('previewGroom');
-            const previewContainer = document.getElementById('previewContainerGroom');
-            const uploadBox = document.getElementById('uploadBoxGroom');
-            const inputFile = document.getElementById('foto_pria');
-
-            // Hapus preview
-            preview.src = '';
-            previewContainer.classList.add('hidden');
-
-            // Reset input file
-            inputFile.value = '';
-
-            // Tampilkan kembali upload box
-            uploadBox.classList.remove('hidden');
-        }
-
-        // Image preview functions for bride
-        function previewBrideImage(event) {
-            const preview = document.getElementById('previewBride');
-            const previewContainer = document.getElementById('previewContainerBride');
-            const uploadBox = document.getElementById('uploadBoxBride');
-
-            if (event.target.files && event.target.files[0]) {
-                // Set src preview
-                preview.src = URL.createObjectURL(event.target.files[0]);
-                previewContainer.classList.remove('hidden');
-
-                // Sembunyikan upload box
-                uploadBox.classList.add('hidden');
-            }
-        }
-
-        function removeBridePreview() {
-            const preview = document.getElementById('previewBride');
-            const previewContainer = document.getElementById('previewContainerBride');
-            const uploadBox = document.getElementById('uploadBoxBride');
-            const inputFile = document.getElementById('foto_wanita');
-
-            // Hapus preview
-            preview.src = '';
-            previewContainer.classList.add('hidden');
-
-            // Reset input file
-            inputFile.value = '';
-
-            // Tampilkan kembali upload box
-            uploadBox.classList.remove('hidden');
-        }
-
-    </script>
 </x-app-layout>
+
+<!-- Main Tabs Script -->
+<script>
+    // Main tabs functionality
+    const tabs = document.querySelectorAll('.tab-btn');
+    const contents = document.querySelectorAll('.tab-content[id]');
+
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            tabs.forEach(t => t.classList.remove('active'));
+            contents.forEach(c => c.classList.add('d-none'));
+
+            tab.classList.add('active');
+            const tabId = tab.dataset.tab;
+            document.getElementById(tabId).classList.remove('d-none');
+        });
+    });
+
+    // Sidebar Tabs Script
+    const tabButtons = document.querySelectorAll('.sub-tab-btn');
+    const tabContents = document.querySelectorAll('.sub-tab-content');
+
+    tabButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            tabButtons.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            const target = btn.dataset.tab;
+            tabContents.forEach(c => c.classList.add('d-none'));
+            document.getElementById(target).classList.remove('d-none');
+        });
+    });
+
+    // Template preview
+    const templateSelect = document.getElementById('template_id');
+    const templatePreview = document.getElementById('template_preview');
+
+    if (templateSelect && templatePreview) {
+        templateSelect.addEventListener('change', () => {
+            const selectedOption = templateSelect.options[templateSelect.selectedIndex];
+            templatePreview.src = selectedOption.dataset.image;
+        });
+
+        templateSelect.dispatchEvent(new Event('change'));
+    }
+
+    // Gallery functionality
+    const dropzone = document.getElementById('gallery-dropzone');
+    const fileInput = document.getElementById('gallery-input');
+    const preview = document.getElementById('gallery-preview');
+
+    if (dropzone && fileInput && preview) {
+        dropzone.addEventListener('click', () => fileInput.click());
+        dropzone.addEventListener('dragover', e => {
+            e.preventDefault();
+            dropzone.classList.add('bg-light');
+        });
+        dropzone.addEventListener('dragleave', () => {
+            dropzone.classList.remove('bg-light');
+        });
+        dropzone.addEventListener('drop', e => {
+            e.preventDefault();
+            dropzone.classList.remove('bg-light');
+            fileInput.files = e.dataTransfer.files;
+            displayPreview(fileInput.files);
+        });
+
+        fileInput.addEventListener('change', () => displayPreview(fileInput.files));
+
+        function displayPreview(files) {
+            preview.innerHTML = '';
+            Array.from(files).forEach(file => {
+                const reader = new FileReader();
+                reader.onload = e => {
+                    const imgContainer = document.createElement('div');
+                    imgContainer.className = 'position-relative';
+                    imgContainer.style.width = '100px';
+                    imgContainer.style.height = '100px';
+
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    img.className = 'img-fluid rounded';
+                    img.style.width = '100px';
+                    img.style.height = '100px';
+                    img.style.objectFit = 'cover';
+                    imgContainer.appendChild(img);
+
+                    // Add delete button
+                    const deleteBtn = document.createElement('button');
+                    deleteBtn.type = 'button';
+                    deleteBtn.className = 'btn btn-danger btn-sm position-absolute top-0 end-0';
+                    deleteBtn.style.width = '24px';
+                    deleteBtn.style.height = '24px';
+                    deleteBtn.style.padding = '0';
+                    deleteBtn.style.borderRadius = '50%';
+                    deleteBtn.innerHTML = '×';
+                    deleteBtn.onclick = function() {
+                        imgContainer.remove();
+                    };
+                    imgContainer.appendChild(deleteBtn);
+
+                    preview.appendChild(imgContainer);
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+    }
+
+    // RSVP settings toggle
+    const enableRsvp = document.getElementById('enable_rsvp');
+    const rsvpSettings = document.getElementById('rsvp_settings');
+
+    if (enableRsvp && rsvpSettings) {
+        // Initially hide settings if checkbox is not checked
+        if (!enableRsvp.checked) {
+            rsvpSettings.style.display = 'none';
+        }
+
+        enableRsvp.addEventListener('change', () => {
+            rsvpSettings.style.display = enableRsvp.checked ? 'block' : 'none';
+        });
+    }
+
+    // Image preview functions for groom
+    function previewGroomImage(event) {
+        const preview = document.getElementById('previewGroom');
+        const previewContainer = document.getElementById('previewContainerGroom');
+        const uploadBox = document.getElementById('uploadBoxGroom');
+
+        if (event.target.files && event.target.files[0]) {
+            // Set src preview
+            preview.src = URL.createObjectURL(event.target.files[0]);
+            previewContainer.classList.remove('d-none');
+
+            // Sembunyikan upload box
+            uploadBox.parentElement.classList.add('d-none');
+        }
+    }
+
+    function removeGroomPreview() {
+        const preview = document.getElementById('previewGroom');
+        const previewContainer = document.getElementById('previewContainerGroom');
+        const uploadBox = document.getElementById('uploadBoxGroom');
+        const inputFile = document.getElementById('foto_pria');
+
+        // Hapus preview
+        preview.src = '';
+        previewContainer.classList.add('d-none');
+
+        // Reset input file
+        inputFile.value = '';
+
+        // Tampilkan kembali upload box
+        uploadBox.parentElement.classList.remove('d-none');
+    }
+
+    // Image preview functions for bride
+    function previewBrideImage(event) {
+        const preview = document.getElementById('previewBride');
+        const previewContainer = document.getElementById('previewContainerBride');
+        const uploadBox = document.getElementById('uploadBoxBride');
+
+        if (event.target.files && event.target.files[0]) {
+            // Set src preview
+            preview.src = URL.createObjectURL(event.target.files[0]);
+            previewContainer.classList.remove('d-none');
+
+            // Sembunyikan upload box
+            uploadBox.parentElement.classList.add('d-none');
+        }
+    }
+
+    function removeBridePreview() {
+        const preview = document.getElementById('previewBride');
+        const previewContainer = document.getElementById('previewContainerBride');
+        const uploadBox = document.getElementById('uploadBoxBride');
+        const inputFile = document.getElementById('foto_wanita');
+
+        // Hapus preview
+        preview.src = '';
+        previewContainer.classList.add('d-none');
+
+        // Reset input file
+        inputFile.value = '';
+
+        // Tampilkan kembali upload box
+        uploadBox.parentElement.classList.remove('d-none');
+    }
+</script>
