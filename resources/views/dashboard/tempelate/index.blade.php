@@ -1,250 +1,382 @@
 <x-app-layout>
+
     <style>
         .template-preview {
-            height: 200px;
+            height: 220px;
             overflow: hidden;
             position: relative;
+            border-radius: 12px;
         }
 
         .preview-img {
             width: 100%;
             height: auto;
-            /* gambar panjang */
             transform: translateY(0);
             transition: transform 6s linear;
         }
 
-        /* saat hover */
         .template-preview:hover .preview-img {
-            transform: translateY(calc(-100% + 200px));
+            transform: translateY(calc(-100% + 220px));
         }
 
-        .preview-img {
-            transition: transform 7s ease-in-out;
-        }
     </style>
+
     <x-slot name="header">
         <div class="d-flex justify-content-between align-items-center">
-            <h2 class="fw-bold text-dark m-0">
-                {{ __('Template') }}
-            </h2>
+            <h2 class="fw-bold text-dark m-0">Template Manager</h2>
 
-            <!-- Tabs (Buttons) -->
             <div class="d-flex gap-2">
-                <button id="tab-template" class="btn btn-primary btn-sm d-flex align-items-center gap-2">
-                    <!-- Ikon Layout -->
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <rect x="4" y="4" width="6" height="5" rx="1"></rect>
-                        <rect x="14" y="4" width="6" height="5" rx="1"></rect>
-                        <rect x="4" y="14" width="6" height="5" rx="1"></rect>
-                        <rect x="14" y="14" width="6" height="5" rx="1"></rect>
-                    </svg>
-                    Template
+                <button id="tab-template" class="btn btn-primary btn-sm">
+                    <i class="bi bi-grid-3x3-gap"></i> Template
                 </button>
 
-                <button id="tab-music" class="btn btn-outline-secondary btn-sm d-flex align-items-center gap-2">
-                    <!-- Ikon Music -->
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
-                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                        stroke-linejoin="round">
-                        <circle cx="6" cy="17" r="3"></circle>
-                        <circle cx="18" cy="17" r="3"></circle>
-                        <path d="M9 17l0 -13l10 0l0 13"></path>
-                    </svg>
-                    Music
+                <button id="tab-music" class="btn btn-outline-secondary btn-sm">
+                    <i class="bi bi-music-note-beamed"></i> Music
                 </button>
             </div>
         </div>
     </x-slot>
 
-    <div class="container-fluid py-4">
+    <div class="container mt-4" id="main-content">
 
-        <!-- Error Messages -->
-        @if ($errors->any())
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                <ul class="mb-0 ps-3">
-                    @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-        @endif
+        <!-- HERO / WELCOME -->
+        <div class="row align-items-center py-4">
+            <div class="col-12 col-lg-6 col-xxl-8">
+                <h3 class="fw-normal mb-0 text-secondary">Let's explore best</h3>
+                <h1 class="mb-4">Wedding Invitation Templates</h1>
 
-        <!-- Content Wrapper -->
-        <div class="card adminuiux-card p-4 rounded shadow-sm border">
+                <div class="row align-items-center">
+                    <div class="col-12 col-md-11 col-xxl-8 mb-4">
+                        <div class="input-group">
+                            <input id="templateSearch" class="form-control border-end-0" type="text" placeholder="Search template...">
+                            <button class="btn btn-lg btn-theme btn-square">
+                                <i class="bi bi-search"></i>
+                            </button>
+                        </div>
+                    </div>
 
-            <!-- Template Content Area -->
-            <div id="content-template" class="tab-content">
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h4 class="fw-bold">My Templates</h4>
-                    <!-- Trigger Modal Bootstrap -->
-                    <button type="button" data-bs-toggle="modal" data-bs-target="#modaltemplate"
-                        class="btn btn-dark d-flex align-items-center gap-2">
-                        <i class="bi bi-plus-lg"></i> Tambah
-                    </button>
-                </div>
-
-                <!-- Grid Layout Bootstrap -->
-                <div class="row row-cols-1 row-cols-md-3 g-4">
-                    @foreach ($tempelate as $template)
-                        <div class="col">
-                            <!-- Card Component -->
-                            <div class="card h-100 shadow-sm border-0 position-relative">
-
-                                <!-- Tombol Hapus Absolute -->
-                                <button onclick="confirmDelete({{ $template->id }})"
-                                    class="position-absolute top-50 end-0 translate-middle-y z-1
-                                btn btn-danger btn-sm rounded-circle shadow d-flex align-items-center justify-content-center me-2"
-                                    style="width: 36px; height: 36px;">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                        fill="currentColor" viewBox="0 0 16 16">
-                                        <path
-                                            d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z" />
-                                        <path fill-rule="evenodd"
-                                            d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z" />
-                                    </svg>
-                                </button>
-
-                                <!-- Hidden Form -->
-                                <form id="delete-form-{{ $template->id }}"
-                                    action="{{ route('templates.destroy', $template->id) }}" method="POST"
-                                    class="d-none">
-                                    @csrf
-                                    @method('DELETE')
-                                </form>
-
-                                <!-- Image -->
-                                <div class="template-preview">
-                                    <img src="/storage/{{ $template->thumbnail }}" alt="Template" class="preview-img">
-                                </div>
-
-
-                                <!-- Body -->
-                                <div class="card-body">
-                                    <h5 class="card-title fw-bold">{{ $template->name }}</h5>
-                                    <p class="card-text small text-muted">Slug: {{ $template->slug }}</p>
-
-                                    <div class="d-flex justify-content-between align-items-center mt-3">
-                                        <span class="badge bg-success bg-opacity-10 text-success">Active</span>
-
-                                        <a href="/templates/{{ $template->slug }}"
-                                            class="btn btn-sm btn-link text-decoration-none p-0 fw-bold">
-                                            Preview
-                                        </a>
-                                    </div>
-                                </div>
-
+                    <div class="col-auto">
+                        <div class="row">
+                            <div class="col-auto theme-green mb-4">
+                                <span class="avatar avatar-40 rounded border-theme-1 border text-theme-1">
+                                    <i class="bi bi-person-check h5"></i>
+                                </span>
+                            </div>
+                            <div class="col-auto theme-green mb-4">
+                                <p class="text-theme-1 small">Professional<br>Designs</p>
                             </div>
                         </div>
-                    @endforeach
+                    </div>
+
+                    <div class="col-auto">
+                        <div class="row">
+                            <div class="col-auto theme-green mb-4">
+                                <span class="avatar avatar-40 rounded border-theme-1 border text-theme-1">
+                                    <i class="bi bi-person-check h5"></i>
+                                </span>
+                            </div>
+                            <div class="col-auto theme-green mb-4">
+                                <p class="text-theme-1 small">100+ Best professionals<br>for your support </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <div class="row">
+                            <div class="col-auto theme-purple mb-4">
+                                <span class="avatar avatar-40 rounded border-theme-1 border text-theme-1">
+                                    <i class="bi bi-shield-check h5"></i>
+                                </span>
+                            </div>
+                            <div class="col-auto theme-purple mb-4">
+                                <p class="text-theme-1 small">We have Quick, Easy<br> and Trusted partners</p>
+                            </div>
+                        </div>
+                    </div>
+
+
                 </div>
             </div>
 
-            <!-- Music Content Area (Dummy placeholder as per original code structure) -->
-            <div id="content-music" class="tab-content d-none">
-                <!-- Paste Music Content here -->
-                <div class="text-center text-muted py-5">
-                    <p>Konten Music akan tampil di sini.</p>
+            <!-- PROMO CARD -->
+            <div class="col-12 col-lg-6 col-xl-4 mb-4">
+                <div class="card adminuiux-card position-relative overflow-hidden bg-theme-1 text-white">
+                    <div class="card-body">
+                        <h2>New Templates!</h2>
+                        <h4 class="fw-medium">Modern & Elegant Wedding Themes</h4>
+                        <p class="mb-4">Update your invitation with premium design</p>
+                        <button class="btn btn-light my-1">Explore Now</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TEMPLATE CONTENT -->
+        <div id="content-template">
+            <div class="col-12">
+                <div class="row mb-2">
+
+                    <!-- Jawa -->
+                    <div class="col-6 col-md-3 col-lg-3 col-xl-3 col-xxl mb-3">
+                        <a href="/templates?kategori=jawa" class="card adminuiux-card style-none text-center h-100">
+                            <div class="card-body">
+                                <i class="avatar avatar-40 text-theme-1 h3 bi bi-flower1 mb-3"></i>
+                                <p class="text-secondary small">Adat Jawa</p>
+                            </div>
+                        </a>
+                    </div>
+
+                    <!-- Sunda -->
+                    <div class="col-6 col-md-3 col-lg-3 col-xl-3 col-xxl mb-3">
+                        <a href="/templates?kategori=sunda" class="card adminuiux-card style-none text-center h-100">
+                            <div class="card-body">
+                                <i class="avatar avatar-40 text-theme-1 bi bi-music-note-beamed h3 mb-3"></i>
+                                <p class="text-secondary small">Adat Sunda</p>
+                            </div>
+                        </a>
+                    </div>
+
+                    <!-- Minang -->
+                    <div class="col-6 col-md-3 col-lg-3 col-xl-3 col-xxl mb-3">
+                        <a href="/templates?kategori=minang" class="card adminuiux-card style-none text-center h-100">
+                            <div class="card-body">
+                                <i class="avatar avatar-40 text-theme-1 bi bi-house-door h3 mb-3"></i>
+                                <p class="text-secondary small">Adat Minangkabau</p>
+                            </div>
+                        </a>
+                    </div>
+
+                    <!-- Batak -->
+                    <div class="col-6 col-md-3 col-lg-3 col-xl-3 col-xxl mb-3">
+                        <a href="/templates?kategori=batak" class="card adminuiux-card style-none text-center h-100">
+                            <div class="card-body">
+                                <i class="avatar avatar-40 text-theme-1 bi bi-dribbble h3 mb-3"></i>
+                                <p class="text-secondary small">Adat Batak</p>
+                            </div>
+                        </a>
+                    </div>
+
+                    <!-- Bugis -->
+                    <div class="col-6 col-md-3 col-lg-3 col-xl-3 col-xxl mb-3">
+                        <a href="/templates?kategori=bugis" class="card adminuiux-card style-none text-center h-100">
+                            <div class="card-body">
+                                <i class="avatar avatar-40 text-theme-1 bi bi-compass h3 mb-3"></i>
+                                <p class="text-secondary small">Adat Bugis</p>
+                            </div>
+                        </a>
+                    </div>
+
+                    <!-- Bali -->
+                    <div class="col-6 col-md-3 col-lg-3 col-xl-3 col-xxl mb-3">
+                        <a href="/templates?kategori=bali" class="card adminuiux-card style-none text-center">
+                            <div class="card-body">
+                                <i class="avatar avatar-40 text-theme-1 bi bi-sun h3 mb-3"></i>
+                                <p class="text-secondary small">Adat Bali</p>
+                            </div>
+                        </a>
+                    </div>
+
+                    <!-- Betawi -->
+                    <div class="col-6 col-md-3 col-lg-3 col-xl-3 col-xxl mb-3">
+                        <a href="/templates?kategori=betawi" class="card adminuiux-card style-none text-center h-100">
+                            <div class="card-body">
+                                <i class="avatar avatar-40 text-theme-1 bi bi-people h3 mb-3"></i>
+                                <p class="text-secondary small">Adat Betawi</p>
+                            </div>
+                        </a>
+                    </div>
+
+                    <!-- Modern -->
+                    <div class="col-6 col-md-3 col-lg-3 col-xl-3 col-xxl mb-3">
+                        <a href="/templates?kategori=modern" class="card adminuiux-card style-none text-center">
+                            <div class="card-body">
+                                <i class="avatar avatar-40 text-theme-1 bi bi-stars h3 mb-3"></i>
+                                <p class="text-secondary small">Modern / Universal</p>
+                            </div>
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h5 class="fw-medium">My Templates</h5>
+
+                <button class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#modaltemplate">
+                    <i class="bi bi-plus-lg"></i> Add Template
+                </button>
+            </div>
+
+            <div class="row">
+                @foreach ($tempelate as $template)
+                <div class="col-12 col-md-6 col-lg-4 template-card" data-name="{{ strtolower($template->name) }}">
+                    <div class="card adminuiux-card mb-4 position-relative">
+
+                        <!-- DELETE BUTTON -->
+                        <button onclick="confirmDelete({{ $template->id }})" class="position-absolute top-0 end-0 m-2 btn btn-danger btn-sm rounded-circle">
+                            <i class="bi bi-trash"></i>
+                        </button>
+
+                        <form id="delete-form-{{ $template->id }}" action="{{ route('templates.destroy', $template->id) }}" method="POST" class="d-none">
+                            @csrf
+                            @method('DELETE')
+                        </form>
+
+                        <!-- PREVIEW -->
+                        <div class="template-preview">
+                            <img src="/storage/{{ $template->thumbnail }}" class="preview-img">
+                        </div>
+
+                        <!-- INFO -->
+                        <div class="card-body">
+                            <h5 class="fw-medium mb-1">{{ $template->name }}</h5>
+                            <p class="text-secondary small">Slug: {{ $template->slug }}</p>
+
+                            <div class="d-flex justify-content-between align-items-center mt-3">
+                                <span class="badge text-bg-success">Active</span>
+
+                                <a href="/templates/{{ $template->slug }}" class="btn btn-sm btn-outline-theme">
+                                    Preview
+                                </a>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                @endforeach
+                <div id="noResult" class="text-center text-muted mt-4 d-none">
+                    <i class="bi bi-search fs-1 d-block mb-2"></i>
+                    <p class="fw-semibold">Template tidak ditemukan</p>
+                    <small>Coba kata kunci lain</small>
                 </div>
             </div>
 
         </div>
+
+        <!-- MUSIC TAB -->
+        <div id="content-music" class="d-none">
+            <div class="text-center py-5 text-muted">
+                <h5>Music Manager</h5>
+                <p>Coming Soon...</p>
+            </div>
+        </div>
+
     </div>
 
-    <!-- Bootstrap Modal Structure -->
-    <div class="modal fade" id="modaltemplate" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <!-- MODAL UPLOAD -->
+    <div class="modal fade" id="modaltemplate" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
+
                 <div class="modal-header">
-                    <h5 class="modal-title fw-bold" id="exampleModalLabel">Upload Template Baru</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <h5 class="modal-title fw-bold">Upload New Template</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
 
                 <form action="/templates/upload" method="POST" enctype="multipart/form-data">
+                    @csrf
                     <div class="modal-body">
-                        @csrf
-                        <!-- Nama Template -->
+
                         <div class="mb-3">
-                            <label for="name" class="form-label fw-semibold">Nama Template</label>
-                            <input type="text" name="name" placeholder="Contoh: Love Theme"
-                                class="form-control" id="name">
+                            <label class="form-label fw-semibold">Template Name</label>
+                            <input type="text" name="name" class="form-control">
                         </div>
 
-                        <!-- Thumbnail -->
                         <div class="mb-3">
-                            <label for="thumbnail" class="form-label fw-semibold">Thumbnail</label>
-                            <input type="file" name="thumbnail" class="form-control" id="thumbnail">
+                            <label class="form-label fw-semibold">Thumbnail</label>
+                            <input type="file" name="thumbnail" class="form-control">
                         </div>
 
-                        <!-- ZIP File -->
                         <div class="mb-3">
-                            <label for="zip" class="form-label fw-semibold">File ZIP Template</label>
-                            <input type="file" name="zip" accept=".zip" class="form-control"
-                                id="zip">
+                            <label class="form-label fw-semibold">ZIP File</label>
+                            <input type="file" name="zip" accept=".zip" class="form-control">
                         </div>
+
                     </div>
 
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                        <button type="submit" class="btn btn-primary">Upload Template</button>
+                        <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button class="btn btn-primary">Upload</button>
                     </div>
                 </form>
+
             </div>
         </div>
     </div>
 
-    <!-- SweetAlert2 -->
+    <!-- SWEETALERT -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
-        // Logika Tab
         const tabTemplate = document.getElementById('tab-template');
         const tabMusic = document.getElementById('tab-music');
         const contentTemplate = document.getElementById('content-template');
         const contentMusic = document.getElementById('content-music');
 
         tabTemplate.onclick = () => {
-            // Style Active Button
             tabTemplate.classList.add('btn-primary');
             tabTemplate.classList.remove('btn-outline-secondary');
             tabMusic.classList.remove('btn-primary');
             tabMusic.classList.add('btn-outline-secondary');
 
-            // Toggle Content (Menggunakan d-none Bootstrap)
             contentTemplate.classList.remove('d-none');
             contentMusic.classList.add('d-none');
         };
 
         tabMusic.onclick = () => {
-            // Style Active Button
             tabMusic.classList.add('btn-primary');
             tabMusic.classList.remove('btn-outline-secondary');
             tabTemplate.classList.remove('btn-primary');
             tabTemplate.classList.add('btn-outline-secondary');
 
-            // Toggle Content
             contentMusic.classList.remove('d-none');
             contentTemplate.classList.add('d-none');
         };
 
-        // SweetAlert Delete
         function confirmDelete(id) {
             Swal.fire({
-                title: 'Yakin ingin menghapus ini?',
-                text: "Data akan hilang permanen!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#3085d6',
-                confirmButtonText: 'Ya, hapus!',
-                cancelButtonText: 'Batal'
+                title: 'Delete this template?'
+                , text: "This action cannot be undone!"
+                , icon: 'warning'
+                , showCancelButton: true
+                , confirmButtonColor: '#d33'
+                , confirmButtonText: 'Yes, delete it!'
             }).then((result) => {
                 if (result.isConfirmed) {
                     document.getElementById('delete-form-' + id).submit();
                 }
             });
         }
+
     </script>
+
 </x-app-layout>
+<script>
+    const searchInput = document.getElementById('templateSearch');
+    const noResult = document.getElementById('noResult');
+
+    searchInput.addEventListener('input', function() {
+        const term = this.value.toLowerCase().trim();
+        const cards = document.querySelectorAll('.template-card');
+
+        let visibleCount = 0;
+
+        cards.forEach(card => {
+            const name = card.getAttribute('data-name');
+
+            if (name.includes(term)) {
+                card.style.display = '';
+                visibleCount++;
+            } else {
+                card.style.display = 'none';
+            }
+        });
+
+        // Jika tidak ada hasil
+        if (visibleCount === 0) {
+            noResult.classList.remove('d-none');
+        } else {
+            noResult.classList.add('d-none');
+        }
+    });
+
+</script>

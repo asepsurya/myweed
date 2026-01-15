@@ -2,15 +2,17 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Http\Controllers\Controller;
 use App\Models\User;
-use Illuminate\Auth\Events\Registered;
-use Illuminate\Http\RedirectResponse;
+use Illuminate\View\View;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rules;
+use Spatie\Permission\Models\Role;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\Rules;
-use Illuminate\View\View;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Auth\Events\Registered;
+use Illuminate\Foundation\Support\Providers\RouteServiceProvider;
 
 class RegisteredUserController extends Controller
 {
@@ -29,22 +31,40 @@ class RegisteredUserController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
+            // 1️⃣ Validasi input
         $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'password' => 'required|string|confirmed|min:8',
         ]);
 
+        // 2️⃣ Buat user baru
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);
 
-        event(new Registered($user));
+        // 3️⃣ Pastikan role ada
+        Role::firstOrCreate(['name' => 'admin']);
+        Role::firstOrCreate(['name' => 'user']);
 
+        // 4️⃣ Assign role otomatis
+        if (User::role('admin')->count() === 0) {
+            $user->assignRole('admin'); // user pertama jadi admin
+        } else {
+            $user->assignRole('user');  // user berikutnya jadi user biasa
+        }
+
+        // 5️⃣ Login otomatis
         Auth::login($user);
 
-        return redirect(route('dashboard', absolute: false));
+        // 6️⃣ Redirect berdasarkan role
+        if ($user->hasRole('admin')) {
+            return redirect()->intended(route('dashboard'));
+        }
+
+        return redirect()->intended(route('dashboard.user'));
+
     }
 }

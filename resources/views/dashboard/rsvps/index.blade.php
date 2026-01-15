@@ -1,49 +1,62 @@
 <x-app-layout>
-    <div class="card shadow-sm">
-        <div class="card-body">
-
-            <!-- Header -->
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h5 class="fw-bold mb-0">RSVP</h5>
-            </div>
-
-            <!-- Statistik -->
-            <div class="row g-3 mb-4">
                 <div class="row g-3 mb-4">
-                    <div class="col-md-3">
-                        <div class="border rounded p-3 text-center">
-                            <i class="bi bi-people-fill fs-3 mb-1"></i>
-                            <div class="fw-bold fs-4">{{ $stats['total'] }}</div>
-                            <small class="text-muted d-block">Total Tamu</small>
+
+                <!-- Total Tamu -->
+                <div class="col-md-3">
+                    <div class="card adminuiux-card theme-teal mb-4">
+                        <div class="card-body z-index-1">
+                            <div class="avatar avatar-60 bg-theme-1-subtle text-theme-1 rounded mb-3">
+                                <i class="bi bi-people-fill h4"></i>
+                            </div>
+                            <h4 class="fw-medium">{{ $stats['total'] }}</h4>
+                            <p><span class="text-secondary">Total:</span> <b>Semua Tamu</b></p>
                         </div>
                     </div>
+                </div>
 
-                    <div class="col-md-3">
-                        <div class="border rounded p-3 text-center">
-                            <i class="bi bi-check-circle-fill fs-3 text-success mb-1"></i>
-                            <div class="fw-bold fs-4 text-success">{{ $stats['hadir'] }}</div>
-                            <small class="text-muted d-block">Hadir</small>
+                <!-- Hadir -->
+                <div class="col-md-3">
+                    <div class="card adminuiux-card theme-success mb-4">
+                        <div class="card-body z-index-1">
+                            <div class="avatar avatar-60 bg-success-subtle text-success rounded mb-3">
+                                <i class="bi bi-check-circle-fill h4"></i>
+                            </div>
+                            <h4 class="fw-medium text-success">{{ $stats['hadir'] }}</h4>
+                            <p><span class="text-secondary">Status:</span> <b>Hadir</b></p>
                         </div>
                     </div>
+                </div>
 
-                    <div class="col-md-3">
-                        <div class="border rounded p-3 text-center">
-                            <i class="bi bi-x-circle-fill fs-3 text-danger mb-1"></i>
-                            <div class="fw-bold fs-4 text-danger">{{ $stats['tidak_hadir'] }}</div>
-                            <small class="text-muted d-block">Tidak Hadir</small>
+                <!-- Tidak Hadir -->
+                <div class="col-md-3">
+                    <div class="card adminuiux-card theme-danger mb-4">
+                        <div class="card-body z-index-1">
+                            <div class="avatar avatar-60 bg-danger-subtle text-danger rounded mb-3">
+                                <i class="bi bi-x-circle-fill h4"></i>
+                            </div>
+                            <h4 class="fw-medium text-danger">{{ $stats['tidak_hadir'] }}</h4>
+                            <p><span class="text-secondary">Status:</span> <b>Tidak Hadir</b></p>
                         </div>
                     </div>
+                </div>
 
-                    <div class="col-md-3">
-                        <div class="border rounded p-3 text-center">
-                            <i class="bi bi-question-circle-fill fs-3 text-warning mb-1"></i>
-                            <div class="fw-bold fs-4 text-warning">{{ $stats['ragu'] }}</div>
-                            <small class="text-muted d-block">Masih Ragu</small>
+                <!-- Masih Ragu -->
+                <div class="col-md-3">
+                    <div class="card adminuiux-card theme-warning mb-4">
+                        <div class="card-body z-index-1">
+                            <div class="avatar avatar-60 bg-warning-subtle text-warning rounded mb-3">
+                                <i class="bi bi-question-circle-fill h4"></i>
+                            </div>
+                            <h4 class="fw-medium text-warning">{{ $stats['ragu'] }}</h4>
+                            <p><span class="text-secondary">Status:</span> <b>Masih Ragu</b></p>
                         </div>
                     </div>
                 </div>
 
             </div>
+
+
+            <!-- Statistik -->
 
             <div class="card shadow-sm mb-4">
                 <!-- Header -->
@@ -51,8 +64,12 @@
                     <h6 class="mb-0">Aktivitas RSVP Terbaru</h6>
 
                     <div class="d-flex gap-2">
-                        <a href="{{ route('rsvp.index') }}" class="btn btn-sm btn-link">Lihat Semua</a>
-
+                        <a href="{{ route('rsvp.index') }}" class="btn btn-sm btn-link">Pasangan</a>
+                        <select name="list" id="list" class="form-control">
+                            @foreach ($inviation as $item)
+                                <option value="{{ $item->id }}">{{ $item->name }}</option>
+                            @endforeach
+                        </select>
                     </div>
                 </div>
 
@@ -124,8 +141,7 @@
                 {{ $rsvps->links() }}
             </div>
 
-        </div>
-    </div>
+
 </x-app-layout>
 <script>
     function confirmDelete(rsvpId) {

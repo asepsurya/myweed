@@ -19,23 +19,24 @@
                     </div>
                 </a>
 
-                {{-- <!-- navigation inline -->
+                <!-- navigation inline -->
                 <div class="collapse navbar-collapse right-in-device justify-content-center" id="header-navbar">
-                    <ul class="navbar-nav mx-lg-3 mb-2 mb-md-0 ">
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ route('dashboard')  }}" :active="request()->routeIs('dashboard')">Dashboard</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ route('tempelate.index') }}" :active="request()->routeIs('tempelate.index')">Portfolio</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="investment-transaction.html">Transaction</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="investment-blogs.html">News</a>
-                        </li>
-                    </ul>
-                </div> --}}
+               <ul class="navbar-nav mx-lg-3 mb-2 mb-md-0">
+                    <li class="nav-item">
+                        <a class="nav-link d-flex align-items-center" href="{{ route('tempelate.index') }}" :active="request()->routeIs('tempelate.index')">
+                             <i class="menu-icon bi bi-palette me-2"></i> Tempelate Saya
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link d-flex align-items-center" href="{{ route('music.index') }}" :active="request()->routeIs('music.index')">
+                            <i class="menu-icon bi bi-music-note-beamed me-2"></i>  Music
+                        </a>
+                    </li>
+
+
+                </ul>
+
+                </div>
 
 
                 <!-- right icons button -->
@@ -333,14 +334,24 @@
                                     </a>
                                 </div>
                                 <div>
-                                    <a class="dropdown-item theme-red" href="investment-login.html">
+
+                                   <form method="POST" action="{{ route('logout') }}" id="logoutForm">
+                                        @csrf
+                                    </form>
+
+                                    <a href="#"
+                                    class="dropdown-item theme-red"
+                                    onclick="event.preventDefault(); document.getElementById('logoutForm').submit();">
                                         <i data-feather="power" class="avatar avatar-18 me-1"></i> Logout
                                     </a>
+
                                 </div>
                             </div>
                         </div>
                     </div>
-
+                    <script>
+                        feather.replace()
+                    </script>
                     <!-- navigation inline toggler for small screen-->
                     <button class="navbar-toggler btn btn-link btn-link-header btn-square btn-icon collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#header-navbar" aria-controls="header-navbar" aria-expanded="false" aria-label="Toggle navigation">
                         <i data-feather="more-vertical" class="openbtn"></i>

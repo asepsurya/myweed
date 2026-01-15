@@ -29,46 +29,25 @@
     <script defer src="{{ asset('assets/js/app435e.js?1096aad991449c8654b2') }}"></script>
     <link href="{{ asset('assets/css/app435e.css?1096aad991449c8654b2') }}" rel="stylesheet">
 </head>
-
-<body
-    class="main-bg main-bg-opac main-bg-blur adminuiux-sidebar-fill-white adminuiux-sidebar-boxed  theme-blue roundedui"
-    data-theme="theme-blue" data-sidebarfill="adminuiux-sidebar-fill-white" data-bs-spy="scroll"
-    data-bs-target="#list-example" data-bs-smooth-scroll="true" tabindex="0">
-
-    {{-- Page Loader --}}
-    @include('layouts.partial.pageloader')
+<body class="main-bg main-bg-opac main-bg-blur adminuiux-sidebar-fill-white adminuiux-sidebar-boxed roundedui theme-teal adminuiux-header-standard adminuiux-sidebar-iconic adminuiux-header-transparent scrolldown" data-theme="theme-teal" data-sidebarfill="adminuiux-sidebar-fill-white" data-bs-spy="scroll" data-bs-target="#list-example" data-bs-smooth-scroll="true" tabindex="0" data-headerlayout="adminuiux-header-standard" data-sidebarlayout="adminuiux-sidebar-iconic">
     {{-- header layout --}}
     @include('layouts.partial.header')
 
     <!-- page wrapper -->
     <div class="adminuiux-wrap">
+        @if(auth()->user() && auth()->user()->hasRole('admin'))
+            <!-- Admin sidebar -->
+             @include('layouts.partial.sidebar')
+        @else
+
+            <!-- User sidebar -->
+            @include('layouts.partial.user_sidebar')
+        @endif
         <!-- Standard sidebar -->
-        @include('layouts.partial.sidebar')
 
-        <main class="adminuiux-content has-sidebar" onclick="contentClick()">
-            <!-- body content of pages -->
 
-            <div class="container-fluid mt-4">
-                <div class="row gx-3 align-items-center">
-                    <div class="col col-sm">
-                        <h5 id="pageTitle"></h5>
-                    </div>
-                </div>
-            </div>
-            <script>
-                document.addEventListener("DOMContentLoaded", function() {
-                    const path = window.location.pathname.split("/").filter(Boolean);
-                    const current = path[path.length - 1] || "dashboard";
-
-                    // Format nama: dashboard -> Dashboard, data-pasangan -> Data Pasangan
-                    const pageName = current
-                        .replace(/-/g, " ")
-                        .replace(/\b\w/g, char => char.toUpperCase());
-                    document.getElementById("pageTitle").textContent = pageName;
-                });
-            </script>
-
-            <div class="container mt-4" id="main-content">
+        <main class="adminuiux-content has-sidebar" onclick="contentClick()" style="padding-top: 68px;">
+            <div class="container-fluid mt-4" id="main-content">
                 {{ $slot }}
                 @include('layouts.partial.toastr')
             </div>
@@ -102,7 +81,6 @@
 
     });
     </script>
-
 
 
     <!-- Page Level js -->

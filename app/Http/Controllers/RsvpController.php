@@ -9,6 +9,7 @@ class RsvpController extends Controller
 {
     public function index()
 {
+    $inviation = Rsvp::all();
     $rsvps = Rsvp::latest()->paginate(10);
 
     $stats = [
@@ -18,7 +19,7 @@ class RsvpController extends Controller
         'ragu' => Rsvp::where('attending', '2')->count(),
     ];
 
-    return view('dashboard.rsvps.index', compact('rsvps', 'stats'));
+    return view('dashboard.rsvps.index', compact('rsvps', 'stats','inviation'));
 }
 
     public function store(Request $request, $invitationId)

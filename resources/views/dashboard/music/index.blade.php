@@ -1,7 +1,7 @@
 <x-app-layout>
-    <div class="card shadow-sm p-4">
+    <div class="card shadow-sm ">
         <!-- Header -->
-        <div class="d-flex justify-content-between align-items-center mb-4">
+        <div class="d-flex justify-content-between align-items-center p-4">
             <h5 class="fw-bold m-0">Wedding Music</h5>
             <!-- Menggunakan data-bs-toggle standar Bootstrap -->
             <button type="button" data-bs-toggle="modal" data-bs-target="#musicModal" class="btn btn-dark btn-sm d-flex align-items-center gap-2">
@@ -20,7 +20,7 @@
 
         <div class="list-group list-group-flush">
         @foreach ($musics as $music)
-            <div class="list-group-item  px-3 d-flex align-items-center gap-3">
+            <div class="list-group-item  d-flex align-items-center gap-3">
                 <!-- Cover Image -->
                 <img src="{{ $music->cover_url ? '/storage/'.$music->cover_url : asset('tempelate/no_sound.webp') }}"
                      class="rounded border object-fit-cover"
