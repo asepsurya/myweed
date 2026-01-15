@@ -99,8 +99,7 @@
 
                 </p>
                 <span class="mt-3">TETI</span>
-                <p class="text-sm">{{ \Carbon\Carbon::parse($invitation->wedding_date)->locale('id')->translatedFormat('l, d F Y') }}
-</p>
+                <p class="text-sm">{{ \Carbon\Carbon::parse($invitation->wedding_date)->locale('id')->translatedFormat('l, d F Y') }}</p>
 
                 <button id="openInvitation"
                     class="bg-primary px-8 py-3 rounded-full text-sm font-semibold shadow-lg active:scale-95 transition">

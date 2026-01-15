@@ -33,6 +33,8 @@ Route::middleware(['auth'])->group(function () {
         ->name('invitation.index');
     Route::get('nvitation/create', [UserInvitationController::class, 'create'])
         ->name('invitation.create');
+    Route::get('nvitation/{slug}', [UserInvitationController::class, 'detail'])
+        ->name('invitation.detail');
 
     Route::post('invitation', [UserInvitationController::class, 'store'])
         ->name('invitation.store');
@@ -51,11 +53,17 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/templates/upload', [TempelateController::class, 'store']);
     Route::delete('/templates/{template}', [TempelateController::class, 'destroy'])->name('templates.destroy');
 
-    Route::post('theme/music/store', [MusicController::class, 'store'])->name('music.store');
-    Route::delete('theme/music/destroy/{id}', [MusicController::class, 'destroy'])->name('music.destroy');
+    Route::get('/musics', [MusicController::class, 'index'])->name('music.index');
+    Route::post('/music/store', [MusicController::class, 'store'])->name('music.store');
+    Route::delete('music/destroy/{id}', [MusicController::class, 'destroy'])->name('music.destroy');
 
 });
+Route::get('/rsvps', [RsvpController::class, 'index'])->name('rsvp.index');
+Route::delete('/rsvp/{rsvp}', [RsvpController::class, 'destroy'])
+    ->name('rsvp.destroy');
+
 Route::post('/rsvp/{invitation}', [RsvpController::class, 'store'])
     ->name('rsvp.store');
-Route::get('/{slug}', [WeddingController::class, 'show']);
+Route::get('/{slug}', [WeddingController::class, 'show'])->name('invitation.show');
 Route::get('/invitation/{invitation}/rsvps', [RsvpController::class, 'getRsvps'])->name('rsvp.list');
+

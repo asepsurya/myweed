@@ -8,7 +8,11 @@ use Illuminate\Http\Request;
 class MusicController extends Controller
 {
 
-
+    public function index(Request $request)
+    {
+        $musics = Music::all();
+        return view('dashboard.music.index', compact('musics'));
+    }
     // Form create
     public function create()
     {

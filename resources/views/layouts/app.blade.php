@@ -1,46 +1,5 @@
-{{-- <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-
-    <title>{{ config('app.name', 'Laravel') }}</title>
-
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
-    <link href="https://unpkg.com/@tabler/icons@latest/iconfont/tabler-icons.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tabler-icons/3.35.0/tabler-icons.min.css" integrity="sha512-gzw5zNP2TRq+DKyAqZfDclaTG4dOrGJrwob2Fc8xwcJPDPVij0HowLIMZ8c1NefFM0OZZYUUUNoPfcoI5jqudw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <script src="https://unpkg.com/alpinejs" defer></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-    <script src="https://unpkg.com/wavesurfer.js@7"></script>
-    <!-- Scripts -->
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-</head>
-<body class="font-sans antialiased">
-    <div class="min-h-screen bg-gray-100">
-        @include('layouts.navigation')
-
-        <!-- Page Heading -->
-        @isset($header)
-        <header class="bg-white shadow">
-            <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-                {{ $header }}
-            </div>
-        </header>
-        @endisset
-
-        <!-- Page Content -->
-        <main>
-            {{ $slot }}
-        </main>
-    </div>
-</body>
-</html> --}}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 
 <head>
     <!-- Required meta tags  -->
@@ -48,14 +7,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
 
-    <title id="dynamicTitle">Admin</title>
-
+    <title id="dynamicTitle">{{ config('app.name', 'Laravel') }}</title>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <link rel="icon" type="image/png" href="{{ asset('tempelate/logo_apps.png') }}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com/">
     <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&amp;family=Open+Sans:ital,wght@0,300..800;1,300..800&amp;display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&amp;family=Open+Sans:ital,wght@0,300..800;1,300..800&amp;display=swap"
+        rel="stylesheet">
     <style>
         :root {
             --adminuiux-content-font: "Open Sans", sans-serif;
@@ -63,14 +24,16 @@
             --adminuiux-title-font: "Lexend", sans-serif;
             --adminuiux-title-font-weight: 600;
         }
-
     </style>
 
     <script defer src="{{ asset('assets/js/app435e.js?1096aad991449c8654b2') }}"></script>
     <link href="{{ asset('assets/css/app435e.css?1096aad991449c8654b2') }}" rel="stylesheet">
 </head>
 
-<body class="main-bg main-bg-opac main-bg-blur adminuiux-sidebar-fill-white adminuiux-sidebar-boxed  theme-blue roundedui" data-theme="theme-blue" data-sidebarfill="adminuiux-sidebar-fill-white" data-bs-spy="scroll" data-bs-target="#list-example" data-bs-smooth-scroll="true" tabindex="0">
+<body
+    class="main-bg main-bg-opac main-bg-blur adminuiux-sidebar-fill-white adminuiux-sidebar-boxed  theme-blue roundedui"
+    data-theme="theme-blue" data-sidebarfill="adminuiux-sidebar-fill-white" data-bs-spy="scroll"
+    data-bs-target="#list-example" data-bs-smooth-scroll="true" tabindex="0">
 
     {{-- Page Loader --}}
     @include('layouts.partial.pageloader')
@@ -103,19 +66,49 @@
                         .replace(/\b\w/g, char => char.toUpperCase());
                     document.getElementById("pageTitle").textContent = pageName;
                 });
-
             </script>
 
             <div class="container mt-4" id="main-content">
-               {{ $slot }}
+                {{ $slot }}
+                @include('layouts.partial.toastr')
             </div>
         </main>
     </div>
 
+   <script>
+    document.addEventListener('DOMContentLoaded', function () {
+
+        const showToast = () => {
+            document.querySelectorAll('.toast').forEach(toastEl => {
+                new bootstrap.Toast(toastEl).show();
+            });
+        };
+
+        // ⏳ tunggu loader hilang
+        const loader = document.getElementById('pageLoader');
+
+        if (loader) {
+            const observer = new MutationObserver(() => {
+                if (loader.style.display === 'none' || loader.classList.contains('d-none')) {
+                    showToast();
+                    observer.disconnect();
+                }
+            });
+
+            observer.observe(loader, { attributes: true });
+        } else {
+            showToast();
+        }
+
+    });
+    </script>
+
 
 
     <!-- Page Level js -->
-    <script src="assets/js/investment/investment-loan-list.js"></script>
+    <script src="{{ asset('assets/js/investment/investment-loan-list.js') }}"></script>
+    <!-- Page Level js -->
+    <script src="{{ asset('assets/js/component/component-toasts.js') }}"></script>
     <script>
         const themeMedia = window.matchMedia('(prefers-color-scheme: dark)');
         const toggleBtn = document.getElementById('themeToggle');
@@ -151,7 +144,6 @@
         });
 
         initTheme();
-
     </script>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
@@ -172,7 +164,6 @@
             // Title Browser Tab
             document.title = "Admin - " + pageName;
         });
-
     </script>
 
 </body>

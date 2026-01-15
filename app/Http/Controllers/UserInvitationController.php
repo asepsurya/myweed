@@ -255,8 +255,6 @@ class UserInvitationController extends Controller
 
     public function destroyGallery(Invitation $invitation, Request $request,$id)
     {
-
-
         $photo = Gallery::findOrFail($id);
 
         // Hapus file
@@ -266,6 +264,13 @@ class UserInvitationController extends Controller
         $photo->delete();
 
         return response()->json(['success' => true]);
+    }
+    public function detail($slug)
+    {
+        $invitation = Invitation::where('slug', $slug)->firstOrFail();
+        abort_if($invitation->user_id !== auth()->id(), 403);
+        $galleries = Gallery::where('invitation_id', $invitation->id)->get();
+        return view('dashboard.invitation.detail', compact('invitation','galleries'));
     }
 
 }

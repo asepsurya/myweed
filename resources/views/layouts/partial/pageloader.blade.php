@@ -1,5 +1,5 @@
     <!-- Pageloader -->
-    <div class="pageloader">
+    <div class="pageloader" id="pageLoader">
         <div class="container h-100">
             <div class="row justify-content-center align-items-center text-center h-100">
                 <div class="col-12 mb-auto pt-4"></div>

@@ -33,7 +33,7 @@
 
                 <!-- Data Pasangan -->
                 <li class="nav-item">
-                    <a href="{{ route('invitation.index') }}" class="nav-link" :active="request()->routeIs('invitation.index')">
+                    <a href="{{ route('invitation.index') }}" class="nav-link " :active="request()->routeIs('invitation.index*')">
                         <i class="menu-icon bi bi-heart"></i>
                         <span class="menu-name">Data Pasangan</span>
                     </a>
@@ -57,7 +57,7 @@
 
                 <!-- Musik -->
                 <li class="nav-item">
-                    <a href="musik.html" class="nav-link">
+                    <a href="{{ route('music.index') }}" class="nav-link" :active="request()->routeIs('music.index')">
                         <i class="menu-icon bi bi-music-note-beamed"></i>
                         <span class="menu-name">Musik Undangan</span>
                     </a>
@@ -65,7 +65,7 @@
 
                 <!-- Lokasi -->
                 <li class="nav-item">
-                    <a href="lokasi.html" class="nav-link">
+                    <a href="#" class="nav-link">
                         <i class="menu-icon bi bi-geo-alt"></i>
                         <span class="menu-name">Lokasi Acara</span>
                     </a>
@@ -81,7 +81,7 @@
 
                 <!-- Ucapan -->
                 <li class="nav-item">
-                    <a href="ucapan.html" class="nav-link">
+                    <a href="{{ route('rsvp.index') }}" class="nav-link" :active="request()->routeIs('rsvp.index')">
                         <i class="menu-icon bi bi-chat-dots"></i>
                         <span class="menu-name">Ucapan & Doa</span>
                     </a>

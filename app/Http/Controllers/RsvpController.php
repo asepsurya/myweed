@@ -7,6 +7,20 @@ use Illuminate\Http\Request;
 
 class RsvpController extends Controller
 {
+    public function index()
+{
+    $rsvps = Rsvp::latest()->paginate(10);
+
+    $stats = [
+        'total' => Rsvp::count(),
+        'hadir' => Rsvp::where('attending', '1')->count(),
+        'tidak_hadir' => Rsvp::where('attending', '2')->count(),
+        'ragu' => Rsvp::where('attending', '2')->count(),
+    ];
+
+    return view('dashboard.rsvps.index', compact('rsvps', 'stats'));
+}
+
     public function store(Request $request, $invitationId)
     {
         $request->validate([
@@ -32,4 +46,13 @@ class RsvpController extends Controller
     $rsvps = Rsvp::where('invitation_id', $invitationId)->latest()->get();
     return response()->json($rsvps);
 }
+public function destroy(Rsvp $rsvp)
+{
+    $rsvp->delete();
+
+    return redirect()
+        ->back()
+        ->with('success', 'RSVP berhasil dihapus');
+}
+
 }
