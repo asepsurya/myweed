@@ -18,6 +18,8 @@ class DatabaseSeeder extends Seeder
         // User::factory(10)->create();
 
        $this->call([WeddingDefaultUserSeeder::class]);
+       $this->call([MusicSeeder::class]);
+       $this->call([TempelateSeed::class]);
 
     }
 }

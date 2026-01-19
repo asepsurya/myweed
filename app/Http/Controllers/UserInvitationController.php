@@ -96,7 +96,12 @@ class UserInvitationController extends Controller
                 'enable_gift' => $request->has('enable_gift'),
 
                 'groom_instagram' =>$request->groom_instagram,
+                'groom_username_instagram'=>$request->bride_username_instagram,
                 'bride_instagram' =>$request->bride_instagram,
+                'bride_username_instagram'=>$request->bride_username_instagram,
+                'akad_address'=>$request->akad_address,
+                'resepsi_address'=>$request->resepsi_address
+
             ]);
             if ($request->hasFile('foto_pria')) {
                 $fotoPria = $request->file('foto_pria')
@@ -247,7 +252,11 @@ class UserInvitationController extends Controller
                 'enable_gift' => $request->has('enable_gift'),
 
                 'groom_instagram' =>$request->groom_instagram,
+                'groom_username_instagram'=>$request->bride_username_instagram,
                 'bride_instagram' =>$request->bride_instagram,
+                'bride_username_instagram'=>$request->bride_username_instagram,
+                'akad_address'=>$request->akad_address,
+                'resepsi_address'=>$request->resepsi_address
             ];
 
             // Update data utama undangan
