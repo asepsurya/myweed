@@ -14,29 +14,29 @@ class WeedingSeeder extends Seeder
      */
     public function run(): void
     {
-         // Roles
-        $admin = Role::create(['name' => 'admin']);
-        $planner = Role::create(['name' => 'wedding-planner']);
-        $guest = Role::create(['name' => 'guest']);
-        $guest = Role::create(['name' => 'user']);
 
-        // Permissions
-        $permissions = [
-            'manage-users',
-            'edit-theme',
-            'manage-gallery',
-            'manage-music',
-            'manage-rsvp',
-            'view-invitation'
-        ];
 
-        foreach ($permissions as $perm) {
-            Permission::create(['name' => $perm]);
-        }
+    //     $planner = Role::create(['name' => 'wedding-planner']);
+    //     $guest = Role::create(['name' => 'guest']);
 
-        // Assign permission ke role
-        $admin->givePermissionTo(Permission::all()); // admin dapat semua
-        $planner->givePermissionTo(['manage-gallery','manage-music','manage-rsvp','edit-theme']);
-        $guest->givePermissionTo(['view-invitation']);
+
+    //     // Permissions
+    //     $permissions = [
+    //         'manage-users',
+    //         'edit-theme',
+    //         'manage-gallery',
+    //         'manage-music',
+    //         'manage-rsvp',
+    //         'view-invitation'
+    //     ];
+
+    //     foreach ($permissions as $perm) {
+    //         Permission::create(['name' => $perm]);
+    //     }
+
+    //     // Assign permission ke role
+    //    / admin dapat semua
+    //     $planner->givePermissionTo(['manage-gallery','manage-music','manage-rsvp','edit-theme']);
+    //     $guest->givePermissionTo(['view-invitation']);
     }
 }

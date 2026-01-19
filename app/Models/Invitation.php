@@ -11,7 +11,8 @@ use Illuminate\Database\Eloquent\Model;
 class Invitation extends Model
 {
       protected $casts = [
-        'custom_data' => 'array'
+        'custom_data' => 'array',
+        'love_story' => 'array',
     ];
     protected $guarded = ['id'];
 
@@ -29,8 +30,17 @@ class Invitation extends Model
     {
         return $this->hasMany(Rsvp::class);
     }
+    public function gifts()
+    {
+        return $this->hasMany(Gift::class);
+    }
      public function musicPreset()
     {
         return $this->belongsTo(Music::class,'music','id');
     }
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
 }

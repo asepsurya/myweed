@@ -22,7 +22,7 @@
             justify-content: center;
             border-radius: 50%;
 
-            color: #ff758c;
+
         }
 
         .timeline {
@@ -80,12 +80,7 @@
         <div class="card adminuiux-card mb-4 pt-5 position-relative">
             <figure class="coverimg start-0 top-0 w-100 h-100 z-index-0 position-absolute overlay-gradiant"
                 style="background-image: url(&quot;assets/img/modern-ai-image/flamingo-3.jpg&quot;);">
-                <div class="position-absolute top-0 end-0 m-2">
-                    <button class="btn btn-theme" onclick="$(this).next().click()">
-                        <i class="bi bi-camera"></i> Change Cover
-                    </button>
-                    <input type="file" class="d-none">
-                </div>
+
                 <img src="{{ asset('assets/img/modern-ai-image/flamingo-3.jpg') }}" class="mw-100" alt=""
                     style="display: none;">
             </figure>
@@ -127,7 +122,7 @@
 
                 {{-- NAMA PASANGAN --}}
                 <h2 class="fw-bold display-6 mb-1">
-                    {{ $invitation->groom_name ?? 'Romeo' }} & {{ $invitation->bride_name ?? 'Juliet' }}
+                    {{ $invitation->groom_nickname ?? 'Romeo' }} & {{ $invitation->bride_nickname ?? 'Juliet' }}
                 </h2>
 
                 {{-- TANGGAL PERNIKAHAN --}}
@@ -201,7 +196,7 @@
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" href="{{ route('invitation.edit', $invitation->slug) }}">
+                                    <a class="nav-link" href="{{ route('invitation.edit', $invitation->id) }}">
                                         <div class="avatar avatar-28 icon"><i class="bi bi-pencil-square fs-4"></i>
                                         </div>
                                         <div class="col">
@@ -215,9 +210,9 @@
                             <hr class="my-3">
 
                             <div class="d-grid gap-2">
-                                <button class="btn btn-outline-danger btn-sm" onclick="window.print()">
+                                <a href="#" class="btn btn-outline-danger btn-sm" >
                                     <i class="bi bi-printer"></i> Cetak Undangan
-                                </button>
+                                </a>
                                 <button class="btn btn-theme btn-sm"
                                     onclick="copyLink('{{ route('invitation.show', $invitation->slug) }}')">
                                     <i class="bi bi-whatsapp"></i> Bagikan Link
@@ -236,8 +231,7 @@
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center mb-4">
                             <h6 class="mb-0 fw-bold text-uppercase text-muted">Mempelai</h6>
-                            <a href="{{ route('invitation.edit', $invitation->slug) }}#general"
-                                class="btn btn-sm btn-light text-primary"><i class="bi bi-pencil-square"></i> Edit</a>
+
                         </div>
 
                         <div class="row g-4">
@@ -253,13 +247,13 @@
                                             style="object-fit:cover; border:4px solid #fff;">
                                         <h5 class="fw-bold text-dark">{{ $invitation->groom_name ?? 'Nama Pria' }}
                                         </h5>
-                                        <p class="text-muted small mb-0">
+                                        <p class="text-black small mb-0">
                                             Putra dari Bpk. {{ $invitation->groom_father_name ?? '-' }} & Ibu
                                             {{ $invitation->groom_mother_name ?? '-' }}
                                         </p>
                                     </div>
                                     <div class="card-body text-center ">
-                                        <small class="text-uppercase fw-bold text-muted">Panggilan</small>
+                                        <small class="text-uppercase fw-bold ">Panggilan</small>
                                         <h6 class="text-primary">{{ $invitation->groom_nickname ?? '-' }}</h6>
                                     </div>
                                 </div>
@@ -297,8 +291,7 @@
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center mb-4">
                             <h6 class="mb-0 fw-bold text-uppercase text-muted">Rangkaian Acara</h6>
-                            <a href="{{ route('invitation.edit', $invitation->slug) }}#acara"
-                                class="btn btn-sm btn-light text-primary"><i class="bi bi-pencil-square"></i> Edit</a>
+
                         </div>
 
                         <div class="timeline">
@@ -356,8 +349,7 @@
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center mb-4">
                             <h6 class="mb-0 fw-bold text-uppercase text-muted">Galeri Foto</h6>
-                            <a href="{{ route('invitation.edit', $invitation->slug) }}#3"
-                                class="btn btn-sm btn-light text-primary"><i class="bi bi-pencil-square"></i> Edit</a>
+
                         </div>
 
                         {{-- Menampilkan galeri jika ada relasi $galleries --}}
@@ -378,14 +370,86 @@
                         </div>
                     </div>
                 </div>
+                <div class="card adminiux-card mb-3">
+                    <div class="card-header">
+                        <h4 class="fw-bold  text-danger"><i class="bi bi-heart-fill"></i> Kisah Cinta Kami
+                                </h4>
+                    </div>
+                    <div class="card-body">
+                        <style>
+                            .love-story-img {
+                                max-height: 280px;
+                                object-fit: cover;
+                            }
+
+                            #loveStoryCarousel {
+                                padding: 10px;
+                            }
+
+                            .carousel-control-prev-icon,
+                            .carousel-control-next-icon {
+                                filter: invert(1);
+                            }
+
+                        </style>
+
+
+                        @if (!empty($invitation->love_story))
+                        <div id="loveStoryCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="6000">
+                            <div class="carousel-inner">
+
+                                @foreach ($invitation->love_story as $index => $story)
+                                <div class="carousel-item {{ $index === 0 ? 'active' : '' }}">
+                                    <div class="row align-items-center g-4 justify-content-center">
+
+                                        {{-- FOTO --}}
+                                        @if (!empty($story['photo']))
+                                        <div class="col-md-5 text-center">
+                                            <img src="{{ asset('storage/'.$story['photo']) }}" class="img-fluid rounded-4 shadow-sm love-story-img" alt="{{ $story['title'] ?? 'Love Story' }}">
+                                        </div>
+                                        @endif
+
+                                        {{-- CERITA --}}
+                                        <div class="col-md-7">
+                                            @if (!empty($story['title']))
+                                            <h5 class="fw-bold text-danger mb-2">{{ $story['title'] }}</h5>
+                                            @endif
+
+                                            @if (!empty($story['story']))
+                                            <p class="text-secondary fst-italic mb-0">
+                                                {!! nl2br(e($story['story'])) !!}
+                                            </p>
+                                            @endif
+                                        </div>
+
+                                    </div>
+                                </div>
+                                @endforeach
+
+                            </div>
+
+                            {{-- NAV --}}
+                            <button class="carousel-control-prev" type="button" data-bs-target="#loveStoryCarousel" data-bs-slide="prev">
+                                <span class="carousel-control-prev-icon"></span>
+                            </button>
+                            <button class="carousel-control-next" type="button" data-bs-target="#loveStoryCarousel" data-bs-slide="next">
+                                <span class="carousel-control-next-icon"></span>
+                            </button>
+                        </div>
+                        @else
+                        <p class="text-secondary fst-italic mb-4">
+                            Belum ada cerita cinta yang ditambahkan.
+                        </p>
+                        @endif
+                    </div>
+                </div>
 
                 <!-- SECTION: LOVE STORY -->
                 <div id="section-story" class="card adminuiux-card overflow-hidden mb-4">
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center mb-4">
-                            <h6 class="mb-0 fw-bold text-uppercase text-muted">Cerita & Quote</h6>
-                            <a href="{{ route('invitation.edit', $invitation->slug) }}#other"
-                                class="btn btn-sm btn-light text-primary"><i class="bi bi-pencil-square"></i> Edit</a>
+                            <h6 class="mb-0 fw-bold text-uppercase text-muted">Quote</h6>
+
                         </div>
 
                         <!-- Love Story Text (Data dari Kode 2) -->
@@ -396,16 +460,6 @@
                             </div>
 
                             <div class="position-relative z-1 text-center">
-                                <h4 class="fw-bold mb-3 text-danger"><i class="bi bi-heart-fill"></i> Kisah Cinta Kami
-                                </h4>
-                                @if ($invitation->love_story)
-                                    <p class="text-secondary fst-italic mb-4">
-                                        {!! nl2br(e($invitation->love_story)) !!}
-                                    </p>
-                                @else
-                                    <p class="text-secondary fst-italic mb-4">Belum ada cerita cinta yang ditambahkan.
-                                    </p>
-                                @endif
 
                                 {{-- Wedding Quote (Data dari Kode 2) --}}
                                 @if ($invitation->wedding_quote)

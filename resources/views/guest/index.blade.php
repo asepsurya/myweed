@@ -32,12 +32,13 @@
                         </div>
 
                         <!-- Badge Status -->
-                        <span class="badge {{ $inv->status == 'Aktif' ? 'text-bg-success' : 'text-bg-secondary' }}">
-                            {{ $inv->status ?? 'Aktif' }}
-                        </span>
+
 
                         <!-- Tombol Aksi -->
                         <div class="d-flex gap-2">
+                            <a href="{{ route('invitation.show', $inv->slug) }}" class="btn btn-outline-primary btn-sm" title="Edit" target="_blank">
+                                <i class="bi bi-eye"></i>
+                            </a>
                             <a href="{{ route('invitation.edit', $inv) }}" class="btn btn-outline-primary btn-sm" title="Edit">
                                 <i class="bi bi-pencil"></i>
                             </a>
@@ -88,8 +89,29 @@ Wassalamu’alaikum Wr. Wb.
                             </div>
                         </div>
                     </div>
+                    @empty
+                    <div class="card flex items-center justify-center min-h-[60vh] p-5">
+                        <div class="text-center">
+                            <!-- Icon -->
 
-                    @endforeach
+
+                            <!-- Text -->
+                            <h3 class="text-lg font-semibold text-gray-700">
+                                Belum ada undangan yang dibuat
+                            </h3>
+                            <p class="mt-1 text-sm text-gray-500">
+                                Mulai buat undangan pertamamu sekarang
+                            </p>
+
+                            <!-- Button -->
+                            <a href="{{ route('invitation.create') }}" class="btn btn-sm  btn-outline-primary">
+                                + Buat Undangan
+                            </a>
+                        </div>
+                    </div>
+
+
+                    @endforelse
                 </ul>
 
             </div>

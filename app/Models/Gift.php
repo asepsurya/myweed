@@ -13,4 +13,9 @@ class Gift extends Model
         'name',
         'qr'
     ];
+
+    public function invitation()
+    {
+        return $this->belongsTo(Invitation::class);
+    }
 }

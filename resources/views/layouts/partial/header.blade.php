@@ -21,20 +21,20 @@
 
                 <!-- navigation inline -->
                 <div class="collapse navbar-collapse right-in-device justify-content-center" id="header-navbar">
-               <ul class="navbar-nav mx-lg-3 mb-2 mb-md-0">
-                    <li class="nav-item">
-                        <a class="nav-link d-flex align-items-center" href="{{ route('tempelate.index') }}" :active="request()->routeIs('tempelate.index')">
-                             <i class="menu-icon bi bi-palette me-2"></i> Tempelate Saya
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link d-flex align-items-center" href="{{ route('music.index') }}" :active="request()->routeIs('music.index')">
-                            <i class="menu-icon bi bi-music-note-beamed me-2"></i>  Music
-                        </a>
-                    </li>
-
-
-                </ul>
+                    @role('admin')
+                <ul class="navbar-nav mx-lg-3 mb-2 mb-md-0">
+                        <li class="nav-item">
+                            <a class="nav-link d-flex align-items-center" href="{{ route('tempelate.index') }}" :active="request()->routeIs('tempelate.index')">
+                                <i class="menu-icon bi bi-palette me-2"></i> Tempelate Saya
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link d-flex align-items-center" href="{{ route('music.index') }}" :active="request()->routeIs('music.index')">
+                                <i class="menu-icon bi bi-music-note-beamed me-2"></i>  Music
+                            </a>
+                        </li>
+                    </ul>
+                    @endrole
 
                 </div>
 
@@ -145,7 +145,7 @@
 
                     </div>
 
-                    <!-- language dropdown -->
+                    {{-- <!-- language dropdown -->
                     <div class="dropdown d-none d-sm-inline-block">
                         <button class="btn btn-link btn-square btn-icon btn-link-header dropdown-toggle no-caret" type="button" data-bs-toggle="dropdown" aria-expanded="false"> <i class="bi bi-translate"></i>
                         </button>
@@ -155,7 +155,7 @@
                             <li><a class="dropdown-item" data-value="CH">CH - Chinese</a></li>
                             <li><a class="dropdown-item" data-value="HI">HI - Hindi</a></li>
                         </ul>
-                    </div>
+                    </div> --}}
 
                     <!-- notification dropdown -->
                     <div class="dropdown d-inline-block">
@@ -256,7 +256,7 @@
                             </div>
                         </a>
                         <div class="dropdown-menu dropdown-menu-end width-300 pt-0 px-0 sm-mi-45px" aria-labelledby="userprofiledd">
-                            <div class="bg-theme-1-space rounded py-3 mb-3 dropdown-dontclose">
+                            <div class="bg-theme-1-space rounded py-3 mb-2 dropdown-dontclose">
                                 <div class="row gx-0">
                                     <div class="col-auto px-3">
                                         <figure class="avatar avatar-50 rounded-circle coverimg align-middle">
@@ -264,44 +264,26 @@
                                         </figure>
                                     </div>
                                     <div class="col align-self-center ">
-                                        <p class="mb-1"><span>AdminUIUX</span></p>
-                                        <p><i class="bi bi-wallet2 me-2"></i> $1100.00 <small class="opacity-50">Balance</small>
+                                        <p class="mb-1"><span>{{ auth()->user()->name }}</span></p>
+                                        <p><small class="opacity-50">{{ auth()->user()->email }}</small>
                                         </p>
                                     </div>
                                 </div>
                             </div>
                             <div class="px-2">
-                                <div><a class="dropdown-item" href="investment-myprofile.html"><i data-feather="user" class="avatar avatar-18 me-1"></i> My
-                                        Profile</a>
+                                <div><a class="dropdown-item" href="investment-myprofile.html"><i data-feather="user" class="avatar avatar-18 me-1"></i>Tentang Saya</a>
                                 </div>
                                 <div>
                                     <a class="dropdown-item" href="investment-dashboard.html">
                                         <div class="row g-0">
                                             <div class="col align-self-center"><i data-feather="layout" class="avatar avatar-18 me-1"></i>
-                                                My Dashboard
+                                                Dashboard Saya
                                             </div>
-                                            <div class="col-auto">
-                                                <figure class="avatar avatar-20 coverimg rounded-circle">
-                                                    <img src="assets/img/modern-ai-image/user-1.jpg" alt="">
-                                                </figure>
-                                                <figure class="avatar avatar-20 coverimg rounded-circle">
-                                                    <img src="assets/img/modern-ai-image/user-2.jpg" alt="">
-                                                </figure>
-                                                <figure class="avatar avatar-20 coverimg rounded-circle">
-                                                    <img src="assets/img/modern-ai-image/user-4.jpg" alt="">
-                                                </figure>
-                                                <div class="avatar avatar-20 bg-theme-1 rounded-circle text-center align-middle">
-                                                    <small class="fs-10 align-middle">9+</small>
-                                                </div>
-                                            </div>
+                                           
                                         </div>
                                     </a>
                                 </div>
-                                <div>
-                                    <a class="dropdown-item" href="investment-earning.html">
-                                        <i data-feather="dollar-sign" class="avatar avatar-18 me-1"></i> Earning
-                                    </a>
-                                </div>
+                             
                                 <div>
                                     <a class="dropdown-item" href="investment-mysubscription.html">
                                         <div class="row">
@@ -313,24 +295,10 @@
                                         </div>
                                     </a>
                                 </div>
-                                <div class="dropdown open-left dropdown-dontclose">
-                                    <a class="dropdown-item" data-bs-toggle="dropdown" aria-expanded="false" role="button">
-                                        <div class="row">
-                                            <div class="col"><i class="bi bi-translate avatar avatar-18 me-1"></i> Language</div>
-                                            <div class="col-auto"><small class="vm">EN - English</small> <i class="bi bi-translate"></i></div>
-                                            <div class="col-auto"><span class="arrow bi bi-chevron-right"></span></div>
-                                        </div>
-                                    </a>
-                                    <div class="dropdown-menu dropdown-menu-end">
-                                        <div><a class="dropdown-item active" data-value="EN">EN - English</a></div>
-                                        <div><a class="dropdown-item" data-value="FR">FR - French</a></div>
-                                        <div><a class="dropdown-item" data-value="CH">CH - Chinese</a></div>
-                                        <div><a class="dropdown-item" data-value="HI">HI - Hindi</a></div>
-                                    </div>
-                                </div>
+                                
                                 <div>
                                     <a class="dropdown-item" href="investment-settings.html">
-                                        <i data-feather="settings" class="avatar avatar-18 me-1"></i> Account Setting
+                                        <i data-feather="settings" class="avatar avatar-18 me-1"></i> Setelan Akun
                                     </a>
                                 </div>
                                 <div>
@@ -342,7 +310,7 @@
                                     <a href="#"
                                     class="dropdown-item theme-red"
                                     onclick="event.preventDefault(); document.getElementById('logoutForm').submit();">
-                                        <i data-feather="power" class="avatar avatar-18 me-1"></i> Logout
+                                        <i data-feather="power" class="avatar avatar-18 me-1"></i> Keluar
                                     </a>
 
                                 </div>

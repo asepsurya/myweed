@@ -18,6 +18,7 @@
 /public/storage
 /storage/*.key
 /storage/pail
+/view/dashboard/tempelate
 /vendor
 Homestead.json
 Homestead.yaml

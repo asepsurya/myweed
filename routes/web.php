@@ -19,7 +19,7 @@ Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
     ->name('logout');
 
 Route::get('/dashboard', [DashboardController::class, 'index'])
-    ->middleware(['auth', 'verified'])
+    ->middleware(['auth', 'verified','role:admin'])
     ->name('dashboard');
 
 Route::get('/home', [DashboardController::class, 'indexUser'])
@@ -37,20 +37,20 @@ require __DIR__.'/auth.php';
 
 Route::middleware(['auth'])->group(function () {
 
-    Route::get('invitation', [UserInvitationController::class, 'index'])->name('invitation.index');
+    Route::get('invitation', [UserInvitationController::class, 'index'])->middleware('role:admin')->name('invitation.index');
     Route::get('invitation/create', [UserInvitationController::class, 'create'])->name('invitation.create');
-    Route::get('nvitation/{slug}', [UserInvitationController::class, 'detail'])->name('invitation.detail');
+    Route::get('invitation/{slug}', [UserInvitationController::class, 'detail'])->name('invitation.detail');
     Route::post('invitation', [UserInvitationController::class, 'store'])->name('invitation.store');
     Route::get('invitation/{invitation}/edit', [UserInvitationController::class, 'edit'])->name('invitation.edit');
     Route::put('invitation/{invitation}', [UserInvitationController::class, 'update'])->name('invitation.update');
     Route::delete('/gallery/{id}', [UserInvitationController::class, 'destroyGallery'])->name('gallery.delete');
 
-    Route::get('theme', [TempelateController::class, 'index'])->name('tempelate.index');
+    Route::get('theme', [TempelateController::class, 'index'])->middleware('role:admin')->name('tempelate.index');
     Route::get('/templates/upload', [TempelateController::class, 'create']);
     Route::post('/templates/upload', [TempelateController::class, 'store']);
     Route::delete('/templates/{template}', [TempelateController::class, 'destroy'])->name('templates.destroy');
 
-    Route::get('/musics', [MusicController::class, 'index'])->name('music.index');
+    Route::get('/musics', [MusicController::class, 'index'])->middleware('role:admin')->name('music.index');
     Route::post('/music/store', [MusicController::class, 'store'])->name('music.store');
     Route::delete('music/destroy/{id}', [MusicController::class, 'destroy'])->name('music.destroy');
 

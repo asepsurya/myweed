@@ -205,7 +205,15 @@
                     <i class="bi bi-plus-lg"></i> Add Template
                 </button>
             </div>
-
+             @if ($errors->any())
+              <div class="alert alert-danger mb-4">
+                <ul class="mb-0">
+                    @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+                </div>
+                @endif
             <div class="row">
                 @foreach ($tempelate as $template)
                 <div class="col-12 col-md-6 col-lg-4 template-card" data-name="{{ strtolower($template->name) }}">
@@ -284,6 +292,10 @@
                         <div class="mb-3">
                             <label class="form-label fw-semibold">Thumbnail</label>
                             <input type="file" name="thumbnail" class="form-control">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Image Preview</label>
+                            <input type="file" name="preview" class="form-control">
                         </div>
 
                         <div class="mb-3">

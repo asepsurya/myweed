@@ -47,8 +47,9 @@
                                        <a href="{{ route('invitation.detail', $inv->slug) }}">{{ $inv->bride_name }} & {{ $inv->groom_name }}</a>
                                     </p>
                                     <p class="text-secondary small">
-                                        Tanggal Nikah: {{ $inv->wedding_date }}
+                                        Tanggal Nikah: {{ $inv->wedding_date }}  |  Dibuat oleh: <span class="fw-medium">{{ $inv->user->name }}</span>
                                     </p>
+                                  
                                 </div>
 
                                 <div class="col-auto text-end">
@@ -72,18 +73,10 @@
                                         title="Bagikan via WhatsApp">
                                         <i class="bi bi-whatsapp h5 mb-0"></i>
                                     </button>
-                                </div>
-
-
-
+                                </div>                               
                             </div>
                         </li>
-                    @endforeach
-                </ul>
-            </div>
-        </div>
-    </div>
-    @php
+                         @php
         $urlBase = route('invitation.show', [$inv->slug]);
     @endphp
 
@@ -112,6 +105,7 @@ Assalamu’alaikum Wr. Wb.,
 Dengan hormat, kami mengundang Bapak/Ibu/Saudara/i [nama] untuk hadir dalam acara pernikahan kami.
 
 Detail acara dapat dilihat di tautan berikut:
+
 {{ $urlBase }}?to=[nama]
 
 Kami merasa bahagia dan terhormat apabila Bapak/Ibu/Saudara/i berkenan hadir serta memberikan doa restu.
@@ -137,6 +131,12 @@ Wassalamu’alaikum Wr. Wb.
             </div>
         </div>
     </div>
+                    @endforeach
+                </ul>
+            </div>
+        </div>
+    </div>
+   
     <script>
         function shareWAWithRecipient(recipientId, messageId) {
             const recipient = document.getElementById(recipientId).value.trim();

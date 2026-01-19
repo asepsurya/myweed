@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Gift;
 use App\Models\Music;
 use App\Models\Gallery;
 use App\Models\Template;
@@ -16,7 +17,7 @@ class UserInvitationController extends Controller
 {
      public function index()
     {
-        $invitations = Invitation::where('user_id', auth()->id())->latest()->get();
+        $invitations = Invitation::with('user')->get();
         return view('dashboard.invitation.index', compact('invitations'));
     }
 
@@ -38,8 +39,28 @@ class UserInvitationController extends Controller
                 'gallery_cover' => 'nullable|image',
                 'custom_music' => 'nullable|audio/*',
             ]);
-            DB::transaction(function () use ($request) {
 
+        DB::transaction(function () use ($request) {
+
+            $stories = [];
+
+            if ($request->has('love_story')) {
+                foreach ($request->love_story as $index => $storyText) {
+
+                    $photoPath = null;
+
+                    if ($request->hasFile('story_photo.' . $index)) {
+                        $photoPath = $request->file('story_photo.' . $index)
+                            ->store('love_story', 'public');
+                    }
+
+                    $stories[] = [
+                        'title' => $request->story_title[$index] ?? null,
+                        'story' => $storyText,
+                        'photo' => $photoPath,
+                    ];
+                }
+            }
             $invitation = Invitation::create([
                 'user_id' => $request->user()->id,
                 'template_id' => $request->template_id,
@@ -66,12 +87,16 @@ class UserInvitationController extends Controller
                 'resepsi_maps' => $request->resepsi_maps,
 
                 'theme_color' => $request->theme_color,
+                'quote_id' => $request->quote_id,
                 'wedding_quote' => $request->wedding_quote,
                 'video_link' => $request->video_link,
-                'love_story' => $request->love_story,
+                'love_story' => $stories,
 
                 'enable_rsvp' => $request->has('enable_rsvp'),
+                'enable_gift' => $request->has('enable_gift'),
 
+                'groom_instagram' =>$request->groom_instagram,
+                'bride_instagram' =>$request->bride_instagram,
             ]);
             if ($request->hasFile('foto_pria')) {
                 $fotoPria = $request->file('foto_pria')
@@ -117,6 +142,27 @@ class UserInvitationController extends Controller
                     ]);
                 }
             }
+            if ($request->has('enable_gift') && $request->enable_gift) {
+                $banks = $request->bank;
+                $numbers = $request->number;
+                $names = $request->name;
+                $qrs = $request->file('qr');
+
+                foreach ($banks as $i => $bank) {
+                    $giftData = [
+                        'invitation_id' => $request->invitation_id,
+                        'bank' => $bank,
+                        'number' => $numbers[$i],
+                        'name' => $names[$i],
+                    ];
+
+                    if (isset($qrs[$i])) {
+                        $giftData['qr'] = $qrs[$i]->store('gifts', 'public');
+                    }
+
+                    Gift::create($giftData);
+                }
+            }
         });
         return redirect()
             ->route('invitation.index')
@@ -127,13 +173,13 @@ class UserInvitationController extends Controller
     {
          $music = Music::where('is_active', true)->get();
         $templates = Template::where('is_active', true)->get();
-        abort_if($invitation->user_id !== auth()->id(), 403);
+
         return view('dashboard.invitation.edit', compact('invitation','music','templates'));
     }
 
     public function update(Request $request, Invitation $invitation)
     {
-        abort_if($invitation->user_id !== auth()->id(), 403);
+
 
     // Validasi data input
         $request->validate([
@@ -147,6 +193,25 @@ class UserInvitationController extends Controller
         ]);
 
         DB::transaction(function () use ($request, $invitation) {
+             $stories = [];
+
+            if ($request->has('love_story')) {
+                foreach ($request->love_story as $index => $storyText) {
+
+                    $photoPath = null;
+
+                    if ($request->hasFile('story_photo.' . $index)) {
+                        $photoPath = $request->file('story_photo.' . $index)
+                            ->store('love_story', 'public');
+                    }
+
+                    $stories[] = [
+                        'title' => $request->story_title[$index] ?? null,
+                        'story' => $storyText,
+                        'photo' => $photoPath,
+                    ];
+                }
+            }
             // Siapkan data untuk diupdate, termasuk slug yang baru
             $updateData = [
                 'template_id' => $request->template_id,
@@ -173,12 +238,16 @@ class UserInvitationController extends Controller
                 'resepsi_maps' => $request->resepsi_maps,
 
                 'theme_color' => $request->theme_color,
+                'quote_id' => $request->quote_id,
                 'wedding_quote' => $request->wedding_quote,
                 'video_link' => $request->video_link,
-                'love_story' => $request->love_story,
+                'love_story' => $stories,
 
                 'enable_rsvp' => $request->has('enable_rsvp'),
+                'enable_gift' => $request->has('enable_gift'),
 
+                'groom_instagram' =>$request->groom_instagram,
+                'bride_instagram' =>$request->bride_instagram,
             ];
 
             // Update data utama undangan
@@ -246,10 +315,47 @@ class UserInvitationController extends Controller
                     ]);
                 }
             }
+           if ($request->enable_gift == 1) {
+
+                $banks   = $request->bank ?? [];
+                $numbers = $request->number ?? [];
+                $names   = $request->name ?? [];
+                $qrs     = $request->file('qr') ?? [];
+
+                foreach ($banks as $i => $bank) {
+
+                    // Skip jika data wajib kosong
+                    if (
+                        empty($numbers[$i]) ||
+                        empty($names[$i])
+                    ) {
+                        continue;
+                    }
+
+                    $data = [
+                        'number' => $numbers[$i],
+                        'name'   => $names[$i],
+                    ];
+
+                    // Jika upload QR baru
+                    if (isset($qrs[$i])) {
+                        $data['qr'] = $qrs[$i]->store('gifts', 'public');
+                    }
+
+                    Gift::updateOrCreate(
+                        [
+                            'invitation_id' => $request->invitation_id,
+                            'bank' => $bank,
+                        ],
+                        $data
+                    );
+                }
+            }
+
         });
 
         return redirect()
-            ->route('invitation.index')
+            ->back()
             ->with('success', 'Undangan berhasil diperbarui 💖');
     }
 
@@ -268,7 +374,7 @@ class UserInvitationController extends Controller
     public function detail($slug)
     {
         $invitation = Invitation::where('slug', $slug)->firstOrFail();
-        abort_if($invitation->user_id !== auth()->id(), 403);
+        // abort_if($invitation->user_id !== auth()->id(), 403);
         $galleries = Gallery::where('invitation_id', $invitation->id)->get();
         return view('dashboard.invitation.detail', compact('invitation','galleries'));
     }

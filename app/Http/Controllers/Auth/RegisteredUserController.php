@@ -48,13 +48,8 @@ class RegisteredUserController extends Controller
         // 3️⃣ Pastikan role ada
         Role::firstOrCreate(['name' => 'admin']);
         Role::firstOrCreate(['name' => 'user']);
-
-        // 4️⃣ Assign role otomatis
-        if (User::role('admin')->count() === 0) {
-            $user->assignRole('admin'); // user pertama jadi admin
-        } else {
-            $user->assignRole('user');  // user berikutnya jadi user biasa
-        }
+        // Role User
+          $user->assignRole('user');
 
         // 5️⃣ Login otomatis
         Auth::login($user);
@@ -64,7 +59,7 @@ class RegisteredUserController extends Controller
             return redirect()->intended(route('dashboard'));
         }
 
-        return redirect()->intended(route('dashboard.user'));
+        return redirect()->intended(route('invitation.create'));
 
     }
 }

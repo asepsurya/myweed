@@ -17,6 +17,10 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&amp;family=Open+Sans:ital,wght@0,300..800;1,300..800&amp;display=swap"
         rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/tom-select/dist/css/tom-select.bootstrap5.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
+
+
     <style>
         :root {
             --adminuiux-content-font: "Open Sans", sans-serif;
@@ -35,14 +39,9 @@
 
     <!-- page wrapper -->
     <div class="adminuiux-wrap">
-        @if(auth()->user() && auth()->user()->hasRole('admin'))
-            <!-- Admin sidebar -->
-             @include('layouts.partial.sidebar')
-        @else
-
-            <!-- User sidebar -->
-            @include('layouts.partial.user_sidebar')
-        @endif
+        {{-- @include('layouts.partial.pageloader') --}}
+        <!-- User sidebar -->
+        @include('layouts.partial.user_sidebar')
         <!-- Standard sidebar -->
 
 
@@ -81,8 +80,6 @@
 
     });
     </script>
-
-
     <!-- Page Level js -->
     <script src="{{ asset('assets/js/investment/investment-loan-list.js') }}"></script>
     <!-- Page Level js -->
@@ -143,6 +140,8 @@
             document.title = "Admin - " + pageName;
         });
     </script>
+
+</script>
 
 </body>
 

@@ -33,11 +33,11 @@ return new class extends Migration
             // Acara
             $table->date('wedding_date');
             $table->string('akad_location')->nullable();
-            $table->time('akad_time')->nullable();
+            $table->string('akad_time')->nullable();
             $table->string('akad_maps')->nullable();
 
             $table->string('resepsi_location')->nullable();
-            $table->time('resepsi_time')->nullable();
+            $table->string('resepsi_time')->nullable();
             $table->string('resepsi_maps')->nullable();
 
             // Tema

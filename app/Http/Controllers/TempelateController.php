@@ -23,6 +23,7 @@ class TempelateController extends Controller
    $request->validate([
         'name' => 'required',
         'thumbnail' => 'required|image',
+        'preview' => 'required|image',
         'zip' => 'required|mimes:zip'
     ]);
 
@@ -51,12 +52,13 @@ class TempelateController extends Controller
 
     // Simpan thumbnail
     $thumb = $request->file('thumbnail')->store('templates', 'public');
-
+    $preview = $request->file('preview')->store('preview', 'public');
     // Simpan ke database
     Template::create([
         'name' => $request->name,
         'slug' => $folderName,
         'thumbnail' => $thumb,
+        'preview' => $preview,
         'sections' => ["hero","couple","event","gallery","rsvp","music"],
         'is_active' => true
     ]);

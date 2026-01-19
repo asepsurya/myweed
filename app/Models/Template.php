@@ -14,6 +14,7 @@ class Template extends Model
         'name',
         'slug',
         'thumbnail',
+        'preview',
         'sections',
     ];
 }

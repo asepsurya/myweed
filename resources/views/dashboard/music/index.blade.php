@@ -19,7 +19,7 @@
         @endphp
 
         <div class="list-group list-group-flush">
-        @foreach ($musics as $music)
+        @forelse ($musics as $music)
             <div class="list-group-item  d-flex align-items-center gap-3">
                 <!-- Cover Image -->
                 <img src="{{ $music->cover_url ? '/storage/'.$music->cover_url : asset('tempelate/no_sound.webp') }}"
@@ -85,7 +85,29 @@
                 <!-- Audio -->
                 <audio id="song{{ $music->id }}" src="{{ fileUrl($music->audio_url) }}"></audio>
             </div>
-        @endforeach
+            @empty
+           <div class="flex items-center justify-center min-h-[60vh] p-5 list-none">
+    <div class="text-center">
+
+        <!-- Icon -->
+        <div class="flex items-center justify-center w-14 h-14 mx-auto mb-3 rounded-full bg-gray-100">
+            <i class="bi bi-music-note-list text-2xl text-gray-400"></i>
+        </div>
+
+        <!-- Text -->
+        <h3 class="text-base font-semibold text-gray-700">
+            Belum ada musik
+        </h3>
+        <p class="mt-1 text-sm text-gray-500">
+            Tambahkan musik agar undangan lebih berkesan
+        </p>
+
+        <!-- Button -->
+       
+    </div>
+</div>
+
+        @endforelse
         </div>
     </div>
 
