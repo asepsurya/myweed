@@ -20,7 +20,11 @@
     <link href="https://cdn.jsdelivr.net/npm/tom-select/dist/css/tom-select.bootstrap5.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
 
-    @yield('head')
+ <link href="https://unpkg.com/cropperjs@1.6.1/dist/cropper.min.css" rel="stylesheet">
+<script src="https://unpkg.com/cropperjs@1.6.1/dist/cropper.min.js"></script>
+<script defer src="https://unpkg.com/face-api.js"></script>
+
+
     <style>
         :root {
             --adminuiux-content-font: "Open Sans", sans-serif;
@@ -32,6 +36,9 @@
 
     <script defer src="{{ asset('assets/js/app435e.js?1096aad991449c8654b2') }}"></script>
     <link href="{{ asset('assets/css/app435e.css?1096aad991449c8654b2') }}" rel="stylesheet">
+
+
+
 </head>
 <body class="main-bg main-bg-opac main-bg-blur adminuiux-sidebar-fill-white adminuiux-sidebar-boxed roundedui theme-teal adminuiux-header-standard adminuiux-sidebar-iconic adminuiux-header-transparent scrolldown" data-theme="theme-teal" data-sidebarfill="adminuiux-sidebar-fill-white" data-bs-spy="scroll" data-bs-target="#list-example" data-bs-smooth-scroll="true" tabindex="0" data-headerlayout="adminuiux-header-standard" data-sidebarlayout="adminuiux-sidebar-iconic">
     {{-- header layout --}}

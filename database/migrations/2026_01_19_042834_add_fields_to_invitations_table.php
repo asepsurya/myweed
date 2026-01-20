@@ -12,6 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('invitations', function (Blueprint $table) {
+
+             $table->string('akad_time_end')->nullable();
+             $table->string('resepsi_time_end')->nullable();
              $table->string('bride_username_instagram')->nullable();
              $table->string('groom_username_instagram')->nullable();
              $table->string('akad_address')->nullable();

@@ -123,7 +123,18 @@
 }
 
 
+.cropper-container,
+.cropper-wrap-box,
+.cropper-canvas,
+.cropper-drag-box {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+
     </style>
+<link href="https://unpkg.com/cropperjs@1.6.1/dist/cropper.min.css" rel="stylesheet">
+<script src="https://unpkg.com/cropperjs@1.6.1/dist/cropper.min.js"></script>
 
     <!-- Errors -->
     @if ($errors->any())
@@ -295,7 +306,7 @@
                                                     </svg>
                                                 </div>
                                                 <p class="mb-0">Klik atau tarik foto ke sini</p>
-                                                <input id="foto_pria" type="file" name="foto_pria" class="d-none" onchange="previewGroomImage(event)">
+                                                   <input id="foto_pria" type="file" name="foto_pria" class="d-none" onchange="openCropModal(event, 'groom')">
                                             </label>
                                         </div>
 
@@ -303,7 +314,7 @@
                                         <div id="previewContainerGroom" class="mt-3 d-none">
                                             <img id="previewGroom" class="img-fluid rounded" alt="Preview Foto">
                                             <div class="text-center mt-2">
-                                                <button type="button" onclick="removeGroomPreview()" class="btn btn-danger btn-sm">
+                                                <button type="button" onclick="removePreview('groom')" class="btn btn-danger btn-sm">
                                                     Hapus
                                                 </button>
                                             </div>
@@ -312,6 +323,7 @@
                                 </div>
                             </div>
                         </div>
+                        {{-- Modal Crop --}}
 
                     </div>
                     {{-- TEMA & WARNA --}}
@@ -546,26 +558,31 @@
                                 </div>
 
                                 <div class="card-body row g-3">
-                                    <div class="col-md-6">
+                                    <div class="col-12">
                                         <label for="akad_location" class="form-label">Nama Tempat</label>
                                         <input type="text" id="akad_location" name="akad_location" placeholder="Masukkan lokasi akad" class="form-control">
                                     </div>
-                                       <div class="col-md-6">
 
-                                   <label for="akad_time" class="form-label">Waktu Akad</label>
-                                    <input type="text"
-                                        id="akad_time"
-                                        name="akad_time"
-                                        value="{{ old('akad_time') }}"
-                                        class="form-control"
-                                        placeholder="Contoh: 08:00 - Selesai">
-                                </div>
                                  <div class="col-12">
                                     <label for="akad_address" class="form-label">Alamat Akad</label>
                                     <input type="text" id="akad_address" name="akad_address"
                                         value="{{ old('akad_address') }}"
                                         placeholder="Contoh : Jalan Pancasila No.41 " class="form-control">
                                 </div>
+
+                                     <div class=" row g-3">
+                                        <div class="col-md-6">
+                                            <label for="akad_time" class="form-label">Jam Mulai</label>
+                                            <input type="time" id="akad_time" name="akad_time" placeholder="Contoh: 08:00 - Selesai" value="{{ old('akad_time') }}" class="form-control resepsi-time">
+                                            <small class="text-muted time-label"></small>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label">Jam Selesai</label>
+                                            <input type="time" name="akad_time_end" class="form-control time-end">
+
+                                        </div>
+                                    </div>
+
                                     <div class="col-12">
                                         <label for="akad_maps" class="form-label">Link Maps</label>
                                         <input type="text" id="akad_maps" name="akad_maps" placeholder="Masukkan link Google Maps" class="form-control">
@@ -581,22 +598,37 @@
                                     <h6 class="mb-0">Tempat Resepsi</h6>
                                 </div>
                                 <div class="card-body row g-3">
-                                    <div class="col-md-6">
+                                    <div class="col-12">
                                         <label for="resepsi_location" class="form-label">Lokasi Acara</label>
                                         <input type="text" id="resepsi_location" name="resepsi_location" placeholder="Masukkan lokasi resepsi" class="form-control">
                                     </div>
-                                <div class="col-md-6">
-                                    <label for="resepsi_time" class="form-label">Waktu Resepsi</label>
-                                    <input type="text" id="resepsi_time" name="resepsi_time" placeholder="Contoh: 08:00 - Selesai"
-                                        value="{{ old('resepsi_time') }}"
-                                        class="form-control">
-                                </div>
+
                                 <div class="col-12">
                                     <label for="resepsi_address" class="form-label">Alamat Resepsi</label>
                                     <input type="text" id="resepsi_address" name="resepsi_address"
                                         value="{{ old('resepsi_address') }}"
                                         placeholder="Contoh : Jalan Pancasila No.41 " class="form-control">
                                 </div>
+
+                                <div class=" row g-3">
+                                    <div class="col-md-6">
+                                        <label for="resepsi_time" class="form-label">Jam Mulai</label>
+                                        <input type="time" id="resepsi_time" name="resepsi_time" placeholder="Contoh: 08:00 - Selesai" value="{{ old('resepsi_time') }}" class="form-control resepsi-time">
+                                        <small class="text-muted time-label"></small>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Jam Selesai</label>
+                                        <input type="time" id="resepsi_time_end" name="resepsi_time_end" class="form-control time-end">
+
+                                        <div class="form-check mt-2">
+                                            <input class="form-check-input sampai-selesai" type="checkbox" id="sampai_selesai">
+                                            <label class="form-check-label" for="sampai_selesai" name="sampai_selesai" value="1" >
+                                                Sampai Selesai
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+
                                     <div class="col-12">
                                         <label for="resepsi_maps" class="form-label">Link Maps</label>
                                         <input type="text" id="resepsi_maps" name="resepsi_maps" placeholder="Masukkan link Google Maps" class="form-control">
@@ -660,7 +692,7 @@
                                                 </svg>
                                             </div>
                                             <p class="mb-0">Klik atau tarik foto ke sini</p>
-                                            <input id="foto_wanita" type="file" name="foto_wanita" class="d-none" onchange="previewBrideImage(event)">
+                                          <input id="foto_wanita" type="file" name="foto_wanita" class="d-none" onchange="openCropModal(event, 'bride')">
                                         </label>
                                     </div>
 
@@ -668,7 +700,7 @@
                                     <div id="previewContainerBride" class="mt-3 d-none">
                                         <img id="previewBride" class="img-fluid rounded" alt="Preview Foto">
                                         <div class="text-center mt-2">
-                                            <button type="button" onclick="removeBridePreview()" class="btn btn-danger btn-sm">
+                                            <button type="button" onclick="removePreview('bride')" class="btn btn-danger btn-sm">
                                                 Hapus
                                             </button>
                                         </div>
@@ -799,6 +831,120 @@
             </div>
         </div>
     </div>
+    {{-- modal Crop --}}
+    <div class="modal fade" id="cropModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5 class="modal-title">Crop Foto</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+             <div class="modal-body p-2" style="height:70vh; overflow:hidden;">
+                    <img id="cropImage" style="max-width:100%; max-height:100%; display:block; margin:auto;">
+                </div>
+              
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" onclick="cropImage()">
+                        Crop & Simpan
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+        <script>
+            let cropper;
+            let currentTarget = null;
+
+            function openCropModal(event, target) {
+                const file = event.target.files[0];
+                if (!file) return;
+
+                currentTarget = target;
+
+                const image = document.getElementById('cropImage');
+                image.src = URL.createObjectURL(file);
+
+                const modalEl = document.getElementById('cropModal');
+                const modal = new bootstrap.Modal(modalEl);
+                modal.show();
+
+                modalEl.addEventListener('shown.bs.modal', () => {
+                    if (cropper) cropper.destroy();
+
+                    cropper = new Cropper(image, {
+                        aspectRatio: 1
+                        , viewMode: 1, // gambar dipaksa stay di dalam modal
+                        autoCropArea: 1, // crop box langsung besar
+                        responsive: true
+                        , zoomable: true
+                        , movable: true
+                        , dragMode: 'move'
+                        , center: true
+                    , });
+
+                    // Force gambar agar penuh
+                    cropper.zoomTo(1);
+                }, {
+                    once: true
+                });
+            }
+
+
+            function cropImage() {
+                if (!cropper || !currentTarget) return;
+
+                const canvas = cropper.getCroppedCanvas({
+                    width: 1080
+                    , height: 1080
+                });
+
+                canvas.toBlob((blob) => {
+                    const file = new File([blob], "photo.jpg", {
+                        type: "image/jpeg"
+                    });
+
+                    const dt = new DataTransfer();
+                    dt.items.add(file);
+
+                    if (currentTarget === 'groom') {
+                        document.getElementById('foto_pria').files = dt.files;
+                        document.getElementById('previewGroom').src = URL.createObjectURL(file);
+                        document.getElementById('previewContainerGroom').classList.remove('d-none');
+                        document.getElementById('uploadBoxGroom').parentElement.classList.add('d-none');
+                    }
+
+                    if (currentTarget === 'bride') {
+                        document.getElementById('foto_wanita').files = dt.files;
+                        document.getElementById('previewBride').src = URL.createObjectURL(file);
+                        document.getElementById('previewContainerBride').classList.remove('d-none');
+                        document.getElementById('uploadBoxBride').parentElement.classList.add('d-none');
+                    }
+
+                    bootstrap.Modal.getInstance(document.getElementById('cropModal')).hide();
+                });
+            }
+
+            function removePreview(target) {
+                if (target === 'groom') {
+                    document.getElementById('previewContainerGroom').classList.add('d-none');
+                    document.getElementById('uploadBoxGroom').parentElement.classList.remove('d-none');
+                    document.getElementById('foto_pria').value = '';
+                }
+
+                if (target === 'bride') {
+                    document.getElementById('previewContainerBride').classList.add('d-none');
+                    document.getElementById('uploadBoxBride').parentElement.classList.remove('d-none');
+                    document.getElementById('foto_wanita').value = '';
+                }
+            }
+
+        </script>
+
+
     <script>
     // Ambil semua element yang memiliki class insta-username
     const usernameInputs = document.querySelectorAll('.insta-username');
@@ -1087,72 +1233,66 @@
             });
         }
 
-        // Image preview functions for groom
-        function previewGroomImage(event) {
-            const preview = document.getElementById('previewGroom');
-            const previewContainer = document.getElementById('previewContainerGroom');
-            const uploadBox = document.getElementById('uploadBoxGroom');
-
-            if (event.target.files && event.target.files[0]) {
-                // Set src preview
-                preview.src = URL.createObjectURL(event.target.files[0]);
-                previewContainer.classList.remove('d-none');
-
-                // Sembunyikan upload box
-                uploadBox.parentElement.classList.add('d-none');
-            }
-        }
-
-        function removeGroomPreview() {
-            const preview = document.getElementById('previewGroom');
-            const previewContainer = document.getElementById('previewContainerGroom');
-            const uploadBox = document.getElementById('uploadBoxGroom');
-            const inputFile = document.getElementById('foto_pria');
-
-            // Hapus preview
-            preview.src = '';
-            previewContainer.classList.add('d-none');
-
-            // Reset input file
-            inputFile.value = '';
-
-            // Tampilkan kembali upload box
-            uploadBox.parentElement.classList.remove('d-none');
-        }
-
-        // Image preview functions for bride
-        function previewBrideImage(event) {
-            const preview = document.getElementById('previewBride');
-            const previewContainer = document.getElementById('previewContainerBride');
-            const uploadBox = document.getElementById('uploadBoxBride');
-
-            if (event.target.files && event.target.files[0]) {
-                // Set src preview
-                preview.src = URL.createObjectURL(event.target.files[0]);
-                previewContainer.classList.remove('d-none');
-
-                // Sembunyikan upload box
-                uploadBox.parentElement.classList.add('d-none');
-            }
-        }
-
-        function removeBridePreview() {
-            const preview = document.getElementById('previewBride');
-            const previewContainer = document.getElementById('previewContainerBride');
-            const uploadBox = document.getElementById('uploadBoxBride');
-            const inputFile = document.getElementById('foto_wanita');
-
-            // Hapus preview
-            preview.src = '';
-            previewContainer.classList.add('d-none');
-
-            // Reset input file
-            inputFile.value = '';
-
-            // Tampilkan kembali upload box
-            uploadBox.parentElement.classList.remove('d-none');
-        }
 
     </script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
 
+    // =============================
+    // JAM MULAI → BADGE PAGI / SIANG / SORE / MALAM
+    // =============================
+    document.querySelectorAll('.resepsi-time').forEach(function (input) {
+        input.addEventListener('input', function () {
+            if (!this.value) return;
+
+            const hour = parseInt(this.value.split(':')[0]);
+            let label = '';
+            let badgeClass = '';
+
+            if (hour >= 5 && hour < 11) {
+                label = 'Pagi';
+                badgeClass = 'bg-warning text-dark';
+            } else if (hour >= 11 && hour < 15) {
+                label = 'Siang';
+                badgeClass = 'bg-primary';
+            } else if (hour >= 15 && hour < 18) {
+                label = 'Sore';
+                badgeClass = 'bg-info text-dark';
+            } else {
+                label = 'Malam';
+                badgeClass = 'bg-dark';
+            }
+
+            const timeLabel = this.closest('.col-md-6')?.querySelector('.time-label');
+            if (timeLabel) {
+                timeLabel.innerHTML = `
+                    <span class="badge ${badgeClass}">
+                        ${label}
+                    </span>
+                `;
+            }
+        });
+    });
+
+    // =============================
+    // JAM SELESAI → SAMPAI SELESAI
+    // =============================
+    document.querySelectorAll('.sampai-selesai').forEach(function (checkbox) {
+        checkbox.addEventListener('change', function () {
+            const container = this.closest('.col-md-6');
+            const endTime = container.querySelector('.time-end');
+
+            if (!endTime) return;
+
+            if (this.checked) {
+                endTime.value = '';
+                endTime.disabled = true;
+            } else {
+                endTime.disabled = false;
+            }
+        });
+    });
+
+});
+</script>
 </x-app-layout>

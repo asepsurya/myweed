@@ -1,21 +1,7 @@
 <x-app-layout>
 
-    <x-slot name="header">
-        <div class="flex justify-between items-center">
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                {{ __('Aktivitas Undangan') }}
-            </h2>
-
-            <a href="{{ route('invitation.create') }}"
-                class="btn-sm inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
-                + Buat Undangan
-            </a>
-        </div>
-    </x-slot>
-
-    <div class="py-10">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-
+    <div class=" py-10">
+        <div class="max-w-7xl container mx-auto sm:px-6 lg:px-8">
             <div class="card adminuiux-card">
                 <div class="card-header">
                     <div class="row align-items-center">
@@ -36,9 +22,9 @@
                 </div>
 
                 <!-- List Aktivitas -->
-                <ul class="list-group list-group-flush border-top bg-none">
+                <ul class="list-group list-group-flush bg-none">
 
-                    @foreach ($invitations as $inv)
+                    @forelse ($invitations as $inv)
                         <li class="list-group-item" >
                             <div class="row gx-3 align-items-center">
 
@@ -49,7 +35,7 @@
                                     <p class="text-secondary small">
                                         Tanggal Nikah: {{ $inv->wedding_date }}  |  Dibuat oleh: <span class="fw-medium">{{ $inv->user->name }}</span>
                                     </p>
-                                  
+
                                 </div>
 
                                 <div class="col-auto text-end">
@@ -73,70 +59,60 @@
                                         title="Bagikan via WhatsApp">
                                         <i class="bi bi-whatsapp h5 mb-0"></i>
                                     </button>
-                                </div>                               
+                                </div>
                             </div>
                         </li>
                          @php
-        $urlBase = route('invitation.show', [$inv->slug]);
-    @endphp
+                            $urlBase = route('invitation.show', [$inv->slug]);
+                        @endphp
 
-    <div class="modal fade" id="waModal{{ $inv->id }}" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-lg modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Bagikan Undangan via WhatsApp</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
-                </div>
+                        <div class="modal fade" id="waModal{{ $inv->id }}" tabindex="-1" aria-hidden="true">
+                            <div class="modal-dialog modal-lg modal-dialog-centered">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">Bagikan Undangan via WhatsApp</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+                                    </div>
 
-                <div class="modal-body">
-                    <!-- Input Nama Penerima -->
-                    <div class="mb-3">
-                        <label for="recipientName{{ $inv->id }}" class="form-label">Nama Penerima:</label>
-                        <input type="text" class="form-control" id="recipientName{{ $inv->id }}"
-                            placeholder="Masukkan nama penerima">
-                    </div>
+                                        <div class="modal-body">
+                                            <!-- Input Nama Penerima -->
+                                            <div class="mb-3">
+                                                <label for="recipientName{{ $inv->id }}" class="form-label">Nama Penerima:</label>
+                                                <input type="text" class="form-control" id="recipientName{{ $inv->id }}"
+                                                    placeholder="Masukkan nama penerima">
+                                            </div>
 
-                    <!-- Pesan Undangan -->
-                    <div class="mb-3">
-                        <label for="waMessage{{ $inv->id }}" class="form-label">Pesan Undangan:</label>
-                        <textarea class="form-control" id="waMessage{{ $inv->id }}" rows="10">
-Assalamu’alaikum Wr. Wb.,
+                                            <!-- Pesan Undangan -->
+                                            <div class="mb-3">
+                                                <label for="waMessage{{ $inv->id }}" class="form-label">Pesan Undangan:</label>
+                                                <textarea class="form-control" id="waMessage{{ $inv->id }}" rows="10">
+                                                    @include('dashboard.invitation.pesan')
+                                                </textarea>
+                                            </div>
+                                        </div>
 
-Dengan hormat, kami mengundang Bapak/Ibu/Saudara/i [nama] untuk hadir dalam acara pernikahan kami.
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                                            <button type="button" class="btn btn-success"
+                                                onclick="shareWAWithRecipient('recipientName{{ $inv->id }}','waMessage{{ $inv->id }}')">
+                                                <i class="bi bi-whatsapp me-1"></i> Share via WhatsApp
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                    @empty
+                        <div class="card-body d-flex flex-column justify-content-center align-items-center p-5 text-muted">
+                            <i class="bi bi-folder-x fs-1 mb-3"></i>
+                            <p class="mb-0">Data Tidak Ditemukan</p>
+                        </div>
 
-Detail acara dapat dilihat di tautan berikut:
-
-{{ $urlBase }}?to=[nama]
-
-Kami merasa bahagia dan terhormat apabila Bapak/Ibu/Saudara/i berkenan hadir serta memberikan doa restu.
-Mohon maaf, undangan ini disampaikan melalui pesan ini sebagai pengganti undangan cetak, mengingat keterbatasan jarak dan waktu.
-
-Terima kasih atas perhatian dan kehadirannya.
-
-Hormat kami,
-Maisaroh & Aceng Fikri
-
-Wassalamu’alaikum Wr. Wb.
-            </textarea>
-                    </div>
-                </div>
-
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                    <button type="button" class="btn btn-success"
-                        onclick="shareWAWithRecipient('recipientName{{ $inv->id }}','waMessage{{ $inv->id }}')">
-                        <i class="bi bi-whatsapp me-1"></i> Share via WhatsApp
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-                    @endforeach
+                    @endforelse
                 </ul>
             </div>
         </div>
     </div>
-   
+
     <script>
         function shareWAWithRecipient(recipientId, messageId) {
             const recipient = document.getElementById(recipientId).value.trim();

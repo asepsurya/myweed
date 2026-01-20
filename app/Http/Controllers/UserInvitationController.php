@@ -9,9 +9,12 @@ use App\Models\Template;
 use App\Models\Invitation;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use Intervention\Image\Image;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use Intervention\Image\ImageManager;
 use Illuminate\Support\Facades\Storage;
+use Intervention\Image\Drivers\Gd\Driver;
 
 class UserInvitationController extends Controller
 {
@@ -27,7 +30,18 @@ class UserInvitationController extends Controller
         $templates = Template::where('is_active', true)->get();
         return view('dashboard.invitation.create', compact('templates', 'music'));
     }
+    private function uploadCompressedImage($file, $path)
+    {
+        $manager = new ImageManager(new Driver());
 
+        $image = $manager->read($file)
+            ->scaleDown(1600) // Hanya mengecilkan, tanpa distorsi
+            ->toJpeg(75);
+
+        Storage::disk('public')->put($path, (string) $image);
+
+        return $path;
+    }
     public function store(Request $request)
     {
         $request->validate([
@@ -80,10 +94,12 @@ class UserInvitationController extends Controller
 
                 'akad_location' => $request->akad_location,
                 'akad_time' => $request->akad_time,
+                'akad_time_end' => $request->akad_time_end,
                 'akad_maps' => $request->akad_maps,
 
                 'resepsi_location' => $request->resepsi_location,
                 'resepsi_time' => $request->resepsi_time,
+                'resepsi_time_end' => $request->filled('sampai_selesai') ? 'Selesai' : $request->resepsi_time_end,
                 'resepsi_maps' => $request->resepsi_maps,
 
                 'theme_color' => $request->theme_color,
@@ -96,7 +112,7 @@ class UserInvitationController extends Controller
                 'enable_gift' => $request->has('enable_gift'),
 
                 'groom_instagram' =>$request->groom_instagram,
-                'groom_username_instagram'=>$request->bride_username_instagram,
+                'groom_username_instagram'=>$request->groom_username_instagram,
                 'bride_instagram' =>$request->bride_instagram,
                 'bride_username_instagram'=>$request->bride_username_instagram,
                 'akad_address'=>$request->akad_address,
@@ -104,25 +120,46 @@ class UserInvitationController extends Controller
 
             ]);
             if ($request->hasFile('foto_pria')) {
-                $fotoPria = $request->file('foto_pria')
-                    ->store("invitations/{$invitation->id}/pria", 'public');
+                $path = "invitations/{$invitation->id}/pria/pria.jpg";
 
-                $invitation->update(['foto_pria' => $fotoPria]);
+                $this->uploadCompressedImage(
+                    $request->file('foto_pria'),
+                    $path,
+                    1200
+                );
+
+                $invitation->update([
+                    'foto_pria' => $path
+                ]);
             }
 
             if ($request->hasFile('foto_wanita')) {
-                $fotoWanita = $request->file('foto_wanita')
-                    ->store("invitations/{$invitation->id}/wanita", 'public');
+                    $path = "invitations/{$invitation->id}/wanita/wanita.jpg";
 
-                $invitation->update(['foto_wanita' => $fotoWanita]);
+                    $this->uploadCompressedImage(
+                        $request->file('foto_wanita'),
+                        $path,
+                        1200
+                    );
+
+                    $invitation->update([
+                        'foto_wanita' => $path
+                    ]);
+                }
+
+
+           if ($request->hasFile('gallery_cover')) {
+                $path = "invitations/{$invitation->id}/cover/cover.jpg";
+
+                $this->uploadCompressedImage(
+                    $request->file('gallery_cover'),
+                    $path,
+                    1600
+                );
+
+                $invitation->update(['gallery_cover' => $path]);
             }
 
-            if ($request->hasFile('gallery_cover')) {
-                $coverPath = $request->file('gallery_cover')
-                    ->store("invitations/{$invitation->id}/cover", 'public');
-
-                $invitation->update(['gallery_cover' => $coverPath]);
-            }
 
             if ($request->hasFile('custom_music')) {
                 $musicPath = $request->file('custom_music')
@@ -182,6 +219,7 @@ class UserInvitationController extends Controller
         return view('dashboard.invitation.edit', compact('invitation','music','templates'));
     }
 
+
     public function update(Request $request, Invitation $invitation)
     {
 
@@ -235,10 +273,12 @@ class UserInvitationController extends Controller
 
                 'akad_location' => $request->akad_location,
                 'akad_time' => $request->akad_time,
+                'akad_time_end' => $request->akad_time_end,
                 'akad_maps' => $request->akad_maps,
 
                 'resepsi_location' => $request->resepsi_location,
                 'resepsi_time' => $request->resepsi_time,
+                'resepsi_time_end' => $request->filled('sampai_selesai') ? 'Selesai' : $request->resepsi_time_end,
                 'resepsi_maps' => $request->resepsi_maps,
 
                 'theme_color' => $request->theme_color,
@@ -251,7 +291,7 @@ class UserInvitationController extends Controller
                 'enable_gift' => $request->has('enable_gift'),
 
                 'groom_instagram' =>$request->groom_instagram,
-                'groom_username_instagram'=>$request->bride_username_instagram,
+                'groom_username_instagram'=>$request->groom_username_instagram,
                 'bride_instagram' =>$request->bride_instagram,
                 'bride_username_instagram'=>$request->bride_username_instagram,
                 'akad_address'=>$request->akad_address,
@@ -263,37 +303,48 @@ class UserInvitationController extends Controller
 
             // --- Proses Update File ---
 
-            // 1. Foto Mempelai Pria
             if ($request->hasFile('foto_pria')) {
-                // Hapus foto lama jika ada
                 if ($invitation->foto_pria) {
                     Storage::disk('public')->delete($invitation->foto_pria);
                 }
-                // Simpan foto baru
-                $fotoPria = $request->file('foto_pria')->store("invitations/{$invitation->id}/pria", 'public');
+
+                $pathPria = "invitations/{$invitation->id}/pria/pria.jpg";
+                $fotoPria = $this->uploadCompressedImage($request->file('foto_pria'), $pathPria);
+
                 $invitation->update(['foto_pria' => $fotoPria]);
             }
 
-            // 2. Foto Mempelai Wanita
             if ($request->hasFile('foto_wanita')) {
-                // Hapus foto lama jika ada
                 if ($invitation->foto_wanita) {
                     Storage::disk('public')->delete($invitation->foto_wanita);
                 }
-                // Simpan foto baru
-                $fotoWanita = $request->file('foto_wanita')->store("invitations/{$invitation->id}/wanita", 'public');
+
+                $pathWanita = "invitations/{$invitation->id}/wanita/wanita.jpg";
+                $fotoWanita = $this->uploadCompressedImage($request->file('foto_wanita'), $pathWanita);
+
                 $invitation->update(['foto_wanita' => $fotoWanita]);
             }
 
             // 3. Cover Galeri
             if ($request->hasFile('gallery_cover')) {
-                // Hapus cover lama jika ada
+
+                // Hapus cover lama
                 if ($invitation->gallery_cover) {
                     Storage::disk('public')->delete($invitation->gallery_cover);
                 }
-                // Simpan cover baru
-                $coverPath = $request->file('gallery_cover')->store("invitations/{$invitation->id}/cover", 'public');
-                $invitation->update(['gallery_cover' => $coverPath]);
+
+                // Path cover baru (kita tentukan sendiri)
+                $path = "invitations/{$invitation->id}/cover/cover.jpg";
+
+                // Upload & compress pakai function
+                $this->uploadCompressedImage(
+                    $request->file('gallery_cover'),
+                    $path,
+                    1600
+                );
+
+                // Update database
+                $invitation->update(['gallery_cover' => $path]);
             }
 
             // 4. Musik Kustom
