@@ -271,19 +271,19 @@
                                 </div>
                             </div>
                             <div class="px-2">
-                                <div><a class="dropdown-item" href="investment-myprofile.html"><i data-feather="user" class="avatar avatar-18 me-1"></i>Tentang Saya</a>
-                                </div>
+
+
                                 <div>
-                                    <a class="dropdown-item" href="investment-dashboard.html">
+                                    <a class="dropdown-item" href="/dashboard">
                                         <div class="row g-0">
                                             <div class="col align-self-center"><i data-feather="layout" class="avatar avatar-18 me-1"></i>
                                                 Dashboard Saya
                                             </div>
-                                           
+
                                         </div>
                                     </a>
                                 </div>
-                             
+
                                 <div>
                                     <a class="dropdown-item" href="investment-mysubscription.html">
                                         <div class="row">
@@ -295,9 +295,9 @@
                                         </div>
                                     </a>
                                 </div>
-                                
+
                                 <div>
-                                    <a class="dropdown-item" href="investment-settings.html">
+                                    <a class="dropdown-item" href="/profile">
                                         <i data-feather="settings" class="avatar avatar-18 me-1"></i> Setelan Akun
                                     </a>
                                 </div>

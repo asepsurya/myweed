@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\GiftController;
 use App\Http\Controllers\RsvpController;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\MusicController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\WeddingController;
@@ -57,6 +58,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/gifts', [GiftController::class, 'index'])->name('gift.index');
     Route::post('/gifts', [GiftController::class, 'store'])->name('gift.store');
     Route::delete('/gifts/{id}', [GiftController::class, 'destroy'])->name('gift.destroy');
+
+    Route::get('/users', [UserController::class, 'index'])->name('user.index');
 
 });
 

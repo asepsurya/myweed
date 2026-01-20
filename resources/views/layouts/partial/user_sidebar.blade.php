@@ -83,7 +83,7 @@
     @role('admin')
     <li class="nav-item">
         <a class="nav-link"
-           href="{{ route('dashboard') }}"
+           href="{{ route('user.index') }}"
            data-bs-toggle="tooltip"
            data-bs-placement="right"
            title="Daftar Pengguna">

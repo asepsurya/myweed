@@ -1,23 +1,36 @@
 <x-app-layout>
 
     <style>
-        .template-preview {
-            height: 220px;
-            overflow: hidden;
-            position: relative;
-            border-radius: 12px;
-        }
 
-        .preview-img {
-            width: 100%;
-            height: auto;
-            transform: translateY(0);
-            transition: transform 6s linear;
-        }
+.adminuiux-card {
+    position: relative;
+    overflow: hidden; /* optional, biar rapi */
+}
 
-        .template-preview:hover .preview-img {
-            transform: translateY(calc(-100% + 220px));
-        }
+.preview-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.delete-btn {
+    z-index: 20;
+}
+.template-preview {
+    position: relative;
+    z-index: 1;
+}
+
+.preview-img {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    display: block;
+}
+
+
+
 
     </style>
 
@@ -219,10 +232,6 @@
                 <div class="col-12 col-md-6 col-lg-4 template-card" data-name="{{ strtolower($template->name) }}">
                     <div class="card adminuiux-card mb-4 position-relative">
 
-                        <!-- DELETE BUTTON -->
-                        <button onclick="confirmDelete({{ $template->id }})" class="position-absolute top-0 end-0 m-2 btn btn-danger btn-sm rounded-circle">
-                            <i class="bi bi-trash"></i>
-                        </button>
 
                         <form id="delete-form-{{ $template->id }}" action="{{ route('templates.destroy', $template->id) }}" method="POST" class="d-none">
                             @csrf
@@ -242,8 +251,8 @@
                             <div class="d-flex justify-content-between align-items-center mt-3">
                                 <span class="badge text-bg-success">Active</span>
 
-                                <a href="/templates/{{ $template->slug }}" class="btn btn-sm btn-outline-theme">
-                                    Preview
+                                <a onclick="confirmDelete({{ $template->id }})" class="btn btn-sm btn-outline-theme">
+                                    <i class="bi bi-trash"></i>
                                 </a>
                             </div>
                         </div>

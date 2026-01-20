@@ -185,7 +185,6 @@ class UserInvitationController extends Controller
     public function update(Request $request, Invitation $invitation)
     {
 
-
     // Validasi data input
         $request->validate([
             'bride_name' => 'required',

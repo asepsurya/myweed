@@ -20,7 +20,7 @@
     <link href="https://cdn.jsdelivr.net/npm/tom-select/dist/css/tom-select.bootstrap5.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
 
-
+    @yield('head')
     <style>
         :root {
             --adminuiux-content-font: "Open Sans", sans-serif;
@@ -140,7 +140,7 @@
             document.title = "Admin - " + pageName;
         });
     </script>
-
+    @yield('js')
 </script>
 
 </body>

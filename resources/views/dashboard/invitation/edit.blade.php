@@ -307,13 +307,13 @@
                                         <div class="col-12 mb-6">
                                             <label for="groom_username_instagram" class="form-label">Username</label>
                                             <span>@</span>
-                                            <input type="text" id="groom_username_instagram" name="groom_username_instagram" value="{{ old('groom_username_instagram') }}" placeholder="Contoh: gemini.ai" class="form-control insta-username">
+                                            <input type="text" id="groom_username_instagram" name="groom_username_instagram" value="{{ old('groom_username_instagram', $invitation->groom_username_instagram) }}" placeholder="Contoh: gemini.ai" class="form-control insta-username">
                                         </div>
 
 
                                         <div class="col-12 mb-6">
                                             <label for="groom_instagram" class="form-label">Link Instagram (Otomatis)</label>
-                                            <input type="text" id="groom_instagram" name="groom_instagram" value="{{ old('groom_instagram') }}" placeholder="Akan terisi otomatis..." class="form-control" readonly>
+                                            <input type="text" id="groom_instagram" name="groom_instagram" value="{{ old('groom_instagram',$invitation->groom_instagram) }}" placeholder="Akan terisi otomatis..." class="form-control" readonly>
                                         </div>
 
                                     <div class="col-12">
@@ -692,14 +692,14 @@
                                     <label for="bride_username_instagram" class="form-label">Username</label>
                                     <span>@</span>
                                     <input type="text" id="bride_username_instagram" name="bride_username_instagram"
-                                        value="{{ old('bride_username_instagram') }}"
+                                        value="{{ old('bride_username_instagram',$invitation->bride_username_instagram) }}"
                                         placeholder="Contoh: gemini.ai" class="form-control insta-username">
                                 </div>
 
                                 <div class="col-12 mb-6">
                                     <label for="bride_instagram" class="form-label">Link Instagram (Otomatis)</label>
                                     <input type="text" id="bride_instagram" name="bride_instagram"
-                                        value="{{ old('bride_instagram') }}"
+                                        value="{{ old('bride_instagram',$invitation->bride_instagram) }}"
                                         placeholder="Akan terisi otomatis..." class="form-control" readonly>
                                 </div>
 
