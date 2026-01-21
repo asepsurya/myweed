@@ -12,9 +12,11 @@ use Illuminate\Http\Request;
 use Intervention\Image\Image;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+
 use Intervention\Image\ImageManager;
+
 use Illuminate\Support\Facades\Storage;
-use Intervention\Image\Drivers\Gd\Driver;
+use Intervention\Image\Drivers\Gd\Driver as GdDriver;;
 
 class UserInvitationController extends Controller
 {
@@ -30,29 +32,57 @@ class UserInvitationController extends Controller
         $templates = Template::where('is_active', true)->get();
         return view('dashboard.invitation.create', compact('templates', 'music'));
     }
-    private function uploadCompressedImage($file, $path)
+
+    private function uploadCompressedImage($file, $fullPath, $maxWidth = 1600)
     {
-        $manager = new ImageManager(new Driver());
 
-        $image = $manager->read($file)
-            ->scaleDown(1600) // Hanya mengecilkan, tanpa distorsi
-            ->toJpeg(75);
+        if (!$file->isValid() || !str_starts_with($file->getMimeType(), 'image/')) {
+            throw new \Exception("File upload tidak valid atau bukan gambar.");
+        }
 
-        Storage::disk('public')->put($path, (string) $image);
+        $driver = new GdDriver();
+        $manager = new ImageManager($driver);
 
-        return $path;
+        $image = $manager->read($file->getRealPath());
+        $encoded = $image->encodeByExtension('webp', 75);
+
+        $folder = pathinfo($fullPath, PATHINFO_DIRNAME);
+        if (!Storage::disk('public')->exists($folder)) {
+            Storage::disk('public')->makeDirectory($folder);
+        }
+
+        Storage::disk('public')->put($fullPath, (string) $encoded);
+
+        return $fullPath;
     }
     public function store(Request $request)
     {
         $request->validate([
-                'bride_name' => 'required',
-                'groom_name' => 'required',
-                'wedding_date' => 'required|date',
-                'template_id' => 'required|exists:templates,id',
-                'gallery.*' => 'nullable|image|max:51200',
-                'gallery_cover' => 'nullable|image',
-                'custom_music' => 'nullable|audio/*',
-            ]);
+            'bride_name' => 'required|string|max:255',
+            'groom_name' => 'required|string|max:255',
+            'wedding_date' => 'required|date',
+            'template_id' => 'required|exists:templates,id',
+
+            // Gallery → hanya cek file type & size, jangan decode
+            'gallery.*' => 'nullable|file|mimes:jpeg,jpg,png,gif,webp|max:10240', // 10MB
+
+            // Cover
+            'gallery_cover' => 'nullable|file|mimes:jpeg,jpg,png,webp|max:10240',
+
+            // Audio → cek mime type & size
+            'custom_music' => 'nullable|file|mimes:mp3,wav,ogg|max:10240', // 10MB
+
+            // Foto pria/wanita
+            'foto_pria' => 'nullable|file|mimes:jpeg,jpg,png,webp|max:10240',
+            'foto_wanita' => 'nullable|file|mimes:jpeg,jpg,png,webp|max:10240',
+
+            // Text story → aman
+            'love_story.*' => 'nullable|string|max:5000',
+
+            // Story photos → cek file & mime type
+            'story_photo.*' => 'nullable|file|mimes:jpeg,jpg,png,webp|max:10240',
+        ]);
+
 
         DB::transaction(function () use ($request) {
 
@@ -120,7 +150,7 @@ class UserInvitationController extends Controller
 
             ]);
             if ($request->hasFile('foto_pria')) {
-                $path = "invitations/{$invitation->id}/pria/pria.jpg";
+                $path = "invitations/{$invitation->id}/pria/pria.webp";
 
                 $this->uploadCompressedImage(
                     $request->file('foto_pria'),
@@ -134,7 +164,7 @@ class UserInvitationController extends Controller
             }
 
             if ($request->hasFile('foto_wanita')) {
-                    $path = "invitations/{$invitation->id}/wanita/wanita.jpg";
+                    $path = "invitations/{$invitation->id}/wanita/wanita.webp";
 
                     $this->uploadCompressedImage(
                         $request->file('foto_wanita'),
@@ -149,7 +179,7 @@ class UserInvitationController extends Controller
 
 
            if ($request->hasFile('gallery_cover')) {
-                $path = "invitations/{$invitation->id}/cover/cover.jpg";
+                $path = "invitations/{$invitation->id}/cover/cover.webp";
 
                 $this->uploadCompressedImage(
                     $request->file('gallery_cover'),
@@ -172,12 +202,20 @@ class UserInvitationController extends Controller
                 ]);
             }
 
-            if ($request->hasFile('gallery')) {
-                foreach ($request->file('gallery') as $image) {
-                    $path = $image->store(
-                        "invitations/{$invitation->id}/gallery",
-                        'public'
-                    );
+           if ($request->hasFile('gallery')) {
+                foreach ($request->file('gallery') as $index => $imageFile) {
+                    // Tentukan path folder
+                    $folder = "invitations/{$invitation->id}/gallery";
+
+                    // Pastikan folder ada
+                    if (!Storage::disk('public')->exists($folder)) {
+                        Storage::disk('public')->makeDirectory($folder);
+                    }
+
+                    // Simpan file asli tanpa compress
+                    $path = $imageFile->storeAs($folder, $imageFile->getClientOriginalName(), 'public');
+
+                    // Simpan record di database
                     Gallery::create([
                         'invitation_id' => $invitation->id,
                         'image' => $path,
@@ -223,37 +261,49 @@ class UserInvitationController extends Controller
     public function update(Request $request, Invitation $invitation)
     {
 
-    // Validasi data input
         $request->validate([
-            'bride_name' => 'required',
-            'groom_name' => 'required',
+            'bride_name' => 'required|string|max:255',
+            'groom_name' => 'required|string|max:255',
             'wedding_date' => 'required|date',
             'template_id' => 'required|exists:templates,id',
-            'gallery.*' => 'nullable|image|max:51200', // 50MB
-            'gallery_cover' => 'nullable|image',
-            'custom_music' => 'nullable|mimes:audio/mpeg,mp3,ogg,wav', // Validasi lebih spesifik untuk audio
+            'gallery.*' => 'nullable|file|mimes:jpeg,jpg,png,gif,webp|max:10240',
+            'gallery_cover' => 'nullable|file|mimes:jpeg,jpg,png,webp|max:10240',
+            'custom_music' => 'nullable|file|mimes:mp3,wav,ogg|max:10240',
         ]);
 
         DB::transaction(function () use ($request, $invitation) {
-             $stories = [];
+         $oldStories = is_string($invitation->love_story)
+            ? json_decode($invitation->love_story, true)
+            : $invitation->love_story;
 
-            if ($request->has('love_story')) {
-                foreach ($request->love_story as $index => $storyText) {
+        $oldStories = $oldStories ?? [];
+        $stories = [];
 
-                    $photoPath = null;
+        if ($request->has('love_story')) {
+            foreach ($request->love_story as $index => $storyText) {
 
-                    if ($request->hasFile('story_photo.' . $index)) {
-                        $photoPath = $request->file('story_photo.' . $index)
-                            ->store('love_story', 'public');
+                // Default pakai foto lama
+                $photoPath = $oldStories[$index]['photo'] ?? null;
+
+                // Kalau ada foto baru → ganti
+                if ($request->hasFile('story_photo.' . $index)) {
+
+                    if ($photoPath && Storage::disk('public')->exists($photoPath)) {
+                        Storage::disk('public')->delete($photoPath);
                     }
 
-                    $stories[] = [
-                        'title' => $request->story_title[$index] ?? null,
-                        'story' => $storyText,
-                        'photo' => $photoPath,
-                    ];
+                    $photoPath = $request->file('story_photo.' . $index)
+                        ->store('love_story', 'public');
                 }
+
+                $stories[] = [
+                    'title' => $request->story_title[$index] ?? null,
+                    'story' => $storyText,
+                    'photo' => $photoPath,
+                ];
             }
+        }
+
             // Siapkan data untuk diupdate, termasuk slug yang baru
             $updateData = [
                 'template_id' => $request->template_id,
@@ -362,18 +412,27 @@ class UserInvitationController extends Controller
                 ]);
             }
 
-            // 5. Galeri Foto (Menambahkan foto baru)
-            // Logika ini hanya menambah foto baru, tidak menghapus yang lama.
-            // Jika Anda ingin mengganti seluruh galeri, Anda perlu logika tambahan (misalnya, menghapus semua Gallery::where('invitation_id', $invitation->id)->delete() sebelum loop ini).
-            if ($request->hasFile('gallery')) {
-                foreach ($request->file('gallery') as $image) {
-                    $path = $image->store("invitations/{$invitation->id}/gallery", 'public');
+        if ($request->hasFile('gallery')) {
+                foreach ($request->file('gallery') as $index => $imageFile) {
+                    // Tentukan path folder
+                    $folder = "invitations/{$invitation->id}/gallery";
+
+                    // Pastikan folder ada
+                    if (!Storage::disk('public')->exists($folder)) {
+                        Storage::disk('public')->makeDirectory($folder);
+                    }
+
+                    // Simpan file asli tanpa compress
+                    $path = $imageFile->storeAs($folder, $imageFile->getClientOriginalName(), 'public');
+
+                    // Simpan record di database
                     Gallery::create([
                         'invitation_id' => $invitation->id,
                         'image' => $path,
                     ]);
                 }
             }
+
            if ($request->enable_gift == 1) {
 
                 $banks   = $request->bank ?? [];

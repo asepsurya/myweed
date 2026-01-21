@@ -18,73 +18,72 @@ class TempelateSeed extends Seeder
     public function run(): void
     {
 
+        $templates = [
+        [
+            'name' => 'Simple',
+            'slug' => 'simple-theme',
+            'thumb' => 'elegant-thumb.png',
+            'preview' => 'simple_preview.png',
+        ],
+        [
+            'name' => 'Luxe Amour',
+            'slug' => 'elegant-theme',
+            'thumb' => 'elegant-thumb.png',
+            'preview' => 'elegant_preview.webp',
+        ],
+        [
+            'name' => 'Anime Tempelate',
+            'slug' => 'anime',
+            'thumb' => 'elegant-thumb.png',
+            'preview' => 'simple_preview.png',
+        ],
+        [
+            'name' => 'Adat Tempelate',
+            'slug' => 'adat',
+            'thumb' => 'elegant-thumb.png',
+            'preview' => 'simple_preview.png',
+        ],
+        [
+            'name' => 'Element Tempelate',
+            'slug' => 'element',
+            'thumb' => 'elegant-thumb.png',
+            'preview' => 'simple_preview.png',
+        ],
+        [
+            'name' => 'Sample Tempelate',
+            'slug' => 'sample',
+            'thumb' => 'elegant-thumb.png',
+            'preview' => 'simple_preview.png',
+        ],
+    ];
 
-        $thumbSource   = public_path('tempelate/sample_preview.png');
-        $previewSource = public_path('tempelate/sample_preview.png');
 
-        // simpan ke storage/app/public
-        $thumb = Storage::disk('public')->putFile(
-            'templates',
-            new HttpFile($thumbSource)
-        );
+      foreach ($templates as $tpl) {
 
-        $preview = Storage::disk('public')->putFile(
-            'preview',
-            new HttpFile($previewSource)
-        );
+            $thumbSource   = public_path('tempelate/thumb/' . $tpl['thumb']);
+            $previewSource = public_path('tempelate/preview/' . $tpl['preview']);
 
-        // hasil $thumb & $preview SAMA seperti upload
-        // contoh: templates/abc123.png, preview/xyz456.png
+            // Simpan thumbnail
+            $thumb = Storage::disk('public')->putFile(
+                'templates',
+                new HttpFile($thumbSource)
+            );
 
-        Template::create([
-            'name'       => 'Simple',
-            'slug'       => 'simple-theme',
-            'thumbnail'  => $thumb,
-            'preview'    => $preview,
-            'sections'   => ["hero", "couple", "event", "gallery", "rsvp", "music"],
-            'is_active'  => true
-        ]);
+            // Simpan preview
+            $preview = Storage::disk('public')->putFile(
+                'preview',
+                new HttpFile($previewSource)
+            );
 
-        Template::create([
-            'name'       => 'Ellegant Tempelate',
-            'slug'       => 'elegant-theme',
-            'thumbnail'  => $thumb,
-            'preview'    => $preview,
-            'sections'   => ["hero", "couple", "event", "gallery", "rsvp", "music"],
-            'is_active'  => true
-        ]);
-        Template::create([
-            'name'       => 'Anime Tempelate',
-            'slug'       => 'anime',
-            'thumbnail'  => $thumb,
-            'preview'    => $preview,
-            'sections'   => ["hero", "couple", "event", "gallery", "rsvp", "music"],
-            'is_active'  => true
-        ]);
-        Template::create([
-            'name'       => 'Adat Tempelate',
-            'slug'       => 'adat',
-            'thumbnail'  => $thumb,
-            'preview'    => $preview,
-            'sections'   => ["hero", "couple", "event", "gallery", "rsvp", "music"],
-            'is_active'  => true
-        ]);
-        Template::create([
-            'name'       => 'Element Tempelate',
-            'slug'       => 'element',
-            'thumbnail'  => $thumb,
-            'preview'    => $preview,
-            'sections'   => ["hero", "couple", "event", "gallery", "rsvp", "music"],
-            'is_active'  => true
-        ]);
-        Template::create([
-            'name'       => 'Sample Tempelate',
-            'slug'       => 'sample',
-            'thumbnail'  => $thumb,
-            'preview'    => $preview,
-            'sections'   => ["hero", "couple", "event", "gallery", "rsvp", "music"],
-            'is_active'  => true
-        ]);
+            Template::create([
+                'name'       => $tpl['name'],
+                'slug'       => $tpl['slug'],
+                'thumbnail'  => $thumb,     // contoh: templates/abc123.webp
+                'preview'    => $preview,   // contoh: preview/xyz456.webp
+                'sections'   => ["hero", "couple", "event", "gallery", "rsvp", "music"],
+                'is_active'  => true
+            ]);
+        }
 
 
 

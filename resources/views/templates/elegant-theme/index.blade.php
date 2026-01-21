@@ -9,42 +9,47 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
-    <!-- Include Fancybox CSS and JS -->
+
+    <!-- Libraries: Fancybox & Tabler Icons & jQuery -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" />
+    <link href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js"></script>
-    <link href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" rel="stylesheet">
 
     <style>
+        /* --- VARIABLES --- */
         :root {
-            --primary-color: #1A3C34;
-            /* Deep Emerald Green */
-            --secondary-color: #C5A059;
-            /* Muted Champagne Gold */
+            --primary-color: #1A3C34;   /* Deep Emerald Green */
+            --secondary-color: #C5A059; /* Muted Champagne Gold */
             --text-dark: #2C2C2C;
             --text-muted: #666666;
-            --bg-color: #FAF9F6;
-            /* Off-White / Eggshell */
+            --bg-color: #FAF9F6;        /* Off-White / Eggshell */
             --white: #FFFFFF;
             --border-color: rgba(26, 60, 52, 0.1);
+            --transition: all 0.3s ease;
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        /* --- RESET & BASE STYLES --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: 'Lato', sans-serif;
             background-color: #e6e6e6;
+            color: var(--text-dark);
             display: flex;
             justify-content: center;
             min-height: 100vh;
-            color: var(--text-dark);
         }
 
-        /* --- Container Mobile --- */
+        a { text-decoration: none; color: var(--secondary-color); transition: var(--transition); }
+        a:hover { color: var(--primary-color); }
+
+        /* --- TYPOGRAPHY --- */
+        h1, h2, h3, .serif-font { font-family: 'Playfair Display', serif; color: var(--primary-color); font-weight: 600; }
+        .script-font { font-family: 'Playfair Display', serif; font-style: italic; color: var(--secondary-color); }
+        .text-center { text-align: center; }
+
+        /* --- LAYOUT: MOBILE CONTAINER --- */
         .mobile-container {
             width: 100%;
             max-width: 414px;
@@ -57,190 +62,123 @@
             flex-direction: column;
         }
 
-        /* --- Typography --- */
-        h1,
-        h2,
-        h3,
-        .serif-font {
-            font-family: 'Playfair Display', serif;
-            color: var(--primary-color);
-            font-weight: 600;
-        }
+        /* --- UTILITY CLASSES --- */
+        .section-padding { padding: 80px 30px; position: relative; }
+        .hairline { width: 50px; height: 1px; background-color: var(--secondary-color); margin: 15px auto; }
+        .mb-4 { margin-bottom: 40px; }
+        .mt-4 { margin-top: 1.5rem; }
+        .mt-6 { margin-top: 2.5rem; }
 
-        .script-font {
-            font-family: 'Playfair Display', serif;
-            font-style: italic;
-            color: var(--secondary-color);
-        }
+        /* Grid & Flex */
+        .grid { display: grid; }
+        .grid-cols-4 { grid-template-columns: repeat(4, 1fr); }
+        .flex { display: flex; }
+        .justify-start { justify-content: flex-start; }
+        .items-center { align-items: center; }
+        .space-y-4 > * + * { margin-top: 1rem; }
 
-        /* PERBAIKAN: Paksa warna putih untuk elemen di dalam Countdown Section */
-        .countdown-section h3,
-        .countdown-section p {
-            color: var(--white) !important;
-        }
+        /* UI Elements */
+        .rounded { border-radius: 0.375rem; }
+        .w-full { width: 100%; }
+        .hidden { display: none !important; }
+        .bg-white { background-color: white; }
+        .border-b { border-bottom: 1px solid rgba(255, 255, 255, 0.5); }
+        .border { border: 1px solid #ddd; }
 
-        .text-center {
+        /* --- COMPONENTS --- */
+
+        /* Hero */
+        .hero {
+            height: 100vh;
+            background: linear-gradient(rgba(26, 60, 52, 0.4), rgba(26, 60, 52, 0.7)),
+                        url('https://picsum.photos/seed/wedding/800/1200'); /* Placeholder jika PHP gagal */
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: var(--white);
             text-align: center;
-        }
-
-        .hairline {
-            width: 50px;
-            height: 1px;
-            background-color: var(--secondary-color);
-            margin: 15px auto;
-        }
-
-        .section-padding {
-            padding: 80px 30px;
             position: relative;
         }
+        .hero h1 { font-size: 3.2rem; color: var(--white); line-height: 1.2; margin-bottom: 5px; letter-spacing: -0.5px; }
+        .hero-subtitle { font-size: 0.9rem; text-transform: uppercase; letter-spacing: 4px; margin-bottom: 20px; opacity: 0.9; }
+        .hero-date { font-family: 'Playfair Display', serif; font-style: italic; font-size: 1.4rem; margin-top: 15px; border: 1px solid rgba(255, 255, 255, 0.5); padding: 10px 30px; display: inline-block; }
 
-        .mb-4 {
-            margin-bottom: 40px;
+        /* Scroll Indicator */
+        .scroll-indicator {
+            position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%);
+            display: flex; flex-direction: column; align-items: center; gap: 8px;
+            color: white; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 2px;
+            animation: bounce 3s infinite; opacity: 0.7; cursor: pointer;
         }
 
-        /* Utility Classes */
-        .grid {
-            display: grid;
-        }
-
-        .grid-cols-4 {
-            grid-template-columns: repeat(4, 1fr);
-        }
-
-        .gap-2 {
-            gap: 0.5rem;
-        }
-
-        .text-2xl {
-            font-size: 1.5rem;
-            font-weight: bold;
-        }
-
-        .text-xs {
-            font-size: 0.75rem;
-        }
-
-        .text-sm {
-            font-size: 0.875rem;
-        }
-
-        .font-bold {
-            font-weight: bold;
-        }
-
-        .border-b {
-            border-bottom: 1px solid rgba(255, 255, 255, 0.5);
-        }
-
-        .border {
-            border: 1px solid #ddd;
-        }
-
-        .rounded {
-            border-radius: 0.375rem;
-        }
-
-        .w-full {
-            width: 100%;
-        }
-
-        .mt-5 {
-            margin-top: 1.25rem;
-        }
-
-        .mt-6 {
-            margin-top: 1.5rem;
-        }
-
-        .max-h-64 {
-            max-height: 16rem;
-        }
-
-        .overflow-y-auto {
-            overflow-y: auto;
-        }
-
-        .p-4 {
-            padding: 1rem;
-        }
-
-        .bg-gray-50 {
-            background-color: #f9fafb;
-        }
-
-        .space-y-3>*+* {
-            margin-top: 0.75rem;
-        }
-
-        .space-y-4>*+* {
-            margin-top: 1rem;
-        }
-
-        .flex {
-            display: flex;
-        }
-
-        .justify-start {
-            justify-content: flex-start;
-        }
-
-        .items-center {
-            align-items: center;
-        }
-
-        .space-x-3>*+* {
-            margin-left: 0.75rem;
-        }
-
-        .text-green-600 {
-            color: #16a34a;
-        }
-
-        .text-red-500 {
-            color: #ef4444;
-        }
-
-        .text-gray-500 {
-            color: #6b7280;
-        }
-
-        .text-gray-600 {
-            color: #4b5563;
-        }
-
-        .bg-white {
-            background-color: white;
-        }
-
-        .inline-block {
+       .btn-outline {
             display: inline-block;
+            margin-top: 25px;
+            padding: 12px 35px;
+            border: 1px solid var(--primary-color);
+            color: var(--primary-color);
+            text-decoration: none;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 2px;
+            transition: all 0.3s;
         }
 
-        .object-cover {
-            object-fit: cover;
+        .btn-outline:hover {
+            background-color:#1A3C34;
+            color: var(--white);
         }
 
-        /* Spinner */
-        .hidden {
-            display: none !important;
+        .reminder-btn {
+            display: inline-flex; align-items: center; gap: 8px; margin-top: 15px;
+            padding: 10px 24px; font-size: 14px; color: #2b2b2b;
+            background: rgba(255, 255, 255, 0.8); border: 1px solid rgba(0,0,0,0.1);
+            border-radius: 50px; backdrop-filter: blur(5px); cursor: pointer;
+            transition: var(--transition); box-shadow: 0 4px 15px rgba(0,0,0,0.05);
         }
+        .reminder-btn:hover { background: #fff; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.1); }
 
-        .animate-spin {
-            animation: spin 1s linear infinite;
+        /* Couple */
+        .couple-wrapper { display: flex; flex-direction: column; gap: 50px; }
+        .couple-card { text-align: center; }
+        .img-frame { position: relative; display: inline-block; margin-bottom: 20px; padding: 10px; border: 1px solid var(--secondary-color); }
+        .couple-img { width: 180px; height: 220px; object-fit: cover; filter: grayscale(20%) sepia(10%); }
+        .couple-name { font-size: 2rem; color: var(--primary-color); margin-bottom: 5px; }
+        .parent-name { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-top: 5px; margin-bottom: 10px;}
+        .ampersand { font-size: 3rem; color: var(--secondary-color); font-style: italic; margin: -30px 0 20px; font-family: 'Playfair Display', serif; }
+
+        /* Event */
+        .event-card { padding: 40px 20px; border: 1px solid var(--border-color); text-align: center; margin-bottom: 30px; transition: var(--transition); }
+        .event-card:hover { border-color: var(--secondary-color); transform: translateY(-5px); }
+        .event-title { font-size: 1.2rem; text-transform: uppercase; letter-spacing: 3px; color: var(--primary-color); margin-bottom: 15px; }
+        .event-time { font-size: 1.8rem; color: var(--secondary-color); font-family: 'Playfair Display', serif; }
+
+        /* Countdown */
+        .countdown-section { background-color: var(--primary-color); color: var(--white); text-align: center; }
+        .countdown-section h2, .countdown-section p { color: var(--white) !important; }
+        .countdown-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 40px; }
+        .timer-val { font-family: 'Playfair Display', serif; font-size: 2.5rem; line-height: 1; margin-bottom: 5px; }
+        .timer-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 2px; opacity: 0.7; }
+
+        /* Love Story (Timeline) */
+        #love-story { background: linear-gradient(to bottom, #ffffff, #f5f5f5); padding: 60px 20px; }
+        .timeline { position: relative; max-width: 400px; margin: 0 auto; }
+        .timeline::before { /* Garis Vertikal */
+            content: ""; position: absolute; left: 20px; top: 0; bottom: 0; width: 2px; background: #e5e7eb;
         }
-
-        @keyframes spin {
-            from {
-                transform: rotate(0deg);
-            }
-
-            to {
-                transform: rotate(360deg);
-            }
+        .timeline-item { position: relative; padding-left: 50px; margin-bottom: 30px; }
+        .timeline-item::before { /* Dots */
+            content: ""; position: absolute; left: 14px; top: 5px; width: 14px; height: 14px;
+            background: var(--secondary-color); border-radius: 50%; border: 3px solid #fff; box-shadow: 0 0 0 2px var(--secondary-color);
         }
+        .timeline-item h5 { color: var(--primary-color); font-size: 1.2rem; margin-bottom: 5px; font-family: 'Playfair Display', serif; }
+        .timeline-content img { border-radius: 8px; margin-top: 10px; max-height: 150px; object-fit: cover; }
 
-        /* --- Masonry Gallery --- */
+        /* Gallery */
         .masonry-gallery {
             column-count: 2;
             column-gap: 1rem;
@@ -264,406 +202,120 @@
             transform: scale(1.02);
         }
 
-        /* --- Hero Section --- */
-        .hero {
-            height: 100vh;
-            background: linear-gradient(rgba(26, 60, 52, 0.4), rgba(26, 60, 52, 0.7)),
-            url('{{ asset('storage/' . $invitation->gallery_cover) }}');
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            color: var(--white);
-            text-align: center;
-            position: relative;
-        }
 
-        .hero-subtitle {
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 4px;
-            margin-bottom: 20px;
-            opacity: 0.9;
-        }
+        /* Gifts */
 
-        .hero h1 {
-            font-size: 3.2rem;
-            color: var(--white);
-            margin-bottom: 5px;
-            letter-spacing: -0.5px;
-            line-height: 1.2;
-        }
 
-        .hero-date {
-            font-family: 'Playfair Display', serif;
-            font-style: italic;
-            font-size: 1.4rem;
-            margin-top: 15px;
-            border-top: 1px solid rgba(255, 255, 255, 0.5);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.5);
-            padding: 10px 30px;
-            display: inline-block;
-        }
-
-        .scroll-indicator {
-            position: absolute;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 8px;
-            color: white;
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            animation: bounce 3s infinite;
-            opacity: 0.7;
-            cursor: pointer;
-        }
-
-        /* --- Quote Section --- */
-        .quote-section {
-            background-color: var(--white);
-            text-align: center;
-            color: var(--text-muted);
-            font-style: italic;
-            font-size: 0.95rem;
-            line-height: 1.8;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        /* --- Couple Section --- */
-        .couple-section {
-            background-color: var(--bg-color);
-        }
-
-        .couple-wrapper {
-            display: flex;
-            flex-direction: column;
-            gap: 50px;
-        }
-
-        .couple-card {
-            text-align: center;
-        }
-
-        .img-frame {
-            position: relative;
-            display: inline-block;
-            margin-bottom: 20px;
-            padding: 10px;
-            border: 1px solid var(--secondary-color);
-        }
-
-        .couple-img {
-            width: 180px;
-            height: 220px;
-            object-fit: cover;
-            filter: grayscale(20%) sepia(10%);
-        }
-
-        .couple-name {
-            font-size: 2rem;
-            margin-bottom: 5px;
-            color: var(--primary-color);
-        }
-
-        .parent-name {
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-top: 5px;
-            margin-bottom: 10px;
-        }
-
-        .ampersand {
-            font-family: 'Playfair Display', serif;
-            font-size: 3rem;
-            color: var(--secondary-color);
-            font-style: italic;
-            margin-top: -30px;
-            margin-bottom: 20px;
-        }
-
-        /* --- Event Section --- */
-        .event-card {
-            margin-bottom: 30px;
-            padding: 40px 20px;
-            border: 1px solid var(--border-color);
-            text-align: center;
-            position: relative;
-            transition: all 0.3s ease;
-        }
-
-        .event-card:hover {
-            border-color: var(--secondary-color);
-            transform: translateY(-5px);
-        }
-
-        .event-title {
-            font-size: 1.2rem;
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            color: var(--primary-color);
-            margin-bottom: 15px;
-        }
-
-        .event-time {
-            font-size: 1.8rem;
-            color: var(--secondary-color);
-            font-family: 'Playfair Display', serif;
-            font-weight: 400;
-        }
-
-        .btn-outline {
-            display: inline-block;
-            margin-top: 25px;
-            padding: 12px 35px;
-            border: 1px solid var(--primary-color);
-            color: var(--primary-color);
-            text-decoration: none;
-            text-transform: uppercase;
-            font-size: 0.75rem;
-            letter-spacing: 2px;
-            transition: all 0.3s;
-        }
-
-        .btn-outline:hover {
-            background-color: var(--primary-color);
-            color: var(--white);
-        }
-
-        /* --- Countdown --- */
-        .countdown-section {
-            background-color: var(--primary-color);
-            color: var(--white);
-            text-align: center;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .countdown-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 10px;
-            margin-top: 40px;
-        }
-
-        .timer-val {
-            font-family: 'Playfair Display', serif;
-            font-size: 2.5rem;
-            line-height: 1;
-            margin-bottom: 5px;
-            color: var(--white);
-        }
-
-        .timer-label {
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            opacity: 0.7;
-        }
-
-        /* --- RSVP Form --- */
-        .rsvp-form {
-            background: var(--white);
-            padding: 40px 30px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05);
-            border-radius: 8px;
-        }
-
-        .form-group {
-            margin-bottom: 25px;
-            text-align: left;
-        }
-
+        /* RSVP */
+        .rsvp-form { background: var(--white); padding: 40px 30px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05); border-radius: 8px; }
+        .form-group { margin-bottom: 20px; text-align: left; }
         .form-control {
-            width: 100%;
-            border: none;
-            border-bottom: 1px solid #ddd;
-            padding: 10px 0;
-            font-family: 'Playfair Display', serif;
-            font-size: 1.1rem;
-            background: transparent;
-            color: var(--text-dark);
+            width: 100%; border: 1px solid #ddd; border-radius: 5px; padding: 12px;
+            font-family: 'Lato', sans-serif; font-size: 1rem; background: #fff; color: var(--text-dark);
             transition: border-color 0.3s;
         }
+        .form-control:focus { outline: none; border-color: var(--secondary-color); }
+        .rsvp-list-item { display: flex; gap: 12px; padding: 12px; background: #f9fafb; border-radius: 8px; align-items: flex-start; }
+        .avatar-placeholder { width: 35px; height: 35px; background: #ddd; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; overflow: hidden; }
 
-        .form-control:focus {
-            outline: none;
-            border-bottom: 1px solid var(--secondary-color);
+        /* Music Control */
+        .music-control {
+            position: fixed; bottom: 20px; right: 20px; width: 50px; height: 50px;
+            background-color: var(--primary-color); border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); z-index: 9999;
+            border: 2px solid white; color: white; font-size: 24px;
+            transition: transform 0.3s;
         }
+        .music-control.playing { animation: spin 4s linear infinite; }
 
-        .form-control.padded {
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            background: #fff;
-            font-family: 'Lato', sans-serif;
-        }
+        /* Footer */
+        footer { background-color: var(--primary-color); color: var(--white); padding: 60px 20px; text-align: center; }
 
-        /* --- Footer --- */
-        footer {
-            background-color: var(--primary-color);
-            color: var(--white);
-            padding: 60px 20px;
-            text-align: center;
-        }
-
-        footer p {
-            font-size: 0.9rem;
-            opacity: 0.8;
-            letter-spacing: 1px;
-        }
-
-        /* --- Animations --- */
-        .fade-in {
-            opacity: 0;
-            transform: translateY(40px);
-            transition: opacity 1.2s ease-out, transform 1.2s ease-out;
-        }
-
-        .fade-in.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
+        /* --- ANIMATIONS --- */
+        .fade-in { opacity: 0; transform: translateY(30px); transition: opacity 1s ease-out, transform 1s ease-out; }
+        .fade-in.visible { opacity: 1; transform: translateY(0); }
 
         @keyframes bounce {
-
-            0%,
-            20%,
-            50%,
-            80%,
-            100% {
-                transform: translate(-50%, 0);
-            }
-
-            40% {
-                transform: translate(-50%, -10px);
-            }
-
-            60% {
-                transform: translate(-50%, -5px);
-            }
+            0%, 20%, 50%, 80%, 100% { transform: translate(-50%, 0); }
+            40% { transform: translate(-50%, -10px); }
+            60% { transform: translate(-50%, -5px); }
         }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
 
-        /* --- Toast Notification --- */
+        /* Toast Notification */
         #toast {
-            visibility: hidden;
-            min-width: 200px;
-            background-color: var(--primary-color);
-            color: #fff;
+            visibility: hidden; min-width: 250px; background-color: #333; color: #fff;
+            text-align: center; padding: 16px; position: fixed; z-index: 100;
+            left: 50%; bottom: 30px; transform: translateX(-50%);
+            font-size: 14px; border-radius: 4px; opacity: 0; transition: opacity 0.5s, bottom 0.5s;
+        }
+        #toast.show { visibility: visible; opacity: 1; bottom: 50px; }
+
+        /* Spinner */
+        .animate-spin { animation: spin 1s linear infinite; }
+         /* --- SECTION: QUOTES (Rapi & Center) --- */
+        .quote-section {
+            padding: 100px 30px;
             text-align: center;
-            padding: 15px 30px;
-            position: fixed;
-            z-index: 99;
-            left: 50%;
-            bottom: 40px;
-            transform: translateX(-50%);
+            background: var(--white);
+            position: relative;
+        }
+        .quote-icon {
+            font-size: 4rem;
+            color: var(--secondary-color);
+            opacity: 0.2;
             font-family: 'Playfair Display', serif;
-            letter-spacing: 1px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-            border-radius: 4px;
+            display: block;
+            margin-bottom: -30px;
+            line-height: 1;
+        }
+        .quote-content {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.25rem;
+            line-height: 1.8;
+            color: var(--text-dark);
+            max-width: 90%; /* Membatasi lebar biar rapi */
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
         }
 
-        #toast.show {
-            visibility: visible;
-            animation: fadein 0.5s, fadeout 0.5s 2.5s;
+ /* --- SECTION: RSVP (Rapi & Chat Style) --- */
+        .rsvp-section { padding: 80px 20px; background: var(--white); }
+        .rsvp-list {
+            max-height: 400px; overflow-y: auto;
+            padding-right: 5px; /* Space for scrollbar */
+            margin-top: 30px;
         }
+        /* Custom Scrollbar */
+        .rsvp-list::-webkit-scrollbar { width: 4px; }
+        .rsvp-list::-webkit-scrollbar-thumb { background-color: #ddd; border-radius: 4px; }
 
-        @keyframes fadein {
-            from {
-                bottom: 0;
-                opacity: 0;
-            }
-
-            to {
-                bottom: 40px;
-                opacity: 1;
-            }
+        .comment-item {
+            display: flex; gap: 15px;
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            border: 1px solid #eee;
+            animation: slideIn 0.5s ease-out;
         }
-
-        @keyframes fadeout {
-            from {
-                bottom: 40px;
-                opacity: 1;
-            }
-
-            to {
-                bottom: 0;
-                opacity: 0;
-            }
+        .comment-avatar {
+            width: 40px; height: 40px;
+            border-radius: 50%; background: #ddd;
+            flex-shrink: 0; overflow: hidden;
         }
-
-        @keyframes fadeUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        .comment-avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .comment-content h5 { font-size: 0.95rem; color: var(--primary-color); margin-bottom: 4px; font-family: 'Playfair Display', serif; font-weight: 600; }
+        .comment-content p { font-size: 0.85rem; color: #555; line-height: 1.5; word-wrap: break-word; }
+        .status-badge {
+            font-size: 0.7rem; padding: 2px 8px; border-radius: 4px;
+            display: inline-block; margin-top: 5px;
         }
-
-        .animate-on-scroll {
-            opacity: 0;
-            transform: translateY(30px);
-        }
-
-        .animate-on-scroll.show {
-            animation: fadeUp .9s ease-out forwards;
-        }
-
-        /* --- Music Control Button --- */
-        .music-control {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            width: 45px;
-            height: 45px;
-            background-color: var(--primary-color);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-            z-index: 9999;
-            border: 2px solid white;
-            animation: rotate 4s linear infinite;
-            animation-play-state: paused;
-            color: white;
-            font-size: 18px;
-        }
-
-        .music-control.playing {
-            animation-play-state: running;
-        }
-
-        @keyframes rotate {
-            from {
-                transform: rotate(0deg);
-            }
-
-            to {
-                transform: rotate(360deg);
-            }
-        }
-
-        a {
-            text-decoration: none;
-            color: #C5A059
-        }
-
-        #gifts .card {
+        .status-hadir { background: #dcfce7; color: #166534; } /* Green */
+        .status-tidak { background: #fee2e2; color: #991b1b; } /* Red */
+           #gifts .card {
             border-radius: 16px;
             transition: all 0.3s ease;
             background:white;
@@ -732,73 +384,44 @@
             font-size: 14px;
             cursor: pointer;
         }
-        .reminder-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    margin-top:10px;
-    padding: 12px 26px;
-    font-size: 15px;
-    font-weight: 500;
-    letter-spacing: 0.4px;
-    color: #2b2b2b;
-    background: rgba(255, 255, 255, 0.7);
-    border: 1px solid rgba(0, 0, 0, 0.15);
-    border-radius: 50px;
-    backdrop-filter: blur(8px);
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-}
-
-.reminder-btn .icon {
-    font-size: 18px;
-}
-
-.reminder-btn:hover {
-    background: #111;
-    color: #fff;
-    transform: translateY(-2px);
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.18);
-}
-
-.reminder-btn:active {
-    transform: scale(0.96);
-}
-
+         .timeline-line { position: absolute; left: 20px; top: 0; bottom: 0; width: 1px; background: var(--secondary-color); opacity: 0.3; }
+        .timeline-item { padding-left: 50px; margin-bottom: 40px; position: relative; }
+        .timeline-dot {
+            position: absolute; left: 14px; top: 0; width: 14px; height: 14px;
+            background: var(--bg-color); border: 2px solid var(--secondary-color); border-radius: 50%;
+        }
+        .story-year { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 2px; color: var(--secondary-color); margin-bottom: 5px; display: block; }
 
     </style>
 </head>
 <body>
 
-    <!-- Audio Control Floating Button (Outside container to float above) -->
+    <!-- Audio Control -->
     <div id="musicBtn" class="music-control">
-        <i class="ti ti-player-play"></i>
+        <i class="ti ti-player-play" id="musicIcon"></i>
     </div>
 
-    <!-- Container Simulasi Mobile -->
+    <!-- Main Container -->
     <div class="mobile-container">
 
         <!-- Hero Section -->
-        <header class="hero">
+        <header class="hero" style="background-image: linear-gradient(rgba(26, 60, 52, 0.4), rgba(26, 60, 52, 0.7)), url('{{ asset('storage/' . $invitation->gallery_cover) }}');">
             <div class="fade-in">
                 <div class="hero-subtitle">The Wedding Of</div>
-                <h1>{{ $invitation->groom_nickname }} & {{ $invitation->bride_nickname }} </h1>
+                <h1>{{ $invitation->groom_nickname }} & {{ $invitation->bride_nickname }}</h1>
 
                 <p class="text-sm">
                     Kepada Yth<br>
-                    <span class="border-b px-2 py-1 inline-block mt-2">
-                        Bapak / Ibu / Saudara
-                    </span>
+                    <span class="border-b px-2 py-1 inline-block mt-2">Bapak / Ibu / Saudara</span>
                 </p>
-
-                <p class="mt-5">{{ request('to') ?? 'Keluarga Besar' }}</p>
+                <p class="mt-4">{{ request('to') ?? 'Keluarga Besar' }}</p>
 
                 <div class="hero-date">{{ \Carbon\Carbon::parse($invitation->wedding_date)->locale('id')->translatedFormat('l, d F Y') }}</div>
+
                 <button id="reminderBtn" class="reminder-btn">
-                <span class="icon"></span>
-                <span class="text">Setel Pengingat</span>
-            </button>
+                    <i class="ti ti-calendar-event"></i>
+                    <span>Setel Pengingat</span>
+                </button>
             </div>
 
             <div class="scroll-indicator" onclick="document.getElementById('quote').scrollIntoView({behavior: 'smooth'})">
@@ -811,7 +434,11 @@
         <section id="quote" class="section-padding quote-section">
             <div class="fade-in">
                 <p class="serif-font" style="font-size: 1.2rem; color: var(--primary-color); margin-bottom: 20px;">Quotes</p>
-                <p>{{ $invitation->wedding_quote }}</p>
+              <p style="font-size: 1rem; line-height: 1.8;">
+                    {!! nl2br(e(str_replace('(', "\n(", $invitation->wedding_quote))) !!}
+                </p>
+
+
                 <div class="hairline" style="margin-top:30px;"></div>
             </div>
         </section>
@@ -827,12 +454,12 @@
                 <!-- Groom -->
                 <div class="couple-card">
                     <div class="img-frame">
-                        <img src="{{ asset('storage/' . $invitation->foto_pria) }}" alt="{{ $invitation->groom_name }}" class="couple-img">
+                        <img src="{{ asset('storage/' . $invitation->foto_pria) }}" alt="{{ $invitation->groom_name }}" class="couple-img" loading="lazy">
                     </div>
                     <h3 class="couple-name">{{ $invitation->groom_name }}</h3>
                     <p class="parent-name">Putra dari Bpk. {{ $invitation->groom_father_name }} & Ibu {{ $invitation->groom_mother_name }}</p>
-                    <a href="{{ $invitation->groom_instagram }}" target="_blank" class=" hover:text-primary/80">
-                        <i class="ti ti-brand-instagram"></i> {{ $invitation->groom_username_instagram }}
+                    <a href="{{ $invitation->groom_instagram }}" target="_blank" style="color: var(--text-muted); font-size: 0.9rem;margin-top:10px;">
+                        <i class="ti ti-brand-instagram"></i> Instagram
                     </a>
                 </div>
 
@@ -841,12 +468,12 @@
                 <!-- Bride -->
                 <div class="couple-card">
                     <div class="img-frame">
-                        <img src="{{ asset('storage/' . $invitation->foto_wanita) }}" alt="{{ $invitation->bride_name }}" class="couple-img">
+                        <img src="{{ asset('storage/' . $invitation->foto_wanita) }}" alt="{{ $invitation->bride_name }}" class="couple-img" loading="lazy">
                     </div>
                     <h3 class="couple-name">{{ $invitation->bride_name }}</h3>
                     <p class="parent-name">Putri dari Bpk. {{ $invitation->bride_father_name }} & Ibu {{ $invitation->bride_mother_name }}</p>
-                    <a href="{{ $invitation->bride_instagram }}" target="_blank" class=" hover:text-primary/80">
-                        <i class="ti ti-brand-instagram"></i> {{ $invitation->bride_username_instagram }}
+                    <a href="{{ $invitation->bride_instagram }}" target="_blank" style="color: var(--text-muted); font-size: 0.9rem;margin-top:10px;">
+                        <i class="ti ti-brand-instagram"></i> Instagram
                     </a>
                 </div>
             </div>
@@ -866,7 +493,7 @@
                     <div class="event-title">Akad Nikah</div>
                     <div class="event-time">{{ $invitation->akad_time }} - {{ $invitation->akad_time_end }}</div>
                     <p style="color: var(--text-muted); margin-top: 10px;"><b>{{ $invitation->akad_location }}</b></p>
-                    <p style="color: var(--text-muted); margin-top: 10px;">{{ $invitation->akad_address }}</p>
+                    <p style="color: var(--text-muted); margin-top: 5px;margin-bottom:10px;">{{ $invitation->akad_address }}</p>
                     <a href="{{ $invitation->akad_maps }}" target="_blank" class="btn-outline">Lihat Peta</a>
                 </div>
 
@@ -875,7 +502,7 @@
                     <div class="event-title">Wedding Reception</div>
                     <div class="event-time">{{ $invitation->resepsi_time }} - {{ $invitation->resepsi_time_end }}</div>
                     <p style="color: var(--text-muted); margin-top: 10px;"><b>{{ $invitation->resepsi_location }}</b></p>
-                    <p style="color: var(--text-muted); margin-top: 10px;">{{ $invitation->resepsi_address }}</p>
+                    <p style="color: var(--text-muted); margin-top: 5px;margin-bottom:10px;">{{ $invitation->resepsi_address }}</p>
                     <a href="{{ $invitation->resepsi_maps }}" target="_blank" class="btn-outline">Lihat Peta</a>
                 </div>
             </div>
@@ -888,25 +515,41 @@
                 <h2 class="serif-font" style="color: var(--white);">Menuju Bahagia</h2>
 
                 <div class="countdown-grid" id="countdown">
-                    <div class="text-center">
-                        <p id="days" class="timer-val">0</p>
-                        <p class="timer-label">Hari</p>
-                    </div>
-                    <div class="text-center">
-                        <p id="hours" class="timer-val">0</p>
-                        <p class="timer-label">Jam</p>
-                    </div>
-                    <div class="text-center">
-                        <p id="minutes" class="timer-val">0</p>
-                        <p class="timer-label">Menit</p>
-                    </div>
-                    <div class="text-center">
-                        <p id="seconds" class="timer-val">0</p>
-                        <p class="timer-label">Detik</p>
-                    </div>
+                    <div class="text-center"><p id="days" class="timer-val">00</p><p class="timer-label">Hari</p></div>
+                    <div class="text-center"><p id="hours" class="timer-val">00</p><p class="timer-label">Jam</p></div>
+                    <div class="text-center"><p id="minutes" class="timer-val">00</p><p class="timer-label">Menit</p></div>
+                    <div class="text-center"><p id="seconds" class="timer-val">00</p><p class="timer-label">Detik</p></div>
                 </div>
             </div>
         </section>
+
+        <!-- Love Story -->
+        @php
+            $loveStories = is_array($invitation->love_story) ? $invitation->love_story : json_decode($invitation->love_story, true);
+        @endphp
+
+       @if(!empty($loveStories[0]['title']) || !empty($loveStories[0]['story']))
+        <section id="love-story">
+            <div class="text-center mb-4">
+                <p class="hero-subtitle" style="color: var(--text-muted);">Kisah Kami</p>
+                <h2 class="serif-font" style="font-size: 2.5rem;">Love Story</h2>
+            </div>
+
+            <div class="timeline">
+                @foreach($loveStories as $story)
+                <div class="timeline-item fade-in">
+                    <h5 >{{ $story['title'] }}</h5>
+                    <div class="timeline-content" style="font-size: 0.80rem; line-height: 1.8;">
+                        <p style="color: var(--text-muted); margin-top: 5px;margin-bottom:10px;font-family:Arial, Helvetica, sans-serif">{{ $story['story'] }}</p>
+                        @if($story['photo'])
+                            <img src="{{ asset('storage/' . $story['photo']) }}" alt="Story Photo" loading="lazy">
+                        @endif
+                    </div>
+                </div>
+                @endforeach
+            </div>
+        </section>
+        @endif
 
         <!-- Gallery (Masonry) -->
         <section class="section-padding" style="background-color: var(--white);">
@@ -917,26 +560,28 @@
             <div class="masonry-gallery fade-in">
                 @forelse ($invitation->galleries as $photo)
                 <a href="{{ asset('storage/' . $photo->image) }}" data-fancybox="gallery" class="masonry-item">
-                    <img src="{{ asset('storage/' . $photo->image) }}" alt="Gallery Photo">
+                    <img src="{{ asset('storage/' . $photo->image) }}" alt="Gallery Photo" loading="lazy">
                 </a>
                 @empty
-                <p class="text-center w-full text-muted" style="grid-column: span 2;">Belum ada foto galeri.</p>
+                <p class="text-center w-full text-muted">Belum ada foto galeri.</p>
                 @endforelse
             </div>
         </section>
-        @if($invitation->enable_gift == 1)
-        @if($invitation->gifts->count())
-        <section id="gifts" class="" style="background-color: #f7f7f7;padding-top:50px;">
-            <div class="container">
-                <p class="hero-subtitle text-center" style="color: var(--text-muted);">Beri Hadiah</p>
-                <h3 class="serif-font text-center" style="font-size: 2.5rem;">Wedding Gifts</h3>
 
-                <div class="row justify-content-center g-4">
-                    @foreach($invitation->gifts as $gift)
-                    <div class="col-md-8 col-12">
-                        <div class="gift-card py-5">
-                            @php
-                            $bankLogos = [
+        <!-- Gifts -->
+        @if($invitation->enable_gift == 1 && $invitation->gifts->count())
+        <section id="gifts" style="background-color: #f7f7f7; padding: 50px 20px;">
+            <div class="text-center mb-4">
+                <p class="hero-subtitle" style="color: var(--text-muted);">Beri Hadiah</p>
+                <h2 class="serif-font" style="font-size: 2.5rem;">Wedding Gifts</h2>
+
+            </div>
+
+            <div class="grid" style="gap: 20px;">
+                @foreach($invitation->gifts as $gift)
+                <div class="gift-card">
+                    @php
+                        $bankLogos = [
                             'BCA' => 'https://upload.wikimedia.org/wikipedia/commons/5/5c/Bank_Central_Asia.svg',
                             'BNI' => 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f0/Bank_Negara_Indonesia_logo_%282004%29.svg/640px-Bank_Negara_Indonesia_logo_%282004%29.svg.png',
                             'BRI' => 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/BANK_BRI_logo.svg/640px-BANK_BRI_logo.svg.png',
@@ -947,37 +592,31 @@
                             'Dana' => 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/Logo_dana_blue.svg/960px-Logo_dana_blue.svg.png',
                             'LinkAja' => 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/Link_logo_%282019%29.svg/3840px-Link_logo_%282019%29.svg.png',
                             'ShopeePay' => 'https://images.seeklogo.com/logo-png/40/2/shopee-pay-logo-png_seeklogo-406839.png',
-                            ];
-                            @endphp
+                        ];
+                    @endphp
 
-                            <div class="gift-logo">
-                                @if(!empty($bankLogos[$gift->bank]))
-                                <img src="{{ $bankLogos[$gift->bank] }}" alt="{{ $gift->bank }}" style="height:30px; object-fit:contain;">
-                                @else
-                                <i class="ti ti-wallet fs-1"></i>
-                                @endif
-                            </div>
-
-                            <div class="gift-content text-center">
-                                <h5 class="gift-name">{{ strtoupper($gift->name) }}</h5>
-                                <p class="gift-number">{{ $gift->number }}</p>
-                            </div>
-
-                            <button class="gift-copy" onclick="copyText('{{ $gift->number }}')">
-                                <i class="ti ti-copy"></i> Salin
-                            </button>
-
-                        </div>
+                    <div class="gift-logo">
+                        @if(!empty($bankLogos[$gift->bank]))
+                            <img src="{{ $bankLogos[$gift->bank] }}" alt="{{ $gift->bank }}" style="height:30px; object-fit:contain;" loading="lazy">
+                        @else
+                            <i class="ti ti-wallet fs-1" style="font-size: 1.5rem;"></i>
+                        @endif
                     </div>
-                    @endforeach
+
+                    <div class="gift-content">
+                        <h5 class="gift-name">{{ strtoupper($gift->name) }}</h5>
+                        <p class="gift-number">{{ $gift->number }}</p>
+                    </div>
+
+                    <button class="gift-copy" onclick="copyText('{{ $gift->number }}')">
+                        <i class="ti ti-copy"></i> Salin
+                    </button>
                 </div>
+                @endforeach
             </div>
         </section>
         @endif
 
-
-
-        @endif
         <!-- RSVP Form -->
         @if($invitation->enable_rsvp == 1)
         <section class="section-padding" style="background-color: #f7f7f7;">
@@ -990,23 +629,22 @@
                 <form id="rsvpForm" class="space-y-4">
                     @csrf
                     <div class="form-group">
-                        <input class="form-control padded w-full" placeholder="Nama" name="name" required>
+                        <input class="form-control w-full" placeholder="Nama Lengkap" name="name" required>
                     </div>
                     <div class="form-group">
-                        <select class="form-control padded w-full" name="attending">
+                        <select class="form-control w-full" name="attending">
                             <option value="1">Hadir</option>
                             <option value="0">Tidak Hadir</option>
                         </select>
                     </div>
                     <div class="form-group">
-                        <textarea id="rsvpMessageInput" class="form-control padded w-full resize-none" rows="3" placeholder="Doa & Ucapan" name="message" style="height:100px; max-height:300px;" required></textarea>
+                        <textarea id="rsvpMessageInput" class="form-control w-full resize-none" rows="3" placeholder="Tulis doa & ucapan..." name="message" style="height: 100px;" required></textarea>
                     </div>
 
                     <div class="text-center">
-                        <button id="rsvpButton" type="submit" class="btn-outline" style="background:transparent; cursor:pointer;">
-                            <span id="buttonText">Kirim</span>
-                            <!-- SVG Spinner -->
-                            <svg id="buttonSpinner" class="w-5 h-5 text-white animate-spin hidden" style="width:20px; height:20px; vertical-align:middle; display:none;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <button id="rsvpButton" type="submit" class="btn-outline" style="width: 100%; background: transparent;">
+                            <span id="buttonText">Kirim Ucapan</span>
+                            <svg id="buttonSpinner" class="animate-spin hidden" style="width: 20px; height: 20px; vertical-align: middle; margin-left: 10px;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path>
                             </svg>
@@ -1015,291 +653,304 @@
                 </form>
             </div>
 
-            <div id="rsvpMessage" class="max-w-md mx-auto mt-4 text-center text-green-600"></div>
+            <!-- Status Message -->
+            <div id="rsvpMessage" class="text-center mt-4 text-sm font-bold hidden"></div>
 
-            <div class="mt-6 p-4 bg-white rounded-lg mx-auto" style="max-width: 414px;">
+            <!-- RSVP List -->
+            <div class="mt-6 bg-white rounded-lg mx-auto p-4" style="max-width: 414px; border: 1px solid #eee;padding:10px;">
                 <h4 class="text-center serif-font text-lg mb-4" style="color: var(--primary-color);">Tinggalkan kami doa terbaik anda untuk momen bahagia kami</h4>
-
-                <div id="rsvpList" class="space-y-3 max-h-64 overflow-y-auto">
-                    <!-- Daftar RSVP akan di-load via JS -->
+                <div id="rsvpList" class="space-y-4" style="max-height: 400px; overflow-y: auto;padding:10px;">
+                    <!-- List loaded via JS -->
                 </div>
-                <div class="text-center mt-2">
-                    <span class="text-sm text-gray-600">({{ $invitation->rsvps->count() }} Ucapan & Doa Restu)</span>
+                <div class="text-center mt-4">
+                    <span class="text-xs text-gray-400">({{ $invitation->rsvps->count() }} Ucapan)</span>
                 </div>
             </div>
         </section>
         @endif
 
-
         <!-- Footer -->
         <footer>
             <h2 class="serif-font" style="color: var(--white); margin-bottom: 10px;">{{ $invitation->groom_nickname }} & {{ $invitation->bride_nickname }}</h2>
             <div class="hairline" style="background-color: var(--secondary-color); width: 30px;"></div>
-            <p style="margin-top: 20px; font-size: 0.8rem;">Merupakan suatu kehormatan dan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir.</p>
+            <p style="margin-top: 20px; font-size: 0.9rem; opacity: 0.8;">Merupakan suatu kehormatan dan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir.</p>
             <br>
             <p style="font-size: 0.7rem; opacity: 0.5;">&copy; {{ date('Y') }} Elegant Wedding Invitation</p>
         </footer>
 
-        <!-- Toast Notification -->
+        <!-- Toast -->
         <div id="toast">Pesan terkirim dengan terima kasih.</div>
 
-    </div>
+    </div> <!-- End Mobile Container -->
 
-    <!-- Audio -->
+    <!-- Audio Element -->
     <audio id="bgMusic" loop>
         @if($invitation->music == 0 && $invitation->music)
-        <!-- Musik Custom -->
-        <source src="{{ asset('storage/'.$invitation->music) }}" type="audio/mpeg">
-
+            <source src="{{ asset('storage/'.$invitation->music) }}" type="audio/mpeg">
         @elseif($invitation->music && $invitation->musicPreset)
-        <!-- Musik dari Database -->
-        <source src="{{ asset('storage/'.$invitation->musicPreset->audio_url) }}" type="audio/mpeg">
-
+            <source src="{{ asset('storage/'.$invitation->musicPreset->audio_url) }}" type="audio/mpeg">
         @else
-        <!-- Musik Default -->
-        <source src="https://www.bensound.com/bensound-music/bensound-romantic.mp3" type="audio/mpeg">
+            <source src="https://www.bensound.com/bensound-music/bensound-romantic.mp3" type="audio/mpeg">
         @endif
     </audio>
+
+    <!-- JavaScript Logic -->
     <script>
-        function copyText(text) {
-            navigator.clipboard.writeText(text);
-            alert("Nomor berhasil disalin!");
-        }
+        document.addEventListener('DOMContentLoaded', () => {
 
-    </script>
-
-    <!-- Scripts -->
-    <script>
-        // --- 1. Logic Auto Height Textarea ---
-        const textarea = document.getElementById('rsvpMessageInput');
-        if (textarea) {
-            textarea.addEventListener('input', function() {
-                this.style.height = 'auto';
-                this.style.height = Math.min(this.scrollHeight, 300) + 'px';
-            });
-        }
-
-        // --- 2. Logic Countdown (Dinamis dari Laravel) ---
-        const weddingDateString = "{{ $invitation->wedding_date }}";
-        const weddingDate = new Date(weddingDateString).getTime();
-
-        const timerInterval = setInterval(function() {
-            const now = new Date().getTime();
-            const distance = weddingDate - now;
-
-            // Cek jika tanggal valid
-            if (isNaN(weddingDate)) {
-                console.error("Format tanggal tidak valid");
-                clearInterval(timerInterval);
-                return;
+            /* --- 1. COPY TO CLIPBOARD & TOAST --- */
+            function showToast(message) {
+                const toast = document.getElementById('toast');
+                toast.textContent = message;
+                toast.className = 'show';
+                setTimeout(() => { toast.className = toast.className.replace('show', ''); }, 3000);
             }
 
-            if (distance < 0) {
-                clearInterval(timerInterval);
-                // PERBAIKAN: Tambahkan style="color: white" agar teks terlihat
-                document.getElementById("countdown").innerHTML = `
-                    <div class="text-center" style="grid-column: span 4;">
-                        <h3 style="color: var(--white); font-size: 1.5rem;">Acara Telah Dimulai</h3>
-                        <p style="color: rgba(255,255,255,0.8); font-size: 0.9rem; margin-top: 5px;">Terima kasih atas doa restu Anda</p>
-                    </div>`;
-                return;
-            }
-
-            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-            document.getElementById("days").innerText = String(days).padStart(2, '0');
-            document.getElementById("hours").innerText = String(hours).padStart(2, '0');
-            document.getElementById("minutes").innerText = String(minutes).padStart(2, '0');
-            document.getElementById("seconds").innerText = String(seconds).padStart(2, '0');
-        }, 1000);
-
-        // --- 3. Logic Audio Music ---
-        const bgMusic = document.getElementById('bgMusic');
-        const musicBtn = document.getElementById('musicBtn');
-
-        // Coba autoplay saat scroll (karena browser sering memblokir autoplay langsung)
-        let hasInteracted = false;
-        window.addEventListener('scroll', () => {
-            if (!hasInteracted && bgMusic.paused) {
-                bgMusic.play().then(() => {
-                    musicBtn.classList.add('playing');
-                    musicBtn.innerHTML = '⏸'; // Icon Pause
-                    hasInteracted = true;
-                }).catch(e => console.log("Autoplay dicegah browser, perlu klik tombol"));
-            }
-        }, {
-            once: true
-        });
-
-        // Fungsi Klik Tombol Musik
-        musicBtn.addEventListener('click', () => {
-            if (bgMusic.paused) {
-                bgMusic.play();
-                musicBtn.classList.add('playing');
-                musicBtn.innerHTML = '⏸'; // Icon Pause
-            } else {
-                bgMusic.pause();
-                musicBtn.classList.remove('playing');
-                musicBtn.innerHTML = '▶'; // Icon Play
-            }
-        });
-
-        // --- 4. Logic RSVP (Fetch & Submit) ---
-        const invitationId = "{{ $invitation->id }}";
-        const form = document.getElementById('rsvpForm');
-        const rsvpButton = document.getElementById('rsvpButton');
-        const buttonText = document.getElementById('buttonText');
-        const buttonSpinner = document.getElementById('buttonSpinner');
-
-        // Render List Function
-        function renderRsvpList(rsvps) {
-            const list = document.getElementById('rsvpList');
-            if (!rsvps || rsvps.length === 0) {
-                list.innerHTML = `
-                    <div class="text-center text-gray-500 text-sm py-6">
-                        Belum ada ucapan 🥲<br>Jadilah yang pertama memberi doa 💖
-                    </div>`;
-                return;
-            }
-
-            list.innerHTML = rsvps.map(rsvp => `
-                <div class="flex justify-start items-center text-sm p-3 bg-gray-50 rounded space-x-3">
-                    <!-- Default Image User -->
-                    <img src="{{ asset('tempelate/user_default.jpg') }}" alt="User" class="object-cover" style="width:32px; height:32px; border-radius:50%;">
-                    <div>
-                        <p class="font-bold" style="color:var(--primary-color)">${rsvp.name}</p>
-                        <p class="text-gray-600 text-xs" style="margin-top:2px;">${rsvp.message}</p>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        // Fetch Function
-        function updateRsvpList() {
-            fetch(`/invitation/${invitationId}/rsvps`)
-                .then(res => {
-                    if (!res.ok) throw new Error('Network error');
-                    return res.json();
-                })
-                .then(data => renderRsvpList(data))
-                .catch(err => {
-                    console.error(err);
-                    document.getElementById('rsvpList').innerHTML = `
-                        <div class="text-center text-red-500 text-sm py-6">Gagal memuat data RSVP 😢</div>`;
+            window.copyText = function(text) {
+                navigator.clipboard.writeText(text).then(() => {
+                    showToast("Nomor rekening berhasil disalin!");
+                }).catch(err => {
+                    console.error('Gagal menyalin', err);
                 });
-        }
+            };
 
-        // Submit Form Function
-        if (form) {
-            form.addEventListener('submit', function(e) {
-                e.preventDefault();
+            /* --- 2. MUSIC PLAYER --- */
+            const bgMusic = document.getElementById('bgMusic');
+            const musicBtn = document.getElementById('musicBtn');
+            const musicIcon = document.getElementById('musicIcon');
+            let hasInteracted = false;
 
-                // UI Loading State
-                rsvpButton.disabled = true;
-                buttonText.innerText = "Mengirim...";
-                buttonSpinner.style.display = "inline-block";
-                buttonSpinner.classList.remove('hidden');
+            // Toggle Icon Helper
+            const toggleMusicIcon = (isPlaying) => {
+                if(isPlaying) {
+                    musicIcon.classList.remove('ti-player-play');
+                    musicIcon.classList.add('ti-player-pause');
+                    musicBtn.classList.add('playing');
+                } else {
+                    musicIcon.classList.remove('ti-player-pause');
+                    musicIcon.classList.add('ti-player-play');
+                    musicBtn.classList.remove('playing');
+                }
+            };
 
-                const formData = new FormData(form);
+            // Play on Interaction (Scroll)
+            window.addEventListener('scroll', () => {
+                if (!hasInteracted && bgMusic.paused) {
+                    bgMusic.play().then(() => {
+                        toggleMusicIcon(true);
+                        hasInteracted = true;
+                    }).catch(e => console.log("Autoplay dicegah browser"));
+                }
+            }, { once: true });
 
-                fetch("{{ route('rsvp.store', $invitation->id) }}", {
-                        method: "POST"
-                        , headers: {
-                            'X-CSRF-TOKEN': form.querySelector('input[name="_token"]').value
-                            , 'Accept': 'application/json'
-                        }
-                        , body: formData
+            // Click Handler
+            musicBtn.addEventListener('click', () => {
+                if (bgMusic.paused) {
+                    bgMusic.play();
+                    toggleMusicIcon(true);
+                } else {
+                    bgMusic.pause();
+                    toggleMusicIcon(false);
+                }
+            });
+            document.addEventListener("visibilitychange", () => {
+            if (document.hidden) {
+                if (!bgMusic.paused) {
+                    bgMusic.pause();
+                    toggleMusicIcon(false);
+                }
+            } else {
+                // Saat balik ke tab → play lagi jika user sudah pernah interaksi
+                if (hasInteracted) {
+                    bgMusic.play().then(() => {
+                        toggleMusicIcon(true);
+                    }).catch(() => {});
+                }
+            }
+        });
+
+            /* --- 3. COUNTDOWN TIMER --- */
+            const weddingDateString = "{{ $invitation->wedding_date }}";
+            const weddingDate = new Date(weddingDateString).getTime();
+            const countdownEl = document.getElementById('countdown');
+
+            const timerInterval = setInterval(() => {
+                const now = new Date().getTime();
+                const distance = weddingDate - now;
+
+                if (isNaN(weddingDate)) {
+                    clearInterval(timerInterval);
+                    return;
+                }
+
+                if (distance < 0) {
+                    clearInterval(timerInterval);
+                    countdownEl.innerHTML = `
+                        <div class="text-center" style="grid-column: span 4;">
+                            <h3 style="color: var(--white); font-size: 1.5rem; font-family: 'Playfair Display', serif;">Acara Telah Dimulai</h3>
+                            <p style="color: rgba(255,255,255,0.8); font-size: 0.9rem; margin-top: 10px;">Terima kasih atas doa restu Anda</p>
+                        </div>`;
+                    return;
+                }
+
+                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                document.getElementById("days").innerText = String(days).padStart(2, '0');
+                document.getElementById("hours").innerText = String(hours).padStart(2, '0');
+                document.getElementById("minutes").innerText = String(minutes).padStart(2, '0');
+                document.getElementById("seconds").innerText = String(seconds).padStart(2, '0');
+            }, 1000);
+
+            /* --- 4. RSVP LOGIC --- */
+            const invitationId = "{{ $invitation->id }}";
+            const form = document.getElementById('rsvpForm');
+            const rsvpButton = document.getElementById('rsvpButton');
+            const buttonText = document.getElementById('buttonText');
+            const buttonSpinner = document.getElementById('buttonSpinner');
+            const rsvpListEl = document.getElementById('rsvpList');
+            const rsvpMessageEl = document.getElementById('rsvpMessage');
+
+            // Auto-resize textarea
+            const textarea = document.getElementById('rsvpMessageInput');
+            if (textarea) {
+                textarea.addEventListener('input', function() {
+                    this.style.height = 'auto';
+                    this.style.height = (this.scrollHeight) + 'px';
+                });
+            }
+
+            // Render List
+            function renderRsvpList(rsvps) {
+                if (!rsvps || rsvps.length === 0) {
+                    rsvpListEl.innerHTML = `<div class="text-center text-gray-400 py-4 text-sm">Belum ada ucapan. Jadilah yang pertama! 💖</div>`;
+                    return;
+                }
+
+                rsvpListEl.innerHTML = rsvps.map(rsvp => `
+                    <div class="rsvp-list-item comment-item">
+                        <div class="avatar-placeholder">
+                            <img src="{{ asset('tempelate/user_default.jpg') }}" alt="User" style="width:100%; height:100%; object-fit:cover;">
+                        </div>
+                        <div>
+                            <p class="font-bold text-sm" style="color:var(--primary-color)">${rsvp.name}</p>
+                            <p class="text-gray-600 text-xs mt-1" style="line-height:1.4;">${rsvp.message}</p>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            // Fetch Data
+            function updateRsvpList() {
+                fetch(`/invitation/${invitationId}/rsvps`)
+                    .then(res => res.json())
+                    .then(data => renderRsvpList(data))
+                    .catch(err => console.error('Gagal memuat RSVP:', err));
+            }
+
+            // Submit Data
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault();
+
+                    // Loading State
+                    rsvpButton.disabled = true;
+                    buttonText.innerText = "Mengirim...";
+                    buttonSpinner.classList.remove('hidden');
+
+                    const formData = new FormData(form);
+
+                    fetch("{{ route('rsvp.store', $invitation->id) }}", {
+                        method: "POST",
+                        headers: {
+                            'X-CSRF-TOKEN': form.querySelector('input[name="_token"]').value,
+                            'Accept': 'application/json'
+                        },
+                        body: formData
                     })
                     .then(response => response.json())
                     .then(data => {
                         if (data.success) {
                             form.reset();
-                            document.getElementById('rsvpMessage').innerText = data.message || "RSVP berhasil dikirim!";
-                            document.getElementById('rsvpMessage').style.display = 'block';
                             textarea.style.height = 'auto';
+                            showToast("RSVP berhasil dikirim!");
                             updateRsvpList();
                         } else {
-                            document.getElementById('rsvpMessage').innerText = data.message || "Terjadi kesalahan.";
-                            document.getElementById('rsvpMessage').classList.add('text-red-500');
-                            document.getElementById('rsvpMessage').style.display = 'block';
+                            rsvpMessageEl.innerText = data.message || "Gagal mengirim RSVP.";
+                            rsvpMessageEl.classList.remove('hidden', 'text-green-600');
+                            rsvpMessageEl.classList.add('text-red-500');
                         }
                     })
                     .catch(error => {
                         console.error(error);
-                        document.getElementById('rsvpMessage').innerText = "Terjadi kesalahan saat mengirim RSVP.";
-                        document.getElementById('rsvpMessage').style.display = 'block';
+                        showToast("Terjadi kesalahan jaringan.");
                     })
                     .finally(() => {
-                        // Reset UI
                         rsvpButton.disabled = false;
-                        buttonText.innerText = "Kirim";
-                        buttonSpinner.style.display = "none";
-                        // Hide success message after 3 sec
-                        setTimeout(() => {
-                            document.getElementById('rsvpMessage').style.display = 'none';
-                        }, 3000);
+                        buttonText.innerText = "Kirim Ucapan";
+                        buttonSpinner.classList.add('hidden');
                     });
-            });
-        }
+                });
+            }
 
-        // Init & Polling
-        updateRsvpList();
-        setInterval(updateRsvpList, 3000);
+            // Init Polling
+            updateRsvpList();
+            setInterval(updateRsvpList, 5000); // Polling every 5s
 
-        // --- 5. Scroll Animation ---
-        const observerOptions = {
-            threshold: 0.15
-        };
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
+            /* --- 5. SCROLL ANIMATION (OBSERVER) --- */
+            const observerOptions = { threshold: 0.1 };
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, observerOptions);
+
+            document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+            /* --- 6. REMINDER LOGIC --- */
+            const reminderBtn = document.getElementById('reminderBtn');
+            if(reminderBtn) {
+                reminderBtn.addEventListener("click", async () => {
+                    // PERBAIKAN: Typo 'weeding_date' -> 'wedding_date'
+                    const weddingTimestamp = new Date("{{ $invitation->wedding_date }}").getTime();
+                    const eventName = "Undangan Pernikahan";
+
+                    if (Notification.permission !== "granted") {
+                        await Notification.requestPermission();
+                    }
+
+                    // Simpan target waktu
+                    localStorage.setItem("weddingReminder", weddingTimestamp);
+                    reminderBtn.style.display = 'none'; // Sembunyikan tombol setelah diset
+                    showToast("Pengingat berhasil disetel! ⏰");
+                });
+            }
+
+            // Cek reminder setiap 30 detik
+            setInterval(() => {
+                const reminder = localStorage.getItem("weddingReminder");
+                if (!reminder) return;
+
+                const now = Date.now();
+                const target = parseInt(reminder);
+
+                // Jika waktu sekarang sudah melewati target, tapi masih dalam hari yang sama (simple check)
+                if (now >= target) {
+                    if (Notification.permission === "granted") {
+                        new Notification("💍 Wedding Reminder", {
+                            body: "Hari ini adalah hari pernikahan!",
+                            icon: "https://cdn-icons-png.flaticon.com/512/179/179257.png"
+                        });
+                    }
+                    // Hapus agar notifikasi tidak spam
+                    localStorage.removeItem("weddingReminder");
                 }
-            });
-        }, observerOptions);
-
-        document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
-
-    </script>
-    <script>
-document.getElementById("reminderBtn").addEventListener("click", async () => {
-
-    const eventName = "Undangan Pernikahan";
-    const eventDate = new Date({{ $invitation->weeding_date }}); // ganti sesuai tanggal acara
-
-    // Minta izin notifikasi
-    if (Notification.permission !== "granted") {
-        await Notification.requestPermission();
-    }
-
-    // Simpan di localStorage
-    localStorage.setItem("weddingReminder", eventDate.getTime());
-   document.getElementById("reminderBtn").hidden = true;
-
-    alert("Pengingat berhasil disetel! ⏰");
-
-});
-
-// Cek pengingat setiap 30 detik
-setInterval(() => {
-    const reminder = localStorage.getItem("weddingReminder");
-    if (!reminder) return;
-
-    const now = Date.now();
-    const target = parseInt(reminder);
-
-    if (now >= target) {
-        new Notification("💍 Wedding Reminder", {
-            body: "Hari ini adalah hari pernikahan!",
+            }, 30000);
         });
-
-        localStorage.removeItem("weddingReminder");
-    }
-}, 30000);
-</script>
-
+    </script>
 </body>
 </html>

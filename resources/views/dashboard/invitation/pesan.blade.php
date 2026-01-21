@@ -4,7 +4,7 @@ Dengan hormat, kami mengundang Bapak/Ibu/Saudara/i [nama] untuk hadir dalam acar
 
 Detail acara dapat dilihat di tautan berikut:
 
-{{ $urlBase }}?to=[nama]
+{{ route('invitation.show', [$inv->slug]); }}?to=[nama]
 
 Kami merasa bahagia dan terhormat apabila Bapak/Ibu/Saudara/i berkenan hadir serta memberikan doa restu.
 Mohon maaf, undangan ini disampaikan melalui pesan ini sebagai pengganti undangan cetak, mengingat keterbatasan jarak dan waktu.

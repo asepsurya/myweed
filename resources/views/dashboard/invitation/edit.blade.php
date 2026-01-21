@@ -134,6 +134,39 @@
           .nav-link {
                 cursor: pointer;
             }
+            .custom-swal-popup {
+                border-radius: 16px;
+                padding: 24px;
+            }
+
+            .custom-swal-title {
+                font-size: 22px;
+                font-weight: 700;
+            }
+
+            .custom-swal-text {
+                font-size: 14px;
+                color: #6b7280;
+            }
+
+            .custom-swal-confirm {
+                background: #ef4444 !important;
+                border-radius: 10px !important;
+                padding: 10px 20px !important;
+                font-weight: 600;
+            }
+
+            .custom-swal-cancel {
+                background: #fff !important;
+                color: #111 !important;
+                border: 1px solid #e5e7eb !important;
+                border-radius: 10px !important;
+                padding: 10px 20px !important;
+                font-weight: 500;
+            }
+
+
+
     </style>
 
     <!-- Errors -->
@@ -148,6 +181,7 @@
     @endif
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    @include('dashboard.invitation.mobile')
     <div class="inner-sidebar-wrap">
         {{-- SIDEBAR MENU --}}
         <div class="inner-sidebar bg-none mb-5 h-100 ">
@@ -230,6 +264,7 @@
                             </ul>
                         </div>
                     </div>
+
 
                 </div>
             </div>
@@ -958,7 +993,7 @@
              <div class="modal-body p-2" style="height:70vh; overflow:hidden;">
                     <img id="cropImage" style="max-width:100%; max-height:100%; display:block; margin:auto;">
                 </div>
-              
+
 
                 <div class="modal-footer">
                     <button type="button" class="btn btn-primary" onclick="cropImage()">
@@ -1432,14 +1467,24 @@
         // --- DELETE GALLERY FUNCTION ---
         function deleteGallery(id) {
             Swal.fire({
-                title: 'Yakin ingin menghapus foto ini?',
-                text: 'Data akan terhapus permanen!',
+                title: 'Are you sure?',
+                text: 'Are you sure you want to delete this filr?\nThis action cannot be undone.',
                 icon: 'warning',
                 showCancelButton: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#3085d6',
-                confirmButtonText: 'Hapus',
-                cancelButtonText: 'Batal'
+
+                confirmButtonText: 'Delete file',
+                cancelButtonText: 'Cancel',
+
+                buttonsStyling: false,
+
+                customClass: {
+                    popup: 'custom-swal-popup',
+                    title: 'custom-swal-title',
+                    htmlContainer: 'custom-swal-text',
+                    confirmButton: 'custom-swal-confirm',
+                    cancelButton: 'custom-swal-cancel'
+                }
+
             }).then((result) => {
                 if (result.isConfirmed) {
                     fetch(`/gallery/${id}`, {
@@ -1452,19 +1497,20 @@
                     .then(data => {
                         if (data.success) {
                             document.getElementById(`gallery-item-${id}`).remove();
+
                             Swal.fire({
                                 icon: 'success',
-                                title: 'Berhasil!',
-                                text: 'Foto berhasil dihapus',
+                                title: 'Deleted!',
+                                text: 'Folder berhasil dihapus.',
                                 timer: 1500,
                                 showConfirmButton: false
                             });
                         }
-                    })
-                    .catch(err => console.error(err));
+                    });
                 }
             });
         }
+
     </script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
@@ -1523,8 +1569,27 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
     });
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', function () {
+
+        const tab = this.getAttribute('data-tab');
+
+        // Remove active dari semua
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+
+        // Aktifkan yang diklik
+        this.classList.add('active');
+
+        // Tampilkan konten tab (sesuaikan selector)
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('show', 'active'));
+        document.getElementById('tab' + tab)?.classList.add('show', 'active');
+    });
+});
+
 
 });
+
 </script>
+
 
 </x-app-layout>

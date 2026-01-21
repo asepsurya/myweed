@@ -121,6 +121,9 @@
         .nav-link {
     cursor: pointer;
 }
+#uploadBoxGroom, #uploadBoxBride{
+    cursor: pointer;
+}
 
 
 .cropper-container,
@@ -146,6 +149,7 @@
         </ul>
     </div>
     @endif
+    @include('dashboard.invitation.mobile')
     <div class="inner-sidebar-wrap">
         <div class="inner-sidebar bg-none mb-5 h-100 ">
 
@@ -844,7 +848,7 @@
              <div class="modal-body p-2" style="height:70vh; overflow:hidden;">
                     <img id="cropImage" style="max-width:100%; max-height:100%; display:block; margin:auto;">
                 </div>
-              
+
 
                 <div class="modal-footer">
                     <button type="button" class="btn btn-primary" onclick="cropImage()">
@@ -854,7 +858,52 @@
             </div>
         </div>
     </div>
+    <!-- Include browser-image-compression -->
+    <script src="https://unpkg.com/browser-image-compression@latest/dist/browser-image-compression.js"></script>
+    <script>
+        async function handleSingleFile(event, type) {
+    const file = event.target.files[0];
+    if (!file) return;
 
+    const options = {
+        maxSizeMB: 2,
+        maxWidthOrHeight: 1200,
+        useWebWorker: true,
+        fileType: "image/webp"
+    };
+
+    let compressedFile;
+    try {
+        const compressedBlob = await imageCompression(file, options);
+
+        // Convert Blob → File
+        compressedFile = new File([compressedBlob], file.name.replace(/\.[^/.]+$/, ".webp"), {
+            type: "image/webp",
+            lastModified: Date.now()
+        });
+
+    } catch(err){
+        console.error("Compression failed:", err);
+        compressedFile = file;
+    }
+
+    // Preview
+    const reader = new FileReader();
+    reader.onload = function(e){
+        const preview = document.getElementById(type==='bride'?'previewBride':'previewGroom');
+        const container = document.getElementById(type==='bride'?'previewContainerBride':'previewContainerGroom');
+        preview.src = e.target.result;
+        container.classList.remove('d-none');
+    }
+    reader.readAsDataURL(compressedFile);
+
+    // Replace input file
+    const dt = new DataTransfer();
+    dt.items.add(compressedFile);
+    event.target.files = dt.files;
+}
+
+    </script>
         <script>
             let cropper;
             let currentTarget = null;

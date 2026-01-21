@@ -14,16 +14,16 @@
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com/">
     <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&amp;family=Open+Sans:ital,wght@0,300..800;1,300..800&amp;display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&amp;family=Open+Sans:ital,wght@0,300..800;1,300..800&amp;display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/tom-select/dist/css/tom-select.bootstrap5.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 
- <link href="https://unpkg.com/cropperjs@1.6.1/dist/cropper.min.css" rel="stylesheet">
-<script src="https://unpkg.com/cropperjs@1.6.1/dist/cropper.min.js"></script>
-<script defer src="https://unpkg.com/face-api.js"></script>
+    <link href="https://unpkg.com/cropperjs@1.6.1/dist/cropper.min.css" rel="stylesheet">
+    <script src="https://unpkg.com/cropperjs@1.6.1/dist/cropper.min.js"></script>
+    <script defer src="https://unpkg.com/face-api.js"></script>
 
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <style>
         :root {
@@ -32,6 +32,7 @@
             --adminuiux-title-font: "Lexend", sans-serif;
             --adminuiux-title-font-weight: 600;
         }
+
     </style>
 
     <script defer src="{{ asset('assets/js/app435e.js?1096aad991449c8654b2') }}"></script>
@@ -59,33 +60,44 @@
             </div>
         </main>
     </div>
+    <footer class="adminuiux-footer mt-auto pb-3">
+        <div class="container-fluid text-center">
+            <span class="small">
+                © {{ date('Y') }} Wedding Creative.
+                Template by InvestmentUX • AdminUIX
+                </span>
 
-   <script>
-    document.addEventListener('DOMContentLoaded', function () {
+        </div>
+    </footer>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
 
-        const showToast = () => {
-            document.querySelectorAll('.toast').forEach(toastEl => {
-                new bootstrap.Toast(toastEl).show();
-            });
-        };
+            const showToast = () => {
+                document.querySelectorAll('.toast').forEach(toastEl => {
+                    new bootstrap.Toast(toastEl).show();
+                });
+            };
 
-        // ⏳ tunggu loader hilang
-        const loader = document.getElementById('pageLoader');
+            // ⏳ tunggu loader hilang
+            const loader = document.getElementById('pageLoader');
 
-        if (loader) {
-            const observer = new MutationObserver(() => {
-                if (loader.style.display === 'none' || loader.classList.contains('d-none')) {
-                    showToast();
-                    observer.disconnect();
-                }
-            });
+            if (loader) {
+                const observer = new MutationObserver(() => {
+                    if (loader.style.display === 'none' || loader.classList.contains('d-none')) {
+                        showToast();
+                        observer.disconnect();
+                    }
+                });
 
-            observer.observe(loader, { attributes: true });
-        } else {
-            showToast();
-        }
+                observer.observe(loader, {
+                    attributes: true
+                });
+            } else {
+                showToast();
+            }
 
-    });
+        });
+
     </script>
     <!-- Page Level js -->
     <script src="{{ asset('assets/js/investment/investment-loan-list.js') }}"></script>
@@ -126,6 +138,7 @@
         });
 
         initTheme();
+
     </script>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
@@ -146,9 +159,10 @@
             // Title Browser Tab
             document.title = "Admin - " + pageName;
         });
+
     </script>
     @yield('js')
-</script>
+    </script>
 
 </body>
 
