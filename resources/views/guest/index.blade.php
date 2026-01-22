@@ -4,15 +4,17 @@
         <div class="py-10">
             <div class="container">
 
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h4>Aktivitas Undangan Terbaru</h4>
-                    <div class="d-flex gap-2">
-                        <a href="{{ route('invitation.index') }}" class="btn btn-sm btn-outline-secondary">Lihat Semua</a>
-                        <a href="{{ route('invitation.create') }}" class="btn btn-sm btn-outline-primary">
-                            <i class="bi bi-plus-circle me-1"></i> Buat Undangan
-                        </a>
-                    </div>
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4 gap-3">
+                <h4 class="mb-0">Aktivitas Undangan Terbaru</h4>
+
+                <!-- Container tombol -->
+                <div class=" w-md-100 d-flex justify-content-md-end">
+                    <a href="{{ route('invitation.create') }}"
+                    class="btn btn-sm btn-outline-primary  w-md-auto">
+                        <i class="bi bi-plus-circle me-1"></i> Buat Undangan
+                    </a>
                 </div>
+            </div>
 
                 <ul class="list-group">
                     @forelse ($invitations as $inv)
@@ -34,18 +36,70 @@
                         <!-- Badge Status -->
 
 
-                        <!-- Tombol Aksi -->
-                        <div class="d-flex gap-2">
-                            <a href="{{ route('invitation.show', $inv->slug) }}" class="btn btn-outline-primary btn-sm" title="Edit" target="_blank">
-                                <i class="bi bi-eye"></i>
-                            </a>
-                            <a href="{{ route('invitation.edit', $inv) }}" class="btn btn-outline-primary btn-sm" title="Edit">
-                                <i class="bi bi-pencil"></i>
-                            </a>
-                            <button type="button" class="btn btn-outline-success btn-sm" data-bs-toggle="modal" data-bs-target="#waModal{{ $inv->id }}" title="Bagikan via WhatsApp">
-                                <i class="bi bi-whatsapp"></i>
-                            </button>
+                  <!-- Tombol Aksi -->
+                        <div class="d-flex justify-content-end">
+
+                            <!-- DESKTOP -->
+                            <div class="d-none d-md-flex gap-2">
+                                <a href="{{ route('invitation.show', $inv->slug) }}"
+                                class="btn btn-outline-primary btn-sm"
+                                target="_blank"
+                                title="Lihat">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+
+                                <a href="{{ route('invitation.edit', $inv) }}"
+                                class="btn btn-outline-primary btn-sm"
+                                title="Edit">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+
+                                <button type="button"
+                                        class="btn btn-outline-success btn-sm"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#waModal{{ $inv->id }}"
+                                        title="Bagikan WhatsApp">
+                                    <i class="bi bi-whatsapp"></i>
+                                </button>
+                            </div>
+
+                            <!-- MOBILE -->
+                            <div class="dropdown d-md-none">
+                                <button class="btn btn-outline-secondary btn-sm"
+                                        type="button"
+                                        data-bs-toggle="dropdown"
+                                        aria-expanded="false">
+                                    <i class="bi bi-three-dots-vertical"></i>
+                                </button>
+
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    <li>
+                                        <a class="dropdown-item"
+                                        href="{{ route('invitation.show', $inv->slug) }}"
+                                        target="_blank">
+                                            <i class="bi bi-eye me-2"></i> Lihat
+                                        </a>
+                                    </li>
+
+                                    <li>
+                                        <a class="dropdown-item"
+                                        href="{{ route('invitation.edit', $inv) }}">
+                                            <i class="bi bi-pencil me-2"></i> Edit
+                                        </a>
+                                    </li>
+
+                                    <li>
+                                        <button class="dropdown-item text-success"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#waModal{{ $inv->id }}">
+                                            <i class="bi bi-whatsapp me-2"></i> Bagikan WhatsApp
+                                        </button>
+                                    </li>
+                                </ul>
+                            </div>
+
                         </div>
+
                     </li>
 
                     <!-- Modal WhatsApp -->

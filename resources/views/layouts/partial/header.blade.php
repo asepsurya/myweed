@@ -42,9 +42,9 @@
               <!-- right icons button -->
               <div class="ms-auto">
                   <!-- global search toggle -->
-                  <button class="btn btn-link btn-square btn-icon btn-link-header" type="button" onclick="openSearch()">
+                  {{-- <button class="btn btn-link btn-square btn-icon btn-link-header" type="button" onclick="openSearch()">
                       <i data-feather="search"></i>
-                  </button>
+                  </button> --}}
 
                   <!-- dark mode -->
                   <button class="btn btn-link btn-square btnsunmoon btn-link-header" id="btn-layout-modes-dark-page">
@@ -145,104 +145,7 @@
 
                   </div>
 
-                  {{-- <!-- language dropdown -->
-                    <div class="dropdown d-none d-sm-inline-block">
-                        <button class="btn btn-link btn-square btn-icon btn-link-header dropdown-toggle no-caret" type="button" data-bs-toggle="dropdown" aria-expanded="false"> <i class="bi bi-translate"></i>
-                        </button>
-                        <ul class="dropdown-menu dropdown-menu-end">
-                            <li><a class="dropdown-item active" data-value="EN">EN - English</a></li>
-                            <li><a class="dropdown-item" data-value="FR">FR - French</a></li>
-                            <li><a class="dropdown-item" data-value="CH">CH - Chinese</a></li>
-                            <li><a class="dropdown-item" data-value="HI">HI - Hindi</a></li>
-                        </ul>
-                    </div> --}}
 
-                  <!-- notification dropdown -->
-                  <div class="dropdown d-inline-block">
-                      <button class="btn btn-link btn-square btn-icon btn-link-header dropdown-toggle no-caret" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                          <i data-feather="bell"></i>
-                          <span class="position-absolute top-0 end-0 badge rounded-pill bg-danger p-1">
-                              <small>9+</small>
-                              <span class="visually-hidden">unread messages</span>
-                          </span>
-                      </button>
-                      <ul class="dropdown-menu dropdown-menu-end notification-dd sm-mi-95px">
-                          <li>
-                              <a class="dropdown-item p-2" href="#">
-                                  <div class="row gx-3">
-                                      <div class="col-auto">
-                                          <figure class="avatar avatar-40 rounded-circle bg-pink">
-                                              <i class="bi bi-gift text-white"></i>
-                                          </figure>
-                                      </div>
-                                      <div class="col">
-                                          <p class="mb-2 small">Congratulation! Your property <span class="fw-bold">#H10215</span> has reached 1000 views.</p>
-                                          <span class="row">
-                                              <span class="col"><span class="badge badge-light rounded-pill text-bg-warning small">Directory</span></span>
-                                              <span class="col-auto small opacity-75">1:00 am</span>
-                                          </span>
-                                      </div>
-                                  </div>
-                              </a>
-                          </li>
-                          <li>
-                              <a class="dropdown-item p-2" href="#">
-                                  <div class="row gx-3">
-                                      <div class="col-auto">
-                                          <figure class="avatar avatar-40 rounded-circle bg-success">
-                                              <i class="bi bi-patch-check text-white"></i>
-                                          </figure>
-                                      </div>
-                                      <div class="col">
-                                          <p class="mb-2 small">Your property <span class="fw-bold">#H10215</span> is published and live now.</p>
-                                          <span class="row">
-                                              <span class="col"><span class="badge badge-light rounded-pill text-bg-primary small">System</span></span>
-                                              <span class="col-auto small opacity-75">1:00 am</span>
-                                          </span>
-                                      </div>
-                                  </div>
-                              </a>
-                          </li>
-                          <li>
-                              <a class="dropdown-item p-2" href="#">
-                                  <div class="row gx-3">
-                                      <div class="col-auto">
-                                          <figure class="avatar avatar-40 rounded-circle bg-info">
-                                              <i class="bi bi-clipboard-check text-white"></i>
-                                          </figure>
-                                      </div>
-                                      <div class="col">
-                                          <p class="mb-2 small">User <span class="fw-bold">Rahana</span> has updated <span class="fw-bold">#H10215</span> property.</p>
-                                          <span class="row">
-                                              <span class="col"><span class="badge badge-light rounded-pill text-bg-success small">team</span></span>
-                                              <span class="col-auto small opacity-75">1:00 am</span>
-                                          </span>
-                                      </div>
-                                  </div>
-                              </a>
-                          </li>
-                          <li>
-                              <div class="dropdown-item p-2">
-                                  <div class="row gx-3">
-                                      <div class="col-auto">
-                                          <figure class="avatar avatar-40 rounded-circle bg-warning ">
-                                              <i class="bi bi-bell text-white"></i>
-                                          </figure>
-                                      </div>
-                                      <div class="col">
-                                          <p class="mb-2 small">Your subscription going to expire soon. Please <a href="profile-subscription.html">upgrade</a> to get service interrupt free.</p>
-                                          <p class="opacity-75 small">4 days ago</p>
-                                      </div>
-                                  </div>
-                              </div>
-                          </li>
-                          <li class="text-center">
-                              <button class="btn btn-link text-center" onclick="notifcationAll()">
-                                  View all <i class="bi bi-arrow-right fs-14"></i>
-                              </button>
-                          </li>
-                      </ul>
-                  </div>
 
                   <!-- profile dropdown -->
                   <div class="dropdown d-inline-block">

@@ -60,7 +60,8 @@
             </div>
         </main>
     </div>
-    <footer class="adminuiux-footer mt-auto pb-3">
+    @include('layouts.partial.mobile_global')
+    {{-- <footer class="adminuiux-footer mt-auto pb-3">
         <div class="container-fluid text-center">
             <span class="small">
                 © {{ date('Y') }} Wedding Creative.
@@ -68,7 +69,7 @@
                 </span>
 
         </div>
-    </footer>
+    </footer> --}}
     <script>
         document.addEventListener('DOMContentLoaded', function() {
 

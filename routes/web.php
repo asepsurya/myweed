@@ -60,13 +60,14 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/gifts/{id}', [GiftController::class, 'destroy'])->name('gift.destroy');
 
     Route::get('/users', [UserController::class, 'index'])->name('user.index');
-
+    Route::get('/rsvps', [RsvpController::class, 'index'])->name('rsvp.index');
+    Route::delete('/rsvp/{rsvp}', [RsvpController::class, 'destroy'])->name('rsvp.destroy');
+    Route::post('/rsvp/{invitation}', [RsvpController::class, 'store'])->name('rsvp.store');
+    Route::get('/invitation/{invitation}/rsvps', [RsvpController::class, 'getRsvps'])->name('rsvp.list');
 });
 
-Route::get('/rsvps', [RsvpController::class, 'index'])->name('rsvp.index');
-Route::delete('/rsvp/{rsvp}', [RsvpController::class, 'destroy'])->name('rsvp.destroy');
-Route::post('/rsvp/{invitation}', [RsvpController::class, 'store'])->name('rsvp.store');
-Route::get('/invitation/{invitation}/rsvps', [RsvpController::class, 'getRsvps'])->name('rsvp.list');
+
+
 Route::get('/{slug}', [WeddingController::class, 'show'])->where('slug', '[A-Za-z0-9\-]+')->name('invitation.show');
 
 

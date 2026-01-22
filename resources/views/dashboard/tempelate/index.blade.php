@@ -1,36 +1,44 @@
 <x-app-layout>
 
     <style>
+        .adminuiux-card {
+            position: relative;
+            overflow: hidden;
+            /* optional, biar rapi */
+        }
 
-.adminuiux-card {
-    position: relative;
-    overflow: hidden; /* optional, biar rapi */
-}
+        .preview-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
 
-.preview-img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-}
+        .delete-btn {
+            z-index: 20;
+        }
 
-.delete-btn {
-    z-index: 20;
-}
-.template-preview {
-    position: relative;
-    z-index: 1;
-}
+        .template-preview {
+            position: relative;
+            z-index: 1;
+        }
 
-.preview-img {
-    width: 100%;
-    height: 220px;
-    object-fit: cover;
-    display: block;
-}
+        .preview-img {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+            display: block;
+        }
 
 
+        .kategori-scroll {
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+        }
 
+        .kategori-scroll::-webkit-scrollbar {
+            display: none;
+        }
 
     </style>
 
@@ -126,90 +134,91 @@
         <!-- TEMPLATE CONTENT -->
         <div id="content-template">
             <div class="col-12">
-                <div class="row mb-2">
+                <div class="row flex-nowrap flex-md-wrap overflow-auto mb-2 kategori-scroll">
 
                     <!-- Jawa -->
-                    <div class="col-6 col-md-3 col-lg-3 col-xl-3 col-xxl mb-3">
+                    <div class="col-8 col-sm-6 col-md-3 mb-3">
                         <a href="/templates?kategori=jawa" class="card adminuiux-card style-none text-center h-100">
                             <div class="card-body">
-                                <i class="avatar avatar-40 text-theme-1 h3 bi bi-flower1 mb-3"></i>
-                                <p class="text-secondary small">Adat Jawa</p>
+                                <i class="avatar avatar-40 text-theme-1 bi bi-flower1 h3 mb-3"></i>
+                                <p class="text-secondary small mb-0">Adat Jawa</p>
                             </div>
                         </a>
                     </div>
 
                     <!-- Sunda -->
-                    <div class="col-6 col-md-3 col-lg-3 col-xl-3 col-xxl mb-3">
+                    <div class="col-8 col-sm-6 col-md-3 mb-3">
                         <a href="/templates?kategori=sunda" class="card adminuiux-card style-none text-center h-100">
                             <div class="card-body">
                                 <i class="avatar avatar-40 text-theme-1 bi bi-music-note-beamed h3 mb-3"></i>
-                                <p class="text-secondary small">Adat Sunda</p>
+                                <p class="text-secondary small mb-0">Adat Sunda</p>
                             </div>
                         </a>
                     </div>
 
                     <!-- Minang -->
-                    <div class="col-6 col-md-3 col-lg-3 col-xl-3 col-xxl mb-3">
+                    <div class="col-8 col-sm-6 col-md-3 mb-3">
                         <a href="/templates?kategori=minang" class="card adminuiux-card style-none text-center h-100">
                             <div class="card-body">
                                 <i class="avatar avatar-40 text-theme-1 bi bi-house-door h3 mb-3"></i>
-                                <p class="text-secondary small">Adat Minangkabau</p>
+                                <p class="text-secondary small mb-0">Adat Minangkabau</p>
                             </div>
                         </a>
                     </div>
 
                     <!-- Batak -->
-                    <div class="col-6 col-md-3 col-lg-3 col-xl-3 col-xxl mb-3">
+                    <div class="col-8 col-sm-6 col-md-3 mb-3">
                         <a href="/templates?kategori=batak" class="card adminuiux-card style-none text-center h-100">
                             <div class="card-body">
                                 <i class="avatar avatar-40 text-theme-1 bi bi-dribbble h3 mb-3"></i>
-                                <p class="text-secondary small">Adat Batak</p>
+                                <p class="text-secondary small mb-0">Adat Batak</p>
                             </div>
                         </a>
                     </div>
 
                     <!-- Bugis -->
-                    <div class="col-6 col-md-3 col-lg-3 col-xl-3 col-xxl mb-3">
+                    <div class="col-8 col-sm-6 col-md-3 mb-3">
                         <a href="/templates?kategori=bugis" class="card adminuiux-card style-none text-center h-100">
                             <div class="card-body">
                                 <i class="avatar avatar-40 text-theme-1 bi bi-compass h3 mb-3"></i>
-                                <p class="text-secondary small">Adat Bugis</p>
+                                <p class="text-secondary small mb-0">Adat Bugis</p>
                             </div>
                         </a>
                     </div>
 
                     <!-- Bali -->
-                    <div class="col-6 col-md-3 col-lg-3 col-xl-3 col-xxl mb-3">
-                        <a href="/templates?kategori=bali" class="card adminuiux-card style-none text-center">
+                    <div class="col-8 col-sm-6 col-md-3 mb-3">
+                        <a href="/templates?kategori=bali" class="card adminuiux-card style-none text-center h-100">
                             <div class="card-body">
                                 <i class="avatar avatar-40 text-theme-1 bi bi-sun h3 mb-3"></i>
-                                <p class="text-secondary small">Adat Bali</p>
+                                <p class="text-secondary small mb-0">Adat Bali</p>
                             </div>
                         </a>
                     </div>
 
                     <!-- Betawi -->
-                    <div class="col-6 col-md-3 col-lg-3 col-xl-3 col-xxl mb-3">
+                    <div class="col-8 col-sm-6 col-md-3 mb-3">
                         <a href="/templates?kategori=betawi" class="card adminuiux-card style-none text-center h-100">
                             <div class="card-body">
                                 <i class="avatar avatar-40 text-theme-1 bi bi-people h3 mb-3"></i>
-                                <p class="text-secondary small">Adat Betawi</p>
+                                <p class="text-secondary small mb-0">Adat Betawi</p>
                             </div>
                         </a>
                     </div>
 
                     <!-- Modern -->
-                    <div class="col-6 col-md-3 col-lg-3 col-xl-3 col-xxl mb-3">
-                        <a href="/templates?kategori=modern" class="card adminuiux-card style-none text-center">
+                    <div class="col-8 col-sm-6 col-md-3 mb-3">
+                        <a href="/templates?kategori=modern" class="card adminuiux-card style-none text-center h-100">
                             <div class="card-body">
                                 <i class="avatar avatar-40 text-theme-1 bi bi-stars h3 mb-3"></i>
-                                <p class="text-secondary small">Modern / Universal</p>
+                                <p class="text-secondary small mb-0">Modern / Universal</p>
                             </div>
                         </a>
                     </div>
 
                 </div>
             </div>
+
 
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h5 class="fw-medium">My Templates</h5>
@@ -218,20 +227,20 @@
                     <i class="bi bi-plus-lg"></i> Add Template
                 </button>
             </div>
-             @if ($errors->any())
-              <div class="alert alert-danger mb-4">
+            @if ($errors->any())
+            <div class="alert alert-danger mb-4">
                 <ul class="mb-0">
                     @foreach ($errors->all() as $error)
                     <li>{{ $error }}</li>
                     @endforeach
                 </ul>
-                </div>
-                @endif
+            </div>
+            @endif
             <div class="row">
                 @foreach ($tempelate as $template)
-                <div class="col-12 col-md-6 col-lg-4 template-card" data-name="{{ strtolower($template->name) }}">
-                    <div class="card adminuiux-card mb-4 position-relative">
+                <div class="col-6 col-md-6 col-lg-4 template-card" data-name="{{ strtolower($template->name) }}">
 
+                    <div class="card adminuiux-card mb-4 position-relative">
 
                         <form id="delete-form-{{ $template->id }}" action="{{ route('templates.destroy', $template->id) }}" method="POST" class="d-none">
                             @csrf
@@ -240,32 +249,39 @@
 
                         <!-- PREVIEW -->
                         <div class="template-preview">
-                            <img src="/storage/{{ $template->thumbnail }}" class="preview-img">
+                            <img src="/storage/{{ $template->thumbnail }}" class="preview-img img-fluid">
                         </div>
 
                         <!-- INFO -->
-                        <div class="card-body">
-                            <h5 class="fw-medium mb-1">{{ $template->name }}</h5>
-                            <p class="text-secondary small">Slug: {{ $template->slug }}</p>
+                        <div class="card-body p-3">
+                            <h6 class="fw-medium mb-1 text-truncate">
+                                {{ $template->name }}
+                            </h6>
 
-                            <div class="d-flex justify-content-between align-items-center mt-3">
+                            <p class="text-secondary small mb-2 text-truncate">
+                                Slug: {{ $template->slug }}
+                            </p>
+
+                            <div class="d-flex justify-content-between align-items-center">
                                 <span class="badge text-bg-success">Active</span>
 
-                                <a onclick="confirmDelete({{ $template->id }})" class="btn btn-sm btn-outline-theme">
+                                <button type="button" onclick="confirmDelete({{ $template->id }})" class="btn btn-sm btn-outline-theme">
                                     <i class="bi bi-trash"></i>
-                                </a>
+                                </button>
                             </div>
                         </div>
 
                     </div>
                 </div>
                 @endforeach
+
                 <div id="noResult" class="text-center text-muted mt-4 d-none">
                     <i class="bi bi-search fs-1 d-block mb-2"></i>
                     <p class="fw-semibold">Template tidak ditemukan</p>
                     <small>Coba kata kunci lain</small>
                 </div>
             </div>
+
 
         </div>
 

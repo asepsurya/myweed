@@ -275,28 +275,37 @@
         <div class="inner-sidebar-content ">
             <div class="p-3">
                 {{-- HEADER --}}
-                <div class="row gx-3 align-items-center mb-4">
-                    <div class="col col-sm">
-                        <h5>Edit Undangan</h5>
-                    </div>
-                    <div class="col-auto py-1 ms-auto d-flex gap-2">
+               <div class="row align-items-center mb-4 gy-3">
+                <!-- Title -->
+                <div class="col-12 col-sm">
+                    <h5 class="mb-0 text-center text-sm-start">
+                        Edit Undangan
+                    </h5>
+                </div>
+
+                <!-- Actions -->
+                <div class="col-12 col-sm-auto ms-sm-auto">
+                    <div class="d-grid d-sm-flex gap-2">
                         <a href="{{ url($invitation->slug) }}" target="_blank"
-                           class="btn btn-outline-primary btn-sm">
-                           Preview Undangan
+                        class="btn btn-outline-primary btn-sm">
+                        Preview Undangan
                         </a>
 
                         <a href="{{ route('invitation.index') }}"
-                           class="btn btn-outline-secondary btn-sm">
-                           Batal
+                        class="btn btn-outline-secondary btn-sm">
+                        Batal
                         </a>
 
-                        <button class="btn btn-primary btn-sm" onclick="document.getElementById('myForm').submit()">
-                            <i class="bi bi-save me-2 align-middle"></i>
-                            Simpan Perubahan
+                        <button type="button"
+                                class="btn btn-primary btn-sm"
+                                onclick="document.getElementById('myForm').submit()">
+                            <i class="bi bi-save me-1"></i>
+                            Simpan
                         </button>
                     </div>
-
                 </div>
+            </div>
+
 
                 <form id="myForm" method="POST" action="{{ route('invitation.update', $invitation) }}" enctype="multipart/form-data">
                     @csrf
@@ -908,8 +917,13 @@
                                         {{-- Since Code B implies dynamic input, we will render the inputs based on available data or empty if new --}}
                                         @if(json_decode($invitation->gifts ?? '[]'))
                                             @foreach(json_decode($invitation->gifts) as $g)
-                                            <div class="gift-item card p-3 mb-3 position-relative">
-                                                <button type="button" class="btn-close position-absolute top-0 end-0 remove-gift" aria-label="Hapus"></button>
+                                            <div class="gift-item card p-3 mb-3 position-relative ">
+                                                <a href="javascript:void(0)"
+                                                class="p-3 btn-close position-absolute top-0 end-0 remove-gift"
+                                                data-id="{{ $g->id }}"
+                                                aria-label="Hapus">
+                                                </a>
+
                                                 <div class="mb-2">
                                                     <label class="form-label">Bank / E-Wallet</label>
                                                     <select name="bank[]" class="form-select bank-select">
@@ -1589,6 +1603,48 @@ document.addEventListener('DOMContentLoaded', function () {
 
 });
 
+</script>
+
+<script>
+document.addEventListener('click', function (e) {
+    if (!e.target.classList.contains('remove-gift')) return;
+
+    const button = e.target;
+    const giftId = button.dataset.id;
+
+    Swal.fire({
+        title: 'Hapus Gift?',
+        text: 'Data yang dihapus tidak bisa dikembalikan',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Ya, hapus',
+        cancelButtonText: 'Batal',
+        confirmButtonColor: '#d33'
+    }).then((result) => {
+        if (!result.isConfirmed) return;
+
+        fetch(`/gifts/${giftId}`, {
+            method: 'DELETE',
+            headers: {
+                'X-CSRF-TOKEN': document
+                    .querySelector('meta[name="csrf-token"]').content,
+                'Accept': 'application/json'
+            }
+        })
+        .then(res => res.json())
+        .then(() => {
+            Swal.fire('Terhapus!', 'Gift berhasil dihapus', 'success');
+
+            const item = button.closest('.gift-item');
+            item.style.transition = '0.3s';
+            item.style.opacity = 0;
+            setTimeout(() => item.remove(), 300);
+        })
+        .catch(() => {
+            Swal.fire('Error', 'Gagal menghapus gift', 'error');
+        });
+    });
+});
 </script>
 
 

@@ -36,19 +36,6 @@
                     </a>
                 @endforeach
 
-
-            {{-- <a href="https://picsum.photos/600?3" data-fancybox="gallery">
-                <img src="https://picsum.photos/300?3" class="rounded shadow cursor-pointer">
-            </a>
-            <a href="https://picsum.photos/600?4" data-fancybox="gallery">
-                <img src="https://picsum.photos/300?4" class="rounded shadow cursor-pointer">
-            </a>
-            <a href="https://picsum.photos/600?5" data-fancybox="gallery">
-                <img src="https://picsum.photos/300?5" class="rounded shadow cursor-pointer">
-            </a>
-            <a href="https://picsum.photos/600?6" data-fancybox="gallery">
-                <img src="https://picsum.photos/300?6" class="rounded shadow cursor-pointer">
-            </a> --}}
         </div>
 
     </div>
