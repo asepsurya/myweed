@@ -9,11 +9,13 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\WeddingController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\TempelateController;
+use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\UserInvitationController;
+use App\Http\Controllers\SubscriptionPlanController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('index');
 });
 
 Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
@@ -56,18 +58,23 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/music/store', [MusicController::class, 'store'])->name('music.store');
     Route::delete('music/destroy/{id}', [MusicController::class, 'destroy'])->name('music.destroy');
 
-    Route::get('/gifts', [GiftController::class, 'index'])->name('gift.index');
-    Route::post('/gifts', [GiftController::class, 'store'])->name('gift.store');
-    Route::delete('/gifts/{id}', [GiftController::class, 'destroy'])->name('gift.destroy');
+    Route::get('/gifts', [GiftController::class, 'index'])->name('gift.index')->middleware('subscription');
+    Route::post('/gifts', [GiftController::class, 'store'])->name('gift.store')->middleware('subscription');
+    Route::delete('/gifts/{id}', [GiftController::class, 'destroy'])->name('gift.destroy')->middleware('subscription');
 
-    Route::get('/users', [UserController::class, 'index'])->name('user.index');
-    Route::get('/rsvps', [RsvpController::class, 'index'])->name('rsvp.index');
-    Route::delete('/rsvp/{rsvp}', [RsvpController::class, 'destroy'])->name('rsvp.destroy');
-    Route::post('/rsvp/{invitation}', [RsvpController::class, 'store'])->name('rsvp.store');
+    Route::get('/users', [UserController::class, 'index'])->name('user.index')->middleware('role:admin');
+    Route::get('/rsvps', [RsvpController::class, 'index'])->name('rsvp.index')->middleware('subscription');
+    Route::delete('/rsvp/{rsvp}', [RsvpController::class, 'destroy'])->name('rsvp.destroy')->middleware('subscription');
+    Route::post('/rsvp/{invitation}', [RsvpController::class, 'store'])->name('rsvp.store')->middleware('subscription');
     Route::get('/invitation/{invitation}/rsvps', [RsvpController::class, 'getRsvps'])->name('rsvp.list');
+
+    Route::get('/subscription-plans', [SubscriptionPlanController::class, 'index'])->name('subscribe.page');
+    Route::get('/subscription-plans/{planId}', [SubscriptionPlanController::class, 'subscribe'])->name('subscribe');
+
 });
 
-
+Route::get('/auth/google', [GoogleController::class, 'redirect']);
+Route::get('/auth/google/callback', [GoogleController::class, 'callback']);
 
 Route::get('/{slug}', [WeddingController::class, 'show'])->where('slug', '[A-Za-z0-9\-]+')->name('invitation.show');
 

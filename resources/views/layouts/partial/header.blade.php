@@ -18,10 +18,10 @@
                       <p class="company-tagline">Digital Wedding Invitation Solutions</p>
                   </div>
               </a>
-
+              @role('admin')
               <!-- navigation inline -->
               <div class="collapse navbar-collapse right-in-device justify-content-center" id="header-navbar">
-                  @role('admin')
+
                   <ul class="navbar-nav mx-lg-3 mb-2 mb-md-0">
                       <li class="nav-item">
                           <a class="nav-link d-flex align-items-center" href="{{ route('tempelate.index') }}" :active="request()->routeIs('tempelate.index')">
@@ -34,10 +34,8 @@
                           </a>
                       </li>
                   </ul>
-                  @endrole
-
               </div>
-
+              @endrole
 
               <!-- right icons button -->
               <div class="ms-auto">
@@ -152,81 +150,104 @@
                       <a class="dropdown-toggle btn btn-link btn-square btn-link-header style-none no-caret px-0" id="userprofiledd" data-bs-toggle="dropdown" aria-expanded="false" role="button">
                           <div class="row gx-0 d-inline-flex">
                               <div class="col-auto align-self-center">
-                                  <figure class="avatar avatar-28 rounded-circle coverimg align-middle">
-                                      <img src="{{ asset('tempelate/user_default.jpg') }}" alt="" id="userphotoonboarding2">
+                                  <figure class="avatar avatar-28 rounded-circle">
+                                      <img src="{{ Auth::user()->avatar
+                                        ? asset('storage/' . Auth::user()->avatar)
+                                        : asset('tempelate/user_default.jpg') }}" alt="User Avatar" id="userphotoonboarding2" class="rounded-circle" referrerpolicy="no-referrer" onerror="this.onerror=null;this.src='{{ asset('tempelate/user_default.jpg') }}';">
                                   </figure>
+
                               </div>
                           </div>
                       </a>
-                      <div class="dropdown-menu dropdown-menu-end width-300 pt-0 px-0 sm-mi-45px" aria-labelledby="userprofiledd">
-                          <div class="bg-theme-1-space rounded py-3 mb-2 dropdown-dontclose">
-                              <div class="row gx-0">
-                                  <div class="col-auto px-3">
-                                      <figure class="avatar avatar-50 rounded-circle coverimg align-middle">
-                                          <img src="{{ asset('tempelate/user_default.jpg') }}" alt="">
-                                      </figure>
-                                  </div>
-                                  <div class="col align-self-center ">
-                                      <p class="mb-1"><span>{{ auth()->user()->name }}</span></p>
-                                      <p><small class="opacity-50">{{ auth()->user()->email }}</small>
+                      <div class="dropdown-menu dropdown-menu-end width-300 p-0 sm-mi-45px" aria-labelledby="userprofiledd">
+
+                          {{-- USER HEADER --}}
+                          <div class="bg-theme-1-space rounded-top py-3 px-3 mb-2 dropdown-dontclose">
+                              <div class="d-flex align-items-center gap-3">
+
+                                  {{-- AVATAR --}}
+                                  <figure class="avatar avatar-50 rounded-circle mb-0">
+                                      <img src="{{ auth()->user()->avatar
+                        ? asset('storage/' . auth()->user()->avatar)
+                        : asset('tempelate/user_default.jpg') }}" class="rounded-circle w-100 h-100 object-fit-cover" alt="User Avatar">
+                                  </figure>
+
+                                  {{-- USER INFO --}}
+                                  <div class="flex-grow-1 overflow-hidden">
+                                      <p class="mb-1 fw-semibold text-truncate" title="{{ auth()->user()->name }}">
+                                          {{ auth()->user()->name }}
+                                      </p>
+                                      <p class="mb-0 small  text-truncate">
+                                          {{ auth()->user()->email }}
                                       </p>
                                   </div>
+
                               </div>
                           </div>
-                          <div class="px-2">
 
+                          {{-- MENU --}}
+                          <div class="px-2 pb-2">
 
-                              <div>
-                                  <a class="dropdown-item" href="/dashboard">
-                                      <div class="row g-0">
-                                          <div class="col align-self-center"><i data-feather="layout" class="avatar avatar-18 me-1"></i>
-                                              Dashboard Saya
-                                          </div>
+                              {{-- DASHBOARD --}}
+                              <a class="dropdown-item d-flex align-items-center gap-2" href="{{ route('dashboard') }}">
+                                  <i class="bi bi-speedometer2 fs-6"></i>
+                                  Dashboard Saya
+                              </a>
 
-                                      </div>
-                                  </a>
-                              </div>
+                              {{-- SUBSCRIPTION --}}
+                              @php
+                              $status = auth()->user()->subscriptionStatus();
+                              @endphp
 
-                              <div>
-                                  <a class="dropdown-item" href="investment-mysubscription.html">
-                                      <div class="row">
-                                          <div class="col"><i data-feather="gift" class="avatar avatar-18 me-1"></i> Subscription</div>
-                                          <div class="col-auto">
-                                              <p class="small text-success">Upgrade</p>
-                                          </div>
-                                          <div class="col-auto"><span class="arrow bi bi-chevron-right"></span></div>
-                                      </div>
-                                  </a>
-                              </div>
+                              <a class="dropdown-item d-flex align-items-center justify-content-between" href="{{ route('subscribe.page') }}">
+                                  <div class="d-flex align-items-center gap-2">
+                                      <i class="bi bi-gift fs-6"></i>
+                                      Subscription
+                                  </div>
 
-                              <div>
-                                  <a class="dropdown-item" href="/profile">
-                                      <i data-feather="settings" class="avatar avatar-18 me-1"></i> Setelan Akun
-                                  </a>
-                              </div>
-                              <div>
+                                  <span class="small
+                                    {{ $status === 'active' ? 'text-success' :
+                                    ($status === 'expired' ? 'text-danger' : 'text-muted') }}">
+                                    {{ ucfirst($status) }}
+                                  </span>
+                              </a>
 
-                                  <form method="POST" action="{{ route('logout') }}" id="logoutForm">
-                                      @csrf
-                                  </form>
+                              {{-- PASSWORD --}}
+                              <a class="dropdown-item d-flex align-items-center gap-2" href="{{ route('profile.edit') }}">
+                                  <i class="bi bi-shield-lock fs-6"></i>
+                                  Ganti Password
+                              </a>
 
-                                  <a href="#" class="dropdown-item theme-red" onclick="event.preventDefault(); document.getElementById('logoutForm').submit();">
-                                      <i data-feather="power" class="avatar avatar-18 me-1"></i> Keluar
-                                  </a>
+                              {{-- SETTINGS --}}
+                              <a class="dropdown-item d-flex align-items-center gap-2" href="{{ route('profile.edit') }}">
+                                  <i class="bi bi-gear fs-6"></i>
+                                  Setelan Akun
+                              </a>
 
-                              </div>
+                              <hr class="my-2">
+
+                              {{-- LOGOUT --}}
+                              <form method="POST" action="{{ route('logout') }}" id="logoutForm">
+                                  @csrf
+                              </form>
+
+                              <a href="#" class="dropdown-item d-flex align-items-center gap-2 text-danger" onclick="event.preventDefault(); document.getElementById('logoutForm').submit();">
+                                  <i class="bi bi-power fs-6"></i>
+                                  Keluar
+                              </a>
+
                           </div>
                       </div>
-                  </div>
-                  <script>
-                      feather.replace()
 
-                  </script>
+                  </div>
+
+                  @role('admin')
                   <!-- navigation inline toggler for small screen-->
                   <button class="navbar-toggler btn btn-link btn-link-header btn-square btn-icon collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#header-navbar" aria-controls="header-navbar" aria-expanded="false" aria-label="Toggle navigation">
                       <i data-feather="more-vertical" class="openbtn"></i>
                       <i data-feather="x" class="closebtn"></i>
                   </button>
+                  @endrole
               </div>
           </div>
       </nav>

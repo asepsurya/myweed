@@ -7,6 +7,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
 
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+
     <title id="dynamicTitle">{{ config('app.name', 'Laravel') }}</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <link rel="icon" type="image/png" href="{{ asset('tempelate/logo_apps.png') }}">
@@ -55,6 +57,11 @@
 
         <main class="adminuiux-content has-sidebar" onclick="contentClick()" style="padding-top: 68px;">
             <div class="container-fluid mt-4" id="main-content">
+                @if(session('warning'))
+                    <div class="alert alert-warning">
+                        {{ session('warning') }}
+                    </div>
+                @endif
                 {{ $slot }}
                 @include('layouts.partial.toastr')
             </div>
@@ -158,12 +165,11 @@
             if (pageTitle) pageTitle.textContent = pageName;
 
             // Title Browser Tab
-            document.title = "Admin - " + pageName;
+            document.title = " " + pageName;
         });
 
     </script>
-    @yield('js')
-    </script>
+
 
 </body>
 

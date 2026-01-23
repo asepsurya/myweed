@@ -209,6 +209,7 @@
                                         <i class="bi bi-music-note-beamed me-3"></i> Musik
                                     </a>
                                 </li>
+
                                  <li class="nav-item">
                                     <a class="nav-link tab-btn" data-tab="8">
                                         <i class="bi bi-play me-3"></i> Video dan Kisah Cinta

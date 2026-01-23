@@ -22,6 +22,7 @@ class DatabaseSeeder extends Seeder
        $this->call([TempelateSeed::class]);
        $this->call([InvitationSeed::class]);
        $this->call([GiftSeeder::class]);
+       $this->call([SubscriptionSeed::class]);
 
     }
 }

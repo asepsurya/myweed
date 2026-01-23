@@ -3,10 +3,12 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\Invitation;
+use App\Models\Subscription;
 use Spatie\Permission\Traits\HasRoles;
-use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable
 {
@@ -22,6 +24,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'google_id',
+        'avatar',
     ];
 
     /**
@@ -46,4 +50,58 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function subscription()
+    {
+        return $this->hasOne(Subscription::class);
+    }
+
+
+    public function isAdmin()
+    {
+        return $this->role === 'admin';
+    }
+
+
+    public function isSubscribed()
+    {
+        if ($this->isAdmin()) {
+            return true;
+        }
+
+        return $this->subscription &&
+            $this->subscription->is_active &&
+            $this->subscription->end_date->isFuture();
+    }
+    public function invitation()
+    {
+        return $this->hasOne(Invitation::class);
+    }
+
+    public function subscriptionStatus()
+    {
+      // ADMIN BYPASS
+    if ($this->isAdmin()) {
+        return 'active';
+    }
+
+    // TIDAK ADA SUBSCRIPTION → FREE
+    if (!$this->subscription) {
+        return 'free';
+    }
+
+    // END DATE NULL (FREE PERMANEN)
+    if (is_null($this->subscription->end_date)) {
+        return 'active';
+    }
+
+    // SUDAH EXPIRED
+    if ($this->subscription->end_date->isPast()) {
+        return 'expired';
+    }
+
+    // MASIH AKTIF
+    return 'active';
+    }
+
 }

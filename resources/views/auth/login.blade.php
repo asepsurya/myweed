@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
     <title>Login</title>
     <link rel="icon" type="image/png" href="assets/img/favicon.png">
 
@@ -100,7 +100,7 @@
                                                 </div>
                                             </div>
                                             <div class="col-auto">
-                                                <a href="investment-forgot-password.html" class=" ">Lupa Password?</a>
+                                                <a href="{{ route('password.request') }}" class=" ">Lupa Password?</a>
                                             </div>
                                         </div>
                                         <button type="submit" id="loginBtn" class="btn btn-lg btn-theme w-100 mb-4">
@@ -125,12 +125,9 @@
                                             </div>
                                         </div>
 
-                                        <button class="btn btn-lg btn-outline-theme w-100 mb-3 text-start">
+                                        <a href="{{ url('/auth/google') }}" class="btn btn-lg btn-outline-theme w-100 mb-3 text-start">
                                             <img src="{{ asset('assets/img/g-logo.png') }}" alt="" class="me-2"> Sign in with Google
-                                        </button>
-                                        <button class="btn btn-lg btn-outline-theme w-100 mb-4 text-start">
-                                            <img src="{{ asset('assets/img/f-logo.png') }}" alt="" class="me-2"> Sign in with Facebook
-                                        </button>
+                                        </a>
                                         <br><br>
                                     </div>
                                 </div>
