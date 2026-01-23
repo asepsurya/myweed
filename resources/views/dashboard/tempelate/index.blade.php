@@ -262,13 +262,24 @@
                                 Slug: {{ $template->slug }}
                             </p>
 
-                            <div class="d-flex justify-content-between align-items-center">
+                          <div class="d-flex justify-content-between align-items-center">
                                 <span class="badge text-bg-success">Active</span>
 
-                                <button type="button" onclick="confirmDelete({{ $template->id }})" class="btn btn-sm btn-outline-theme">
-                                    <i class="bi bi-trash"></i>
-                                </button>
+                                <div class="d-flex gap-2">
+                                    <a href="{{ route('template.preview', ['romeo-juliet',$template->id]) }}"
+                                    target="_blank"
+                                    class="btn btn-sm btn-outline-primary">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+
+                                    <button type="button"
+                                            onclick="confirmDelete({{ $template->id }})"
+                                            class="btn btn-sm btn-outline-theme">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
                             </div>
+
                         </div>
 
                     </div>

@@ -50,6 +50,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/templates/upload', [TempelateController::class, 'create']);
     Route::post('/templates/upload', [TempelateController::class, 'store']);
     Route::delete('/templates/{template}', [TempelateController::class, 'destroy'])->name('templates.destroy');
+    Route::get('/templates/{slug}/{id}', [TempelateController::class, 'preview'])->name('template.preview');
 
     Route::get('/musics', [MusicController::class, 'index'])->middleware('role:admin')->name('music.index');
     Route::post('/music/store', [MusicController::class, 'store'])->name('music.store');

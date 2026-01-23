@@ -5,10 +5,11 @@ namespace App\Http\Controllers;
 use ZipArchive;
 use App\Models\Music;
 use App\Models\Template;
+use App\Models\Invitation;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\File;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\File;
 
 class TempelateController extends Controller
 {
@@ -84,4 +85,39 @@ class TempelateController extends Controller
 
         return back()->with('success', 'Template berhasil dihapus.');
     }
+   public function preview($slug, $id)
+    {
+        // Ambil invitation + relasi
+        $invitation = Invitation::with([
+                'template',
+                'galleries',
+                'rsvps',
+            ])
+            ->where('slug', $slug)
+            ->firstOrFail();
+
+        // Ambil template
+        $template = Template::findOrFail($id);
+
+        // Update template_id
+        if ($invitation->template_id != $template->id) {
+            $invitation->update([
+                'template_id' => $template->id
+            ]);
+
+            // Refresh relasi template
+            $invitation->load('template');
+        }
+
+        // Tentukan view template
+        $templateView = 'templates.' . $invitation->template->slug . '.index';
+
+        // Safety: view template tidak ada
+        if (!view()->exists($templateView)) {
+            abort(404, 'Template tidak ditemukan');
+        }
+
+        return view($templateView, compact('invitation'));
+    }
+
 }
