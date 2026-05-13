@@ -16,5 +16,8 @@ class Template extends Model
         'thumbnail',
         'preview',
         'sections',
+        'views_count',
+        'likes_count',
+        'category',
     ];
 }

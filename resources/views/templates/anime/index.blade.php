@@ -3,12 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nandang & Rinjani | Anime Wedding</title>
+    <title>{{ $invitation->groom_nickname }} & {{ $invitation->bride_nickname }} | Anime Wedding</title>
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ url()->current() }}">
+    <meta property="og:title" content="{{ $invitation->groom_nickname }} & {{ $invitation->bride_nickname }} Wedding Invitation">
+    <meta property="og:description" content="You are invited to the wedding of {{ $invitation->groom_nickname }} & {{ $invitation->bride_nickname }}. Click to see the details.">
+    <meta property="og:image" content="{{ asset('storage/' . $invitation->gallery_cover) }}">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="{{ url()->current() }}">
+    <meta property="twitter:title" content="{{ $invitation->groom_nickname }} & {{ $invitation->bride_nickname }} Wedding Invitation">
+    <meta property="twitter:description" content="You are invited to the wedding of {{ $invitation->groom_nickname }} & {{ $invitation->bride_nickname }}. Click to see the details.">
+    <meta property="twitter:image" content="{{ asset('storage/' . $invitation->gallery_cover) }}">
 
     <!-- Google Fonts: Fredoka (Bulat/Anime), Quicksand (Modern) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;600&family=Quicksand:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js"></script>
 
     <style>
         :root {
@@ -40,6 +57,12 @@
             justify-content: center;
             min-height: 100vh;
             color: var(--text-dark);
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        body::-webkit-scrollbar {
+            display: none;
         }
 
         /* --- Container Mobile --- */
@@ -325,6 +348,18 @@
         /* Animations */
         .pop-in { opacity: 0; transform: scale(0.8); transition: 0.5s all; }
         .pop-in.visible { opacity: 1; transform: scale(1); }
+
+        /* --- Desktop Layout (Split Screen) --- */
+        @media (min-width: 1024px) {
+            body { background: var(--bg-color); height: 100vh; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+            .mobile-container { max-width: 1000px !important; flex-direction: row !important; display: flex !important; height: 90vh; border-radius: 20px; overflow: hidden; border: var(--border-thick); box-shadow: 15px 15px 0 var(--text-dark); }
+            .hero { flex: 1.2; height: 100% !important; border-bottom: none; border-right: var(--border-thick); background-attachment: scroll; }
+            .content-wrapper { flex: 1; height: 100%; overflow-y: auto; background: var(--white); scrollbar-width: thin; scrollbar-color: var(--primary-color) transparent; }
+            .content-wrapper::-webkit-scrollbar { width: 8px; }
+            .content-wrapper::-webkit-scrollbar-thumb { background: var(--primary-color); border: 2px solid var(--text-dark); border-radius: 10px; }
+            .section-padding { padding: 60px 40px; }
+            .hero h1 { font-size: 4rem; }
+        }
     </style>
 </head>
 <body>
@@ -337,7 +372,7 @@
     <div class="mobile-container">
 
         <!-- Hero Section -->
-        <header class="hero">
+        <header id="preview-hero-bg" class="hero">
             <div class="pop-in">
                 <h2 style="color: #FFA502; text-shadow: 2px 2px 0 var(--text-dark); font-size: 1.2rem;">The Wedding Of</h2>
                 <h1>{{ $invitation->groom_nickname }} <span style="font-size: 0.6em; vertical-align: middle;">&</span> {{ $invitation->bride_nickname }} </h1>
@@ -352,7 +387,8 @@
             </div>
         </header>
 
-        <!-- Quote Section (Speech Bubble) -->
+        <div class="content-wrapper">
+            <!-- Quote Section (Speech Bubble) -->
         <section class="quote-section">
             <div class="speech-bubble pop-in">
                 <div style="text-align: right; font-size: 0.8rem; color: var(--primary-color); font-weight: bold; margin-bottom: 10px;">Ar-Rum: 21</div>
@@ -370,14 +406,14 @@
             <div class="space-y-3">
                 <!-- Groom -->
                 <div class="card-anime text-center pop-in">
-                    <img src="{{ asset('storage/' . $invitation->foto_pria) }}" alt="Groom" class="couple-img">
+                    <img id="preview-foto-pria" src="{{ asset('storage/' . $invitation->foto_pria) }}" alt="Groom" class="couple-img">
                     <h3 style="margin-top: 15px;">{{ $invitation->groom_name }}</h3>
                     <p class="text-sm" style="color: #666;">Putra dari Bpk. Fulan & Ibu Fulana</p>
                 </div>
 
                 <!-- Bride -->
                 <div class="card-anime text-center pop-in">
-                    <img src="{{ asset('storage/' . $invitation->foto_wanita) }}" alt="Bride" class="couple-img">
+                    <img id="preview-foto-wanita" src="{{ asset('storage/' . $invitation->foto_wanita) }}" alt="Bride" class="couple-img">
                     <h3 style="margin-top: 15px; color: var(--primary-color);">{{ $invitation->bride_name }}</h3>
                     <p class="text-sm" style="color: #666;">Putri dari Bpk. Surya & Ibu Dewi</p>
                 </div>
@@ -431,7 +467,7 @@
             <div class="text-center mb-4 pop-in">
                 <h2 style="font-size: 2rem;">Galeri Foto</h2>
             </div>
-            <div class="masonry-gallery pop-in">
+            <div class="masonry-gallery pop-in" id="gallery-container">
                  @forelse ($invitation->galleries as $photo)
                     <a href="{{ asset('storage/' . $photo->image) }}" data-fancybox="gallery" class="masonry-item">
                         <img src="{{ asset('storage/' . $photo->image) }}" alt="Gallery">
@@ -440,9 +476,28 @@
                     <p class="text-center w-full" style="grid-column: span 2; padding: 20px;">Belum ada foto galeri 😢</p>
                  @endforelse
             </div>
+            
+        <!-- Gifts -->
+        @if($invitation->enable_gift == 1 && $invitation->gifts->count())
+        <section class="section-padding" style="background: white;">
+            <div class="text-center mb-5 pop-in">
+                <h2 class="anime-font" style="font-size: 2.5rem; color: #ff69b4;">Kado Pernikahan</h2>
+            </div>
+            <div class="grid grid-cols-1 gap-4 px-4">
+                @foreach($invitation->gifts as $gift)
+                <div class="card-anime p-6 text-center shadow-lg bg-white border-2 border-pink-100 rounded-2xl pop-in">
+                    <h4 class="font-bold text-lg text-pink-500">{{ $gift->bank }}</h4>
+                    <p class="text-xl font-bold my-2">{{ $gift->number }}</p>
+                    <p class="text-gray-600 mb-4">A/N: {{ $gift->name }}</p>
+                    <button onclick="copyToClipboard('{{ $gift->number }}')" class="btn-anime py-2 px-6 text-sm">Salin Rekening</button>
+                </div>
+                @endforeach
+            </div>
         </section>
+        @endif
 
         <!-- RSVP Form -->
+        @if($invitation->enable_rsvp == 1)
         <section class="section-padding" style="background: #FFF0F5;">
             <div class="text-center mb-4 pop-in">
                 <h2 style="font-size: 2rem;">Ucapan & Doa</h2>
@@ -451,40 +506,26 @@
             <div class="card-anime pop-in">
                 <form id="rsvpForm" class="space-y-3">
                     @csrf
-                    <div>
-                        <input class="form-control" placeholder="Nama Kamu 👤" name="name" required>
-                    </div>
-                    <div>
-                        <select class="form-control" name="attending">
-                            <option value="1">Saya Hadir! ✅</option>
-                            <option value="0">Maaf, Tidak Bisa 😔</option>
-                        </select>
-                    </div>
-                    <div>
-                        <textarea id="rsvpMessageInput" class="form-control resize-none" rows="3"
-                            placeholder="Tulis doa manis... ✨" name="message" style="height:100px; max-height:300px;" required></textarea>
+                    <div><input class="form-control" placeholder="Nama Kamu 👤" name="name" required></div>
+                    <div><select class="form-control" name="attending"><option value="1">Saya Hadir! ✅</option><option value="0">Maaf, Tidak Bisa 😔</option></select></div>
+                    
+                    <div class="emoji-picker" style="margin-bottom: 10px; display: flex; gap: 10px; justify-content: center;">
+                        <button type="button" onclick="addEmoji('🎉')" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">🎉</button>
+                        <button type="button" onclick="addEmoji('❤️')" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">❤️</button>
+                        <button type="button" onclick="addEmoji('🥳')" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">🥳</button>
+                        <button type="button" onclick="addEmoji('✨')" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">✨</button>
+                        <button type="button" onclick="addEmoji('🙏')" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">🙏</button>
                     </div>
 
-                    <button id="rsvpButton" type="submit" class="btn-anime w-full" style="width: 100%;">
-                        <span id="buttonText">Kirim Ucapan 🚀</span>
-                        <svg id="buttonSpinner" class="w-5 h-5 text-white animate-spin hidden" style="width:20px; height:20px; vertical-align:middle;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path>
-                        </svg>
-                    </button>
+                    <div><textarea class="form-control resize-none" rows="3" placeholder="Tulis doa manis... ✨" name="message" style="height:100px; max-height:300px;" required></textarea></div>
+                    <button id="rsvpButton" type="submit" class="btn-anime w-full">Kirim Ucapan 🚀</button>
                 </form>
             </div>
-
-            <div id="rsvpMessage" class="text-center mt-4 text-white" style="background: var(--primary-color); border: var(--border-thick); border-radius: 10px; padding: 10px; max-width: 300px; margin: 20px auto; display: none; box-shadow: var(--comic-shadow);"></div>
-
-            <div class="card-anime mt-4" style="padding: 15px;">
-                <h4 class="text-center anime-font text-lg mb-4">Doa dari Teman 💌</h4>
-                <div id="rsvpList" class="max-h-64">
-                    <!-- List loaded via JS -->
-                </div>
-                <center class="mt-4"> <span class="text-sm">({{ $invitation->rsvps->count() }} Pesan)</span> </center>
+            <div class="mt-8 pop-in">
+                <div id="rsvpList" class="space-y-4" style="max-height: 400px; overflow-y: auto;"></div>
             </div>
         </section>
+        @endif
 
         <!-- Footer -->
         <footer>
@@ -492,10 +533,26 @@
             <p style="font-size: 0.9rem; opacity: 0.9;">Terima kasih sudah mampir! 🎉</p>
             <p style="font-size: 0.7rem; opacity: 0.7; margin-top: 20px;">&copy; {{ date('Y') }} Anime Wedding Invitation</p>
         </footer>
-
+        </div>
     </div>
 
     <!-- Audio -->
+    @if($invitation->youtube_url)
+        @php
+            $videoId = '';
+            if (preg_match('%(?:youtube(?:-nocookie)?\.com/(?:[^/]+/.+/|(?:v|e(?:mbed)?)/|.*[?&]v=)|youtu\.be/)([^"&?/ ]{11})%i', $invitation->youtube_url, $match)) {
+                $videoId = $match[1];
+            }
+        @endphp
+        @if($videoId)
+            <div id="youtubePlayer" style="display:none">
+                <iframe id="ytIframe" width="0" height="0" 
+                    src="https://www.youtube.com/embed/{{ $videoId }}?enablejsapi=1&autoplay=1&loop=1&playlist={{ $videoId }}" 
+                    frameborder="0" allow="autoplay"></iframe>
+            </div>
+        @endif
+    @endif
+
     <audio id="bgMusic" loop>
         @if($invitation->music == 0 && $invitation->music)
         <source src="{{ asset('storage/'.$invitation->music) }}" type="audio/mpeg">
@@ -550,27 +607,49 @@
         // --- 3. Music Logic ---
         const bgMusic = document.getElementById('bgMusic');
         const musicBtn = document.getElementById('musicBtn');
+        const ytIframe = document.getElementById('ytIframe');
         let hasInteracted = false;
+        let isYoutube = {{ $invitation->youtube_url ? 'true' : 'false' }};
+
+        // --- 4. Clipboard ---
+        window.copyToClipboard = (text) => {
+            navigator.clipboard.writeText(text).then(() => {
+                alert("Nomor rekening berhasil disalin!");
+            });
+        };
+
+        function playMusic() {
+            if (isYoutube && ytIframe) {
+                ytIframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+            } else if (bgMusic) {
+                bgMusic.play().catch(e => console.log("Autoplay blocked"));
+            }
+            musicBtn.innerHTML = '⏸';
+            musicBtn.style.background = 'var(--primary-color)';
+        }
+
+        function pauseMusic() {
+            if (isYoutube && ytIframe) {
+                ytIframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+            } else if (bgMusic) {
+                bgMusic.pause();
+            }
+            musicBtn.innerHTML = '▶';
+            musicBtn.style.background = 'var(--secondary-color)';
+        }
 
         window.addEventListener('scroll', () => {
-            if (!hasInteracted && bgMusic.paused) {
-                bgMusic.play().then(() => {
-                    musicBtn.innerHTML = '⏸';
-                    musicBtn.style.background = 'var(--primary-color)';
-                    hasInteracted = true;
-                }).catch(e => console.log("Autoplay dicegah"));
+            if (!hasInteracted) {
+                playMusic();
+                hasInteracted = true;
             }
         }, { once: true });
 
         musicBtn.addEventListener('click', () => {
-            if (bgMusic.paused) {
-                bgMusic.play();
-                musicBtn.innerHTML = '⏸';
-                musicBtn.style.background = 'var(--primary-color)';
+            if (musicBtn.innerHTML === '▶') {
+                playMusic();
             } else {
-                bgMusic.pause();
-                musicBtn.innerHTML = '▶';
-                musicBtn.style.background = 'var(--secondary-color)';
+                pauseMusic();
             }
         });
 
@@ -584,6 +663,7 @@
 
         function renderRsvpList(rsvps) {
             const list = document.getElementById('rsvpList');
+            if (!list) return; // Guard against null
             if (!rsvps || rsvps.length === 0) {
                 list.innerHTML = `<div class="text-center text-sm py-4">Belum ada ucapan 😢</div>`;
                 return;
@@ -658,6 +738,40 @@
 
         document.querySelectorAll('.pop-in').forEach(el => observer.observe(el));
 
+        // --- 6. Live Preview Sync ---
+        window.addEventListener('message', function(event) {
+            if (event.data.type === 'syncImages') {
+                const imgs = event.data.images;
+                if (imgs.pria) {
+                    const el = document.getElementById('preview-foto-pria');
+                    if(el) el.src = imgs.pria;
+                }
+                if (imgs.wanita) {
+                    const el = document.getElementById('preview-foto-wanita');
+                    if(el) el.src = imgs.wanita;
+                }
+                if (imgs.cover) {
+                    const el = document.getElementById('preview-hero-bg');
+                    if(el) el.style.backgroundImage = `url('${imgs.cover}')`;
+                }
+                if (imgs.gallery && imgs.gallery.length > 0) {
+                    const galleryContainer = document.getElementById('gallery-container');
+                    if (galleryContainer) {
+                        galleryContainer.innerHTML = imgs.gallery.map(src => `
+                            <a href="${src}" data-fancybox="gallery" class="masonry-item">
+                                <img src="${src}" alt="Gallery">
+                            </a>
+                        `).join('');
+                    }
+                }
+            }
+        });
+
+        function addEmoji(emoji) {
+            const textarea = document.querySelector('textarea[name="message"]');
+            textarea.value += emoji;
+            textarea.focus();
+        }
     </script>
 </body>
 </html>

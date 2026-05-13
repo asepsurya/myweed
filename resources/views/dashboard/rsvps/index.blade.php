@@ -114,7 +114,7 @@
                 <form action="" method="GET">
                     <select name="list" id="list" class="form-control" onchange="form.submit()">
                         <option value="">Pilih Undangan</option>
-                        @foreach ($inviation as $item)
+                        @foreach ($invitations as $item)
                         <option value="{{ $item->id }}" {{ $activeInvitationId == $item->id ? 'selected' : '' }}>
                             {{ $item->groom_nickname }} & {{ $item->bride_nickname }}
                         </option>

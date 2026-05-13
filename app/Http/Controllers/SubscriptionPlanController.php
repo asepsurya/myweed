@@ -84,11 +84,11 @@ class SubscriptionPlanController extends Controller
             }
 
               Subscription::updateOrCreate(
-                ['user_id' => auth()->id()],
+                ['user_id' => $payment->user_id],
                 [
                     'subscription_plan_id' => $plan->id,
-                    'start_date' => now(),
-                    'end_date' => now()->addDays($plan->duration),
+                    'start_date' => $startDate,
+                    'end_date' => $endDate,
                     'is_active' => true
                 ]
                 );

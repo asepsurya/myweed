@@ -23,8 +23,7 @@
 
     <link href="https://unpkg.com/cropperjs@1.6.1/dist/cropper.min.css" rel="stylesheet">
     <script src="https://unpkg.com/cropperjs@1.6.1/dist/cropper.min.js"></script>
-    <script defer src="https://unpkg.com/face-api.js"></script>
-
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <style>
@@ -43,7 +42,7 @@
 
 
 </head>
-<body class="main-bg main-bg-opac main-bg-blur adminuiux-sidebar-fill-white adminuiux-sidebar-boxed roundedui theme-teal adminuiux-header-standard adminuiux-sidebar-iconic adminuiux-header-transparent scrolldown" data-theme="theme-teal" data-sidebarfill="adminuiux-sidebar-fill-white" data-bs-spy="scroll" data-bs-target="#list-example" data-bs-smooth-scroll="true" tabindex="0" data-headerlayout="adminuiux-header-standard" data-sidebarlayout="adminuiux-sidebar-iconic">
+<body class="main-bg main-bg-opac main-bg-blur adminuiux-sidebar-fill-white adminuiux-sidebar-boxed roundedui theme-teal adminuiux-header-standard adminuiux-sidebar-iconic adminuiux-header-transparent scrolldown @yield('sidebar_class')" data-theme="theme-teal" data-sidebarfill="adminuiux-sidebar-fill-white" data-bs-spy="scroll" data-bs-target="#list-example" data-bs-smooth-scroll="true" tabindex="0" data-headerlayout="adminuiux-header-standard" data-sidebarlayout="adminuiux-sidebar-iconic">
     {{-- header layout --}}
     @include('layouts.partial.header')
 
@@ -62,7 +61,11 @@
                         {{ session('warning') }}
                     </div>
                 @endif
-                {{ $slot }}
+                @if(isset($slot))
+                    {{ $slot }}
+                @else
+                    @yield('content')
+                @endif
                 @include('layouts.partial.toastr')
             </div>
         </main>
@@ -139,11 +142,13 @@
         });
 
         // MANUAL TOGGLE
-        toggleBtn.addEventListener('click', () => {
-            const current = document.documentElement.getAttribute('data-bs-theme');
-            const next = current === 'dark' ? 'light' : 'dark';
-            applyTheme(next);
-        });
+        if (toggleBtn) {
+            toggleBtn.addEventListener('click', () => {
+                const current = document.documentElement.getAttribute('data-bs-theme');
+                const next = current === 'dark' ? 'light' : 'dark';
+                applyTheme(next);
+            });
+        }
 
         initTheme();
 
@@ -171,6 +176,7 @@
     </script>
 
 
+    @stack('scripts')
 </body>
 
 

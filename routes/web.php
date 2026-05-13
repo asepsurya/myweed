@@ -14,15 +14,15 @@ use App\Http\Controllers\UserInvitationController;
 use App\Http\Controllers\SubscriptionPlanController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 
-Route::get('/', function () {
-    return view('index');
-});
+use App\Http\Controllers\LandingController;
+
+Route::get('/', [LandingController::class, 'index'])->name('landing');
 
 Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
     ->name('logout');
 
 Route::get('/dashboard', [DashboardController::class, 'index'])
-    ->middleware(['auth', 'verified','role:admin'])
+    ->middleware(['auth', 'verified', 'role:admin'])
     ->name('dashboard');
 
 Route::get('/home', [DashboardController::class, 'indexUser'])
@@ -36,23 +36,32 @@ Route::middleware('auth')->group(function () {
 
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
+
+Route::get('/templates/{slug}/{id}', [TempelateController::class, 'preview'])->name('template.preview');
+Route::get('/demo/{slug}', [TempelateController::class, 'demo'])->name('template.demo');
+Route::any('/invitation/live-preview', [TempelateController::class, 'liveUpdate'])->name('invitation.live-preview');
+Route::post('/templates/{template}/like', [TempelateController::class, 'like'])->name('template.like');
 
 Route::middleware(['auth'])->group(function () {
 
     Route::get('invitation', [UserInvitationController::class, 'index'])->middleware('role:admin')->name('invitation.index');
+    Route::post('invitation/bulk-delete', [UserInvitationController::class, 'bulkDestroy'])->name('invitation.bulk-delete');
+    Route::post('invitation/autosave', [UserInvitationController::class, 'autoSave'])->name('invitation.autosave');
     Route::get('invitation/create', [UserInvitationController::class, 'create'])->name('invitation.create');
     Route::get('invitation/{slug}', [UserInvitationController::class, 'detail'])->name('invitation.detail');
     Route::post('invitation', [UserInvitationController::class, 'store'])->name('invitation.store');
     Route::get('invitation/{invitation}/edit', [UserInvitationController::class, 'edit'])->name('invitation.edit');
     Route::put('invitation/{invitation}', [UserInvitationController::class, 'update'])->name('invitation.update');
+    Route::delete('invitation/{invitation}', [UserInvitationController::class, 'destroy'])->name('invitation.destroy');
     Route::delete('/gallery/{id}', [UserInvitationController::class, 'destroyGallery'])->name('gallery.delete');
+    Route::post('premium/upgrade', [UserInvitationController::class, 'upgradeToPremium'])->name('premium.upgrade');
 
     Route::get('theme', [TempelateController::class, 'index'])->middleware('role:admin')->name('tempelate.index');
     Route::get('/templates/upload', [TempelateController::class, 'create']);
     Route::post('/templates/upload', [TempelateController::class, 'store']);
     Route::delete('/templates/{template}', [TempelateController::class, 'destroy'])->name('templates.destroy');
-    Route::get('/templates/{slug}/{id}', [TempelateController::class, 'preview'])->name('template.preview');
+
 
     Route::get('/musics', [MusicController::class, 'index'])->middleware('role:admin')->name('music.index');
     Route::post('/music/store', [MusicController::class, 'store'])->name('music.store');
@@ -65,13 +74,15 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/users', [UserController::class, 'index'])->name('user.index')->middleware('role:admin');
     Route::get('/rsvps', [RsvpController::class, 'index'])->name('rsvp.index')->middleware('subscription');
     Route::delete('/rsvp/{rsvp}', [RsvpController::class, 'destroy'])->name('rsvp.destroy')->middleware('subscription');
-    Route::post('/rsvp/{invitation}', [RsvpController::class, 'store'])->name('rsvp.store')->middleware('subscription');
-    Route::get('/invitation/{invitation}/rsvps', [RsvpController::class, 'getRsvps'])->name('rsvp.list');
+
 
     Route::get('/subscription-plans', [SubscriptionPlanController::class, 'index'])->name('subscribe.page');
     Route::get('/subscription-plans/{planId}', [SubscriptionPlanController::class, 'subscribe'])->name('subscribe');
 
 });
+
+Route::post('/invitation/{invitation}/rsvp', [RsvpController::class, 'store'])->name('rsvp.store');
+Route::get('/invitation/{invitation}/rsvps', [RsvpController::class, 'getRsvps'])->name('rsvp.list');
 
 Route::get('/auth/google', [GoogleController::class, 'redirect']);
 Route::get('/auth/google/callback', [GoogleController::class, 'callback']);

@@ -43,4 +43,21 @@ class Invitation extends Model
         return $this->belongsTo(User::class);
     }
 
+    public static function createDefault($userId)
+    {
+        return self::create([
+            'user_id' => $userId,
+            'template_id' => 1, // Simple Template
+            'slug' => 'basic-wedding-' . $userId . '-' . rand(100, 999),
+            'groom_name' => 'Mempelai Pria',
+            'bride_name' => 'Mempelai Wanita',
+            'wedding_date' => now()->addMonths(3)->format('Y-m-d'),
+            'status' => 'draft',
+            'wedding_quote' => 'Dan di antara tanda-tanda (kebesaran)-Nya ialah Dia menciptakan pasangan-pasangan untukmu dari jenismu sendiri, agar kamu cenderung dan merasa tenteram kepadanya, dan Dia menjadikan di antaramu rasa kasih dan sayang.',
+            'akad_location' => 'Masjid Raya',
+            'akad_time' => '08:00:00',
+            'resepsi_location' => 'Gedung Serbaguna',
+            'resepsi_time' => '11:00:00',
+        ]);
+    }
 }
