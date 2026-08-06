@@ -473,7 +473,7 @@
                     Kepada Yth<br>
                     <span class="border-b px-2 py-1 inline-block mt-2">Bapak / Ibu / Saudara</span>
                 </p>
-                <p class="mt-4">{{ request('to') ?? 'Tamu Undangan' }}</p>
+                <p class="mt-4">{{ request('penerima') ?? 'Tamu Undangan' }}</p>
 
                 <div class="hero-date">{{ \Carbon\Carbon::parse($invitation->wedding_date)->locale('id')->translatedFormat('l, d F Y') }}</div>
 

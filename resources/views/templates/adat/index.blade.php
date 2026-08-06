@@ -628,7 +628,7 @@
 
             <div class="hero-sub fade-in">
                 Kepada Yth. Bapak/Ibu/Saudara/i<br>
-                <span style="font-weight: 700; font-size: 1.2rem; display: inline-block; margin-top: 5px;">{{ request('to') ?? 'Tamu Undangan' }}</span>
+                <span style="font-weight: 700; font-size: 1.2rem; display: inline-block; margin-top: 5px;">{{ request('penerima') ?? 'Tamu Undangan' }}</span>
             </div>
 
             <div class="hero-sub fade-in" style="margin-top: 20px;">

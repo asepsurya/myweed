@@ -388,20 +388,8 @@
                             <div class="form-floating">
                                 <textarea class="form-control" id="waMessage{{ $inv->id }}" placeholder="Pesan undangan"
                                     style="height:200px">
-                                                                        Assalamu'alaikum Wr. Wb.,
-
-                                                                        Dengan hormat, kami mengundang Bapak/Ibu/Saudara/i [nama] untuk hadir dalam acara pernikahan kami.
-
-                                                                        Detail acara dapat dilihat di tautan berikut:
-                                                                        {{ route('invitation.show', [$inv->slug]) }}?to=[nama]
-
-                                                                        Kami merasa bahagia dan terhormat apabila Bapak/Ibu/Saudara/i berkenan hadir serta memberikan doa restu.
-
-                                                                        Hormat kami,
-                                                                        {{ $inv->groom_nickname }} & {{ $inv->bride_nickname }}
-
-                                                                        Wassalamu'alaikum Wr. Wb.
-                                                                                                    </textarea>
+                                                @include('dashboard.invitation.pesan')
+                                                        </textarea>
                                 <label for="waMessage{{ $inv->id }}">Pesan Undangan</label>
                             </div>
                         </div>

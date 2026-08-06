@@ -78,7 +78,7 @@
             <div class="relative z-10 text-white px-6 space-y-4">
                 <p class="text-sm tracking-widest uppercase font-serif">The Wedding Of</p>
                 <h1 class="font-serif text-5xl font-bold italic">{{ $invitation->groom_nickname }} & {{ $invitation->bride_nickname }}</h1>
-                <p class="text-sm mt-4">Kepada Yth: {{ request('to') ?? 'Tamu Undangan' }}</p>
+                <p class="text-sm mt-4">Kepada Yth: {{ request('penerima') ?? 'Tamu Undangan' }}</p>
                 <div class="mt-6 border-y border-white/30 py-3">
                     <p class="text-lg font-serif italic">{{ \Carbon\Carbon::parse($invitation->wedding_date)->locale('id')->translatedFormat('d F Y') }}</p>
                 </div>

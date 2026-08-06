@@ -540,7 +540,7 @@
                 </div>
 
                 <p style="margin: 2px 0; font-size: 0.8em;">Kepada Yth.</p>
-                <div class="guest-tag" id="display-guest-name">{{ request('to') ?? 'Keluarga Besar' }}</div>
+                <div class="guest-tag" id="display-guest-name">{{ request('penerima') ?? 'Keluarga Besar' }}</div>
 
                 <button class="btn-main" onclick="openInvitation()">✉️ Buka Surat Undangan</button>
                 <button class="btn-secondary" onclick="toggleModal('generator-modal', true)">🔗 Buat Link
@@ -639,7 +639,7 @@
                 <h4 style="margin-top: 0; color: var(--color-primary); font-size: 0.9em;">Konfirmasi RSVP</h4>
                 <form id="rsvp-form" action="{{ route('rsvp.store', $invitation) }}" method="POST">
                     @csrf
-                    <input type="text" id="rsvp-name" name="name" value="{{ request('to') ?? 'Tamu Undangan' }}" readonly style="background-color: #e0e0e0;">
+                    <input type="text" id="rsvp-name" name="name" value="{{ request('penerima') ?? 'Tamu Undangan' }}" readonly style="background-color: #e0e0e0;">
                     <select id="rsvp-status" name="attending" required>
                         <option value="1">Hadir</option>
                         <option value="2">Tidak Hadir</option>
@@ -708,7 +708,7 @@
             }
         };
 
-        let guestName = "{{ request('to') ?? 'Tamu Undangan' }}";
+        let guestName = "{{ request('penerima') ?? 'Tamu Undangan' }}";
         let dialog = [];
         let currentLine = 0;
         let isAudioEnabled = true;
@@ -1085,7 +1085,7 @@ END:VCALENDAR`;
                 return;
             }
             const baseUrl = window.location.origin + window.location.pathname;
-            const generatedUrl = `${baseUrl}?to=${encodeURIComponent(input)}`;
+            const generatedUrl = `${baseUrl}?penerima=${encodeURIComponent(input)}`;
 
             navigator.clipboard.writeText(generatedUrl).then(() => {
                 alert(`Link berhasil disalin!\n\nURL: ${generatedUrl}`);

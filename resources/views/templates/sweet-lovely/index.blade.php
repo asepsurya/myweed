@@ -289,7 +289,7 @@
                 <p class="font-body-md text-body-md mb-2">Kepada Yth.</p>
                 <p class="font-body-lg text-body-lg font-bold mb-6">Bapak / Ibu / Saudara</p>
                 <div class="border border-on-primary/30 rounded-lg p-4 backdrop-blur-md bg-surface/10 mb-8 inline-block min-w-[280px]">
-                    <p class="font-body-md text-body-md mb-2">{{ request('to') ?? 'Keluarga Besar' }}</p>
+                    <p class="font-body-md text-body-md mb-2">{{ request('penerima') ?? 'Keluarga Besar' }}</p>
                     <p class="font-headline-md text-headline-md italic font-headline-md">{{ \Carbon\Carbon::parse($invitation->wedding_date)->locale('id')->translatedFormat('l, d F Y') }}</p>
                 </div>
                 <br />

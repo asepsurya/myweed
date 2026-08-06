@@ -391,7 +391,7 @@
                                 Dengan hormat, kami mengundang Bapak/Ibu/Saudara/i [nama] untuk hadir dalam acara pernikahan kami.
 
                                 Detail acara dapat dilihat di tautan berikut:
-                                {{ route('invitation.show', [$inv->slug]) }}?to=[nama]
+                                {{ route('invitation.show', [$inv->slug]) }}?penerima=[nama]
 
                                 Kami merasa bahagia dan terhormat apabila Bapak/Ibu/Saudara/i berkenan hadir serta memberikan doa restu.
 

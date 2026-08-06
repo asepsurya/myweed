@@ -77,7 +77,7 @@
                 <p class="text-sm font-light italic opacity-80">{{ \Carbon\Carbon::parse($invitation->wedding_date)->locale('id')->translatedFormat('l, d F Y') }}</p>
                 <div class="mt-4 text-xs tracking-widest opacity-60">
                     Kepada Yth:<br>
-                    <span class="text-primary font-bold block mt-2 text-sm">{{ request('to') ?? 'Tamu Undangan' }}</span>
+                    <span class="text-primary font-bold block mt-2 text-sm">{{ request('penerima') ?? 'Tamu Undangan' }}</span>
                 </div>
                 <button onclick="document.getElementById('content').scrollIntoView({behavior:'smooth'})" class="mt-10 border border-primary px-10 py-3 text-xs uppercase tracking-widest hover:bg-primary hover:text-black transition text-primary">Buka Undangan</button>
             </div>
