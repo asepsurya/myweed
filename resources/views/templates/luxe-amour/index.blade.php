@@ -2,9 +2,28 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
+<<<<<<< HEAD:resources/views/templates/elegant-theme/index.blade.php
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <meta name="csrf-token" content="{{ csrf_token() }}" />
     <title>{{ $invitation->groom_nickname ?? 'Pasangan' }} &amp; {{ $invitation->bride_nickname ?? 'Pasangan' }} | The Wedding</title>
+=======
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ $invitation->groom_nickname }} & {{ $invitation->bride_nickname }} | Wedding Invitation</title>
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ url()->current() }}">
+    <meta property="og:title" content="{{ $invitation->groom_nickname }} & {{ $invitation->bride_nickname }} Wedding Invitation">
+    <meta property="og:description" content="You are invited to the wedding of {{ $invitation->groom_nickname }} & {{ $invitation->bride_nickname }}. Click to see the details.">
+    <meta property="og:image" content="{{ asset('storage/' . $invitation->gallery_cover) }}">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="{{ url()->current() }}">
+    <meta property="twitter:title" content="{{ $invitation->groom_nickname }} & {{ $invitation->bride_nickname }} Wedding Invitation">
+    <meta property="twitter:description" content="You are invited to the wedding of {{ $invitation->groom_nickname }} & {{ $invitation->bride_nickname }}. Click to see the details.">
+    <meta property="twitter:image" content="{{ asset('storage/' . $invitation->gallery_cover) }}">
+>>>>>>> cf03afae4c1d966c8748d360e1034ab498ceeb3b:resources/views/templates/luxe-amour/index.blade.php
 
     <!-- Fonts & Icons -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -43,6 +62,12 @@
             display: flex;
             justify-content: center;
             min-height: 100vh;
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        body::-webkit-scrollbar {
+            display: none;
         }
 
         a { text-decoration: none; color: var(--secondary-color); transition: var(--transition); }
@@ -190,6 +215,7 @@
         .quote-section { padding: 100px 30px; text-align: center; background: var(--white); position: relative; }
         .quote-content { font-family: 'Playfair Display', serif; font-size: 1.25rem; line-height: 1.8; color: var(--text-dark); max-width: 90%; margin: 0 auto; position: relative; z-index: 2; }
 
+<<<<<<< HEAD:resources/views/templates/elegant-theme/index.blade.php
         .gift-card { margin: 10px; position: relative; background: #dddddd; border-radius: 16px; padding: 50px; min-height: 140px; overflow: hidden; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05); }
         .gift-card::before { content: ""; position: absolute; inset: 0; background-image: linear-gradient(135deg, #f3f3f3 25%, transparent 25%), linear-gradient(225deg, #f3f3f3 25%, transparent 25%); opacity: 0.4; }
         .gift-logo { position: absolute; top: 20px; right: 20px; }
@@ -197,6 +223,47 @@
         .gift-name { font-weight: 600; letter-spacing: 1px; color: #7a5a2f; }
         .gift-number { font-size: 18px; font-weight: 500; color: #444; }
         .gift-copy { position: absolute; bottom: 20px; right: 20px; border: none; background: transparent; color: #7a5a2f; font-size: 14px; cursor: pointer; display: flex; align-items: center; gap: 5px; }
+=======
+        /* --- Desktop Layout (Split Screen) --- */
+        @media (min-width: 1024px) {
+            body {
+                background: #f0f0f0;
+                height: 100vh;
+                overflow: hidden;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            .mobile-container {
+                max-width: 1000px !important;
+                flex-direction: row !important;
+                display: flex !important;
+                height: 90vh;
+                border-radius: 20px;
+                overflow: hidden;
+                border: 1px solid rgba(0,0,0,0.1);
+            }
+            .hero {
+                flex: 1.2;
+                height: 100% !important;
+            }
+            .content-wrapper {
+                flex: 1;
+                height: 100%;
+                overflow-y: auto;
+                background: var(--bg-color);
+                scrollbar-width: thin;
+                scrollbar-color: var(--primary-color) transparent;
+            }
+            .content-wrapper::-webkit-scrollbar { width: 5px; }
+            .content-wrapper::-webkit-scrollbar-thumb { background: var(--primary-color); border-radius: 10px; }
+            
+            /* Adjustments for desktop */
+            .section-padding { padding: 80px 40px; }
+            .hero h1 { font-size: 4rem; }
+        }
+
+>>>>>>> cf03afae4c1d966c8748d360e1034ab498ceeb3b:resources/views/templates/luxe-amour/index.blade.php
     </style>
 </head>
 <body>
@@ -210,8 +277,13 @@
     <div class="mobile-container">
 
         <!-- Hero Section -->
+<<<<<<< HEAD:resources/views/templates/elegant-theme/index.blade.php
         <header id="home" class="hero" style="background-image: linear-gradient(rgba(26, 60, 52, 0.4), rgba(26, 60, 52, 0.7)), url('{{ asset('storage/' . ($invitation->gallery_cover ?? 'default/cover.jpg')) }}');">
             <div class="fade-in px-6">
+=======
+        <header id="preview-hero-bg" class="hero" style="background-image: linear-gradient(rgba(26, 60, 52, 0.4), rgba(26, 60, 52, 0.7)), url('{{ asset('storage/' . $invitation->gallery_cover) }}');">
+            <div class="fade-in">
+>>>>>>> cf03afae4c1d966c8748d360e1034ab498ceeb3b:resources/views/templates/luxe-amour/index.blade.php
                 <div class="hero-subtitle">The Wedding Of</div>
                 <h1>{{ $invitation->groom_nickname }} & {{ $invitation->bride_nickname }}</h1>
 
@@ -219,7 +291,11 @@
                     Kepada Yth<br>
                     <span class="border-b border-white/50 px-2 py-1 inline-block mt-2">Bapak / Ibu / Saudara</span>
                 </p>
+<<<<<<< HEAD:resources/views/templates/elegant-theme/index.blade.php
                 <p class="mt-4 font-semibold text-lg">{{ request('to') ?? 'Keluarga Besar' }}</p>
+=======
+                <p class="mt-4">{{ request('to') ?? 'Tamu Undangan' }}</p>
+>>>>>>> cf03afae4c1d966c8748d360e1034ab498ceeb3b:resources/views/templates/luxe-amour/index.blade.php
 
                 <div class="hero-date">{{ \Carbon\Carbon::parse($invitation->wedding_date)->locale('id')->translatedFormat('l, d F Y') }}</div>
 
@@ -235,8 +311,9 @@
             </div>
         </header>
 
-        <!-- Quote Section -->
-        <section id="quote" class="section-padding quote-section">
+        <div class="content-wrapper">
+            <!-- Quote Section -->
+            <section id="quote" class="section-padding quote-section">
             <div class="fade-in">
                 <p class="serif-font" style="font-size: 1.2rem; color: var(--primary-color); margin-bottom: 20px;">Quotes</p>
                 <p class="quote-content">
@@ -257,7 +334,11 @@
                 <!-- Groom -->
                 <div class="couple-card">
                     <div class="img-frame">
+<<<<<<< HEAD:resources/views/templates/elegant-theme/index.blade.php
                         <img src="{{ asset('storage/' . ($invitation->foto_pria ?? 'default/groom.jpg')) }}" alt="{{ $invitation->groom_name }}" class="couple-img" loading="lazy">
+=======
+                        <img id="preview-foto-pria" src="{{ asset('storage/' . $invitation->foto_pria) }}" alt="{{ $invitation->groom_name }}" class="couple-img" loading="lazy">
+>>>>>>> cf03afae4c1d966c8748d360e1034ab498ceeb3b:resources/views/templates/luxe-amour/index.blade.php
                     </div>
                     <h3 class="couple-name">{{ $invitation->groom_name }}</h3>
                     <p class="parent-name">Putra dari Bpk. {{ $invitation->groom_father_name }} & Ibu {{ $invitation->groom_mother_name }}</p>
@@ -272,7 +353,11 @@
                 <!-- Bride -->
                 <div class="couple-card">
                     <div class="img-frame">
+<<<<<<< HEAD:resources/views/templates/elegant-theme/index.blade.php
                         <img src="{{ asset('storage/' . ($invitation->foto_wanita ?? 'default/bride.jpg')) }}" alt="{{ $invitation->bride_name }}" class="couple-img" loading="lazy">
+=======
+                        <img id="preview-foto-wanita" src="{{ asset('storage/' . $invitation->foto_wanita) }}" alt="{{ $invitation->bride_name }}" class="couple-img" loading="lazy">
+>>>>>>> cf03afae4c1d966c8748d360e1034ab498ceeb3b:resources/views/templates/luxe-amour/index.blade.php
                     </div>
                     <h3 class="couple-name">{{ $invitation->bride_name }}</h3>
                     <p class="parent-name">Putri dari Bpk. {{ $invitation->bride_father_name }} & Ibu {{ $invitation->bride_mother_name }}</p>
@@ -363,6 +448,7 @@
                 <p class="hero-subtitle" style="color: var(--text-muted);">Moments</p>
                 <h2 class="serif-font" style="font-size: 2.5rem;">Galeri</h2>
             </div>
+<<<<<<< HEAD:resources/views/templates/elegant-theme/index.blade.php
             <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 fade-in" id="galleryGrid">
                 @forelse($invitation->galleries as $index => $photo)
                 <div class="gallery-item {{ $index >= 6 ? 'hidden' : '' }}" data-gallery-index="{{ $index }}">
@@ -372,6 +458,13 @@
                         </a>
                     </div>
                 </div>
+=======
+            <div class="masonry-gallery fade-in" id="gallery-container">
+                @forelse ($invitation->galleries as $photo)
+                <a href="{{ asset('storage/' . $photo->image) }}" data-fancybox="gallery" class="masonry-item">
+                    <img src="{{ asset('storage/' . $photo->image) }}" alt="Gallery Photo" loading="lazy">
+                </a>
+>>>>>>> cf03afae4c1d966c8748d360e1034ab498ceeb3b:resources/views/templates/luxe-amour/index.blade.php
                 @empty
                 <p class="text-center col-span-full text-gray-500">Belum ada foto galeri.</p>
                 @endforelse
@@ -437,13 +530,19 @@
         </section>
         @endif
 
-        <!-- RSVP Form -->
+        <!-- RSVP -->
         @if($invitation->enable_rsvp == 1)
+<<<<<<< HEAD:resources/views/templates/elegant-theme/index.blade.php
         <section id="rsvp" class="section-padding" style="background-color: #f7f7f7;">
             <div class="text-center mb-4 fade-in">
+=======
+        <section id="rsvp" style="padding: 100px 20px; background-color: var(--white);">
+            <div class="text-center mb-5 fade-in">
+>>>>>>> cf03afae4c1d966c8748d360e1034ab498ceeb3b:resources/views/templates/luxe-amour/index.blade.php
                 <p class="hero-subtitle" style="color: var(--text-muted);">RSVP</p>
-                <h2 class="serif-font" style="font-size: 2.5rem;">Ucapan</h2>
+                <h2 class="serif-font" style="font-size: 2.5rem;">Ucapan & Doa</h2>
             </div>
+<<<<<<< HEAD:resources/views/templates/elegant-theme/index.blade.php
 
             @if($invitation->rsvp_deadline)
             <div class="text-center mb-4 fade-in">
@@ -468,11 +567,23 @@
                     </div>
                     <div class="form-group">
                         <select class="form-control" name="attending" required>
+=======
+            
+            <div class="rsvp-form fade-in" style="max-width: 500px; margin: 0 auto; background: #fff; padding: 40px; box-shadow: 0 10px 40px rgba(0,0,0,0.05); border-radius: 15px;">
+                <form id="rsvpForm">
+                    @csrf
+                    <div style="margin-bottom: 20px;">
+                        <input type="text" name="name" class="form-control" placeholder="Nama Anda" style="width: 100%; padding: 12px; border: 1px solid #eee; border-radius: 8px;" required>
+                    </div>
+                    <div style="margin-bottom: 20px;">
+                        <select name="attending" class="form-control" style="width: 100%; padding: 12px; border: 1px solid #eee; border-radius: 8px;">
+>>>>>>> cf03afae4c1d966c8748d360e1034ab498ceeb3b:resources/views/templates/luxe-amour/index.blade.php
                             <option value="1">Hadir</option>
                             <option value="2">Tidak Hadir</option>
                             <option value="3">Masih Ragu</option>
                         </select>
                     </div>
+<<<<<<< HEAD:resources/views/templates/elegant-theme/index.blade.php
                     <div class="form-group">
                         <textarea id="rsvpMessageInput" class="form-control resize-none" rows="3" placeholder="Tulis doa & ucapan..." name="message" style="height: 100px;" required></textarea>
                     </div>
@@ -485,13 +596,32 @@
                                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path>
                             </svg>
                         </button>
+=======
+
+                    <div class="emoji-picker" style="margin-bottom: 10px; display: flex; gap: 10px; justify-content: center;">
+                        <button type="button" onclick="addEmoji('🎉')" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">🎉</button>
+                        <button type="button" onclick="addEmoji('❤️')" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">❤️</button>
+                        <button type="button" onclick="addEmoji('🥳')" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">🥳</button>
+                        <button type="button" onclick="addEmoji('✨')" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">✨</button>
+                        <button type="button" onclick="addEmoji('🙏')" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">🙏</button>
                     </div>
+
+                    <div style="margin-bottom: 20px;">
+                        <textarea name="message" class="form-control" rows="4" placeholder="Tulis ucapan selamat..." style="width: 100%; padding: 12px; border: 1px solid #eee; border-radius: 8px;" required></textarea>
+>>>>>>> cf03afae4c1d966c8748d360e1034ab498ceeb3b:resources/views/templates/luxe-amour/index.blade.php
+                    </div>
+                    <button type="submit" id="rsvpButton" class="btn-primary" style="width: 100%; padding: 15px; background: var(--primary-color); color: #fff; border: none; border-radius: 8px; cursor: pointer;">Kirim Ucapan</button>
                 </form>
             </div>
 
+<<<<<<< HEAD:resources/views/templates/elegant-theme/index.blade.php
             <div id="rsvpMessage" class="text-center mt-4 text-sm font-bold hidden"></div>
 
             <div class="mt-6 bg-white rounded-lg mx-auto p-4" style="border: 1px solid #eee;">
+=======
+            <!-- RSVP List -->
+            <div class="mt-6 bg-white rounded-lg mx-auto p-4" style="max-width: 414px; border: 1px solid #eee;padding:10px;">
+>>>>>>> cf03afae4c1d966c8748d360e1034ab498ceeb3b:resources/views/templates/luxe-amour/index.blade.php
                 <h4 class="text-center serif-font text-lg mb-4" style="color: var(--primary-color);">Tinggalkan kami doa terbaik anda untuk momen bahagia kami</h4>
                 <div id="rsvpList" class="space-y-4" style="max-height: 400px; overflow-y: auto; padding-right: 5px;" data-url="{{ route('rsvp.list', $invitation) }}"></div>
                 <div class="text-center mt-4">
@@ -540,6 +670,7 @@
             <br>
             <p style="font-size: 0.7rem; opacity: 0.5;">&copy; {{ date('Y') }} Elegant Wedding Invitation</p>
         </footer>
+        </div>
 
     </div>
 
@@ -877,6 +1008,7 @@
                 } else {
                     rsvpList.innerHTML = '<p class="text-center text-gray-500 mb-2">Belum ada ucapan. Jadilah yang pertama!</p><span class="material-symbols-outlined text-primary block text-center">favorite</span>';
                 }
+<<<<<<< HEAD:resources/views/templates/elegant-theme/index.blade.php
             })
             .catch(function(err) { console.error('Failed to load RSVP list:', err); });
         }
@@ -926,6 +1058,46 @@
         };
 
     });
+=======
+            }, 30000);
+
+            /* --- 7. LIVE PREVIEW SYNC --- */
+            window.addEventListener('message', function(event) {
+                if (event.data.type === 'syncImages') {
+                    const imgs = event.data.images;
+                    if (imgs.pria) {
+                        const el = document.getElementById('preview-foto-pria');
+                        if(el) el.src = imgs.pria;
+                    }
+                    if (imgs.wanita) {
+                        const el = document.getElementById('preview-foto-wanita');
+                        if(el) el.src = imgs.wanita;
+                    }
+                    if (imgs.cover) {
+                        const el = document.getElementById('preview-hero-bg');
+                        if(el) el.style.backgroundImage = `linear-gradient(rgba(26, 60, 52, 0.4), rgba(26, 60, 52, 0.7)), url('${imgs.cover}')`;
+                    }
+                    if (imgs.gallery && imgs.gallery.length > 0) {
+                        const galleryContainer = document.getElementById('gallery-container');
+                        if (galleryContainer) {
+                            galleryContainer.innerHTML = imgs.gallery.map(src => `
+                                <a href="${src}" data-fancybox="gallery" class="masonry-item">
+                                    <img src="${src}" alt="Gallery Photo">
+                                </a>
+                            `).join('');
+                        }
+                    }
+                }
+            });
+        });
+        });
+
+        function addEmoji(emoji) {
+            const textarea = document.querySelector('textarea[name="message"]');
+            textarea.value += emoji;
+            textarea.focus();
+        }
+>>>>>>> cf03afae4c1d966c8748d360e1034ab498ceeb3b:resources/views/templates/luxe-amour/index.blade.php
     </script>
 </body>
 </html>

@@ -10,6 +10,7 @@ class RsvpController extends Controller
 {
     public function index()
     {
+<<<<<<< HEAD
         $inviation = Invitation::orderBy('id')->get();
 
         $activeInvitationId = request('list')
@@ -36,6 +37,40 @@ class RsvpController extends Controller
             'rsvps',
             'stats',
             'inviation',
+=======
+        $user = auth()->user();
+        $activeInvitationId = request('list');
+
+        if (!$activeInvitationId) {
+            if ($user->isAdmin()) {
+                $activeInvitationId = Invitation::first()?->id;
+            } else {
+                $activeInvitationId = Invitation::where('user_id', $user->id)->first()?->id;
+            }
+        }
+
+        $rsvps = Rsvp::where('invitation_id', $activeInvitationId)
+            ->latest()
+            ->paginate(10);
+
+        $stats = [
+            'total'       => Rsvp::where('invitation_id', $activeInvitationId)->count(),
+            'hadir'       => Rsvp::where('invitation_id', $activeInvitationId)->where('attending', '1')->count(),
+            'tidak_hadir' => Rsvp::where('invitation_id', $activeInvitationId)->where('attending', '2')->count(),
+            'ragu'        => Rsvp::where('invitation_id', $activeInvitationId)->where('attending', '0')->count(),
+        ];
+
+        if ($user->isAdmin()) {
+            $invitations = Invitation::all();
+        } else {
+            $invitations = Invitation::where('user_id', $user->id)->get();
+        }
+
+        return view('dashboard.rsvps.index', compact(
+            'rsvps',
+            'stats',
+            'invitations',
+>>>>>>> cf03afae4c1d966c8748d360e1034ab498ceeb3b
             'activeInvitationId'
         ));
     }
@@ -57,13 +92,15 @@ class RsvpController extends Controller
             'attending' => $request->attending ?? 1,
         ]);
 
-       return response()->json([
-        'success' => true,
-        'message' => 'RSVP berhasil dikirim!'
-    ]);
+        return response()->json([
+            'success' => true,
+            'message' => 'RSVP berhasil dikirim!'
+        ]);
     }
+
     public function getRsvps($invitationId)
     {
+<<<<<<< HEAD
         $invitation = Invitation::findOrFail($invitationId);
         $rsvps = Rsvp::where('invitation_id', $invitation->id)->latest()->get();
         return response()->json($rsvps);
@@ -71,10 +108,18 @@ class RsvpController extends Controller
 public function destroy(Rsvp $rsvp)
 {
     $rsvp->delete();
+=======
+        $rsvps = Rsvp::where('invitation_id', $invitationId)->latest()->get();
+        return response()->json($rsvps);
+    }
+>>>>>>> cf03afae4c1d966c8748d360e1034ab498ceeb3b
 
-    return redirect()
-        ->back()
-        ->with('success', 'RSVP berhasil dihapus');
-}
+    public function destroy(Rsvp $rsvp)
+    {
+        $rsvp->delete();
 
+        return redirect()
+            ->back()
+            ->with('success', 'RSVP berhasil dihapus');
+    }
 }

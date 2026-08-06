@@ -51,11 +51,12 @@ class GoogleController extends Controller
 
         Auth::login($user);
 
-        // 🔽 redirect logic
-        if (Invitation::where('user_id', $user->id)->exists()) {
-            return redirect('/dashboard');
+        // 🔽 Otomatis buat undangan jika belum punya
+        if (!Invitation::where('user_id', $user->id)->exists()) {
+            Invitation::createDefault($user->id);
         }
 
-        return redirect()->route('invitation.create');
+        // 🔽 redirect logic
+        return redirect()->route('dashboard.user');
     }
 }

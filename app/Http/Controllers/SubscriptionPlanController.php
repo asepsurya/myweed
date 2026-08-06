@@ -100,6 +100,7 @@ class subscriptionPlanController extends Controller
                 return response()->json(['message' => 'Plan not found'], 404);
             }
 
+<<<<<<< HEAD
             $subscription = Subscription::where('user_id', $payment->user_id)->first();
 
             if ($subscription && $subscription->end_date && $subscription->end_date->isFuture()) {
@@ -112,6 +113,10 @@ class subscriptionPlanController extends Controller
 
             Subscription::updateOrCreate(
                 ['user_id' => $payment->user_id], // ✅ BENAR
+=======
+              Subscription::updateOrCreate(
+                ['user_id' => $payment->user_id],
+>>>>>>> cf03afae4c1d966c8748d360e1034ab498ceeb3b
                 [
                     'subscription_plan_id' => $plan->id,
                     'start_date' => $startDate,

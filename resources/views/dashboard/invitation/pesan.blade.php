@@ -1,18 +1,22 @@
-Assalamu’alaikum Wr. Wb.,
+Assalamu’alaikum Wr. Wb.
 
-Dengan hormat, kami mengundang Bapak/Ibu/Saudara/i [nama] untuk hadir dalam acara pernikahan kami.
+Tanpa mengurangi rasa hormat, perkenankan kami mengundang Bapak/Ibu/Saudara/i [nama] untuk menghadiri acara pernikahan kami:
 
-Detail acara dapat dilihat di tautan berikut:
+{{ $inv->bride_name }} & {{ $inv->groom_name }}
 
-{{ route('invitation.show', [$inv->slug]); }}?to=[nama]
+Detail acara dan lokasi dapat dilihat melalui tautan undangan digital berikut:
 
-Kami merasa bahagia dan terhormat apabila Bapak/Ibu/Saudara/i berkenan hadir serta memberikan doa restu.
-Mohon maaf, undangan ini disampaikan melalui pesan ini sebagai pengganti undangan cetak, mengingat keterbatasan jarak dan waktu.
+{{ route('invitation.show', [$inv->slug]) }}?to=[nama_url]
 
-Terima kasih atas perhatian dan kehadirannya.
+Merupakan suatu kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir dan memberikan doa restu.
 
+<<<<<<< HEAD
 Hormat kami,
 Maisaroh & Aceng Fikri
 
 Wassalamu’alaikum Wr. Wb.
 
+=======
+Terima kasih.
+Wassalamu’alaikum Wr. Wb.
+>>>>>>> cf03afae4c1d966c8748d360e1034ab498ceeb3b

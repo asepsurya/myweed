@@ -27,9 +27,15 @@ class TempelateSeed extends Seeder
         ],
         [
             'name' => 'Luxe Amour',
-            'slug' => 'elegant-theme',
+            'slug' => 'luxe-amour',
             'thumb' => 'elegant-thumb.png',
             'preview' => 'elegant_preview.webp',
+        ],
+        [
+            'name' => 'Elegant Classic',
+            'slug' => 'elegant_tempelate',
+            'thumb' => 'elegant-thumb.png',
+            'preview' => 'simple_preview.png',
         ],
         [
             'name' => 'Anime Tempelate',
@@ -75,14 +81,16 @@ class TempelateSeed extends Seeder
                 new HttpFile($previewSource)
             );
 
-            Template::create([
-                'name'       => $tpl['name'],
-                'slug'       => $tpl['slug'],
-                'thumbnail'  => $thumb,     // contoh: templates/abc123.webp
-                'preview'    => $preview,   // contoh: preview/xyz456.webp
-                'sections'   => ["hero", "couple", "event", "gallery", "rsvp", "music"],
-                'is_active'  => true
-            ]);
+            Template::updateOrCreate(
+                ['slug' => $tpl['slug']],
+                [
+                    'name'       => $tpl['name'],
+                    'thumbnail'  => $thumb,
+                    'preview'    => $preview,
+                    'sections'   => ["hero", "couple", "event", "gallery", "rsvp", "music"],
+                    'is_active'  => true
+                ]
+            );
         }
 
 

@@ -66,7 +66,7 @@
 
                                   <!-- Dashboard -->
                                   <div class="col-4">
-                                      <a class="dropdown-item square-item" href="dashboard.html">
+                                      <a class="dropdown-item square-item" href="{{ auth()->user()->hasRole('admin') ? route('dashboard') : route('dashboard.user') }}">
                                           <div class="avatar avatar-40 rounded mb-2">
                                               <i class="bi bi-columns-gap fs-4 mx-0"></i>
                                           </div>
@@ -75,42 +75,42 @@
                                       </a>
                                   </div>
 
-                                  <!-- Pasangan -->
+                                  <!-- Buat Undangan -->
                                   <div class="col-4">
-                                      <a class="dropdown-item square-item" href="pasangan.html">
+                                      <a class="dropdown-item square-item" href="{{ route('invitation.create') }}">
                                           <div class="avatar avatar-40 rounded mb-2">
-                                              <i class="bi bi-heart fs-4 mx-0"></i>
+                                              <i class="bi bi-plus-circle fs-4 mx-0"></i>
                                           </div>
-                                          <p class="mb-0">Pasangan</p>
-                                          <p class="fs-12 opacity-50 mb-2">Profil</p>
+                                          <p class="mb-0">Undangan</p>
+                                          <p class="fs-12 opacity-50 mb-2">Buat Baru</p>
                                       </a>
                                   </div>
 
-                                  <!-- Acara -->
+                                  <!-- Template -->
                                   <div class="col-4">
-                                      <a class="dropdown-item square-item" href="acara.html">
+                                      <a class="dropdown-item square-item" href="{{ auth()->user()->hasRole('admin') ? route('tempelate.index') : route('landing') . '#themes' }}">
                                           <div class="avatar avatar-40 rounded mb-2">
-                                              <i class="bi bi-calendar-event fs-4 mx-0"></i>
+                                              <i class="bi bi-palette fs-4 mx-0"></i>
                                           </div>
-                                          <p class="mb-0">Acara</p>
-                                          <p class="fs-12 opacity-50 mb-2">Jadwal</p>
+                                          <p class="mb-0">Template</p>
+                                          <p class="fs-12 opacity-50 mb-2">Katalog</p>
                                       </a>
                                   </div>
 
-                                  <!-- Galeri -->
+                                  <!-- Hadiah/Gift -->
                                   <div class="col-4">
-                                      <a class="dropdown-item square-item" href="galeri.html">
+                                      <a class="dropdown-item square-item" href="{{ route('gift.index') }}">
                                           <div class="avatar avatar-40 rounded mb-2">
-                                              <i class="bi bi-images fs-4 mx-0"></i>
+                                              <i class="bi bi-gift fs-4 mx-0"></i>
                                           </div>
-                                          <p class="mb-0">Galeri</p>
-                                          <p class="fs-12 opacity-50 mb-2">Foto</p>
+                                          <p class="mb-0">Hadiah</p>
+                                          <p class="fs-12 opacity-50 mb-2">Kelola</p>
                                       </a>
                                   </div>
 
                                   <!-- Musik -->
                                   <div class="col-4">
-                                      <a class="dropdown-item square-item" href="musik.html">
+                                      <a class="dropdown-item square-item" href="{{ auth()->user()->hasRole('admin') ? route('music.index') : '#' }}">
                                           <div class="avatar avatar-40 rounded mb-2">
                                               <i class="bi bi-music-note-beamed fs-4 mx-0"></i>
                                           </div>
@@ -121,7 +121,7 @@
 
                                   <!-- RSVP -->
                                   <div class="col-4">
-                                      <a class="dropdown-item square-item" href="rsvp.html">
+                                      <a class="dropdown-item square-item" href="{{ route('rsvp.index') }}">
                                           <div class="avatar avatar-40 rounded mb-2">
                                               <i class="bi bi-clipboard-check fs-4 mx-0"></i>
                                           </div>
@@ -134,7 +134,7 @@
                           </div>
 
                           <div class="text-center">
-                              <a class="btn btn-link text-center" href="pengaturan.html">
+                              <a class="btn btn-link text-center" href="{{ route('profile.edit') }}">
                                   Pengaturan Lengkap
                                   <i class="bi bi-arrow-right fs-14"></i>
                               </a>
@@ -185,7 +185,7 @@
                           <div class="px-2 pb-2">
 
                               {{-- DASHBOARD --}}
-                              <a class="dropdown-item d-flex align-items-center gap-2" href="{{ route('dashboard') }}">
+                              <a class="dropdown-item d-flex align-items-center gap-2" href="{{ auth()->user()->hasRole('admin') ? route('dashboard') : route('dashboard.user') }}">
                                   <i class="bi bi-speedometer2 fs-6"></i>
                                   Dashboard Saya
                               </a>

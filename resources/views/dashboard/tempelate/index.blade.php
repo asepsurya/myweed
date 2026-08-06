@@ -138,7 +138,7 @@
 
                     <!-- Jawa -->
                     <div class="col-8 col-sm-6 col-md-3 mb-3">
-                        <a href="/templates?kategori=jawa" class="card adminuiux-card style-none text-center h-100">
+                        <a href="javascript:void(0)" onclick="filterCategory('jawa')" class="card adminuiux-card category-filter style-none text-center h-100" data-category="jawa">
                             <div class="card-body">
                                 <i class="avatar avatar-40 text-theme-1 bi bi-flower1 h3 mb-3"></i>
                                 <p class="text-secondary small mb-0">Adat Jawa</p>
@@ -148,7 +148,7 @@
 
                     <!-- Sunda -->
                     <div class="col-8 col-sm-6 col-md-3 mb-3">
-                        <a href="/templates?kategori=sunda" class="card adminuiux-card style-none text-center h-100">
+                        <a href="javascript:void(0)" onclick="filterCategory('sunda')" class="card adminuiux-card category-filter style-none text-center h-100" data-category="sunda">
                             <div class="card-body">
                                 <i class="avatar avatar-40 text-theme-1 bi bi-music-note-beamed h3 mb-3"></i>
                                 <p class="text-secondary small mb-0">Adat Sunda</p>
@@ -158,7 +158,7 @@
 
                     <!-- Minang -->
                     <div class="col-8 col-sm-6 col-md-3 mb-3">
-                        <a href="/templates?kategori=minang" class="card adminuiux-card style-none text-center h-100">
+                        <a href="javascript:void(0)" onclick="filterCategory('minang')" class="card adminuiux-card category-filter style-none text-center h-100" data-category="minang">
                             <div class="card-body">
                                 <i class="avatar avatar-40 text-theme-1 bi bi-house-door h3 mb-3"></i>
                                 <p class="text-secondary small mb-0">Adat Minangkabau</p>
@@ -168,7 +168,7 @@
 
                     <!-- Batak -->
                     <div class="col-8 col-sm-6 col-md-3 mb-3">
-                        <a href="/templates?kategori=batak" class="card adminuiux-card style-none text-center h-100">
+                        <a href="javascript:void(0)" onclick="filterCategory('batak')" class="card adminuiux-card category-filter style-none text-center h-100" data-category="batak">
                             <div class="card-body">
                                 <i class="avatar avatar-40 text-theme-1 bi bi-dribbble h3 mb-3"></i>
                                 <p class="text-secondary small mb-0">Adat Batak</p>
@@ -178,7 +178,7 @@
 
                     <!-- Bugis -->
                     <div class="col-8 col-sm-6 col-md-3 mb-3">
-                        <a href="/templates?kategori=bugis" class="card adminuiux-card style-none text-center h-100">
+                        <a href="javascript:void(0)" onclick="filterCategory('bugis')" class="card adminuiux-card category-filter style-none text-center h-100" data-category="bugis">
                             <div class="card-body">
                                 <i class="avatar avatar-40 text-theme-1 bi bi-compass h3 mb-3"></i>
                                 <p class="text-secondary small mb-0">Adat Bugis</p>
@@ -188,7 +188,7 @@
 
                     <!-- Bali -->
                     <div class="col-8 col-sm-6 col-md-3 mb-3">
-                        <a href="/templates?kategori=bali" class="card adminuiux-card style-none text-center h-100">
+                        <a href="javascript:void(0)" onclick="filterCategory('bali')" class="card adminuiux-card category-filter style-none text-center h-100" data-category="bali">
                             <div class="card-body">
                                 <i class="avatar avatar-40 text-theme-1 bi bi-sun h3 mb-3"></i>
                                 <p class="text-secondary small mb-0">Adat Bali</p>
@@ -198,7 +198,7 @@
 
                     <!-- Betawi -->
                     <div class="col-8 col-sm-6 col-md-3 mb-3">
-                        <a href="/templates?kategori=betawi" class="card adminuiux-card style-none text-center h-100">
+                        <a href="javascript:void(0)" onclick="filterCategory('betawi')" class="card adminuiux-card category-filter style-none text-center h-100" data-category="betawi">
                             <div class="card-body">
                                 <i class="avatar avatar-40 text-theme-1 bi bi-people h3 mb-3"></i>
                                 <p class="text-secondary small mb-0">Adat Betawi</p>
@@ -208,7 +208,7 @@
 
                     <!-- Modern -->
                     <div class="col-8 col-sm-6 col-md-3 mb-3">
-                        <a href="/templates?kategori=modern" class="card adminuiux-card style-none text-center h-100">
+                        <a href="javascript:void(0)" onclick="filterCategory('modern')" class="card adminuiux-card category-filter style-none text-center h-100" data-category="modern">
                             <div class="card-body">
                                 <i class="avatar avatar-40 text-theme-1 bi bi-stars h3 mb-3"></i>
                                 <p class="text-secondary small mb-0">Modern / Universal</p>
@@ -238,7 +238,7 @@
             @endif
             <div class="row">
                 @foreach ($tempelate as $template)
-                <div class="col-6 col-md-6 col-lg-4 template-card" data-name="{{ strtolower($template->name) }}">
+                <div class="col-6 col-md-6 col-lg-4 template-card" data-name="{{ strtolower($template->name) }}" data-category="{{ $template->category }}">
 
                     <div class="card adminuiux-card mb-4 position-relative">
 
@@ -249,7 +249,7 @@
 
                         <!-- PREVIEW -->
                         <div class="template-preview">
-                            <img src="/storage/{{ $template->thumbnail }}" class="preview-img img-fluid">
+                            <img src="{{ $template->thumbnail ? asset('storage/' . $template->thumbnail) : 'https://placehold.co/600x450?text=No+Thumbnail' }}" class="preview-img img-fluid">
                         </div>
 
                         <!-- INFO -->
@@ -325,6 +325,7 @@
                         </li>
                     </ul>
 
+<<<<<<< HEAD
                     <div class="tab-content">
                         {{-- ZIP Upload --}}
                         <div class="tab-pane fade show active" id="zip-panel" role="tabpanel">
@@ -354,6 +355,25 @@
                                     <button type="submit" class="btn btn-primary">Upload</button>
                                 </div>
                             </form>
+=======
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Template Name</label>
+                            <input type="text" name="name" class="form-control" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Kategori</label>
+                            <select name="category" class="form-select" required>
+                                <option value="jawa">Adat Jawa</option>
+                                <option value="sunda">Adat Sunda</option>
+                                <option value="minang">Adat Minang</option>
+                                <option value="batak">Adat Batak</option>
+                                <option value="bugis">Adat Bugis</option>
+                                <option value="bali">Adat Bali</option>
+                                <option value="betawi">Adat Betawi</option>
+                                <option value="modern">Modern / Universal</option>
+                            </select>
+>>>>>>> cf03afae4c1d966c8748d360e1034ab498ceeb3b
                         </div>
 
                         {{-- Code Import --}}
@@ -438,17 +458,21 @@
 <script>
     const searchInput = document.getElementById('templateSearch');
     const noResult = document.getElementById('noResult');
+    let activeCategory = 'all';
 
-    searchInput.addEventListener('input', function() {
-        const term = this.value.toLowerCase().trim();
+    function filterTemplates() {
+        const term = searchInput.value.toLowerCase().trim();
         const cards = document.querySelectorAll('.template-card');
-
         let visibleCount = 0;
 
         cards.forEach(card => {
             const name = card.getAttribute('data-name');
+            const category = card.getAttribute('data-category');
 
-            if (name.includes(term)) {
+            const matchesSearch = name.includes(term);
+            const matchesCategory = (activeCategory === 'all' || category === activeCategory);
+
+            if (matchesSearch && matchesCategory) {
                 card.style.display = '';
                 visibleCount++;
             } else {
@@ -456,13 +480,27 @@
             }
         });
 
-        // Jika tidak ada hasil
         if (visibleCount === 0) {
             noResult.classList.remove('d-none');
         } else {
             noResult.classList.add('d-none');
         }
-    });
+    }
+
+    window.filterCategory = function(cat) {
+        // Toggle category
+        if (activeCategory === cat) {
+            activeCategory = 'all';
+            document.querySelectorAll('.category-filter').forEach(el => el.classList.remove('border-primary', 'bg-light'));
+        } else {
+            activeCategory = cat;
+            document.querySelectorAll('.category-filter').forEach(el => el.classList.remove('border-primary', 'bg-light'));
+            document.querySelector(`.category-filter[data-category="${cat}"]`).classList.add('border-primary', 'bg-light');
+        }
+        filterTemplates();
+    }
+
+    searchInput.addEventListener('input', filterTemplates);
 
 </script>
 

@@ -14,15 +14,15 @@ use App\Http\Controllers\UserInvitationController;
 use App\Http\Controllers\SubscriptionPlanController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 
-Route::get('/', function () {
-    return view('index');
-});
+use App\Http\Controllers\LandingController;
+
+Route::get('/', [LandingController::class, 'index'])->name('landing');
 
 Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
     ->name('logout');
 
 Route::get('/dashboard', [DashboardController::class, 'index'])
-    ->middleware(['auth', 'verified','role:admin'])
+    ->middleware(['auth', 'verified', 'role:admin'])
     ->name('dashboard');
 
 Route::get('/home', [DashboardController::class, 'indexUser'])
@@ -36,25 +36,38 @@ Route::middleware('auth')->group(function () {
 
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
+
+Route::get('/templates/{slug}/{id}', [TempelateController::class, 'preview'])->name('template.preview');
+Route::get('/demo/{slug}', [TempelateController::class, 'demo'])->name('template.demo');
+Route::any('/invitation/live-preview', [TempelateController::class, 'liveUpdate'])->name('invitation.live-preview');
+Route::post('/templates/{template}/like', [TempelateController::class, 'like'])->name('template.like');
 
 Route::middleware(['auth'])->group(function () {
 
     Route::get('invitation', [UserInvitationController::class, 'index'])->middleware('role:admin')->name('invitation.index');
+    Route::post('invitation/bulk-delete', [UserInvitationController::class, 'bulkDestroy'])->name('invitation.bulk-delete');
+    Route::post('invitation/autosave', [UserInvitationController::class, 'autoSave'])->name('invitation.autosave');
     Route::get('invitation/create', [UserInvitationController::class, 'create'])->name('invitation.create');
     Route::post('invitation/quick-create', [UserInvitationController::class, 'quickCreate'])->name('invitation.quick-create');
     Route::get('invitation/{slug}', [UserInvitationController::class, 'detail'])->name('invitation.detail');
     Route::post('invitation', [UserInvitationController::class, 'store'])->name('invitation.store');
     Route::get('invitation/{invitation}/edit', [UserInvitationController::class, 'edit'])->name('invitation.edit');
     Route::put('invitation/{invitation}', [UserInvitationController::class, 'update'])->name('invitation.update');
+    Route::delete('invitation/{invitation}', [UserInvitationController::class, 'destroy'])->name('invitation.destroy');
     Route::delete('/gallery/{id}', [UserInvitationController::class, 'destroyGallery'])->name('gallery.delete');
+<<<<<<< HEAD
     Route::delete('/invitation/{invitation}', [UserInvitationController::class, 'destroy'])->name('invitation.destroy');
+=======
+    Route::post('premium/upgrade', [UserInvitationController::class, 'upgradeToPremium'])->name('premium.upgrade');
+>>>>>>> cf03afae4c1d966c8748d360e1034ab498ceeb3b
 
     Route::post('/templates/import-code', [TempelateController::class, 'importCode'])->name('templates.import-code');
     Route::get('theme', [TempelateController::class, 'index'])->middleware('role:admin')->name('tempelate.index');
     Route::get('/templates/upload', [TempelateController::class, 'create']);
     Route::post('/templates/upload', [TempelateController::class, 'store']);
     Route::delete('/templates/{template}', [TempelateController::class, 'destroy'])->name('templates.destroy');
+<<<<<<< HEAD
     Route::get('/templates/{slug}/{id}', [TempelateController::class, 'preview'])->name('template.preview');
     Route::put('/templates/{slug}/{id}', [TempelateController::class, 'previewUpdate'])->name('template.preview.update');
 
@@ -68,6 +81,9 @@ Route::middleware(['auth'])->group(function () {
 
         return response()->file($filePath);
     })->where('path', '.*')->name('template.asset');
+=======
+
+>>>>>>> cf03afae4c1d966c8748d360e1034ab498ceeb3b
 
     Route::get('/musics', [MusicController::class, 'index'])->middleware('role:admin')->name('music.index');
     Route::post('/music/store', [MusicController::class, 'store'])->name('music.store');
@@ -80,6 +96,10 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/users', [UserController::class, 'index'])->name('user.index')->middleware('role:admin');
     Route::get('/rsvps', [RsvpController::class, 'index'])->name('rsvp.index')->middleware('subscription');
     Route::delete('/rsvp/{rsvp}', [RsvpController::class, 'destroy'])->name('rsvp.destroy')->middleware('subscription');
+<<<<<<< HEAD
+=======
+
+>>>>>>> cf03afae4c1d966c8748d360e1034ab498ceeb3b
 
     Route::get('/subscription-plans', [SubscriptionPlanController::class, 'index'])->name('subscribe.page');
     Route::get('/subscription-plans/{planId}', [SubscriptionPlanController::class, 'subscribe'])->name('subscribe');
@@ -87,7 +107,11 @@ Route::middleware(['auth'])->group(function () {
 
 });
 
+<<<<<<< HEAD
 Route::post('/rsvp/{invitation}', [RsvpController::class, 'store'])->name('rsvp.store');
+=======
+Route::post('/invitation/{invitation}/rsvp', [RsvpController::class, 'store'])->name('rsvp.store');
+>>>>>>> cf03afae4c1d966c8748d360e1034ab498ceeb3b
 Route::get('/invitation/{invitation}/rsvps', [RsvpController::class, 'getRsvps'])->name('rsvp.list');
 
 Route::get('/auth/google', [GoogleController::class, 'redirect']);

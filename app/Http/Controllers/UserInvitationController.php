@@ -26,11 +26,23 @@ class UserInvitationController extends Controller
         return view('dashboard.invitation.index', compact('invitations'));
     }
 
-    public function create()
+    public function create(Request $request)
     {
+        $user = auth()->user();
+        // Check Limit for Non-Subscribed Users
+        if (!$user->isSubscribed() && Invitation::where('user_id', $user->id)->count() >= 1) {
+            return redirect()->route('dashboard.user')->with('error', 'Versi gratis hanya diperbolehkan membuat 1 undangan. Silakan aktifkan Paket Subscription untuk membuat lebih banyak! ✨');
+        }
+
         $music = Music::where('is_active', true)->get();
+<<<<<<< HEAD
         $templates = Template::where('is_active', true)->paginate(6);
         return view('dashboard.invitation.create', compact('templates', 'music'));
+=======
+        $templates = Template::where('is_active', true)->get();
+        $selectedTemplateId = $request->template_id;
+        return view('dashboard.invitation.create', compact('templates', 'music', 'selectedTemplateId'));
+>>>>>>> cf03afae4c1d966c8748d360e1034ab498ceeb3b
     }
 
     public function quickCreate(Request $request)
@@ -167,7 +179,11 @@ class UserInvitationController extends Controller
             'groom_name' => 'required|string|max:255',
             'wedding_date' => 'required|date',
             'template_id' => 'required|exists:templates,id',
+<<<<<<< HEAD
             'theme_color' => 'nullable|string|max:255',
+=======
+            'primary_color' => 'nullable|string|max:7',
+>>>>>>> cf03afae4c1d966c8748d360e1034ab498ceeb3b
 
             'gallery.*' => 'nullable|file|mimes:jpeg,jpg,png,gif,webp|max:10240',
             'gallery_cover' => 'nullable|file|mimes:jpeg,jpg,png,webp|max:10240',
@@ -199,7 +215,22 @@ class UserInvitationController extends Controller
             'foto_wanita.max' => 'Foto mempelai wanita tidak boleh melebihi :max kilobyte.',
         ]);
 
+<<<<<<< HEAD
         $baseSlug = Str::slug($request->groom_nickname . '-' . $request->bride_nickname);
+=======
+        $user = auth()->user();
+        // Double check limit for store
+        if (!$user->isSubscribed() && Invitation::where('user_id', $user->id)->count() >= 1) {
+            return redirect()->route('dashboard.user')->with('error', 'Limit tercapai. Aktifkan Paket Subscription untuk membuat lebih banyak undangan.');
+        }
+
+        // Check Template Premium Access
+        $template = Template::findOrFail($request->template_id);
+        if ($template->is_premium && !$user->isSubscribed()) {
+            return redirect()->back()->with('error', 'Template Premium hanya tersedia untuk member aktif! ✨');
+        }
+
+>>>>>>> cf03afae4c1d966c8748d360e1034ab498ceeb3b
 
         // Check if same user already has this slug → redirect to edit
         $existingInvitation = Invitation::where('slug', $baseSlug)
@@ -271,9 +302,22 @@ class UserInvitationController extends Controller
                     ];
                 }
             }
+            $baseSlug = Str::slug($request->groom_name . '-' . $request->bride_name);
+            $slug = $baseSlug;
+            $counter = 1;
+            while (Invitation::where('slug', $slug)->exists()) {
+                $slug = $baseSlug . '-' . $counter;
+                $counter++;
+            }
+
             $invitation = Invitation::create([
                 'user_id' => auth()->user()->id,
                 'template_id' => $request->template_id,
+<<<<<<< HEAD
+=======
+                'status' => 'published',
+                'primary_color' => $request->primary_color,
+>>>>>>> cf03afae4c1d966c8748d360e1034ab498ceeb3b
                 'slug' => $slug,
 
                 'groom_name' => $request->groom_name,
@@ -302,6 +346,7 @@ class UserInvitationController extends Controller
                 'quote_id' => $request->quote_id,
                 'wedding_quote' => $request->wedding_quote,
                 'video_link' => $request->video_link,
+                'youtube_url' => $request->youtube_url,
                 'love_story' => $stories,
 
                 'enable_rsvp' => $request->has('enable_rsvp'),
@@ -313,10 +358,14 @@ class UserInvitationController extends Controller
                 'bride_username_instagram'=>$request->bride_username_instagram,
                 'akad_address'=>$request->akad_address,
                 'resepsi_address'=>$request->resepsi_address,
+<<<<<<< HEAD
 
                 'rsvp_deadline' => $request->rsvp_deadline,
                 'rsvp_message' => $request->rsvp_message,
                 'rsvp_whatsapp' => $request->rsvp_whatsapp,
+=======
+                'primary_color' => $request->primary_color ?? '#0d9488'
+>>>>>>> cf03afae4c1d966c8748d360e1034ab498ceeb3b
 
             ]);
             if ($request->hasFile('foto_pria')) {
@@ -415,10 +464,10 @@ class UserInvitationController extends Controller
 
                 foreach ($banks as $i => $bank) {
                     $giftData = [
-                        'invitation_id' => $request->invitation_id,
+                        'invitation_id' => $invitation->id,
                         'bank' => $bank,
-                        'number' => $numbers[$i],
-                        'name' => $names[$i],
+                        'number' => $numbers[$i] ?? null,
+                        'name' => $names[$i] ?? null,
                     ];
 
                     if (isset($qrs[$i])) {
@@ -461,12 +510,26 @@ class UserInvitationController extends Controller
 
     public function update(Request $request, Invitation $invitation)
     {
+<<<<<<< HEAD
+=======
+        $user = auth()->user();
+        // Check Template Premium Access
+        $template = Template::findOrFail($request->template_id);
+        if ($template->is_premium && !$user->isSubscribed()) {
+            return redirect()->back()->with('error', 'Template Premium hanya tersedia untuk member aktif! ✨');
+        }
+
+>>>>>>> cf03afae4c1d966c8748d360e1034ab498ceeb3b
         $request->validate([
             'bride_name' => 'required|string|max:255',
             'groom_name' => 'required|string|max:255',
             'wedding_date' => 'required|date',
             'template_id' => 'required|exists:templates,id',
+<<<<<<< HEAD
             'theme_color' => 'nullable|string|max:255',
+=======
+            'primary_color' => 'nullable|string|max:7',
+>>>>>>> cf03afae4c1d966c8748d360e1034ab498ceeb3b
             'gallery.*' => 'nullable|file|mimes:jpeg,jpg,png,gif,webp|max:10240',
             'gallery_cover' => 'nullable|file|mimes:jpeg,jpg,png,webp|max:10240',
             'custom_music' => 'nullable|file|mimes:mp3,wav,ogg|max:10240',
@@ -510,11 +573,28 @@ class UserInvitationController extends Controller
             }
         }
 
+<<<<<<< HEAD
             $updateData = [
                 'template_id' => $request->template_id,
                 'slug' => !empty($request->groom_nickname) && !empty($request->bride_nickname)
                     ? Str::slug($request->groom_nickname . '-' . $request->bride_nickname)
                     : $invitation->slug,
+=======
+            $baseSlug = Str::slug($request->groom_name . '-' . $request->bride_name);
+            $slug = $baseSlug;
+            $counter = 1;
+            while (Invitation::where('slug', $slug)->where('id', '!=', $invitation->id)->exists()) {
+                $slug = $baseSlug . '-' . $counter;
+                $counter++;
+            }
+
+            // Siapkan data untuk diupdate
+            $updateData = [
+                'template_id' => $request->template_id,
+                'status' => 'published',
+                'primary_color' => $request->primary_color,
+                'slug' => $slug,
+>>>>>>> cf03afae4c1d966c8748d360e1034ab498ceeb3b
 
                 'groom_name' => $request->groom_name,
                 'groom_nickname' => $request->groom_nickname,
@@ -542,11 +622,13 @@ class UserInvitationController extends Controller
                 'quote_id' => $request->quote_id,
                 'wedding_quote' => $request->wedding_quote,
                 'video_link' => $request->video_link,
+                'youtube_url' => $request->youtube_url,
                 'love_story' => $stories,
 
                 'enable_rsvp' => $request->has('enable_rsvp'),
                 'enable_gift' => $request->has('enable_gift'),
 
+<<<<<<< HEAD
                 'groom_instagram' => $request->groom_username_instagram ? 'https://www.instagram.com/' . $request->groom_username_instagram : $invitation->groom_instagram,
                 'groom_username_instagram' => $request->groom_username_instagram,
                 'bride_instagram' => $request->bride_username_instagram ? 'https://www.instagram.com/' . $request->bride_username_instagram : $invitation->bride_instagram,
@@ -559,6 +641,15 @@ class UserInvitationController extends Controller
                 'rsvp_whatsapp' => $request->rsvp_whatsapp,
 
                 'music_youtube_url' => $request->music_youtube_url,
+=======
+                'groom_instagram' =>$request->groom_instagram,
+                'groom_username_instagram'=>$request->groom_username_instagram,
+                'bride_instagram' =>$request->bride_instagram,
+                'bride_username_instagram'=>$request->bride_username_instagram,
+                'akad_address'=>$request->akad_address,
+                'resepsi_address'=>$request->resepsi_address,
+                'primary_color' => $request->primary_color
+>>>>>>> cf03afae4c1d966c8748d360e1034ab498ceeb3b
             ];
 
 $invitation->update($updateData);
@@ -700,6 +791,7 @@ $invitation->update($updateData);
                 $qrs     = $request->file('qr') ?? [];
 
                 foreach ($banks as $i => $bank) {
+<<<<<<< HEAD
 
                     if (
                         empty($numbers[$i]) ||
@@ -708,9 +800,11 @@ $invitation->update($updateData);
                         continue;
                     }
 
+=======
+>>>>>>> cf03afae4c1d966c8748d360e1034ab498ceeb3b
                     $data = [
-                        'number' => $numbers[$i],
-                        'name'   => $names[$i],
+                        'number' => $numbers[$i] ?? null,
+                        'name'   => $names[$i] ?? null,
                     ];
 
                     if (isset($qrs[$i])) {
@@ -798,4 +892,150 @@ $invitation->update($updateData);
         return view('dashboard.invitation.detail', compact('invitation','galleries'));
     }
 
+    public function autoSave(Request $request)
+    {
+        // Sangat santai: minimal template_id untuk bisa pratinjau
+        $request->validate([
+            'template_id' => 'required|exists:templates,id',
+        ]);
+
+        $user = auth()->user();
+        // Check Template Premium Access
+        $template = Template::findOrFail($request->template_id);
+        if ($template->is_premium && !$user->isSubscribed()) {
+            return response()->json(['success' => false, 'message' => 'Template Premium 💎'], 403);
+        }
+
+        $id = $request->id;
+        $invitation = null;
+
+        if ($id && $id != 0) {
+            $invitation = Invitation::where('id', $id)->where('user_id', auth()->id())->first();
+        }
+
+        // Data yang akan disimpan (hanya teks/json, bukan file agar ringan)
+        $data = $request->except(['foto_pria', 'foto_wanita', 'gallery_cover', 'gallery', 'custom_music', 'qr', 'story_photo']);
+        $data['user_id'] = auth()->id();
+        $data['status'] = 'draft';
+        
+        // Unique Slug for AutoSave
+        $baseSlug = 'draft-' . auth()->id();
+        if ($request->groom_name && $request->bride_name) {
+            $baseSlug = Str::slug($request->groom_name . '-' . $request->bride_name);
+        }
+        
+        $slug = $baseSlug;
+        $counter = 1;
+        $existingId = ($invitation) ? $invitation->id : 0;
+        while (Invitation::where('slug', $slug)->where('id', '!=', $existingId)->exists()) {
+            $slug = $baseSlug . '-' . $counter;
+            $counter++;
+        }
+        $data['slug'] = $slug;
+
+        // Khusus fields boolean/checkbox
+        $data['enable_rsvp'] = $request->has('enable_rsvp');
+        $data['enable_gift'] = $request->has('enable_gift');
+
+        if ($invitation) {
+            // Jika sudah ada, jangan ganti slugnya terus menerus kalau sudah punya nama
+            if ($invitation->groom_name && $invitation->bride_name && isset($data['slug'])) {
+                 unset($data['slug']);
+            }
+            $invitation->update($data);
+        } else {
+            $invitation = Invitation::create($data);
+        }
+
+        return response()->json([
+            'success' => true,
+            'id' => $invitation->id,
+            'message' => 'Draft otomatis disimpan ✨'
+        ]);
+    }
+
+    public function destroy(Invitation $invitation)
+    {
+        // abort_if($invitation->user_id !== auth()->id() && !auth()->user()->hasRole('admin'), 403);
+        
+        DB::transaction(function () use ($invitation) {
+            // Hapus file-file terkait
+            if ($invitation->foto_pria) Storage::disk('public')->delete($invitation->foto_pria);
+            if ($invitation->foto_wanita) Storage::disk('public')->delete($invitation->foto_wanita);
+            if ($invitation->gallery_cover) Storage::disk('public')->delete($invitation->gallery_cover);
+            
+            // Periksa apakah musik kustom atau ID musik
+            if ($invitation->music && !is_numeric($invitation->music)) {
+                Storage::disk('public')->delete($invitation->music);
+            }
+            
+            // Hapus galeri
+            foreach ($invitation->galleries as $gallery) {
+                Storage::disk('public')->delete($gallery->image);
+                $gallery->delete();
+            }
+            
+            // Hapus RSVP & Gift
+            $invitation->gifts()->delete();
+            $invitation->rsvps()->delete();
+            
+            $invitation->delete();
+        });
+
+        return redirect()->back()->with('success', 'Undangan berhasil dihapus 🗑️');
+    }
+
+    public function bulkDestroy(Request $request)
+    {
+        $ids = $request->ids;
+        if (!$ids || !is_array($ids)) {
+            return redirect()->back()->with('error', 'Pilih minimal satu undangan untuk dihapus.');
+        }
+
+        DB::transaction(function () use ($ids) {
+            $invitations = Invitation::whereIn('id', $ids)->get();
+
+            foreach ($invitations as $invitation) {
+                // abort_if($invitation->user_id !== auth()->id() && !auth()->user()->hasRole('admin'), 403);
+                
+                // Hapus file-file terkait
+                if ($invitation->foto_pria) Storage::disk('public')->delete($invitation->foto_pria);
+                if ($invitation->foto_wanita) Storage::disk('public')->delete($invitation->foto_wanita);
+                if ($invitation->gallery_cover) Storage::disk('public')->delete($invitation->gallery_cover);
+                
+                if ($invitation->music && !is_numeric($invitation->music)) {
+                    Storage::disk('public')->delete($invitation->music);
+                }
+                
+                foreach ($invitation->galleries as $gallery) {
+                    Storage::disk('public')->delete($gallery->image);
+                    $gallery->delete();
+                }
+                
+                $invitation->gifts()->delete();
+                $invitation->rsvps()->delete();
+                $invitation->delete();
+            }
+        });
+
+        return redirect()->back()->with('success', 'Undangan terpilih berhasil dihapus 🗑️');
+    }
+
+    public function upgradeToPremium(Request $request)
+    {
+        $user = auth()->user();
+        
+        // Buat subscription aktif selama 30 hari
+        \App\Models\Subscription::updateOrCreate(
+            ['user_id' => $user->id],
+            [
+                'subscription_plan_id' => 3, // Premium Plan
+                'start_date' => now(),
+                'end_date' => now()->addDays(30),
+                'is_active' => true,
+            ]
+        );
+
+        return redirect()->back()->with('success', 'Selamat! Anda telah berlangganan Paket Premium. Nikmati fitur buat undangan tanpa batas selama 30 hari ke depan! 💎✨');
+    }
 }

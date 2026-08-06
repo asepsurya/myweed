@@ -48,13 +48,16 @@ class RegisteredUserController extends Controller
 
         $user->assignRole('user');
 
+        // 🔽 Otomatis buat undangan "Basic Wedding"
+        \App\Models\Invitation::createDefault($user->id);
+
         Auth::login($user);
 
         if ($user->hasRole('admin')) {
             return redirect()->intended(route('dashboard'));
         }
 
-        return redirect()->intended(route('invitation.create'));
+        return redirect()->intended(route('dashboard.user'));
 
     }
 }
