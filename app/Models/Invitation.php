@@ -16,6 +16,50 @@ class Invitation extends Model
     ];
     protected $guarded = ['id'];
 
+    protected $fillable = [
+        'user_id',
+        'template_id',
+        'slug',
+        'is_default',
+        'groom_name',
+        'groom_nickname',
+        'groom_father_name',
+        'groom_mother_name',
+        'foto_pria',
+        'foto_wanita',
+        'bride_name',
+        'bride_nickname',
+        'bride_father_name',
+        'bride_mother_name',
+        'wedding_date',
+        'akad_location',
+        'akad_time',
+        'akad_time_end',
+        'akad_maps',
+        'resepsi_location',
+        'resepsi_time',
+        'resepsi_time_end',
+        'resepsi_maps',
+        'theme_color',
+        'gallery_cover',
+        'wedding_quote',
+        'video_link',
+        'love_story',
+        'enable_rsvp',
+        'enable_gift',
+        'groom_instagram',
+        'groom_username_instagram',
+        'bride_instagram',
+        'bride_username_instagram',
+        'akad_address',
+        'resepsi_address',
+        'rsvp_deadline',
+        'rsvp_message',
+        'rsvp_whatsapp',
+        'music',
+        'music_youtube_url',
+    ];
+
     public function template()
     {
         return $this->belongsTo(Template::class);

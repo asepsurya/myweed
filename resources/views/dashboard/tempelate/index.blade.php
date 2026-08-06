@@ -308,45 +308,82 @@
 
     <!-- MODAL UPLOAD -->
     <div class="modal fade" id="modaltemplate" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content">
-
                 <div class="modal-header">
                     <h5 class="modal-title fw-bold">Upload New Template</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
 
-                <form action="/templates/upload" method="POST" enctype="multipart/form-data">
-                    @csrf
-                    <div class="modal-body">
+                <div class="modal-body">
+                    <ul class="nav nav-tabs mb-3" id="uploadTemplateTab" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="zip-tab" data-bs-toggle="tab" data-bs-target="#zip-panel" type="button" role="tab">Upload ZIP</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="code-tab" data-bs-toggle="tab" data-bs-target="#code-panel" type="button" role="tab">Import Code</button>
+                        </li>
+                    </ul>
 
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold">Template Name</label>
-                            <input type="text" name="name" class="form-control">
+                    <div class="tab-content">
+                        {{-- ZIP Upload --}}
+                        <div class="tab-pane fade show active" id="zip-panel" role="tabpanel">
+                            <form action="/templates/upload" method="POST" enctype="multipart/form-data">
+                                @csrf
+                                <div class="mb-3">
+                                    <label class="form-label fw-semibold">Template Name</label>
+                                    <input type="text" name="name" class="form-control" required>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label fw-semibold">Thumbnail</label>
+                                    <input type="file" name="thumbnail" class="form-control" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label fw-semibold">Image Preview</label>
+                                    <input type="file" name="preview" class="form-control" required>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label fw-semibold">ZIP File</label>
+                                    <input type="file" name="zip" accept=".zip" class="form-control" required>
+                                </div>
+
+                                <div class="modal-footer px-0 pb-0">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                    <button type="submit" class="btn btn-primary">Upload</button>
+                                </div>
+                            </form>
                         </div>
 
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold">Thumbnail</label>
-                            <input type="file" name="thumbnail" class="form-control">
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold">Image Preview</label>
-                            <input type="file" name="preview" class="form-control">
-                        </div>
+                        {{-- Code Import --}}
+                        <div class="tab-pane fade" id="code-panel" role="tabpanel">
+                            <form action="/templates/import-code" method="POST">
+                                @csrf
+                                <div class="mb-3">
+                                    <label class="form-label fw-semibold">Template Name</label>
+                                    <input type="text" name="name" class="form-control" required>
+                                </div>
 
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold">ZIP File</label>
-                            <input type="file" name="zip" accept=".zip" class="form-control">
-                        </div>
+                                <div class="mb-3">
+                                    <label class="form-label fw-semibold">Template Slug</label>
+                                    <input type="text" name="slug" class="form-control" required>
+                                    <div class="form-text">Contoh: love-theme, elegant-theme</div>
+                                </div>
 
+                                <div class="mb-3">
+                                    <label class="form-label fw-semibold">Blade Code</label>
+                                    <textarea name="code" class="form-control font-monospace" rows="12" required placeholder="Paste kode Blade di sini..."></textarea>
+                                </div>
+
+                                <div class="modal-footer px-0 pb-0">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                    <button type="submit" class="btn btn-primary">Import Template</button>
+                                </div>
+                            </form>
+                        </div>
                     </div>
-
-                    <div class="modal-footer">
-                        <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button class="btn btn-primary">Upload</button>
-                    </div>
-                </form>
-
+                </div>
             </div>
         </div>
     </div>
@@ -428,3 +465,4 @@
     });
 
 </script>
+

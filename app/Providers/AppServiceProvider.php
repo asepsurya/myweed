@@ -19,9 +19,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-            MidtransConfig::$serverKey = config('midtrans.server_key');
-            MidtransConfig::$isProduction = config('midtrans.is_production');
-            MidtransConfig::$isSanitized = true;
-            MidtransConfig::$is3ds = true;
+        MidtransConfig::$serverKey = config('midtrans.server_key');
+        MidtransConfig::$isProduction = config('midtrans.is_production');
+        MidtransConfig::$isSanitized = true;
+        MidtransConfig::$is3ds = true;
+
+        \Illuminate\Pagination\Paginator::useBootstrap();
     }
 }

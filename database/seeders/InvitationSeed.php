@@ -20,6 +20,7 @@ class InvitationSeed extends Seeder
             'user_id'       => 1,
             'template_id'   => 2,
             'slug'          => 'romeo-juliet',
+            'is_default'    => true,
 
             // Groom
             'groom_name'        => 'Romeo',

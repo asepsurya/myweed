@@ -24,6 +24,7 @@ class DashboardController extends Controller
     }
     public function indexUser(){
         $invitations = Invitation::where('user_id', auth()->id())->latest()->get();
-        return view('guest.index', compact('invitations'));
+        $templates = Template::where('is_active', true)->get();
+        return view('guest.index', compact('invitations', 'templates'));
     }
 }

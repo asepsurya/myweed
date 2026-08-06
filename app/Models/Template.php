@@ -16,5 +16,6 @@ class Template extends Model
         'thumbnail',
         'preview',
         'sections',
+        'is_active',
     ];
 }

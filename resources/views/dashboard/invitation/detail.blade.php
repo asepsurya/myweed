@@ -94,7 +94,7 @@
                     {{-- Mempelai Pria --}}
                     <figure class="avatar avatar-120 rounded-circle"
                         style="
-                        background-image: url('{{ $invitation->foto_pria && file_exists(storage_path('app/public/' . $invitation->foto_pria)) ? asset('storage/' . $invitation->foto_pria) : 'https://picsum.photos/seed/groom/300/300' }}');
+                         background-image: url('{{ $invitation->foto_pria && file_exists(storage_path('app/public/' . $invitation->foto_pria)) ? '/storage/' . $invitation->foto_pria : 'https://picsum.photos/seed/groom/300/300' }}');
                         background-size: cover;
                         background-position: center;
                         background-color: #fff;
@@ -108,7 +108,7 @@
                     {{-- Mempelai Wanita --}}
                     <figure class="avatar avatar-120 rounded-circle"
                         style="
-                        background-image: url('{{ $invitation->foto_wanita && file_exists(storage_path('app/public/' . $invitation->foto_wanita)) ? asset('storage/' . $invitation->foto_wanita) : 'https://picsum.photos/seed/bride/300/300' }}');
+                         background-image: url('{{ $invitation->foto_wanita && file_exists(storage_path('app/public/' . $invitation->foto_wanita)) ? '/storage/' . $invitation->foto_wanita : 'https://picsum.photos/seed/bride/300/300' }}');
                         background-size: cover;
                         background-position: center;
                         background-color: #fff;
@@ -242,7 +242,7 @@
                                         class="text-center position-relative">
                                         <i
                                             class="bi bi-gender-male position-absolute top-0 end-0 m-3 text-white fs-4 opacity-50"></i>
-                                        <img src="{{ $invitation->foto_pria ? asset('storage/' . $invitation->foto_pria) : 'https://picsum.photos/seed/groom/200/200' }}"
+                                        <img src="{{ $invitation->foto_pria ? '/storage/' . $invitation->foto_pria : 'https://picsum.photos/seed/groom/200/200' }}"
                                             class="rounded-circle mb-3 shadow-lg" width="120" height="120"
                                             style="object-fit:cover; border:4px solid #fff;">
                                         <h5 class="fw-bold text-dark">{{ $invitation->groom_name ?? 'Nama Pria' }}
@@ -266,7 +266,7 @@
                                         class="text-center position-relative">
                                         <i
                                             class="bi bi-gender-female position-absolute top-0 end-0 m-3 text-white fs-4 opacity-50"></i>
-                                        <img src="{{ $invitation->foto_wanita ? asset('storage/' . $invitation->foto_wanita) : 'https://picsum.photos/seed/bride/200/200' }}"
+                                        <img src="{{ $invitation->foto_wanita ? '/storage/' . $invitation->foto_wanita : 'https://picsum.photos/seed/bride/200/200' }}"
                                             class="rounded-circle mb-3 shadow-lg" width="120" height="120"
                                             style="object-fit:cover; border:4px solid #fff;">
                                         <h5 class="fw-bold text-white">{{ $invitation->bride_name ?? 'Nama Wanita' }}
@@ -357,9 +357,9 @@
                             @if (isset($galleries) && $galleries->count())
                                 @foreach ($galleries as $gallery)
                                     <div class="col-6 col-md-4 col-lg-3">
-                                        <a href="{{ asset('storage/' . $gallery->image) }}"
+                                        <a href="/storage/{{ $gallery->image }}"
                                             class="glightbox gallery-card">
-                                            <img src="{{ asset('storage/' . $gallery->image) }}"
+                                            <img src="/storage/{{ $gallery->image }}"
                                                 class="gallery-img shadow-sm" alt="Gallery Photo">
                                         </a>
                                     </div>
@@ -405,7 +405,7 @@
                                         {{-- FOTO --}}
                                         @if (!empty($story['photo']))
                                         <div class="col-md-5 text-center">
-                                            <img src="{{ asset('storage/'.$story['photo']) }}" class="img-fluid rounded-4 shadow-sm love-story-img" alt="{{ $story['title'] ?? 'Love Story' }}">
+                                             <img src="/storage/{{ $story['photo'] }}" class="img-fluid rounded-4 shadow-sm love-story-img" alt="{{ $story['title'] ?? 'Love Story' }}">
                                         </div>
                                         @endif
 
@@ -656,3 +656,4 @@
     }
 </script>
 </x-app-layout>
+

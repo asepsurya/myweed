@@ -151,9 +151,7 @@
                           <div class="row gx-0 d-inline-flex">
                               <div class="col-auto align-self-center">
                                   <figure class="avatar avatar-28 rounded-circle">
-                                      <img src="{{ Auth::user()->avatar
-                                        ? asset('storage/' . Auth::user()->avatar)
-                                        : asset('tempelate/user_default.jpg') }}" alt="User Avatar" id="userphotoonboarding2" class="rounded-circle" referrerpolicy="no-referrer" onerror="this.onerror=null;this.src='{{ asset('tempelate/user_default.jpg') }}';">
+<img src="{{ Auth::user()->avatar ? asset('storage/' . Auth::user()->avatar) : asset('tempelate/user_default.jpg') }}" alt="User Avatar" id="userphotoonboarding2" class="rounded-circle" referrerpolicy="no-referrer" onerror="this.onerror=null;this.src='{{ asset('tempelate/user_default.jpg') }}';">
                                   </figure>
 
                               </div>
@@ -167,9 +165,7 @@
 
                                   {{-- AVATAR --}}
                                   <figure class="avatar avatar-50 rounded-circle mb-0">
-                                      <img src="{{ auth()->user()->avatar
-                        ? asset('storage/' . auth()->user()->avatar)
-                        : asset('tempelate/user_default.jpg') }}" class="rounded-circle w-100 h-100 object-fit-cover" alt="User Avatar">
+<img src="{{ auth()->user()->avatar ? asset('storage/' . auth()->user()->avatar) : asset('tempelate/user_default.jpg') }}" class="rounded-circle w-100 h-100 object-fit-cover" alt="User Avatar">
                                   </figure>
 
                                   {{-- USER INFO --}}
@@ -443,3 +439,4 @@
           </div>
       </div>
   </header>
+

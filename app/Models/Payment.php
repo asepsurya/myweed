@@ -16,6 +16,7 @@ class Payment extends Model
             'payment_type',
             'payload',
             'paid_at',
+            'status',
         ];
 
     protected $casts = [
@@ -54,5 +55,10 @@ class Payment extends Model
     public function isFailed(): bool
     {
         return in_array($this->transaction_status, ['deny', 'expire', 'cancel', 'failure']);
+    }
+
+        public function subscriptionPlan()
+    {
+        return $this->belongsTo(SubscriptionPlan::class);
     }
 }

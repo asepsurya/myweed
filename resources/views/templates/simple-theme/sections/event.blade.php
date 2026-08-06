@@ -1,27 +1,30 @@
       <!-- COUNTDOWN -->
             <div class="bg-primary/10 p-6  text-center animate-on-scroll px-6">
                 <h2 class="font-serif text-2xl text-primary mb-4">Menghitung Hari</h2>
-                <div class="grid grid-cols-4 gap-2" id="countdown">
+                <div class="grid grid-cols-4 gap-2" id="countdownGrid">
                     <div>
-                        <p id="days" class="text-2xl font-bold text-primary">0</p>
+                        <p id="days" class="text-2xl font-bold text-primary">00</p>
                         <p class="text-xs">Hari</p>
                     </div>
                     <div>
-                        <p id="hours" class="text-2xl font-bold text-primary">0</p>
+                        <p id="hours" class="text-2xl font-bold text-primary">00</p>
                         <p class="text-xs">Jam</p>
                     </div>
                     <div>
-                        <p id="minutes" class="text-2xl font-bold text-primary">0</p>
+                        <p id="minutes" class="text-2xl font-bold text-primary">00</p>
                         <p class="text-xs">Menit</p>
                     </div>
                     <div>
-                        <p id="seconds" class="text-2xl font-bold text-primary">0</p>
+                        <p id="seconds" class="text-2xl font-bold text-primary">00</p>
                         <p class="text-xs">Detik</p>
                     </div>
                 </div>
+                <div id="countdownPassed" class="mb-4 hidden">
+                    <p class="font-headline-md text-headline-md">Acara Telah Dimulai</p>
+                </div>
             </div>
             <!-- LOCATION -->
-            <div class="text-center animate-on-scroll px-6">
+             <div id="events" class="text-center animate-on-scroll px-6">
                 <h2 class="font-serif text-2xl text-primary mb-6">Lokasi & Acara</h2>
 
                 <!-- AKAD NIKAH -->

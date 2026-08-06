@@ -30,7 +30,9 @@ class GoogleController extends Controller
         $avatarPath = null;
 
         if ($googleUser->avatar) {
-            $avatarContents = Http::get($googleUser->avatar)->body();
+            $avatarContents = Http::withOptions([
+                'verify' => env('CURL_CA_BUNDLE', 'C:\\php\\extras\\ssl\\cacert.pem'),
+            ])->get($googleUser->avatar)->body();
             $avatarPath = 'avatars/google_' . md5($googleUser->email) . '.jpg';
 
             Storage::disk('public')->put($avatarPath, $avatarContents);

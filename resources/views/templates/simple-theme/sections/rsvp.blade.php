@@ -1,152 +1,67 @@
 <!-- RSVP -->
-@if($invitation->enable_rsvp === 1)
-<div class="bg-primary/10 p-6 rounded-xl animate-on-scroll px-6">
-    <h2 class="font-serif text-2xl text-primary text-center mb-4">Berikan Ucapan & Doa Restu Anda</h2>
-    <form id="rsvpForm" class="space-y-4 max-w-md mx-auto">
-        @csrf
-        <input class="w-full px-4 py-2 rounded border" placeholder="Nama" name="name">
-        <select class="w-full px-4 py-2 rounded border" name="attending">
-            <option value="1">Hadir</option>
-            <option value="0">Tidak Hadir</option>
-        </select>
-        <textarea id="rsvpMessageInput" class="w-full px-4 py-2 rounded border resize-none overflow-hidden" rows="3"
-            placeholder="Doa & Ucapan" name="message" style="height:100px; max-height:300px;"></textarea>
+@if($invitation->enable_rsvp == 1)
+<section id="rsvp" class="bg-primary/10 p-6 rounded-xl animate-on-scroll px-6">
+    <h2 class="font-serif text-2xl text-primary text-center mb-4">Ucapan</h2>
 
-        <script>
-            // Auto height textarea
-            const textarea = document.getElementById('rsvpMessageInput');
+    @if($invitation->rsvp_deadline)
+    <div class="text-center mb-4 fade-in">
+        <p class="font-label-sm text-label-sm text-on-surface-variant">
+            <span class="material-symbols-outlined text-sm align-middle">calendar_today</span>
+            Batas RSVP: {{ \Carbon\Carbon::parse($invitation->rsvp_deadline)->format('d/m/Y') }}
+        </p>
+    </div>
+    @endif
 
-            textarea.addEventListener('input', function() {
-                this.style.height = 'auto'; // reset dulu
-                this.style.height = Math.min(this.scrollHeight, 300) + 'px'; // auto expand sampai max 300px
-            });
-        </script>
-        <button id="rsvpButton"
-            class="w-full bg-primary text-white py-2 rounded-full flex justify-center items-center gap-2"
-            type="submit">
-            <span id="buttonText">Kirim</span>
-            <svg id="buttonSpinner" class="w-5 h-5 text-white animate-spin hidden" xmlns="http://www.w3.org/2000/svg"
-                fill="none" viewBox="0 0 24 24">
-                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
-                </circle>
-                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path>
-            </svg>
-        </button>
+    @if($invitation->rsvp_message)
+    <div class="text-center mb-6 fade-in">
+        <p class="font-body-md text-body-md text-on-surface-variant italic">"{{ $invitation->rsvp_message }}"</p>
+    </div>
+    @endif
 
-    </form>
-
-
-    <div id="rsvpMessage" class="max-w-md mx-auto mt-4 text-center text-green-600"></div>
-
-    <div class="mt-6 p-4 bg-white rounded-lg">
-        <h4 class="center font-serif text-lg text-primary mb-4">Tinggalkan kami doa terbaik anda
-            untuk momen bahagia kami</h4>
-
-        <div id="rsvpList" class="space-y-3 max-h-64 overflow-y-auto">
-            <!-- Daftar RSVP akan di-load di sini -->
-        </div>
-        <center> <span class="text-sm text-gray-600 mb-2"> ({{ $invitation->rsvps->count() }} Ucapan & Doa Restu)</span>
-        </center>
+    <div class="bg-surface p-6 md:p-8 rounded-xl shadow-sm border border-outline-variant/30 mb-8 fade-in">
+        <form id="rsvpForm" action="{{ route('rsvp.store', $invitation) }}" method="POST" class="space-y-4">
+            @csrf
+            <div>
+                <input name="name" class="w-full rounded-md border border-outline-variant/50 shadow-sm focus:border-primary focus:ring focus:ring-primary/20 bg-surface px-4 py-3" placeholder="Nama Lengkap" type="text" required />
+            </div>
+            <div>
+                <select name="attending" class="w-full rounded-md border border-outline-variant/50 shadow-sm focus:border-primary focus:ring focus:ring-primary/20 bg-surface text-on-surface-variant px-4 py-3" required>
+                    <option value="1">Hadir</option>
+                    <option value="2">Tidak Hadir</option>
+                    <option value="3">Masih Ragu</option>
+                </select>
+            </div>
+            <div>
+                <textarea name="message" class="w-full rounded-md border border-outline-variant/50 shadow-sm focus:border-primary focus:ring focus:ring-primary/20 bg-surface px-4 py-3" placeholder="Tulis doa & ucapan..." rows="4" required></textarea>
+            </div>
+            <button id="rsvpButton" class="w-full border border-primary text-primary px-6 py-3 rounded-md font-label-sm text-label-sm uppercase tracking-wider hover:bg-primary/5 transition-colors" type="submit">
+                <span id="buttonText">Kirim Ucapan</span>
+                <svg id="buttonSpinner" class="animate-spin hidden inline-block ml-2" style="width:18px;height:18px;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path>
+                </svg>
+            </button>
+        </form>
     </div>
 
-    <script>
-        const invitationId = "{{ $invitation->id }}";
+    <!-- Status Message -->
+    <div id="rsvpMessage" class="text-center mb-4 text-sm font-bold hidden"></div>
 
-       function renderRsvpList(rsvps) {
-            const list = document.getElementById('rsvpList');
+    <!-- RSVP List -->
+    <div class="text-center bg-surface p-6 rounded-xl shadow-sm border border-outline-variant/30 fade-in">
+        <h3 class="font-body-lg text-body-lg text-primary font-semibold mb-4">Tinggalkan kami doa terbaik untuk momen bahagia kami</h3>
+        <div id="rsvpList" class="rsvp-list text-left max-h-[400px] overflow-y-auto" data-url="{{ route('rsvp.list', $invitation) }}">
+            <!-- List loaded via JS -->
+        </div>
+        <p class="font-label-sm text-label-sm text-outline mt-4">({{ $invitation->rsvps->count() }} Ucapan)</p>
+    </div>
 
-            // Jika belum ada data
-            if (!rsvps || rsvps.length === 0) {
-                list.innerHTML = `
-                    <div class="text-center text-gray-500 text-sm py-6">
-                        Belum ada ucapan 🥲
-                        <br>Jadilah yang pertama memberi doa 💖
-                    </div>
-                `;
-                return;
-            }
-
-           list.innerHTML = rsvps.map(rsvp => `
-            <div class="flex justify-start items-center text-sm p-3 bg-gray-50 rounded space-x-3">
-                <img src="{{ asset('tempelate/user_default.jpg') }}" 
-                    alt="User" 
-                    class="w-8 h-8 rounded-full object-cover">
-                <div>
-                    <p class="font-semibold">${rsvp.name}</p>
-                    <p class="text-gray-600 text-xs">${rsvp.message}</p>
-                </div>
-            </div>
-        `).join('');
-
-        }
-
-        // Load RSVP list dari server
-        function updateRsvpList() {
-            fetch(`/invitation/${invitationId}/rsvps`)
-                .then(res => res.json())
-                .then(data => renderRsvpList(data))
-                .catch(err => {
-                    console.error(err);
-                    document.getElementById('rsvpList').innerHTML = `
-                        <div class="text-center text-red-500 text-sm py-6">
-                            Gagal memuat data RSVP 😢
-                        </div>
-                    `;
-                });
-        }
-
-
-        const form = document.getElementById('rsvpForm');
-        const button = document.getElementById('rsvpButton');
-        const buttonText = document.getElementById('buttonText');
-        const buttonSpinner = document.getElementById('buttonSpinner');
-
-        form.addEventListener('submit', function(e) {
-            e.preventDefault();
-
-            // Show loading + text "Mengirim..."
-            button.disabled = true;
-            buttonText.innerText = "Mengirim...";
-            buttonSpinner.classList.remove('hidden');
-
-            const formData = new FormData(form);
-
-            fetch("{{ route('rsvp.store', $invitation->id) }}", {
-                    method: "POST",
-                    headers: {
-                        'X-CSRF-TOKEN': form.querySelector('input[name="_token"]').value,
-                        'Accept': 'application/json',
-                    },
-                    body: formData
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        form.reset(); // clear form
-                        document.getElementById('rsvpMessage').innerText = data.message ||
-                            "RSVP berhasil dikirim!";
-                        updateRsvpList(); // refresh list
-                    } else {
-                        document.getElementById('rsvpMessage').innerText = data.message || "Terjadi kesalahan.";
-                    }
-                })
-                .catch(error => {
-                    console.error(error);
-                    document.getElementById('rsvpMessage').innerText = "Terjadi kesalahan saat mengirim RSVP.";
-                })
-                .finally(() => {
-                    // Kembalikan tombol ke normal
-                    button.disabled = false;
-                    buttonText.innerText = "Kirim";
-                    buttonSpinner.classList.add('hidden');
-                });
-        });
-
-        // Auto-refresh setiap 3 detik
-        setInterval(updateRsvpList, 3000);
-
-        // Load pertama kali
-        updateRsvpList();
-    </script>
-</div>
+    @if($invitation->rsvp_whatsapp)
+    <div class="text-center mt-6 fade-in">
+        <a href="https://wa.me/{{ $invitation->rsvp_whatsapp }}?text=Halo,%20saya%20ingin%20konfirmasi%20RSVP%20untuk%20undangan%20pernikahan." target="_blank" class="inline-flex items-center gap-2 bg-[#22c55e] text-white px-6 py-3 rounded-full font-label-sm text-label-sm hover:bg-[#16a34a] transition-colors">
+            <span class="material-symbols-outlined" style="font-size:18px;">chat</span> Konfirmasi via WhatsApp
+        </a>
+    </div>
+    @endif
+</section>
 @endif

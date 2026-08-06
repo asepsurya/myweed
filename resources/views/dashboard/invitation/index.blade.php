@@ -2,8 +2,42 @@
 <style>
   .card {
     border-radius: 10px 10px 0 0 !important;
-}
+  }
 
+  @media (max-width: 767.98px) {
+    .invitation-item {
+      padding: 14px 16px !important;
+    }
+
+    .invitation-item .avatar-40 {
+      width: 44px !important;
+      height: 44px !important;
+    }
+
+    .invitation-item .col-auto.d-flex.gap-2 {
+      width: 100%;
+      justify-content: flex-end;
+      gap: 8px !important;
+    }
+
+    .invitation-item .col-auto.d-flex.gap-2 a,
+    .invitation-item .col-auto.d-flex.gap-2 button {
+      width: 44px;
+      height: 44px;
+    }
+
+    .list-group-item {
+      padding: 14px 16px !important;
+    }
+  }
+
+  @media (max-width: 575.98px) {
+    .invitation-item .col-auto.d-flex.gap-2 a,
+    .invitation-item .col-auto.d-flex.gap-2 button {
+      width: 48px;
+      height: 48px;
+    }
+  }
 </style>
     <div class=" py-10">
         <div class="max-w-7xl container mx-auto sm:px-6 lg:px-8">
@@ -68,6 +102,18 @@
                                         class="avatar avatar-40 rounded-circle border border-theme-1 bg-theme-1-subtle text-theme-1 d-flex align-items-center justify-content-center">
                                         <i class="bi bi-pencil h5 mb-0"></i>
                                     </a>
+
+                                    @if(!$inv->is_default)
+                                    <form action="{{ route('invitation.destroy', $inv) }}" method="POST" class="d-inline"
+                                        onsubmit="return confirm('Hapus undangan ini?');">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit"
+                                            class="avatar avatar-40 rounded-circle border border-danger bg-danger-subtle text-danger d-flex align-items-center justify-content-center">
+                                            <i class="bi bi-trash h5 mb-0"></i>
+                                        </button>
+                                    </form>
+                                    @endif
 
                                     <!-- Tombol Share WA -->
                                     <button type="button"
@@ -175,3 +221,4 @@ document.getElementById('filterInvitation').addEventListener('input', function (
     </script>
 
 </x-app-layout>
+

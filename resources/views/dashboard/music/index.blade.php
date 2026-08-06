@@ -14,7 +14,7 @@
             if (!$path) return null;
             return Str::startsWith($path, ['http://', 'https://'])
             ? $path
-            : asset("storage/$folder/$path");
+            : '/storage/' . ($folder ? $folder . '/' : '') . $path;
         }
         @endphp
 
@@ -183,3 +183,4 @@
         }
     </script>
 </x-app-layout>
+

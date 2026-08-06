@@ -87,13 +87,7 @@
                     </a>
                 </li>
 
-                <!-- Hadiah -->
-                <li class="nav-item">
-                    <a href="hadiah.html" class="nav-link">
-                        <i class="menu-icon bi bi-gift"></i>
-                        <span class="menu-name">Hadiah Digital</span>
-                    </a>
-                </li>
+              
 
                 <!-- Tema -->
                 <li class="nav-item">
@@ -166,3 +160,4 @@
             </ul>
         </div>
     </div>
+

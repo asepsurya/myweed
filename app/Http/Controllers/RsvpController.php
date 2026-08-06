@@ -9,53 +9,52 @@ use Illuminate\Http\Request;
 class RsvpController extends Controller
 {
     public function index()
-{
- $inviation = Invitation::orderBy('id')->get();
+    {
+        $inviation = Invitation::orderBy('id')->get();
 
-    // Ambil invitation_id aktif
-    $activeInvitationId = request('list')
-        ?? $inviation->first()?->id;
+        $activeInvitationId = request('list')
+            ?? $inviation->first()?->id;
 
-    // Query RSVP
-    $rsvps = Rsvp::when($activeInvitationId, function ($q) use ($activeInvitationId) {
-            $q->where('invitation_id', $activeInvitationId);
-        })
-        ->latest()
-        ->paginate(10)
-        ->withQueryString();
+        $rsvps = Rsvp::when($activeInvitationId, function ($q) use ($activeInvitationId) {
+                $q->where('invitation_id', $activeInvitationId);
+            })
+            ->latest()
+            ->paginate(10)
+            ->withQueryString();
 
-    // Statistik berdasarkan invitation aktif
-    $stats = [
-        'total' => Rsvp::where('invitation_id', $activeInvitationId)->count(),
-        'hadir' => Rsvp::where('invitation_id', $activeInvitationId)
-                        ->where('attending', 1)->count(),
-        'tidak_hadir' => Rsvp::where('invitation_id', $activeInvitationId)
-                              ->where('attending', 2)->count(),
-        'ragu' => Rsvp::where('invitation_id', $activeInvitationId)
-                       ->where('attending', 3)->count(),
-    ];
+        $stats = [
+            'total' => Rsvp::where('invitation_id', $activeInvitationId)->count(),
+            'hadir' => Rsvp::where('invitation_id', $activeInvitationId)
+                            ->where('attending', 1)->count(),
+            'tidak_hadir' => Rsvp::where('invitation_id', $activeInvitationId)
+                                  ->where('attending', 2)->count(),
+            'ragu' => Rsvp::where('invitation_id', $activeInvitationId)
+                           ->where('attending', 3)->count(),
+        ];
 
-    return view('dashboard.rsvps.index', compact(
-        'rsvps',
-        'stats',
-        'inviation',
-        'activeInvitationId'
-    ));
-}
+        return view('dashboard.rsvps.index', compact(
+            'rsvps',
+            'stats',
+            'inviation',
+            'activeInvitationId'
+        ));
+    }
 
     public function store(Request $request, $invitationId)
     {
+        $invitation = Invitation::findOrFail($invitationId);
+
         $request->validate([
             'name' => 'required|string|max:100',
             'message' => 'nullable|string',
-            'attending' => 'nullable',
+            'attending' => 'nullable|in:1,2,3',
         ]);
 
         Rsvp::create([
-            'invitation_id' => $invitationId,
+            'invitation_id' => $invitation->id,
             'name' => $request->name,
             'message' => $request->message,
-            'attending' => $request->attending ?? true,
+            'attending' => $request->attending ?? 1,
         ]);
 
        return response()->json([
@@ -64,10 +63,11 @@ class RsvpController extends Controller
     ]);
     }
     public function getRsvps($invitationId)
-{
-    $rsvps = Rsvp::where('invitation_id', $invitationId)->latest()->get();
-    return response()->json($rsvps);
-}
+    {
+        $invitation = Invitation::findOrFail($invitationId);
+        $rsvps = Rsvp::where('invitation_id', $invitation->id)->latest()->get();
+        return response()->json($rsvps);
+    }
 public function destroy(Rsvp $rsvp)
 {
     $rsvp->delete();

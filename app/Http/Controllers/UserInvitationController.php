@@ -16,7 +16,7 @@ use App\Http\Controllers\Controller;
 use Intervention\Image\ImageManager;
 
 use Illuminate\Support\Facades\Storage;
-use Intervention\Image\Drivers\Gd\Driver as GdDriver;;
+use Intervention\Image\Drivers\Gd\Driver as GdDriver;
 
 class UserInvitationController extends Controller
 {
@@ -29,29 +29,134 @@ class UserInvitationController extends Controller
     public function create()
     {
         $music = Music::where('is_active', true)->get();
-        $templates = Template::where('is_active', true)->get();
+        $templates = Template::where('is_active', true)->paginate(6);
         return view('dashboard.invitation.create', compact('templates', 'music'));
     }
 
-    private function uploadCompressedImage($file, $fullPath, $maxWidth = 1600)
+    public function quickCreate(Request $request)
     {
+        $request->validate([
+            'groom_name' => 'required|string|max:255',
+            'bride_name' => 'required|string|max:255',
+            'groom_nickname' => 'nullable|string|max:255',
+            'bride_nickname' => 'nullable|string|max:255',
+            'template_id' => 'nullable|exists:templates,id',
+        ], [
+            'groom_name.required' => 'Nama mempelai pria wajib diisi.',
+            'bride_name.required' => 'Nama mempelai wanita wajib diisi.',
+            'template_id.exists' => 'Template yang dipilih tidak valid.',
+        ]);
 
-        if (!$file->isValid() || !str_starts_with($file->getMimeType(), 'image/')) {
-            throw new \Exception("File upload tidak valid atau bukan gambar.");
+        $baseSlug = Str::slug(
+            ($request->groom_nickname ?: $request->groom_name) . '-' . ($request->bride_nickname ?: $request->bride_name)
+        );
+
+        $slug = $baseSlug;
+        $counter = 1;
+        while (Invitation::where('slug', $slug)->exists()) {
+            $slug = $baseSlug . '-' . $counter++;
         }
 
-        $driver = new GdDriver();
-        $manager = new ImageManager($driver);
+        $user = $request->user();
 
-        $image = $manager->read($file->getRealPath());
-        $encoded = $image->encodeByExtension('webp', 75);
+        if (!$user->isAdmin() && !$user->isSubscribed()) {
+            $existing = Invitation::where('user_id', $user->id)->first();
+            if ($existing && $existing->slug !== $slug) {
+                if ($request->wantsJson() || $request->ajax()) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Anda hanya dapat membuat satu undangan. Upgrade ke berlangganan untuk membuat undangan tanpa batas.',
+                    ], 403);
+                }
+
+                return redirect()
+                    ->back()
+                    ->with('error', 'Anda hanya dapat membuat satu undangan. Upgrade ke berlangganan untuk membuat undangan tanpa batas.');
+            }
+        }
+
+        $templateId = $request->template_id ?? 2;
+
+        $invitation = Invitation::updateOrCreate(
+            [
+                'user_id' => $request->user()->id,
+                'slug' => $slug,
+            ],
+            [
+                'template_id' => $templateId,
+                'groom_name' => $request->groom_name,
+                'groom_nickname' => $request->groom_nickname,
+                'bride_name' => $request->bride_name,
+                'bride_nickname' => $request->bride_nickname,
+            ]
+        );
+
+        if ($request->wantsJson() || $request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Undangan berhasil dibuat',
+                'invitation' => $invitation,
+            ]);
+        }
+
+        return redirect()
+            ->route('invitation.edit', $invitation)
+            ->with('success', 'Undangan berhasil dibuat 💖');
+    }
+
+    private function uploadImageAsWebP($file, $fullPath, $maxWidth = null)
+    {
+        if (!$file->isValid() || !str_starts_with($file->getMimeType(), 'image/')) {
+            throw new \Exception("File upload tidak valid atau bukan gambar. MIME: " . $file->getMimeType() . ", isValid: " . ($file->isValid() ? 'yes' : 'no'));
+        }
+
+        $fullPath = preg_replace('/\.(jpe?g|png|gif|webp)$/i', '.webp', $fullPath);
 
         $folder = pathinfo($fullPath, PATHINFO_DIRNAME);
         if (!Storage::disk('public')->exists($folder)) {
-            Storage::disk('public')->makeDirectory($folder);
+            Storage::disk('public')->makeDirectory($folder, 0755, true);
         }
 
-        Storage::disk('public')->put($fullPath, (string) $encoded);
+        $content = file_get_contents($file->getRealPath());
+
+        if ($content === false) {
+            throw new \Exception("Gagal membaca file: " . $file->getRealPath());
+        }
+
+        if ($maxWidth && str_starts_with($file->getMimeType(), 'image/')) {
+            try {
+                $driver = new GdDriver();
+                $manager = new ImageManager($driver);
+                $image = $manager->read($file->getRealPath());
+
+                if ($image->width() > $maxWidth) {
+                    $image->scale(width: $maxWidth);
+                }
+
+                $encoded = $image->toWebp(75);
+                $content = (string) $encoded;
+            } catch (\Throwable $e) {
+                \Log::warning('GD resize failed, saving original: ' . $e->getMessage());
+            }
+        }
+
+        if (strlen($content) === 0) {
+            throw new \Exception("File content is empty for: {$fullPath}");
+        }
+
+        $saved = Storage::disk('public')->put($fullPath, $content);
+
+        \Log::debug('uploadImageAsWebP saved', [
+            'path' => $fullPath,
+            'size' => strlen($content),
+            'storage_result' => $saved,
+            'file_exists' => Storage::disk('public')->exists($fullPath),
+        ]);
+
+        if (!$saved || !Storage::disk('public')->exists($fullPath)) {
+            $errorPath = Storage::disk('public')->path($fullPath);
+            throw new \Exception("Gagal menyimpan file ke storage: {$fullPath} (path: {$errorPath})");
+        }
 
         return $fullPath;
     }
@@ -62,29 +167,88 @@ class UserInvitationController extends Controller
             'groom_name' => 'required|string|max:255',
             'wedding_date' => 'required|date',
             'template_id' => 'required|exists:templates,id',
+            'theme_color' => 'nullable|string|max:255',
 
-            // Gallery → hanya cek file type & size, jangan decode
-            'gallery.*' => 'nullable|file|mimes:jpeg,jpg,png,gif,webp|max:10240', // 10MB
-
-            // Cover
+            'gallery.*' => 'nullable|file|mimes:jpeg,jpg,png,gif,webp|max:10240',
             'gallery_cover' => 'nullable|file|mimes:jpeg,jpg,png,webp|max:10240',
-
-            // Audio → cek mime type & size
-            'custom_music' => 'nullable|file|mimes:mp3,wav,ogg|max:10240', // 10MB
-
-            // Foto pria/wanita
+            'custom_music' => 'nullable|file|mimes:mp3,wav,ogg|max:10240',
             'foto_pria' => 'nullable|file|mimes:jpeg,jpg,png,webp|max:10240',
             'foto_wanita' => 'nullable|file|mimes:jpeg,jpg,png,webp|max:10240',
-
-            // Text story → aman
             'love_story.*' => 'nullable|string|max:5000',
-
-            // Story photos → cek file & mime type
             'story_photo.*' => 'nullable|file|mimes:jpeg,jpg,png,webp|max:10240',
+        ], [
+            'bride_name.required' => 'Nama mempelai wanita wajib diisi.',
+            'bride_name.string' => 'Nama mempelai wanita harus berupa teks.',
+            'bride_name.max' => 'Nama mempelai wanita tidak boleh melebihi :max karakter.',
+            'groom_name.required' => 'Nama mempelai pria wajib diisi.',
+            'groom_name.string' => 'Nama mempelai pria harus berupa teks.',
+            'groom_name.max' => 'Nama mempelai pria tidak boleh melebihi :max karakter.',
+            'wedding_date.required' => 'Tanggal pernikahan wajib diisi.',
+            'wedding_date.date' => 'Tanggal pernikahan harus berupa tanggal yang valid.',
+            'template_id.required' => 'Template undangan wajib dipilih.',
+            'template_id.exists' => 'Template yang dipilih tidak valid.',
+            'gallery.*.mimes' => 'File galeri harus berupa gambar (jpeg, jpg, png, gif, webp).',
+            'gallery.*.max' => 'File galeri tidak boleh melebihi :max kilobyte.',
+            'gallery_cover.mimes' => 'Cover galeri harus berupa gambar (jpeg, jpg, png, webp).',
+            'gallery_cover.max' => 'Cover galeri tidak boleh melebihi :max kilobyte.',
+            'custom_music.mimes' => 'File musik harus berupa audio (mp3, wav, ogg).',
+            'custom_music.max' => 'File musik tidak boleh melebihi :max kilobyte.',
+            'foto_pria.mimes' => 'Foto mempelai pria harus berupa gambar (jpeg, jpg, png, webp).',
+            'foto_pria.max' => 'Foto mempelai pria tidak boleh melebihi :max kilobyte.',
+            'foto_wanita.mimes' => 'Foto mempelai wanita harus berupa gambar (jpeg, jpg, png, webp).',
+            'foto_wanita.max' => 'Foto mempelai wanita tidak boleh melebihi :max kilobyte.',
         ]);
 
+        $baseSlug = Str::slug($request->groom_nickname . '-' . $request->bride_nickname);
 
-        DB::transaction(function () use ($request) {
+        // Check if same user already has this slug → redirect to edit
+        $existingInvitation = Invitation::where('slug', $baseSlug)
+            ->where('user_id', $request->user()->id)
+            ->first();
+
+        if ($existingInvitation) {
+            if ($request->wantsJson() || $request->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Undangan sudah ada, redirecting to edit mode',
+                    'invitation' => $existingInvitation,
+                    'redirect_to_edit' => true,
+                ]);
+            }
+
+            return redirect()
+                ->route('invitation.edit', $existingInvitation)
+                ->with('success', 'Undangan sudah ada, Anda dialihkan ke halaman edit.');
+        }
+
+        // Ensure global slug uniqueness - append numeric suffix if needed
+        $slug = $baseSlug;
+        $counter = 1;
+        while (Invitation::where('slug', $slug)->exists()) {
+            $slug = $baseSlug . '-' . $counter++;
+        }
+
+        $user = $request->user();
+
+        if (!$user->isAdmin() && !$user->isSubscribed()) {
+            $hasExisting = Invitation::where('user_id', $user->id)->exists();
+            if ($hasExisting) {
+                if ($request->wantsJson() || $request->ajax()) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Anda hanya dapat membuat satu undangan. Upgrade ke berlangganan untuk membuat undangan tanpa batas.',
+                    ], 403);
+                }
+
+                return redirect()
+                    ->back()
+                    ->with('error', 'Anda hanya dapat membuat satu undangan. Upgrade ke berlangganan untuk membuat undangan tanpa batas.');
+            }
+        }
+
+        $invitation = null;
+
+        DB::transaction(function () use ($request, $slug, &$invitation) {
 
             $stories = [];
 
@@ -94,8 +258,10 @@ class UserInvitationController extends Controller
                     $photoPath = null;
 
                     if ($request->hasFile('story_photo.' . $index)) {
-                        $photoPath = $request->file('story_photo.' . $index)
-                            ->store('love_story', 'public');
+                        $photoPath = $this->uploadImageAsWebP(
+                            $request->file('story_photo.' . $index),
+                            "love_story/" . uniqid() . ".webp"
+                        );
                     }
 
                     $stories[] = [
@@ -106,9 +272,9 @@ class UserInvitationController extends Controller
                 }
             }
             $invitation = Invitation::create([
-                'user_id' => $request->user()->id,
+                'user_id' => auth()->user()->id,
                 'template_id' => $request->template_id,
-                'slug' => Str::slug($request->groom_name . '-' . $request->bride_name),
+                'slug' => $slug,
 
                 'groom_name' => $request->groom_name,
                 'groom_nickname' => $request->groom_nickname,
@@ -146,27 +312,36 @@ class UserInvitationController extends Controller
                 'bride_instagram' =>$request->bride_instagram,
                 'bride_username_instagram'=>$request->bride_username_instagram,
                 'akad_address'=>$request->akad_address,
-                'resepsi_address'=>$request->resepsi_address
+                'resepsi_address'=>$request->resepsi_address,
+
+                'rsvp_deadline' => $request->rsvp_deadline,
+                'rsvp_message' => $request->rsvp_message,
+                'rsvp_whatsapp' => $request->rsvp_whatsapp,
 
             ]);
             if ($request->hasFile('foto_pria')) {
-                $path = "invitations/{$invitation->id}/pria/pria.webp";
+                try {
+                    $path = "invitations/{$invitation->id}/pria/pria.webp";
 
-                $this->uploadCompressedImage(
-                    $request->file('foto_pria'),
-                    $path,
-                    1200
-                );
+                    $this->uploadImageAsWebP(
+                        $request->file('foto_pria'),
+                        $path,
+                        1200
+                    );
 
-                $invitation->update([
-                    'foto_pria' => $path
-                ]);
+                    $invitation->update([
+                        'foto_pria' => $path
+                    ]);
+                } catch (\Throwable $e) {
+                    \Log::error('Foto pria upload failed: ' . $e->getMessage());
+                }
             }
 
             if ($request->hasFile('foto_wanita')) {
+                try {
                     $path = "invitations/{$invitation->id}/wanita/wanita.webp";
 
-                    $this->uploadCompressedImage(
+                    $this->uploadImageAsWebP(
                         $request->file('foto_wanita'),
                         $path,
                         1200
@@ -175,51 +350,61 @@ class UserInvitationController extends Controller
                     $invitation->update([
                         'foto_wanita' => $path
                     ]);
+                } catch (\Throwable $e) {
+                    \Log::error('Foto wanita upload failed: ' . $e->getMessage());
                 }
+            }
 
 
            if ($request->hasFile('gallery_cover')) {
+               try {
                 $path = "invitations/{$invitation->id}/cover/cover.webp";
 
-                $this->uploadCompressedImage(
+                $this->uploadImageAsWebP(
                     $request->file('gallery_cover'),
                     $path,
                     1600
                 );
 
                 $invitation->update(['gallery_cover' => $path]);
-            }
+                } catch (\Throwable $e) {
+                    \Log::error('Gallery cover upload failed: ' . $e->getMessage());
+                }
+           }
 
 
-            if ($request->hasFile('custom_music')) {
-                $musicPath = $request->file('custom_music')
-                    ->store("invitations/{$invitation->id}/music", 'public');
+           if ($request->hasFile('custom_music')) {
+               $musicPath = $request->file('custom_music')
+                   ->store("invitations/{$invitation->id}/music", 'public');
 
-                $invitation->update(['music' => $musicPath]);
-            }else{
-                 $invitation->update([
-                    'music' => $request->music_id,
-                ]);
-            }
+               $invitation->update(['music' => $musicPath]);
+           }else{
+                $invitation->update([
+                   'music' => $request->music_id,
+               ]);
+           }
 
-           if ($request->hasFile('gallery')) {
+          if ($request->hasFile('gallery')) {
                 foreach ($request->file('gallery') as $index => $imageFile) {
-                    // Tentukan path folder
-                    $folder = "invitations/{$invitation->id}/gallery";
+                    try {
+                        $folder = "invitations/{$invitation->id}/gallery";
 
-                    // Pastikan folder ada
-                    if (!Storage::disk('public')->exists($folder)) {
-                        Storage::disk('public')->makeDirectory($folder);
+                        if (!Storage::disk('public')->exists($folder)) {
+                            Storage::disk('public')->makeDirectory($folder, 0755, true);
+                        }
+
+                        $path = $this->uploadImageAsWebP(
+                            $imageFile,
+                            $folder . '/' . uniqid() . '.webp'
+                        );
+
+                        Gallery::create([
+                            'invitation_id' => $invitation->id,
+                            'image' => $path,
+                        ]);
+                    } catch (\Throwable $e) {
+                        \Log::error('Gallery upload failed: ' . $e->getMessage());
                     }
-
-                    // Simpan file asli tanpa compress
-                    $path = $imageFile->storeAs($folder, $imageFile->getClientOriginalName(), 'public');
-
-                    // Simpan record di database
-                    Gallery::create([
-                        'invitation_id' => $invitation->id,
-                        'image' => $path,
-                    ]);
                 }
             }
             if ($request->has('enable_gift') && $request->enable_gift) {
@@ -237,22 +422,38 @@ class UserInvitationController extends Controller
                     ];
 
                     if (isset($qrs[$i])) {
-                        $giftData['qr'] = $qrs[$i]->store('gifts', 'public');
+                        try {
+                            $giftData['qr'] = $this->uploadImageAsWebP(
+                                $qrs[$i],
+                                'gifts/' . uniqid() . '.webp'
+                            );
+                        } catch (\Throwable $e) {
+                            \Log::error('Gift QR upload failed: ' . $e->getMessage());
+                        }
                     }
 
                     Gift::create($giftData);
                 }
             }
         });
+
+        if ($request->wantsJson() || $request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Undangan berhasil dibuat',
+                'invitation' => $invitation->fresh(),
+            ]);
+        }
+
         return redirect()
             ->route('invitation.index')
-            ->with('success', 'Undangan berhasil dibuat 💖') ;
+            ->with('success', 'Undangan berhasil dibuat 💖');
     }
 
     public function edit(Invitation $invitation)
     {
          $music = Music::where('is_active', true)->get();
-        $templates = Template::where('is_active', true)->get();
+        $templates = Template::where('is_active', true)->paginate(6);
 
         return view('dashboard.invitation.edit', compact('invitation','music','templates'));
     }
@@ -260,18 +461,23 @@ class UserInvitationController extends Controller
 
     public function update(Request $request, Invitation $invitation)
     {
-
         $request->validate([
             'bride_name' => 'required|string|max:255',
             'groom_name' => 'required|string|max:255',
             'wedding_date' => 'required|date',
             'template_id' => 'required|exists:templates,id',
+            'theme_color' => 'nullable|string|max:255',
             'gallery.*' => 'nullable|file|mimes:jpeg,jpg,png,gif,webp|max:10240',
             'gallery_cover' => 'nullable|file|mimes:jpeg,jpg,png,webp|max:10240',
             'custom_music' => 'nullable|file|mimes:mp3,wav,ogg|max:10240',
+            'music_youtube_url' => 'nullable|url',
+            'foto_pria' => 'nullable|file|mimes:jpeg,jpg,png,webp|max:10240',
+            'foto_wanita' => 'nullable|file|mimes:jpeg,jpg,png,webp|max:10240',
         ]);
 
-        DB::transaction(function () use ($request, $invitation) {
+        $uploadErrors = [];
+
+        DB::transaction(function () use ($request, $invitation, &$uploadErrors) {
          $oldStories = is_string($invitation->love_story)
             ? json_decode($invitation->love_story, true)
             : $invitation->love_story;
@@ -282,18 +488,18 @@ class UserInvitationController extends Controller
         if ($request->has('love_story')) {
             foreach ($request->love_story as $index => $storyText) {
 
-                // Default pakai foto lama
                 $photoPath = $oldStories[$index]['photo'] ?? null;
 
-                // Kalau ada foto baru → ganti
                 if ($request->hasFile('story_photo.' . $index)) {
 
                     if ($photoPath && Storage::disk('public')->exists($photoPath)) {
                         Storage::disk('public')->delete($photoPath);
                     }
 
-                    $photoPath = $request->file('story_photo.' . $index)
-                        ->store('love_story', 'public');
+                    $photoPath = $this->uploadImageAsWebP(
+                        $request->file('story_photo.' . $index),
+                        "love_story/{$index}_" . uniqid() . '.webp'
+                    );
                 }
 
                 $stories[] = [
@@ -304,10 +510,11 @@ class UserInvitationController extends Controller
             }
         }
 
-            // Siapkan data untuk diupdate, termasuk slug yang baru
             $updateData = [
                 'template_id' => $request->template_id,
-                'slug' => Str::slug($request->groom_name . '-' . $request->bride_name),
+                'slug' => !empty($request->groom_nickname) && !empty($request->bride_nickname)
+                    ? Str::slug($request->groom_nickname . '-' . $request->bride_nickname)
+                    : $invitation->slug,
 
                 'groom_name' => $request->groom_name,
                 'groom_nickname' => $request->groom_nickname,
@@ -340,100 +547,152 @@ class UserInvitationController extends Controller
                 'enable_rsvp' => $request->has('enable_rsvp'),
                 'enable_gift' => $request->has('enable_gift'),
 
-                'groom_instagram' =>$request->groom_instagram,
-                'groom_username_instagram'=>$request->groom_username_instagram,
-                'bride_instagram' =>$request->bride_instagram,
-                'bride_username_instagram'=>$request->bride_username_instagram,
-                'akad_address'=>$request->akad_address,
-                'resepsi_address'=>$request->resepsi_address
+                'groom_instagram' => $request->groom_username_instagram ? 'https://www.instagram.com/' . $request->groom_username_instagram : $invitation->groom_instagram,
+                'groom_username_instagram' => $request->groom_username_instagram,
+                'bride_instagram' => $request->bride_username_instagram ? 'https://www.instagram.com/' . $request->bride_username_instagram : $invitation->bride_instagram,
+                'bride_username_instagram' => $request->bride_username_instagram,
+                'akad_address' => $request->akad_address,
+                'resepsi_address' => $request->resepsi_address,
+
+                'rsvp_deadline' => $request->rsvp_deadline,
+                'rsvp_message' => $request->rsvp_message,
+                'rsvp_whatsapp' => $request->rsvp_whatsapp,
+
+                'music_youtube_url' => $request->music_youtube_url,
             ];
 
-            // Update data utama undangan
-            $invitation->update($updateData);
+$invitation->update($updateData);
 
-            // --- Proses Update File ---
+            \Log::debug('Update foto debug', [
+                'has_foto_pria' => $request->hasFile('foto_pria'),
+                'has_foto_wanita' => $request->hasFile('foto_wanita'),
+                'all_files' => array_keys($request->files->all()),
+            ]);
 
-            if ($request->hasFile('foto_pria')) {
+            // --- REMOVE FOTO PRIA IF FLAGGED (only if no new file was uploaded) ---
+            if ($request->input('remove_foto_pria') == 1 && !$request->hasFile('foto_pria')) {
                 if ($invitation->foto_pria) {
                     Storage::disk('public')->delete($invitation->foto_pria);
                 }
-
-                $pathPria = "invitations/{$invitation->id}/pria/pria.jpg";
-                $fotoPria = $this->uploadCompressedImage($request->file('foto_pria'), $pathPria);
-
-                $invitation->update(['foto_pria' => $fotoPria]);
+                $invitation->update(['foto_pria' => null]);
             }
 
-            if ($request->hasFile('foto_wanita')) {
+            // --- REMOVE FOTO WANITA IF FLAGGED (only if no new file was uploaded) ---
+            if ($request->input('remove_foto_wanita') == 1 && !$request->hasFile('foto_wanita')) {
                 if ($invitation->foto_wanita) {
                     Storage::disk('public')->delete($invitation->foto_wanita);
                 }
-
-                $pathWanita = "invitations/{$invitation->id}/wanita/wanita.jpg";
-                $fotoWanita = $this->uploadCompressedImage($request->file('foto_wanita'), $pathWanita);
-
-                $invitation->update(['foto_wanita' => $fotoWanita]);
+                $invitation->update(['foto_wanita' => null]);
             }
 
-            // 3. Cover Galeri
-            if ($request->hasFile('gallery_cover')) {
+            // --- FOTO PRIA ---
+            if ($request->hasFile('foto_pria')) {
+                try {
+                    $oldPath = $invitation->foto_pria;
+                    $pathPria = "invitations/{$invitation->id}/pria/pria.webp";
+                    $this->uploadImageAsWebP($request->file('foto_pria'), $pathPria, 1200);
 
-                // Hapus cover lama
+                    if ($oldPath && $oldPath !== $pathPria) {
+                        Storage::disk('public')->delete($oldPath);
+                    }
+                    $invitation->update(['foto_pria' => $pathPria]);
+                } catch (\Throwable $e) {
+                    \Log::error('Foto pria upload failed: ' . $e->getMessage());
+                    $uploadErrors[] = 'Foto mempelai pria: ' . $e->getMessage();
+                }
+            }
+
+            // --- FOTO WANITA ---
+            if ($request->hasFile('foto_wanita')) {
+                try {
+                    $oldPath = $invitation->foto_wanita;
+                    $pathWanita = "invitations/{$invitation->id}/wanita/wanita.webp";
+                    $this->uploadImageAsWebP($request->file('foto_wanita'), $pathWanita, 1200);
+
+                    if ($oldPath && $oldPath !== $pathWanita) {
+                        Storage::disk('public')->delete($oldPath);
+                    }
+                    $invitation->update(['foto_wanita' => $pathWanita]);
+                } catch (\Throwable $e) {
+                    \Log::error('Foto wanita upload failed: ' . $e->getMessage());
+                    $uploadErrors[] = 'Foto mempelai wanita: ' . $e->getMessage();
+                }
+            }
+
+            // --- GALLERY COVER ---
+            $removeCover = $request->input('remove_gallery_cover') == 1;
+            $hasNewCover = $request->hasFile('gallery_cover');
+
+            if ($removeCover && !$hasNewCover) {
                 if ($invitation->gallery_cover) {
                     Storage::disk('public')->delete($invitation->gallery_cover);
                 }
-
-                // Path cover baru (kita tentukan sendiri)
-                $path = "invitations/{$invitation->id}/cover/cover.jpg";
-
-                // Upload & compress pakai function
-                $this->uploadCompressedImage(
-                    $request->file('gallery_cover'),
-                    $path,
-                    1600
-                );
-
-                // Update database
-                $invitation->update(['gallery_cover' => $path]);
+                $invitation->update(['gallery_cover' => null]);
             }
 
-            // 4. Musik Kustom
-            if ($request->hasFile('custom_music')) {
-                // Hapus musik lama jika ada
+            if ($hasNewCover) {
+                try {
+                    $oldPath = $invitation->gallery_cover;
+                    $path = "invitations/{$invitation->id}/cover/cover.webp";
+                    $this->uploadImageAsWebP($request->file('gallery_cover'), $path, 1600);
+
+                    if ($oldPath && $oldPath !== $path) {
+                        Storage::disk('public')->delete($oldPath);
+                    }
+                    $invitation->update(['gallery_cover' => $path]);
+                } catch (\Throwable $e) {
+                    \Log::error('Gallery cover upload failed: ' . $e->getMessage());
+                    $uploadErrors[] = 'Cover galeri: ' . $e->getMessage();
+                }
+            }
+
+            if ($request->input('music_source') === 'youtube') {
+                $invitation->update([
+                    'music_youtube_url' => $request->music_youtube_url,
+                    'music' => 0,
+                ]);
+            } elseif ($request->hasFile('custom_music')) {
                 if ($invitation->music) {
                     Storage::disk('public')->delete($invitation->music);
                 }
-                // Simpan musik baru
                 $musicPath = $request->file('custom_music')->store("invitations/{$invitation->id}/music", 'public');
-                $invitation->update(['music' => $musicPath]);
-            }else{
-                 $invitation->update([
+                $invitation->update([
+                    'music' => $musicPath,
+                    'music_youtube_url' => null,
+                ]);
+            } else {
+                $invitation->update([
                     'music' => $request->music_id,
+                    'music_youtube_url' => null,
                 ]);
             }
 
         if ($request->hasFile('gallery')) {
                 foreach ($request->file('gallery') as $index => $imageFile) {
-                    // Tentukan path folder
-                    $folder = "invitations/{$invitation->id}/gallery";
+                    try {
+                        $folder = "invitations/{$invitation->id}/gallery";
 
-                    // Pastikan folder ada
-                    if (!Storage::disk('public')->exists($folder)) {
-                        Storage::disk('public')->makeDirectory($folder);
+                        if (!Storage::disk('public')->exists($folder)) {
+                            Storage::disk('public')->makeDirectory($folder, 0755, true);
+                        }
+
+                        $path = $this->uploadImageAsWebP(
+                            $imageFile,
+                            $folder . '/' . uniqid() . '.webp'
+                        );
+
+                        Gallery::create([
+                            'invitation_id' => $invitation->id,
+                            'image' => $path,
+                        ]);
+                    } catch (\Throwable $e) {
+                        \Log::error('Gallery upload failed: ' . $e->getMessage());
+                        $uploadErrors[] = 'Galeri #' . ($index + 1) . ': ' . $e->getMessage();
                     }
-
-                    // Simpan file asli tanpa compress
-                    $path = $imageFile->storeAs($folder, $imageFile->getClientOriginalName(), 'public');
-
-                    // Simpan record di database
-                    Gallery::create([
-                        'invitation_id' => $invitation->id,
-                        'image' => $path,
-                    ]);
                 }
             }
 
-           if ($request->enable_gift == 1) {
+            if ($request->enable_gift == 1) {
 
                 $banks   = $request->bank ?? [];
                 $numbers = $request->number ?? [];
@@ -442,7 +701,6 @@ class UserInvitationController extends Controller
 
                 foreach ($banks as $i => $bank) {
 
-                    // Skip jika data wajib kosong
                     if (
                         empty($numbers[$i]) ||
                         empty($names[$i])
@@ -455,14 +713,21 @@ class UserInvitationController extends Controller
                         'name'   => $names[$i],
                     ];
 
-                    // Jika upload QR baru
                     if (isset($qrs[$i])) {
-                        $data['qr'] = $qrs[$i]->store('gifts', 'public');
+                        try {
+                            $data['qr'] = $this->uploadImageAsWebP(
+                                $qrs[$i],
+                                'gifts/' . uniqid() . '.webp'
+                            );
+                        } catch (\Throwable $e) {
+                            \Log::error('Gift QR upload failed: ' . $e->getMessage());
+                            $uploadErrors[] = 'QR Gift #' . ($i + 1) . ': ' . $e->getMessage();
+                        }
                     }
 
                     Gift::updateOrCreate(
                         [
-                            'invitation_id' => $request->invitation_id,
+                            'invitation_id' => $invitation->id,
                             'bank' => $bank,
                         ],
                         $data
@@ -470,29 +735,65 @@ class UserInvitationController extends Controller
                 }
             }
 
-        });
+         });
 
-        return redirect()
-            ->back()
-            ->with('success', 'Undangan berhasil diperbarui 💖');
+          if (!empty($uploadErrors)) {
+               if ($request->ajax()) {
+                   return response()->json([
+                       'success' => false,
+                       'message' => 'Data berhasil diperbarui, tetapi ada masalah pada upload gambar: ' . implode(', ', $uploadErrors),
+                   ]);
+               }
+               return redirect()
+                   ->back()
+                   ->with('warning', 'Data berhasil diperbarui, tetapi ada masalah pada upload gambar: ' . implode(', ', $uploadErrors));
+           }
+
+           if ($request->ajax()) {
+               return response()->json([
+                   'success' => true,
+                   'message' => 'Undangan berhasil diperbarui',
+                   'invitation' => $invitation->fresh(),
+               ]);
+           }
+
+           return redirect()
+               ->back()
+               ->with('success', 'Undangan berhasil diperbarui 💖');
     }
 
     public function destroyGallery(Invitation $invitation, Request $request,$id)
     {
         $photo = Gallery::findOrFail($id);
 
-        // Hapus file
         Storage::disk('public')->delete($photo->image);
 
-        // Hapus data
         $photo->delete();
 
         return response()->json(['success' => true]);
     }
+
+    public function destroy(Invitation $invitation)
+    {
+        if ($invitation->is_default) {
+            return redirect()
+                ->back()
+                ->with('error', 'Data default romeo-juliet tidak dapat dihapus.');
+        }
+
+        if ($invitation->foto_pria) {
+            Storage::disk('public')->deleteDirectory("invitations/{$invitation->id}");
+        }
+
+        $invitation->delete();
+
+        return redirect()
+            ->route('invitation.index')
+            ->with('success', 'Undangan berhasil dihapus.');
+    }
     public function detail($slug)
     {
         $invitation = Invitation::where('slug', $slug)->firstOrFail();
-        // abort_if($invitation->user_id !== auth()->id(), 403);
         $galleries = Gallery::where('invitation_id', $invitation->id)->get();
         return view('dashboard.invitation.detail', compact('invitation','galleries'));
     }

@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Foundation\Application;
+use App\Http\Middleware\MidtransConfig;
 use App\Http\Middleware\RedirectByRole;
 use App\Http\Middleware\CheckSubscription;
 use Spatie\Permission\Middleware\RoleMiddleware;
@@ -10,6 +11,7 @@ use Spatie\Permission\Exceptions\UnauthorizedException;
 use Spatie\Permission\Middleware\RoleOrPermissionMiddleware;
 
 return Application::configure(basePath: dirname(__DIR__))
+
     ->withRouting(
         web: __DIR__.'/../routes/web.php',
         api: __DIR__.'/../routes/api.php',
@@ -34,5 +36,10 @@ return Application::configure(basePath: dirname(__DIR__))
                 'permission' => PermissionMiddleware::class,
                 'role_or_permission' => RoleOrPermissionMiddleware::class,
                 'subscription' => CheckSubscription::class,
+                'midtrans' => MidtransConfig::class,
+            ]);
+            $middleware->append(MidtransConfig::class);
+            $middleware->validateCsrfTokens(except: [
+                'api/midtrans/callback',
             ]);
     })->create();

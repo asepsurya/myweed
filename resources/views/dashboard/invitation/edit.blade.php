@@ -1,13 +1,516 @@
-<x-app-layout>
+﻿<x-app-layout>
+<style>
+    
+        /* --- Layout --- */
+        .inner-sidebar-wrap .inner-sidebar { background-color: transparent; }
+        .inner-sidebar,
+        .inner-sidebar-wrap,
+        .inner-sidebar .nav { width: 100%; max-width: 100%; }
 
-    <style>
+        /* --- Mobile Optimizations --- */
+        @media (max-width: 991.98px) {
+            .edit-form-panel .card {
+                margin-bottom: 1rem;
+            }
+
+            .edit-form-panel .card-header {
+                padding: 12px 16px !important;
+            }
+
+            .edit-form-panel .card-body {
+                padding: 16px !important;
+            }
+
+            .edit-form-panel .row.g-3 {
+                row-gap: 1rem;
+            }
+
+            .edit-form-panel .form-label {
+                font-size: 0.85rem;
+                font-weight: 600;
+                margin-bottom: 6px;
+            }
+
+            .edit-form-panel .form-control {
+                padding: 10px 14px;
+                font-size: 1rem;
+            }
+
+            .edit-form-panel input[type="file"] {
+                padding: 8px;
+            }
+
+            .edit-layout .row.align-items-center.mb-4 {
+                row-gap: 12px;
+            }
+
+            .edit-layout .btn-sm {
+                padding: 10px 16px;
+                font-size: 0.9rem;
+            }
+
+            .islami-icon {
+                width: 40px;
+                height: 40px;
+                border-radius: 10px;
+            }
+
+            .upload-zone {
+                padding: 24px 16px !important;
+                min-height: 120px;
+            }
+
+            .upload-zone svg {
+                width: 32px;
+                height: 32px;
+            }
+
+            .gallery-thumb {
+                width: 100%;
+                max-width: 160px;
+            }
+
+            .sticky-save-btn {
+                padding: 12px 16px;
+            }
+
+            .sticky-save-btn .btn {
+                width: 100%;
+                padding: 14px;
+                font-size: 1rem;
+                font-weight: 600;
+            }
+
+            /* Add bottom spacing for mobile bottom nav */
+            .inner-sidebar-content {
+                padding-bottom: 80px;
+            }
+
+            /* Hide live preview on mobile */
+            .edit-preview-panel,
+            .android-frame.live-preview-frame {
+                display: none !important;
+            }
+        }
+
+        @media (max-width: 575.98px) {
+            .edit-form-panel .card-body {
+                padding: 12px !important;
+            }
+
+            .edit-form-panel .row.g-3 {
+                row-gap: 0.75rem;
+            }
+
+            .edit-form-panel .form-control {
+                padding: 12px 14px;
+                font-size: 1rem;
+            }
+
+            .edit-form-panel .btn-sm {
+                padding: 12px 18px;
+                font-size: 0.9rem;
+            }
+
+            .islami-icon {
+                width: 36px;
+                height: 36px;
+            }
+
+            .upload-zone {
+                padding: 20px 12px !important;
+                min-height: 100px;
+            }
+        }
+
+        /* --- Theme Color --- */
+        :root { --sidebar-theme-color: {{ $invitation->theme_color ?? '#3b82f6' }}; }
+
+        /* --- Sidebar Sticky --- */
+        .sidebar-sticky {
+            position: sticky;
+            top: 0;
+            height: auto;
+        }
+
+        .sidebar-menu-wrap {
+            flex: 0 0 auto;
+            overflow-y: visible;
+        }
+
+        /* --- Sidebar Nav Items --- */
+        .islami-icon {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: color-mix(in srgb, var(--sidebar-theme-color) 15%, transparent);
+            border-radius: 10px;
+            color: var(--sidebar-theme-color);
+            flex-shrink: 0;
+        }
+
+        .inner-sidebar .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 10px 12px;
+            border-radius: 10px;
+            color: #374151;
+            transition: all 0.2s ease;
+            margin-bottom: 4px;
+            text-decoration: none;
+        }
+
+        .inner-sidebar .nav-link:hover {
+            background-color: color-mix(in srgb, var(--sidebar-theme-color) 10%, transparent);
+            color: var(--sidebar-theme-color);
+        }
+
+        .inner-sidebar .nav-link.active {
+            background-color: var(--sidebar-theme-color);
+            color: #ffffff;
+        }
+
+        .inner-sidebar .nav-link.active .islami-icon {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+        }
+
+        .inner-sidebar .nav-link span {
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        /* --- Dark Mode: Sidebar --- */
+        [data-bs-theme="dark"] .inner-sidebar .nav-link { color: #e5e7eb; }
+        [data-bs-theme="dark"] .inner-sidebar .nav-link:hover {
+            background-color: color-mix(in srgb, var(--sidebar-theme-color) 20%, transparent);
+            color: var(--sidebar-theme-color);
+        }
+        [data-bs-theme="dark"] .islami-icon {
+            background-color: color-mix(in srgb, var(--sidebar-theme-color) 20%, transparent);
+            color: var(--sidebar-theme-color);
+        }
+        [data-bs-theme="dark"] .inner-sidebar .nav-link.active .islami-icon {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+        }
+
+        /* --- Dark Mode: TomSelect --- */
+        [data-bs-theme="dark"] .ts-control,
+        [data-bs-theme="dark"] .ts-dropdown { background-color: #1e1e2d; color: #e5e7eb; border-color: #374151; }
+        [data-bs-theme="dark"] .ts-control input { color: #e5e7eb; }
+        [data-bs-theme="dark"] .ts-dropdown { box-shadow: 0 10px 25px rgba(0, 0, 0, .6); }
+        [data-bs-theme="dark"] .ts-dropdown .option { color: #e5e7eb; }
+        [data-bs-theme="dark"] .ts-dropdown .option:hover,
+        [data-bs-theme="dark"] .ts-dropdown .option.active { background-color: #374151; color: #fff; }
+        [data-bs-theme="dark"] .ts-dropdown .option.selected { background-color: #2563eb; color: #fff; }
+        [data-bs-theme="dark"] .ts-control::after { border-top-color: #e5e7eb; }
+
+        /* --- Photo Preview --- */
+        #previewContainerGroom,
+        #previewContainerBride { text-align: center; }
+
+        #previewGroom,
+        #previewBride {
+            width: 100%;
+            max-width: 300px;
+            height: 400px;
+            object-fit: cover;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            margin: 0 auto;
+            background-color: #f8f9fa;
+            display: block;
+        }
+
+        /* --- Upload Zone --- */
+        .upload-zone {
+            border: 2px dashed var(--bs-border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .upload-zone:hover {
+            border-color: var(--sidebar-theme-color);
+            background: color-mix(in srgb, var(--sidebar-theme-color) 3%, transparent);
+        }
+        .upload-zone svg { color: var(--bs-secondary-color); }
+
+        /* --- Instagram Input Group --- */
+        .insta-group { display: flex; align-items: stretch; }
+        .insta-prefix {
+            display: flex;
+            align-items: center;
+            padding: 0 0.75rem;
+            background: var(--bs-tertiary-bg);
+            border: 1px solid var(--bs-border-color);
+            border-right: none;
+            border-radius: 0.375rem 0 0 0.375rem;
+            font-weight: 600;
+            color: var(--bs-secondary-color);
+        }
+        .insta-group .form-control { border-radius: 0 0.375rem 0.375rem 0; }
+
+        /* --- Gallery --- */
+        .gallery-thumb {
+            width: 100px;
+            height: 100px;
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative;
+            flex-shrink: 0;
+        }
+        .gallery-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .gallery-thumb .btn-remove {
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            width: 22px;
+            height: 22px;
+            padding: 0;
+            border-radius: 50%;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* --- Gift Item --- */
+        .gift-item {
+            border: 1px solid var(--bs-border-color);
+            border-radius: 12px;
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+            position: relative;
+        }
+
+        /* --- Love Story Item --- */
+        .love-story-item {
+            border: 1px solid var(--bs-border-color);
+            border-radius: 12px;
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+        }
+
+        /* --- Android Preview Frame --- */
         .android-frame {
             width: 200px;
             height: 400px;
             border: 10px solid #111;
             border-radius: 30px;
             background: #000;
-            overflow-y: auto;
+            overflow: auto;
+            position: relative;
+            margin: 0 auto;
+        }
+       .nav-link {
+            cursor: pointer !important;
+        }
+        .android-frame::before {
+            content: '';
+            position: absolute;
+            top: 6px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 70px;
+            height: 6px;
+            background: #333;
+            border-radius: 10px;
+            z-index: 2;
+        }
+        .android-frame .screen { width: 100%; height: 100%; overflow: auto; scrollbar-width: none; }
+        .android-frame .screen::-webkit-scrollbar { display: none; width: 0; height: 0; }
+        .android-frame .preview-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 20px;
+        }
+
+        /* --- Tab Transition --- */
+        .tab-content { animation: tabFade 0.2s ease-out; }
+        @keyframes tabFade {
+            from { opacity: 0; transform: translateY(6px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- Template Selection --- */
+        .template-option.selected-template {
+            border-color: #0d6efd !important;
+            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+        }
+        .template-option {
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+        .template-option:hover {
+            border-color: #0d6efd !important;
+            cursor: pointer;
+        }
+
+          /* --- Sticky Save (Mobile) --- */
+          .sticky-save-btn {
+              position: fixed;
+              bottom: 20px;
+              right: 20px;
+              z-index: 1050;
+              opacity: 0;
+              transform: translateY(20px);
+              transition: opacity 0.3s ease, transform 0.3s ease;
+              pointer-events: none;
+          }
+          .sticky-save-btn.visible {
+              opacity: 1;
+              transform: translateY(0);
+              pointer-events: auto;
+          }
+
+          /* Floating save button for mobile */
+          #mobileSaveButton {
+              width: 56px;
+              height: 56px;
+              border-radius: 50%;
+              padding: 0;
+              display: inline-flex;
+              align-items: center;
+              justify-content: center;
+              background: var(--sidebar-theme-color, #FF6B81) !important;
+              border: none;
+              color: #fff;
+              box-shadow: 0 4px 16px rgba(0,0,0,.25);
+              transition: transform .2s ease, box-shadow .2s ease;
+              position: fixed;
+              bottom: 88px;
+              right: 20px;
+              z-index: 1050;
+          }
+
+          #mobileSaveButton:active {
+              transform: scale(.92);
+              box-shadow: 0 2px 8px rgba(0,0,0,.3);
+          }
+
+          /* Hide red delete buttons on mobile */
+          @media (max-width: 575.98px) {
+              .gallery-thumb .btn-remove {
+                  display: none !important;
+              }
+
+              .edit-form-panel .btn-danger,
+              .edit-form-panel .btn-close[aria-label="Hapus"] {
+                  display: none !important;
+              }
+          }
+
+          /* --- Layout Responsif untuk Laptop --- */
+          @media (min-width: 992px) {
+              .inner-sidebar-wrap {
+                  display: flex;
+                  flex-wrap: nowrap;
+                  align-items: flex-start;
+                  gap: 1rem;
+              }
+              .inner-sidebar-wrap > .inner-sidebar {
+                  
+                  flex-shrink: 0;
+              }
+              .inner-sidebar-wrap > .inner-sidebar-content {
+                  flex: 1 1 auto;
+                  min-width: 0;
+              }
+          }
+
+          /* --- Live Preview Split Layout --- */
+          .edit-layout {
+              display: flex;
+              flex-direction: column;
+              gap: 1rem;
+          }
+          @media (min-width: 992px) {
+              .edit-layout {
+                  flex-direction: row;
+                  align-items: flex-start;
+              }
+              .edit-form-panel {
+                  flex: 1 1 auto;
+                  min-width: 0;
+              }
+              .edit-preview-panel {
+                  width: 400px;
+                  flex-shrink: 0;
+                  align-self: flex-start;
+              }
+             
+          }
+          
+            
+            .live-preview-frame {
+                width: 360px;
+                height: 640px;
+                margin: 0 auto;
+                 overflow: auto;
+    -webkit-overflow-scrolling: touch;
+    background: #fff;
+            }
+            @media (max-width: 991.98px) {
+                .live-preview-frame {
+                    width: 320px;
+                    height: 560px;
+                }
+            }
+            [data-bs-theme="dark"] #previewFrame {
+                background: #1e1e2d;
+            }
+        </style>
+     <style>
+        .android-frame {
+            width: 200px;
+            height: 400px;
+            border: 10px solid #111;
+            border-radius: 30px;
+            background: #000;
+            overflow: auto;
+            position: relative;
+            margin: 0 auto;
+        }
+         .android-frame.live-preview-frame {
+            width: 360px;
+            height: 640px;
+            overflow: hidden;
+            position: sticky;
+            top: 1rem;
+            align-self: flex-start;
+        }
+        @media (max-width: 991.98px) {
+            .android-frame.live-preview-frame {
+                width: 320px;
+                height: 560px;
+            }
+        }
+        .android-frame.live-preview-frame .screen {
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            scrollbar-width: none;
+        }
+        .android-frame.live-preview-frame .screen::-webkit-scrollbar {
+            scrollbar-color: rgba(0,0,0,0.15) transparent;
+            display: block;
+         
+        }
+        #previewFrame {
+            width: 100%;
+            height: 100%;
+            border: none;
+            display: block;
+            background: var(--bs-body-bg);
         }
 
         /* notch / speaker */
@@ -32,16 +535,46 @@
         }
 
         .inner-sidebar-wrap .inner-sidebar-content {
-            overflow-y: auto;
-            scrollbar-width: none;
-            /* Firefox */
-            -ms-overflow-style: none;
-            /* IE & Edge lama */
+            overflow-y: visible !important;
+            height: auto !important;
+            max-height: none !important;
+            align-self: flex-start;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(0,0,0,0.2) transparent;
+        }
+
+        /* Global thin scrollbar */
+        html, body {
+            scrollbar-width: thin;
+            scrollbar-color: rgba(0,0,0,0.15) transparent;
+        }
+        html::-webkit-scrollbar,
+        body::-webkit-scrollbar {
+            width: 4px;
+            height: 4px;
+        }
+        html::-webkit-scrollbar-track,
+        body::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        html::-webkit-scrollbar-thumb,
+        body::-webkit-scrollbar-thumb {
+            background: rgba(0,0,0,0.15);
+            border-radius: 2px;
         }
 
         .inner-sidebar-wrap .inner-sidebar-content::-webkit-scrollbar {
-            display: none;
-            /* Chrome, Safari */
+            width: 4px;
+        }
+        .inner-sidebar-wrap .inner-sidebar-content::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .inner-sidebar-wrap .inner-sidebar-content::-webkit-scrollbar-thumb {
+            background: rgba(0,0,0,0.15);
+            border-radius: 2px;
+        }
+        .inner-sidebar-wrap .inner-sidebar-content {
+            scrollbar-width: thin;
         }
 
         .inner-sidebar-wrap .inner-sidebar {
@@ -53,6 +586,40 @@
         .inner-sidebar .nav {
             width: 100%;
             max-width: 100%;
+        }
+
+        :root {
+            --sidebar-theme-color: {{ $invitation->theme_color ?? '#3b82f6' }};
+        }
+
+        .sidebar-sticky {
+            position: sticky;
+            top: 0;
+            height: auto;
+        }
+
+        .sidebar-menu-wrap {
+            flex: 0 0 auto;
+            overflow-y: visible;
+        }
+
+        [data-bs-theme="dark"] .inner-sidebar .nav-link {
+            color: #e5e7eb;
+        }
+
+        [data-bs-theme="dark"] .inner-sidebar .nav-link:hover {
+            background-color: color-mix(in srgb, var(--sidebar-theme-color) 20%, transparent);
+            color: var(--sidebar-theme-color);
+        }
+
+        [data-bs-theme="dark"] .islami-icon {
+            background-color: color-mix(in srgb, var(--sidebar-theme-color) 20%, transparent);
+            color: var(--sidebar-theme-color);
+        }
+
+        [data-bs-theme="dark"] .inner-sidebar .nav-link.active .islami-icon {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: #ffffff;
         }
 
         /* --- CSS UNTUK MEMPERBAIKI UKURAN FOTO --- */
@@ -122,18 +689,47 @@
 
         /* Ikon style */
         .islami-icon {
-            width: 36px;
-            height: 36px;
+            width: 30px;
+            height: 30px;
             display: flex;
             align-items: center;
             justify-content: center;
-            background-color: #eff2f5;
-            border-radius: 10px;
-            color: #3b82f6;
+            background-color: color-mix(in srgb, var(--sidebar-theme-color) 15%, transparent);
+            border-radius: 8px;
+            color: var(--sidebar-theme-color);
+            flex-shrink: 0;
         }
-          .nav-link {
-                cursor: pointer;
-            }
+
+        .inner-sidebar .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 8px 10px;
+            border-radius: 8px;
+            color: #374151;
+            transition: all 0.2s ease;
+            margin-bottom: 2px;
+            text-decoration: none;
+        }
+
+        .inner-sidebar .nav-link:hover {
+            background-color: color-mix(in srgb, var(--sidebar-theme-color) 10%, transparent);
+            color: var(--sidebar-theme-color);
+        }
+
+        .inner-sidebar .nav-link.active {
+            background-color: var(--sidebar-theme-color);
+            color: #ffffff;
+        }
+
+        .inner-sidebar .nav-link.active .islami-icon {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+        }
+
+        .inner-sidebar .nav-link span {
+            font-weight: 500;
+            font-size: 13px;
+        }
             .custom-swal-popup {
                 border-radius: 16px;
                 padding: 24px;
@@ -156,14 +752,31 @@
                 font-weight: 600;
             }
 
-            .custom-swal-cancel {
-                background: #fff !important;
-                color: #111 !important;
-                border: 1px solid #e5e7eb !important;
-                border-radius: 10px !important;
-                padding: 10px 20px !important;
-                font-weight: 500;
-            }
+             .custom-swal-cancel {
+                 background: #fff !important;
+                 color: #111 !important;
+                 border: 1px solid #e5e7eb !important;
+                 border-radius: 10px !important;
+                 padding: 10px 20px !important;
+                 font-weight: 500;
+             }
+
+             .sticky-save-btn {
+                 position: fixed;
+                 bottom: 20px;
+                 right: 20px;
+                 z-index: 1050;
+                 opacity: 0;
+                 transform: translateY(20px);
+                 transition: opacity 0.3s ease, transform 0.3s ease;
+                 pointer-events: none;
+             }
+
+             .sticky-save-btn.visible {
+                 opacity: 1;
+                 transform: translateY(0);
+                 pointer-events: auto;
+             }
 
 
 
@@ -181,17 +794,16 @@
     @endif
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-    @include('dashboard.invitation.mobile')
     <div class="inner-sidebar-wrap">
         {{-- SIDEBAR MENU --}}
-        <div class="inner-sidebar bg-none mb-5 h-100 ">
+        <div class="inner-sidebar bg-none mb-5 "  >
 
-            <div class="card adminuiux-card h-100">
-                <div class="card-body d-flex flex-column">
+            <div class="card adminuiux-card ">
+                <div class="card-body d-flex flex-column sidebar-sticky">
 
                     <div class="row mb-3">
                         <div class="col align-self-center">
-                            <h6 class="fw-medium">Main Menu</h6>
+                            <h6 class="fw-medium">Edit Undangan</h6>
                         </div>
                         <div class="col-auto">
                             <a class="btn btn-link btn-square" data-bs-toggle="collapse" data-bs-target="#usersidebarprofile">
@@ -203,61 +815,88 @@
                         </div>
                     </div>
 
-                    <div class="inner-sidebar-wrap flex-fill">
-                        <div class="inner-sidebar h-100">
-                            <ul class="nav flex-column h-100 overflow-auto no-scrollbar">
+                    <div class="inner-sidebar-wrap sidebar-menu-wrap">
+                        <div class="inner-sidebar">
+                            <ul class="nav flex-column no-scrollbar">
 
                                 <li class="nav-item">
-                                    <a class="nav-link tab-btn active" data-tab="1">
-                                        <i class="bi bi-person-fill me-3"></i> Mempelai Pria
+                                    <a class="nav-link tab-btn active" data-tab="2">
+                                        <div class="islami-icon me-3">
+                                            <i class="bi bi-palette fs-5"></i>
+                                        </div>
+                                        <span>Tema & Warna</span>
+                                    </a>
+                                </li>
+
+                                <li class="nav-item">
+                                    <a class="nav-link tab-btn" data-tab="1">
+                                        <div class="islami-icon me-3">
+                                            <i class="bi bi-person-fill fs-5"></i>
+                                        </div>
+                                        <span>Mempelai Pria</span>
                                     </a>
                                 </li>
 
                                 <li class="nav-item">
                                     <a class="nav-link tab-btn" data-tab="7">
-                                        <i class="bi bi-person-heart me-3"></i> Mempelai Wanita
+                                        <div class="islami-icon me-3">
+                                            <i class="bi bi-person-heart fs-5"></i>
+                                        </div>
+                                        <span>Mempelai Wanita</span>
                                     </a>
                                 </li>
 
                                 <li class="nav-item">
                                     <a class="nav-link tab-btn" data-tab="6">
-                                        <i class="bi bi-geo-alt-fill me-3"></i> Tempat & Tanggal
-                                    </a>
-                                </li>
-
-                                <li class="nav-item">
-                                    <a class="nav-link tab-btn" data-tab="2">
-                                        <i class="bi bi-palette me-3"></i> Tema & Warna
+                                        <div class="islami-icon me-3">
+                                            <i class="bi bi-geo-alt-fill fs-5"></i>
+                                        </div>
+                                        <span>Tempat & Tanggal</span>
                                     </a>
                                 </li>
 
                                 <li class="nav-item">
                                     <a class="nav-link tab-btn" data-tab="3">
-                                        <i class="bi bi-images me-3"></i> Galeri Foto
+                                        <div class="islami-icon me-3">
+                                            <i class="bi bi-images fs-5"></i>
+                                        </div>
+                                        <span>Galeri Foto</span>
                                     </a>
                                 </li>
 
                                 <li class="nav-item">
                                     <a class="nav-link tab-btn" data-tab="4">
-                                        <i class="bi bi-music-note-beamed me-3"></i> Musik
+                                        <div class="islami-icon me-3">
+                                            <i class="bi bi-music-note-beamed fs-5"></i>
+                                        </div>
+                                        <span>Musik</span>
                                     </a>
                                 </li>
-                                 <li class="nav-item">
+
+                                <li class="nav-item">
                                     <a class="nav-link tab-btn" data-tab="8">
-                                        <i class="bi bi-play me-3"></i> Video dan Kisah Cinta
+                                        <div class="islami-icon me-3">
+                                            <i class="bi bi-play fs-5"></i>
+                                        </div>
+                                        <span>Video dan Kisah Cinta</span>
                                     </a>
                                 </li>
 
                                 <li class="nav-item">
                                     <a class="nav-link tab-btn" data-tab="5">
-                                        <i class="bi bi-chat-dots me-3"></i> RSVP
+                                        <div class="islami-icon me-3">
+                                            <i class="bi bi-chat-dots fs-5"></i>
+                                        </div>
+                                        <span>RSVP</span>
                                     </a>
                                 </li>
 
-
                                 <li class="nav-item">
                                     <a class="nav-link tab-btn" data-tab="9">
-                                        <i class="menu-icon bi bi-gift me-3"></i> Hadiah dan Donasi
+                                        <div class="islami-icon me-3">
+                                            <i class="bi bi-gift fs-5"></i>
+                                        </div>
+                                        <span>Hadiah dan Donasi</span>
                                     </a>
                                 </li>
 
@@ -273,46 +912,64 @@
 
         {{-- MAIN CONTENT --}}
         <div class="inner-sidebar-content ">
-            <div class="p-3">
+            <div class="edit-layout">
+                <div class="edit-form-panel">
+                    <div class="">
                 {{-- HEADER --}}
-               <div class="row align-items-center mb-4 gy-3">
-                <!-- Title -->
-                <div class="col-12 col-sm">
-                    <h5 class="mb-0 text-center text-sm-start">
-                        Edit Undangan
-                    </h5>
-                </div>
-
-                <!-- Actions -->
-                <div class="col-12 col-sm-auto ms-sm-auto">
-                    <div class="d-grid d-sm-flex gap-2">
-                        <a href="{{ url($invitation->slug) }}" target="_blank"
-                        class="btn btn-outline-primary btn-sm">
-                        Preview Undangan
-                        </a>
-
-                        <a href="{{ route('invitation.index') }}"
-                        class="btn btn-outline-secondary btn-sm">
-                        Batal
-                        </a>
-
-                        <button type="button"
-                                class="btn btn-primary btn-sm"
-                                onclick="document.getElementById('myForm').submit()">
-                            <i class="bi bi-save me-1"></i>
-                            Simpan
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-
                 <form id="myForm" method="POST" action="{{ route('invitation.update', $invitation) }}" enctype="multipart/form-data">
                     @csrf
                     @method('PUT')
 
+                    <div class="row align-items-center mb-4 gy-3">
+                        <!-- Title -->
+                       <div class="col-12 col-sm hide-on-mobile">
+    <h5 class="mb-0 text-center text-sm-start">
+        Edit Undangan
+    </h5>
+</div>
+
+<style>
+    /* Menyembunyikan elemen pada layar mobile (di bawah 768px) dan menampilkannya di desktop */
+    @media (max-width: 767.98px) {
+        .hide-on-mobile {
+            display: none !important;
+        }
+    }
+</style>
+
+                        <!-- Actions -->
+                    <div class="col-12 col-sm-auto ms-sm-auto">
+                        <div class="d-grid d-sm-flex gap-2">
+                            <a href="{{ url($invitation->slug) }}" target="_blank"
+                            class="btn btn-outline-primary btn-sm d-none d-sm-inline-flex">
+                            Preview Undangan
+                            </a>
+
+                            <a href="{{ route('invitation.index') }}"
+                            class="btn btn-outline-secondary btn-sm d-none d-sm-inline-flex">
+                            Batal
+                            </a>
+
+                            <button type="submit"
+                                    class="btn btn-primary btn-sm d-none d-sm-inline-flex"
+                                    id="saveButton">
+                                <i class="bi bi-save me-1"></i>
+                                Simpan
+                            </button>
+                        </div>
+
+                        {{-- Floating save button for mobile --}}
+                        <button type="submit"
+                                class="btn btn-primary btn-sm rounded-circle d-sm-none"
+                                style="width: 56px; height: 56px; z-index: 1050; box-shadow: 0 4px 16px rgba(0,0,0,.2);"
+                                id="mobileSaveButton">
+                            <i class="bi bi-save fs-5"></i>
+                        </button>
+                    </div>
+                    </div>
+
                     {{-- 1. MEMPELAI PRIA --}}
-                    <div id="1" class="tab-content active">
+                    <div id="1" class="tab-content d-none">
                         <div class="card">
                             <div class="card-header p-3 d-flex align-items-center gap-3">
                                 <div class="islami-icon">
@@ -349,9 +1006,11 @@
                                             <input type="text" id="groom_mother_name" name="groom_mother_name" value="{{ old('groom_mother_name', $invitation->groom_mother_name) }}" placeholder="Masukkan nama lengkap ibu" class="form-control">
                                         </div>
                                         <div class="col-12 mb-6">
-                                            <label for="groom_username_instagram" class="form-label">Username</label>
-                                            <span>@</span>
-                                            <input type="text" id="groom_username_instagram" name="groom_username_instagram" value="{{ old('groom_username_instagram', $invitation->groom_username_instagram) }}" placeholder="Contoh: gemini.ai" class="form-control insta-username">
+                                            <label for="groom_username_instagram" class="form-label">Username Instagram</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text">@</span>
+                                                <input type="text" id="groom_username_instagram" name="groom_username_instagram" value="{{ old('groom_username_instagram', $invitation->groom_username_instagram) }}" placeholder="Contoh: gemini.ai" class="form-control insta-username">
+                                            </div>
                                         </div>
 
 
@@ -362,50 +1021,29 @@
 
                                     <div class="col-12">
                                         <label class="form-label">Foto Mempelai Pria</label>
-                                        {{-- LOGIKA EDIT: Jika ada foto lama, tampilkan preview --}}
-                                        @if($invitation->foto_pria)
-                                            <div id="previewContainerGroom" class="mt-3 mb-3 text-center">
-                                                <img id="previewGroom" src="{{ asset('storage/' . $invitation->foto_pria) }}" class="professional-preview rounded" alt="Preview Foto">
-                                                <div class="text-center mt-2">
-                                                    <button type="button" onclick="removePreview('groom')" class="btn btn-danger btn-sm">
-                                                        Hapus
-                                                    </button>
+                                        <input type="hidden" name="remove_foto_pria" id="remove_foto_pria" value="0">
+
+                                        <div id="previewContainerGroom" class="mt-3 mb-3 text-center {{ $invitation->foto_pria ? '' : 'd-none' }}">
+                                             <img id="previewGroom" src="{{ $invitation->foto_pria ? '/storage/' . $invitation->foto_pria : '' }}" class="professional-preview rounded" alt="Preview Foto">
+                                            <div class="text-center mt-2">
+                                                <button type="button" onclick="removePreview('groom')" class="btn btn-danger btn-sm">
+                                                    Hapus
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <div class="border border-dashed p-4 text-center rounded {{ $invitation->foto_pria ? 'd-none' : '' }}" id="uploadBoxGroomContainer">
+                                            <label id="uploadBoxGroom" for="foto_pria" class="cursor-pointer">
+                                                <div class="mb-2">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="d-block mx-auto" width="40" height="40" fill="currentColor" viewBox="0 0 16 16">
+                                                        <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z" />
+                                                        <path d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708l3-3z" />
+                                                    </svg>
                                                 </div>
-                                            </div>
-                                            <div class="border border-dashed p-4 text-center rounded d-none" id="uploadBoxGroomContainer">
-                                                <label id="uploadBoxGroom" for="foto_pria" class="cursor-pointer">
-                                                    <div class="mb-2">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" class="d-block mx-auto" width="40" height="40" fill="currentColor" viewBox="0 0 16 16">
-                                                            <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z" />
-                                                            <path d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708l3-3z" />
-                                                        </svg>
-                                                    </div>
-                                                    <p class="mb-0">Klik atau tarik foto ke sini</p>
-                                                    <input id="foto_pria" type="file" name="foto_pria" class="d-none" onchange="openCropModal(event, 'groom')">
-                                                </label>
-                                            </div>
-                                        @else
-                                            <div class="border border-dashed p-4 text-center rounded" id="uploadBoxGroomContainer">
-                                                <label id="uploadBoxGroom" for="foto_pria" class="cursor-pointer">
-                                                    <div class="mb-2">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" class="d-block mx-auto" width="40" height="40" fill="currentColor" viewBox="0 0 16 16">
-                                                            <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z" />
-                                                            <path d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708l3-3z" />
-                                                        </svg>
-                                                    </div>
-                                                    <p class="mb-0">Klik atau tarik foto ke sini</p>
-                                                    <input id="foto_pria" type="file" name="foto_pria" class="d-none" onchange="previewGroomImage(event)">
-                                                </label>
-                                            </div>
-                                            <div id="previewContainerGroom" class="mt-3 d-none text-center">
-                                                <img id="previewGroom" class="img-fluid rounded professional-preview" alt="Preview Foto">
-                                                <div class="text-center mt-2">
-                                                    <button type="button" onclick="removeGroomPreview()" class="btn btn-danger btn-sm">
-                                                        Hapus
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        @endif
+                                                <p class="mb-0">Klik atau tarik foto ke sini</p>
+                                                <input id="foto_pria" type="file" name="foto_pria" class="d-none" onchange="openCropModal(event, 'groom')">
+                                            </label>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -413,80 +1051,158 @@
                     </div>
 
                     {{-- 2. TEMA & WARNA --}}
-                    <div id="2" class="tab-content d-none">
-                        <div class="row">
-                            <div class="col-md-8">
+                    <div id="2" class="tab-content active">
+                        <div class="card">
+                            <div class="card-body">
                                 <div class="mb-3">
-                                    <label class="form-label">Pilih Template</label>
-                                    <select id="template_id" name="template_id" class="form-select">
+                                    <label class="form-label fw-semibold">Pilih Template</label>
+                                    <input type="hidden" name="template_id" id="template_id" value="{{ $invitation->template_id }}">
+                                    @php
+                                        $defaultThemeColors = [
+                                            'simple-theme' => '#c8a97e',
+                                            'elegant-theme' => '#1A3C34',
+                                            'royal-gold' => '#C9A84C',
+                                            'floral-botanical' => '#8B6F5E',
+                                            'anime' => '#FF6B81',
+                                            'adat' => '#1A4D2E',
+                                            'element' => '#8E7F7F',
+                                            'sample' => '#D4AF37',
+                                            'elegant_tempelate' => '#1A3C34',
+                                        ];
+                                    @endphp
+                                    <div class="row g-3" id="template-selector">
                                         @foreach ($templates as $template)
-                                        <option value="{{ $template->id }}"
-                                            {{ $invitation->template_id == $template->id ? 'selected' : '' }}
-                                           data-image="{{ Storage::url($template->preview) }}">
-                                            {{ $template->name }}
-                                        </option>
+                                        @php
+                                            $templateColor = $defaultThemeColors[$template->slug] ?? '#3b82f6';
+                                        @endphp
+                                        <div class="col-6 col-md-4">
+                                            <div class="template-option card cursor-pointer border-2 {{ $invitation->template_id == $template->id ? 'selected-template' : '' }}"
+                                                 data-template-id="{{ $template->id }}"
+                                                 data-preview="{{ Storage::url($template->preview) }}"
+                                                 data-theme-color="{{ $templateColor }}">
+                                                <div class="position-relative">
+                                                    <img src="{{ Storage::url($template->preview) }}" class="card-img-top" style="height: 150px; object-fit: cover;">
+                                                    @if ($invitation->template_id == $template->id)
+                                                    <div class="position-absolute top-0 end-0 bg-primary text-white rounded-circle" style="width: 24px; height: 24px; margin: 4px;">
+                                                        <i class="bi bi-check-lg fs-6" style="font-size: 12px;"></i>
+                                                    </div>
+                                                    @endif
+                                                </div>
+                                                <div class="card-body p-2">
+                                                    <h6 class="mb-0 text-center">{{ $template->name }}</h6>
+                                                </div>
+                                            </div>
+                                        </div>
                                         @endforeach
-                                    </select>
-                                    <script>
-                                        new TomSelect('#template_id', {
-                                            placeholder: 'Cari template...',
-                                            valueField: 'value',
-                                            labelField: 'text',
-                                            searchField: ['text'],
-                                            render: {
-                                                option: function(data, escape) {
-                                                    return `<div class="d-flex align-items-center gap-2"><i class="bi bi-palette fs-5"></i><span>${escape(data.text)}</span></div>`;
-                                                },
-                                                item: function(data, escape) {
-                                                    return `<span><i class="bi bi-palette me-1"></i>${escape(data.text)}</span>`;
-                                                }
-                                            }
-                                        });
-                                    </script>
-                                </div>
-
-                                <div class="mb-4">
-                                    <label for="gallery_cover" class="form-label">Cover Galeri</label>
-                                    <input type="file" id="gallery_cover" name="gallery_cover" accept="image/*" class="form-control">
-                                </div>
-
-
-                            </div>
-                            <div class="item-center col-md-4">
-                                <label class="form-label">Preview</label>
-                                <div class="android-frame">
-                                    <div class="screen">
-                                        {{-- Logic sederhana update gambar preview berdasarkan select --}}
-                                        <img id="androidPreview" class="preview-img" loading="lazy">
+                                        {{ $templates->links() }}
                                     </div>
+                                     </div>
+
+                                    <div class="mb-4">
+                                        <label class="form-label fw-semibold">Tone Warna Tema</label>
+                                        <div class="d-flex align-items-center gap-3">
+                                            <input type="hidden" name="theme_color" id="theme_color" value="{{ $invitation->theme_color ?? '#3b82f6' }}">
+                                            <input type="color" id="theme_color_picker" value="{{ $invitation->theme_color ?? '#3b82f6' }}" class="form-control form-control-color" style="width: 60px; height: 40px; padding: 0; border: 1px solid var(--bs-border-color); border-radius: 4px; cursor: pointer; background: {{ $invitation->theme_color ?? '#3b82f6' }};">
+                                            <input type="text" id="theme_color_text" class="form-control" style="max-width: 150px;" value="{{ $invitation->theme_color ?? '#3b82f6' }}" readonly>
+                                            <span class="text-muted small">Warna tema akan diterapkan ke sidebar dan elemen utama.</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-4">
+                                        <label for="gallery_cover" class="form-label">Cover Galeri</label>
+                                    <input type="hidden" name="remove_gallery_cover" id="remove_gallery_cover" value="0">
+
+                                    <div id="existingGalleryCover" class="{{ $invitation->gallery_cover ? '' : 'd-none' }}">
+                                        <img src="{{ $invitation->gallery_cover ? '/storage/' . $invitation->gallery_cover : '' }}" class="img-fluid rounded mb-2" style="max-height: 200px; object-fit: cover;" id="existingGalleryCoverImg">
+                                        <button type="button" onclick="removeGalleryCover()" class="btn btn-danger btn-sm">Hapus</button>
+                                    </div>
+
+                                    <div id="galleryCoverPreview" class="mt-2 d-none">
+                                        <img src="" class="img-fluid rounded" style="max-height: 200px; object-fit: cover;">
+                                    </div>
+
+                                    <input type="file" id="gallery_cover" name="gallery_cover" accept="image/*" class="form-control mt-2" onchange="handleGalleryCover(this)">
                                 </div>
+
+
                             </div>
+                            
                         </div>
                     </div>
                     <script>
-                        document.addEventListener('DOMContentLoaded', function () {
-                            const select = document.getElementById('template_id');
-                            const preview = document.getElementById('androidPreview');
+                    window.reloadPreview = function() {
+                        const previewFrame = document.getElementById('previewFrame');
+                        if (!previewFrame) return;
+                        const baseUrl = window.currentPreviewUrl ? window.currentPreviewUrl.split('?')[0] : previewFrame.src.split('?')[0];
+                        const themeColor = document.getElementById('theme_color')?.value || '{{ $invitation->theme_color ?? "#3b82f6" }}';
+                        previewFrame.src = baseUrl + '?theme_color=' + encodeURIComponent(themeColor) + '&t=' + Date.now();
+                    };
+                    document.addEventListener('DOMContentLoaded', function () {
+                        const preview = document.getElementById('androidPreview');
+                        const options = document.querySelectorAll('.template-option');
 
-                            function updatePreview() {
-                                const selected = select.options[select.selectedIndex];
-                                const image = selected.getAttribute('data-image');
+            function selectTemplate(option) {
+                document.getElementById('template_id').value = option.dataset.templateId;
 
-                                if (image) {
-                                    preview.src = image;
-                                }
+                const image = option.dataset.preview;
+                if (image && preview) {
+                    preview.src = image;
+                }
+
+                options.forEach(o => o.classList.remove('selected-template'));
+                option.classList.add('selected-template');
+
+                // Update theme color to template default
+                const themeColor = option.dataset.themeColor;
+                if (themeColor) {
+                    const themeColorPicker = document.getElementById('theme_color_picker');
+                    const themeColorHidden = document.getElementById('theme_color');
+                    const themeColorText = document.getElementById('theme_color_text');
+                    if (themeColorPicker) themeColorPicker.value = themeColor;
+                    document.documentElement.style.setProperty('--sidebar-theme-color', themeColor);
+                    if (themeColorHidden) themeColorHidden.value = themeColor;
+                    if (themeColorText) themeColorText.value = themeColor;
+                }
+
+                // Reload live preview with new template
+                window.reloadPreview();
+            }
+
+                            options.forEach(option => {
+                                option.addEventListener('click', function () {
+                                    selectTemplate(this);
+                                });
+                            });
+
+                            const currentlySelected = document.querySelector('.template-option.selected-template');
+                            if (currentlySelected && preview) {
+                                preview.src = currentlySelected.dataset.preview;
                             }
 
-                            // init saat load (edit mode)
-                            updatePreview();
+                            // Theme color picker event handler
+                            const themeColorPicker = document.getElementById('theme_color_picker');
+                            const themeColorHidden = document.getElementById('theme_color');
+                            const themeColorText = document.getElementById('theme_color_text');
 
-                            // ganti saat dipilih
-                            select.addEventListener('change', updatePreview);
+                            if (themeColorPicker) {
+                                themeColorPicker.addEventListener('input', function() {
+                                    const color = this.value;
+                                    document.documentElement.style.setProperty('--sidebar-theme-color', color);
+                                    if (themeColorHidden) themeColorHidden.value = color;
+                                    if (themeColorText) themeColorText.value = color;
+// Reload live preview iframe with new theme color
+                                     window.reloadPreview();
+                                });
+                            }
                         });
-                        </script>
+                    </script>
 
                     {{-- 3. GALERI FOTO --}}
                     <div id="3" class="tab-content d-none">
+                        <div class="card">
+                            <div class="card-body">
+                                
+                          
                         <label for="gallery_cover" class="form-label">Galeri Kisah</label>
                         <div class="">
                             <div class="card">
@@ -502,7 +1218,7 @@
                                     @if($invitation->galleries)
                                         @foreach(json_decode($invitation->galleries) as $image)
                                             <div class="position-relative" id="gallery-item-{{ $image->id }}" style="width: 100px; height: 100px;">
-                                                <img src="{{ asset('storage/' . $image->image) }}" class="img-fluid rounded" style="width: 100px; height: 100px; object-fit: cover;">
+                                                 <img src="{{ $image->image ? '/storage/' . $image->image : '' }}" class="img-fluid rounded" style="width: 100px; height: 100px; object-fit: cover;">
                                                 <button type="button"
                                                         class="btn btn-danger btn-sm position-absolute top-0 end-0"
                                                         style="width: 24px; height: 24px; padding: 0; border-radius: 50%;"
@@ -515,54 +1231,166 @@
                                 </div>
                             </div>
                         </div>
+                          </div>
+                        </div>
                     </div>
 
                     {{-- 4. MUSIK --}}
                     <div id="4" class="tab-content d-none">
+                        <div class="card">
+                            <div class="card-body">
+                           
                         <div class="mb-3">
-                            <label for="music_id" class="form-label">Pilih Lagu Background</label>
-                            <select id="music_id" name="music_id" class="form-select">
-                                <option value="">-- Pilih Lagu --</option>
-                                @if(isset($music))
-                                @foreach ($music as $musicItem)
-                                <option value="{{ $musicItem->id }}"
-                                    {{ $invitation->music == $musicItem->id ? 'selected' : '' }}
-                                    data-audio="{{ asset('storage/' . $musicItem->audio_url) }}">
-                                    {{ $musicItem->title }}
-                                </option>
-                                @endforeach
-                                @endif
-                            </select>
-                            <script>
-                                new TomSelect('#music_id', {
-                                    placeholder: 'Cari lagu...',
-                                    valueField: 'value',
-                                    labelField: 'text',
-                                    searchField: ['text'],
-                                    render: {
-                                        option: function(data, escape) {
-                                            return `<div class="d-flex align-items-center gap-2"><i class="bi bi-music-note-beamed fs-5"></i><span>${escape(data.text)}</span></div>`;
-                                        },
-                                        item: function(data, escape) {
-                                            return `<span><i class="bi bi-music-note-beamed me-1"></i>${escape(data.text)}</span>`;
-                                        }
+                            <label class="form-label fw-semibold">Pilih Sumber Musik</label>
+                            <div class="d-flex gap-3 mb-3" role="radiogroup">
+                                <div class="form-check form-check-inline me-3">
+                                    <input class="form-check-input music-source-radio" type="radio"
+                                           name="music_source" value="internal"
+                                           id="musicSourceInternal"
+                                           {{ (empty($invitation->music_youtube_url) && $invitation->music) ? 'checked' : (empty($invitation->music_youtube_url) ? 'checked' : '') }}>
+                                    <label class="form-check-label" for="musicSourceInternal">
+                                        <i class="bi bi-music-note-beamed me-1"></i>Perpustakaan / Upload
+                                    </label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input music-source-radio" type="radio"
+                                           name="music_source" value="youtube"
+                                           id="musicSourceYoutube"
+                                           {{ !empty($invitation->music_youtube_url) ? 'checked' : '' }}>
+                                    <label class="form-check-label" for="musicSourceYoutube">
+                                        <i class="bi bi-youtube me-1 text-danger"></i>Dari YouTube
+                                    </label>
+                                </div>
+                            </div>
+
+                            {{-- Internal Music (preset + upload) --}}
+                            <div id="musicInternalOptions" class="music-source-options">
+                                <div class="mb-3">
+                                    <label for="music_id" class="form-label">Pilih Lagu Background</label>
+                                    <select id="music_id" name="music_id" class="form-select">
+                                        <option value="">-- Pilih Lagu --</option>
+                                        @if(isset($music))
+                                        @foreach ($music as $musicItem)
+                                        <option value="{{ $musicItem->id }}"
+                                            {{ $invitation->music == $musicItem->id ? 'selected' : '' }}
+                                            data-audio="{{ asset('storage/' . $musicItem->audio_url) }}">
+                                            {{ $musicItem->title }}
+                                        </option>
+                                        @endforeach
+                                        @endif
+                                    </select>
+                                    <script>
+                                        new TomSelect('#music_id', {
+                                            placeholder: 'Cari lagu...',
+                                            valueField: 'value',
+                                            labelField: 'text',
+                                            searchField: ['text'],
+                                            render: {
+                                                option: function(data, escape) {
+                                                    return `<div class="d-flex align-items-center gap-2"><i class="bi bi-music-note-beamed fs-5"></i><span>${escape(data.text)}</span></div>`;
+                                                },
+                                                item: function(data, escape) {
+                                                    return `<span><i class="bi bi-music-note-beamed me-1"></i>${escape(data.text)}</span>`;
+                                                }
+                                            }
+                                        });
+                                    </script>
+
+                                    <audio id="audioPlayer" controls style="margin-top:10px; width:100%;">
+                                        Your browser does not support the audio element.
+                                    </audio>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="custom_music" class="form-label">Upload Lagu Pilihan Kamu</label>
+                                    <input type="file" name="custom_music" accept="audio/*" class="form-control">
+                                </div>
+                            </div>
+
+                            {{-- YouTube Music --}}
+                            <div id="musicYoutubeOptions" class="music-source-options" style="display:none;">
+                                <div class="mb-3">
+                                    <label for="music_youtube_url" class="form-label">Link Video YouTube</label>
+                                    <input type="url" id="music_youtube_url" name="music_youtube_url"
+                                           class="form-control"
+                                           placeholder="https://www.youtube.com/watch?v=..."
+                                           value="{{ $invitation->music_youtube_url ?? '' }}">
+                                    <div class="form-text">Masukkan link video YouTube untuk digunakan sebagai musik background</div>
+                                </div>
+
+                                <div id="youtube-preview" class="mt-3 d-none">
+                                    <div class="border rounded p-2 d-flex align-items-center gap-2">
+                                        <i class="bi bi-youtube fs-4 text-danger"></i>
+                                        <div>
+                                            <div class="fw-medium">Video YouTube Terpilih</div>
+                                            <div id="youtube-video-id" class="small text-muted"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                             
+                            </div>
+                        </div>
+                        <script>
+                            // Toggle source options
+                            const sourceRadios = document.querySelectorAll('.music-source-radio');
+                            const internalOptions = document.getElementById('musicInternalOptions');
+                            const youtubeOptions = document.getElementById('musicYoutubeOptions');
+
+                            function toggleSourceOptions() {
+                                const isYoutube = document.getElementById('musicSourceYoutube').checked;
+                                if (internalOptions) internalOptions.style.display = isYoutube ? 'none' : 'block';
+                                if (youtubeOptions) youtubeOptions.style.display = isYoutube ? 'block' : 'none';
+                            }
+
+                            sourceRadios.forEach(radio => {
+                                radio.addEventListener('change', toggleSourceOptions);
+                            });
+
+                            // YouTube URL parsing
+                            const youtubeInput = document.getElementById('music_youtube_url');
+                            const youtubePreview = document.getElementById('youtube-preview');
+                            const youtubeVideoIdSpan = document.getElementById('youtube-video-id');
+
+                            function extractYoutubeVideoId(url) {
+                                if (!url) return null;
+                                const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)(?<videoId>[A-Za-z0-9_-]{11}).*/;
+                                const match = url.match(regExp);
+                                return match ? match.groups.videoId : null;
+                            }
+
+                            if (youtubeInput) {
+                                youtubeInput.addEventListener('input', function() {
+                                    const url = this.value.trim();
+                                    const videoId = extractYoutubeVideoId(url);
+                                    if (videoId && youtubeOptions && youtubeOptions.style.display !== 'none') {
+                                        youtubeVideoIdSpan.textContent = 'Video ID: ' + videoId;
+                                        youtubePreview.classList.remove('d-none');
+                                    } else {
+                                        youtubePreview.classList.add('d-none');
                                     }
                                 });
-                            </script>
 
-                            <audio id="audioPlayer" controls style="margin-top:10px; width:100%;">
-                                Your browser does not support the audio element.
-                            </audio>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="custom_music" class="form-label">Upload Lagu Pilihan Kamu</label>
-                            <input type="file" name="custom_music" accept="audio/*" class="form-control">
-                        </div>
+                                // Init
+                                const initialValue = youtubeInput.value.trim();
+                                if (initialValue) {
+                                    const videoId = extractYoutubeVideoId(initialValue);
+                                    if (videoId) {
+                                        youtubeVideoIdSpan.textContent = 'Video ID: ' + videoId;
+                                        youtubePreview.classList.remove('d-none');
+                                    }
+                                }
+                            }
+                        </script>
                     </div>
 
                     {{-- 5. RSVP --}}
                     <div id="5" class="tab-content d-none">
+                        <div class="card">
+                            <div class="card-body">
+
+                           
                         <div class="mb-3">
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" id="enable_rsvp" name="enable_rsvp"
@@ -594,6 +1422,8 @@
                                     value="{{ old('rsvp_whatsapp', $invitation->rsvp_whatsapp) }}"
                                     placeholder="6281234567890" class="form-control">
                             </div>
+                        </div>
+                         </div>
                         </div>
                     </div>
 
@@ -649,7 +1479,7 @@
                                         </div>
                                         <div class="col-md-6">
                                             <label class="form-label">Jam Selesai</label>
-                                            <input type="time" name="akad_time_end" class="form-control time-end"  value="{{ old('akad_time', $invitation->akad_time_end) }}">
+                                            <input type="time" name="akad_time_end" class="form-control time-end"  value="{{ old('akad_time_end', $invitation->akad_time_end) }}">
                                         </div>
                                     </div>
 
@@ -660,7 +1490,11 @@
                                     <label for="akad_maps" class="form-label">Link Maps</label>
                                     <input type="text" id="akad_maps" name="akad_maps"
                                         value="{{ old('akad_maps', $invitation->akad_maps) }}"
-                                        placeholder="Masukkan link Google Maps" class="form-control">
+                                        placeholder="Masukkan link Google Maps" class="form-control"
+                                        oninput="updateMapPreview('akad_maps', 'akad_map_preview')">
+                                    <div id="akad_map_preview" class="mt-2 d-none">
+                                        <iframe id="akad_map_iframe" width="100%" height="200" style="border:0; border-radius: 8px;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -712,7 +1546,11 @@
                                     <label for="resepsi_maps" class="form-label">Link Maps</label>
                                     <input type="text" id="resepsi_maps" name="resepsi_maps"
                                         value="{{ old('resepsi_maps', $invitation->resepsi_maps) }}"
-                                        placeholder="Masukkan link Google Maps" class="form-control">
+                                        placeholder="Masukkan link Google Maps" class="form-control"
+                                        oninput="updateMapPreview('resepsi_maps', 'resepsi_map_preview')">
+                                    <div id="resepsi_map_preview" class="mt-2 d-none">
+                                        <iframe id="resepsi_map_iframe" width="100%" height="200" style="border:0; border-radius: 8px;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -756,11 +1594,13 @@
                                         placeholder="Masukkan nama lengkap ibu kandung mempelai wanita" class="form-control">
                                 </div>
                                 <div class="col-12 mb-6">
-                                    <label for="bride_username_instagram" class="form-label">Username</label>
-                                    <span>@</span>
-                                    <input type="text" id="bride_username_instagram" name="bride_username_instagram"
-                                        value="{{ old('bride_username_instagram',$invitation->bride_username_instagram) }}"
-                                        placeholder="Contoh: gemini.ai" class="form-control insta-username">
+                                    <label for="bride_username_instagram" class="form-label">Username Instagram</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">@</span>
+                                        <input type="text" id="bride_username_instagram" name="bride_username_instagram"
+                                            value="{{ old('bride_username_instagram',$invitation->bride_username_instagram) }}"
+                                            placeholder="Contoh: gemini.ai" class="form-control insta-username">
+                                    </div>
                                 </div>
 
                                 <div class="col-12 mb-6">
@@ -772,49 +1612,29 @@
 
                                 <div class="col-12">
                                     <label class="form-label">Foto Mempelai Wanita</label>
-                                    @if($invitation->foto_wanita)
-                                        <div id="previewContainerBride" class="mt-3 mb-3 text-center">
-                                            <img id="previewBride" src="{{ asset('storage/' . $invitation->foto_wanita) }}" class="professional-preview rounded" alt="Preview Foto">
-                                            <div class="text-center mt-2">
-                                                <button type="button" onclick="removeBridePreview()" class="btn btn-danger btn-sm">
-                                                    Hapus
-                                                </button>
+                                    <input type="hidden" name="remove_foto_wanita" id="remove_foto_wanita" value="0">
+
+                                    <div id="previewContainerBride" class="mt-3 mb-3 text-center {{ $invitation->foto_wanita ? '' : 'd-none' }}">
+                                         <img id="previewBride" src="{{ $invitation->foto_wanita ? '/storage/' . $invitation->foto_wanita : '' }}" class="professional-preview rounded" alt="Preview Foto">
+                                        <div class="text-center mt-2">
+                                            <button type="button" onclick="removePreview('bride')" class="btn btn-danger btn-sm">
+                                                Hapus
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <div class="border border-dashed p-4 text-center rounded {{ $invitation->foto_wanita ? 'd-none' : '' }}" id="uploadBoxBrideContainer">
+                                        <label id="uploadBoxBride" for="foto_wanita" class="cursor-pointer">
+                                            <div class="mb-2">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="d-block mx-auto" width="40" height="40" fill="currentColor" viewBox="0 0 16 16">
+                                                    <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z" />
+                                                    <path d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708l3-3z" />
+                                                </svg>
                                             </div>
-                                        </div>
-                                        <div class="border border-dashed p-4 text-center rounded d-none" id="uploadBoxBrideContainer">
-                                            <label id="uploadBoxBride" for="foto_wanita" class="cursor-pointer">
-                                                <div class="mb-2">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" class="d-block mx-auto" width="40" height="40" fill="currentColor" viewBox="0 0 16 16">
-                                                        <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z" />
-                                                        <path d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708l3-3z" />
-                                                    </svg>
-                                                </div>
-                                                <p class="mb-0">Klik atau tarik foto ke sini</p>
-                                                <input id="foto_wanita" type="file" name="foto_wanita" class="d-none" onchange="openCropModal(event, 'bride')">
-                                            </label>
-                                        </div>
-                                    @else
-                                        <div class="border border-dashed p-4 text-center rounded" id="uploadBoxBrideContainer">
-                                            <label id="uploadBoxBride" for="foto_wanita" class="cursor-pointer">
-                                                <div class="mb-2">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" class="d-block mx-auto" width="40" height="40" fill="currentColor" viewBox="0 0 16 16">
-                                                        <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z" />
-                                                        <path d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708l3-3z" />
-                                                    </svg>
-                                                </div>
-                                                <p class="mb-0">Klik atau tarik foto ke sini</p>
-                                                <input id="foto_wanita" type="file" name="foto_wanita" class="d-none" onchange="openCropModal(event, 'bride')">
-                                            </label>
-                                        </div>
-                                        <div id="previewContainerBride" class="mt-3 d-none text-center">
-                                            <img id="previewBride" class="img-fluid rounded professional-preview" alt="Preview Foto">
-                                            <div class="text-center mt-2">
-                                                <button type="button" onclick="removePreview('bride')" class="btn btn-danger btn-sm">
-                                                    Hapus
-                                                </button>
-                                            </div>
-                                        </div>
-                                    @endif
+                                            <p class="mb-0">Klik atau tarik foto ke sini</p>
+                                            <input id="foto_wanita" type="file" name="foto_wanita" class="d-none" onchange="openCropModal(event, 'bride')">
+                                        </label>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -822,6 +1642,8 @@
 
                     {{-- 8. LAINNYA (VIDEO & KISAH) --}}
                     <div id="8" class="tab-content d-none">
+                        <div class="card">
+                            <div class="card-body">
                         <div id="other">
                             <div class="row g-3">
                                 {{-- QUOTE --}}
@@ -865,7 +1687,7 @@
 
                                         @if(!empty($story['photo']))
                                         <div class="mb-2">
-                                            <img src="{{ asset('storage/'.$story['photo']) }}" class="img-fluid rounded mb-2" style="max-height:150px;object-fit:cover;">
+                                             <img src="{{ $story['photo'] ? '/storage/'.$story['photo'] : '' }}" class="img-fluid rounded mb-2" style="max-height:150px;object-fit:cover;">
                                         </div>
                                         @endif
 
@@ -891,10 +1713,16 @@
                                     </div>
                             </div>
                         </div>
+                        </div>
+                        </div>
                     </div>
 
                     {{-- 9. GIFT / DONASI --}}
                     <div id="9" class="tab-content d-none">
+                        <div class="card">
+                            <div class="card-body">
+
+                         
                         <div class="form-check mb-3">
                             <input class="form-check-input" type="checkbox" value="1" name="enable_gift" id="enableGift" {{ isset($invitation->enable_gift) && $invitation->enable_gift ? 'checked' : '' }}>
                             <label class="form-check-label" for="enableGift">
@@ -988,10 +1816,28 @@
                                 </div>
                             </div>
                         </div>
+                           </div>
+                        </div>
                     </div>
 
                 </form>
             </div>
+            </div>
+            <div class="edit-preview-panel">
+                    <div class="android-frame live-preview-frame">
+                        <div class="screen">
+                            <iframe id="previewFrame"
+                                src="{{ url($invitation->slug) }}"
+                                scrolling="no"
+                                loading="lazy"
+                                sandbox="allow-scripts allow-same-origin allow-forms"
+                                width="100%"
+                                height="100%">
+                            </iframe>
+                        </div>
+                    </div>
+            </div>
+        </div>
         </div>
     </div>
  {{-- modal Crop --}}
@@ -1017,78 +1863,162 @@
             </div>
         </div>
     </div>
+    <!-- Include js-image-compressor -->
+    <script src="https://unpkg.com/js-image-compressor/dist/image-compressor.js"></script>
+    <script>
+        function compressImage(file, options = {}) {
+            return new Promise((resolve, reject) => {
+                if (typeof ImageCompressor === 'undefined') {
+                    reject(new Error('ImageCompressor library not loaded'));
+                    return;
+                }
+
+                const defaultOptions = {
+                    file: file,
+                    quality: 0.85,
+                    mimeType: 'image/webp',
+                    maxWidth: 1920,
+                    maxHeight: 1920,
+                    convertSize: Infinity,
+                    loose: true,
+                    redressOrientation: true,
+                    success: resolve,
+                    error: reject
+                };
+
+                new ImageCompressor(Object.assign(defaultOptions, options));
+            });
+        }
+    </script>
     <!-- SCRIPTS -->
   <script>
             let cropper;
-            let currentTarget = null;
 
             function openCropModal(event, target) {
                 const file = event.target.files[0];
                 if (!file) return;
 
-                currentTarget = target;
+                const modalEl = document.getElementById('cropModal');
+                modalEl.setAttribute('data-crop-target', target);
 
                 const image = document.getElementById('cropImage');
                 image.src = URL.createObjectURL(file);
 
-                const modalEl = document.getElementById('cropModal');
                 const modal = new bootstrap.Modal(modalEl);
                 modal.show();
-
-                modalEl.addEventListener('shown.bs.modal', () => {
-                    if (cropper) cropper.destroy();
-
-                    cropper = new Cropper(image, {
-                        aspectRatio: 1
-                        , viewMode: 1, // gambar dipaksa stay di dalam modal
-                        autoCropArea: 1, // crop box langsung besar
-                        responsive: true
-                        , zoomable: true
-                        , movable: true
-                        , dragMode: 'move'
-                        , center: true
-                    , });
-
-                    // Force gambar agar penuh
-                    cropper.zoomTo(1);
-                }, {
-                    once: true
-                });
             }
+
+            document.getElementById('cropModal').addEventListener('shown.bs.modal', function() {
+                if (cropper) cropper.destroy();
+
+                const image = document.getElementById('cropImage');
+                cropper = new Cropper(image, {
+                    aspectRatio: 1
+                    , viewMode: 1, // gambar dipaksa stay di dalam modal
+                    autoCropArea: 1, // crop box langsung besar
+                    responsive: true
+                    , zoomable: true
+                    , movable: true
+                    , dragMode: 'move'
+                    , center: true
+                , });
+
+                // Force gambar agar penuh
+                cropper.zoomTo(1);
+            });
 
 
             function cropImage() {
-                if (!cropper || !currentTarget) return;
+                if (!cropper) return;
+
+                const submitBtn = document.querySelector('#saveButton');
+                if (submitBtn) submitBtn.disabled = true;
+
+                const modalEl = document.getElementById('cropModal');
+                const target = modalEl.getAttribute('data-crop-target');
+
+                if (!target) return;
 
                 const canvas = cropper.getCroppedCanvas({
                     width: 1080
                     , height: 1080
                 });
 
-                canvas.toBlob((blob) => {
-                    const file = new File([blob], "photo.jpg", {
-                        type: "image/jpeg"
-                    });
-
-                    const dt = new DataTransfer();
-                    dt.items.add(file);
-
-                    if (currentTarget === 'groom') {
-                        document.getElementById('foto_pria').files = dt.files;
-                        document.getElementById('previewGroom').src = URL.createObjectURL(file);
-                        document.getElementById('previewContainerGroom').classList.remove('d-none');
-                        document.getElementById('uploadBoxGroom').parentElement.classList.add('d-none');
+                canvas.toBlob(async (blob) => {
+                    let file;
+                    try {
+                        const compressedBlob = await compressImage(new File([blob], "photo.jpg", { type: "image/jpeg" }));
+                        file = new File([compressedBlob], "photo.webp", {
+                            type: "image/webp",
+                            lastModified: Date.now()
+                        });
+                    } catch (err) {
+                        console.error("Crop compression failed, using original:", err);
+                        file = new File([blob], "photo.jpg", {
+                            type: "image/jpeg",
+                            lastModified: Date.now()
+                        });
                     }
 
-                    if (currentTarget === 'bride') {
-                        document.getElementById('foto_wanita').files = dt.files;
-                        document.getElementById('previewBride').src = URL.createObjectURL(file);
-                        document.getElementById('previewContainerBride').classList.remove('d-none');
-                        document.getElementById('uploadBoxBride').parentElement.classList.add('d-none');
+                    let inputEl, previewEl, previewContainerEl, uploadBoxEl;
+
+                    if (target === 'groom') {
+                        inputEl = document.getElementById('foto_pria');
+                        document.getElementById('remove_foto_pria').value = '0';
+                        previewEl = document.getElementById('previewGroom');
+                        previewContainerEl = document.getElementById('previewContainerGroom');
+                        uploadBoxEl = document.getElementById('uploadBoxGroom');
                     }
 
-                    bootstrap.Modal.getInstance(document.getElementById('cropModal')).hide();
-                });
+                    if (target === 'bride') {
+                        inputEl = document.getElementById('foto_wanita');
+                        document.getElementById('remove_foto_wanita').value = '0';
+                        previewEl = document.getElementById('previewBride');
+                        previewContainerEl = document.getElementById('previewContainerBride');
+                        uploadBoxEl = document.getElementById('uploadBoxBride');
+                    }
+
+                    try {
+                        const dt = new DataTransfer();
+                        dt.items.add(file);
+                        inputEl.files = dt.files;
+                    } catch (dtError) {
+                        console.error('DataTransfer failed, trying fallback:', dtError);
+                        try {
+                            const fallbackInput = document.createElement('input');
+                            fallbackInput.type = 'file';
+                            fallbackInput.name = inputEl.name;
+                            fallbackInput.id = inputEl.id;
+                            fallbackInput.className = inputEl.className;
+                            fallbackInput.style.display = 'none';
+                            fallbackInput.onchange = inputEl.onchange;
+                            const parent = inputEl.parentNode;
+                            parent.replaceChild(fallbackInput, inputEl);
+                            const dt = new DataTransfer();
+                            dt.items.add(file);
+                            fallbackInput.files = dt.files;
+                            if (target === 'groom') {
+                                inputEl = document.getElementById('foto_pria');
+                            } else {
+                                inputEl = document.getElementById('foto_wanita');
+                            }
+                        } catch (fallbackError) {
+                            console.error('All file-setting methods failed:', fallbackError);
+                            alert('Gagal mengatur file foto. Silakan coba lagi.');
+                            if (submitBtn) submitBtn.disabled = false;
+                            return;
+                        }
+                    }
+
+                    if (previewEl) previewEl.src = URL.createObjectURL(file);
+                    if (previewContainerEl) previewContainerEl.classList.remove('d-none');
+                    if (uploadBoxEl && uploadBoxEl.parentElement) uploadBoxEl.parentElement.classList.add('d-none');
+
+                    const modal = bootstrap.Modal.getInstance(modalEl);
+                    if (modal) modal.hide();
+
+                    if (submitBtn) submitBtn.disabled = false;
+                }, 'image/jpeg', 0.9);
             }
 
             function removePreview(target) {
@@ -1096,13 +2026,46 @@
                     document.getElementById('previewContainerGroom').classList.add('d-none');
                     document.getElementById('uploadBoxGroom').parentElement.classList.remove('d-none');
                     document.getElementById('foto_pria').value = '';
+                    document.getElementById('remove_foto_pria').value = '1';
                 }
 
                 if (target === 'bride') {
                     document.getElementById('previewContainerBride').classList.add('d-none');
                     document.getElementById('uploadBoxBride').parentElement.classList.remove('d-none');
                     document.getElementById('foto_wanita').value = '';
+                    document.getElementById('remove_foto_wanita').value = '1';
                 }
+            }
+
+            async function handleGalleryCover(input) {
+                const file = input.files[0];
+                if (!file) return;
+
+                document.getElementById('existingGalleryCover')?.classList.add('d-none');
+
+                try {
+                    const compressedBlob = await compressImage(file);
+                    const compressedFile = new File([compressedBlob], file.name.replace(/\.[^/.]+$/, ".webp"), {
+                        type: "image/webp",
+                        lastModified: Date.now()
+                    });
+
+                    const dt = new DataTransfer();
+                    dt.items.add(compressedFile);
+                    input.files = dt.files;
+
+                    const preview = document.getElementById('galleryCoverPreview');
+                    preview.querySelector('img').src = URL.createObjectURL(compressedFile);
+                    preview.classList.remove('d-none');
+                } catch (err) {
+                    console.error("Gallery cover compression failed:", err);
+                }
+            }
+
+            function removeGalleryCover() {
+                document.getElementById('remove_gallery_cover').value = '1';
+                document.getElementById('existingGalleryCover').classList.add('d-none');
+                document.getElementById('gallery_cover').value = '';
             }
 
         </script>
@@ -1129,10 +2092,10 @@
                 targetLinkInput.value = `https://www.instagram.com/${username}`;
             } else {
                 targetLinkInput.value = '';
-            }
-        });
-    });
-</script>
+window.currentPreviewUrl = previewFrame.src;
+                             }
+                         });
+                     </script>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -1256,22 +2219,22 @@
             wrapper.appendChild(div);
         }
 
-        function showQuote() {
-            const quotes = {
-                rum21: {
-                    text: "Dan di antara tanda-tanda kebesaran-Nya ialah Dia menciptakan pasangan untukmu agar kamu merasa tentram.",
-                    source: "(QS. Ar-Rum : 21)"
-                },
-                nisa1: {
-                    text: "Bertakwalah kepada Tuhanmu yang telah menciptakan kamu dari diri yang satu dan darinya Dia menciptakan pasangannya.",
-                    source: "(QS. An-Nisa : 1)"
-                },
-                furqan74: {
-                    text: "Ya Tuhan kami, anugerahkanlah kepada kami pasangan dan keturunan sebagai penyejuk mata.",
-                    source: "(QS. Al-Furqan : 74)"
-                }
-            };
+        const quotes = {
+            rum21: {
+                text: "Dan di antara tanda-tanda kebesaran-Nya ialah Dia menciptakan pasangan untukmu agar kamu merasa tentram.",
+                source: "(QS. Ar-Rum : 21)"
+            },
+            nisa1: {
+                text: "Bertakwalah kepada Tuhanmu yang telah menciptakan kamu dari diri yang satu dan darinya Dia menciptakan pasangannya.",
+                source: "(QS. An-Nisa : 1)"
+            },
+            furqan74: {
+                text: "Ya Tuhan kami, anugerahkanlah kepada kami pasangan dan keturunan sebagai penyejuk mata.",
+                source: "(QS. Al-Furqan : 74)"
+            }
+        };
 
+        function showQuote() {
             const select = document.getElementById("wedding_quote_select").value;
             const resultBox = document.getElementById("quote_result");
             const hiddenInput = document.getElementById("wedding_quote");
@@ -1280,7 +2243,6 @@
                 document.getElementById("quote_text").innerText = `"${quotes[select].text}"`;
                 document.getElementById("quote_source").innerText = quotes[select].source;
 
-                // Simpan ke hidden input
                 if(hiddenInput) {
                     hiddenInput.value = `"${quotes[select].text}" ${quotes[select].source}`;
                 }
@@ -1306,78 +2268,36 @@
         // --- TABS LOGIC ---
         const tabs = document.querySelectorAll('.tab-btn');
         const contents = document.querySelectorAll('.tab-content[id]');
+        const TAB_STORAGE_KEY = 'invitation_edit_active_tab_{{ $invitation->id }}';
+
+        function switchTab(tabEl) {
+            tabs.forEach(t => t.classList.remove('active'));
+            contents.forEach(c => {
+                c.classList.add('d-none');
+                c.classList.remove('active');
+            });
+
+            tabEl.classList.add('active');
+            const tabId = tabEl.dataset.tab;
+            const content = document.getElementById(tabId);
+            if (content) {
+                content.classList.remove('d-none');
+                content.classList.add('active');
+                localStorage.setItem(TAB_STORAGE_KEY, tabId);
+            }
+        }
 
         tabs.forEach(tab => {
-            tab.addEventListener('click', () => {
-                tabs.forEach(t => t.classList.remove('active'));
-                contents.forEach(c => c.classList.add('d-none'));
-
-                tab.classList.add('active');
-                const tabId = tab.dataset.tab;
-                const content = document.getElementById(tabId);
-                if(content) content.classList.remove('d-none');
-            });
+            tab.addEventListener('click', () => switchTab(tab));
         });
 
-        // --- IMAGE PREVIEW LOGIC (GROOM) ---
-        function previewGroomImage(event) {
-            const preview = document.getElementById('previewGroom');
-            const previewContainer = document.getElementById('previewContainerGroom');
-            const uploadBoxContainer = document.getElementById('uploadBoxGroomContainer');
+        const savedTabId = localStorage.getItem(TAB_STORAGE_KEY);
+        const defaultTabId = document.querySelector('.tab-btn.active')?.dataset?.tab || '2';
+        const initialTabId = savedTabId || defaultTabId;
 
-            if (event.target.files && event.target.files[0]) {
-                // Jika container preview belum ada di DOM (kondisi else di HTML), buat dulu
-                if (!previewContainer || previewContainer.classList.contains('d-none')) {
-                     // Logic ini menangani saat awalnya upload box tampil, lalu user upload
-                     // Kita pastikan struktur HTML sudah ada dan hanya toggle class
-                }
-
-                preview.src = URL.createObjectURL(event.target.files[0]);
-                previewContainer.classList.remove('d-none');
-                uploadBoxContainer.classList.add('d-none');
-            }
-        }
-
-        function removeGroomPreview() {
-            const preview = document.getElementById('previewGroom');
-            const previewContainer = document.getElementById('previewContainerGroom');
-            const uploadBoxContainer = document.getElementById('uploadBoxGroomContainer');
-            const inputFile = document.getElementById('foto_pria');
-
-            // Hapus sumber gambar
-            preview.src = '';
-
-            // Tampilkan Upload Box, Sembunyikan Preview
-            previewContainer.classList.add('d-none');
-            uploadBoxContainer.classList.remove('d-none');
-
-            // Reset input agar bisa upload file yang sama
-            inputFile.value = '';
-        }
-
-        // --- IMAGE PREVIEW LOGIC (BRIDE) ---
-        function previewBrideImage(event) {
-            const preview = document.getElementById('previewBride');
-            const previewContainer = document.getElementById('previewContainerBride');
-            const uploadBoxContainer = document.getElementById('uploadBoxBrideContainer');
-
-            if (event.target.files && event.target.files[0]) {
-                preview.src = URL.createObjectURL(event.target.files[0]);
-                previewContainer.classList.remove('d-none');
-                uploadBoxContainer.classList.add('d-none');
-            }
-        }
-
-        function removeBridePreview() {
-            const preview = document.getElementById('previewBride');
-            const previewContainer = document.getElementById('previewContainerBride');
-            const uploadBoxContainer = document.getElementById('uploadBoxBrideContainer');
-            const inputFile = document.getElementById('foto_wanita');
-
-            preview.src = '';
-            previewContainer.classList.add('d-none');
-            uploadBoxContainer.classList.remove('d-none');
-            inputFile.value = '';
+        const initialTab = document.querySelector(`.tab-btn[data-tab="${initialTabId}"]`);
+        if (initialTab) {
+            switchTab(initialTab);
         }
 
         // --- GALLERY LOGIC ---
@@ -1394,14 +2314,28 @@
             dropzone.addEventListener('dragleave', () => {
                 dropzone.classList.remove('bg-light');
             });
-            dropzone.addEventListener('drop', e => {
+            dropzone.addEventListener('drop', async e => {
                 e.preventDefault();
                 dropzone.classList.remove('bg-light');
-                fileInput.files = e.dataTransfer.files;
+
+                const files = Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('image/'));
+                const compressedFiles = await Promise.all(files.map(f => compressImage(f).then(blob => new File([blob], f.name.replace(/\.[^/.]+$/, ".webp"), { type: "image/webp", lastModified: Date.now() }))));
+
+                const dt = new DataTransfer();
+                compressedFiles.forEach(f => dt.items.add(f));
+                fileInput.files = dt.files;
                 displayPreview(fileInput.files);
             });
 
-            fileInput.addEventListener('change', () => displayPreview(fileInput.files));
+            fileInput.addEventListener('change', async () => {
+                const files = Array.from(fileInput.files).filter(f => f.type.startsWith('image/'));
+                const compressedFiles = await Promise.all(files.map(f => compressImage(f).then(blob => new File([blob], f.name.replace(/\.[^/.]+$/, ".webp"), { type: "image/webp", lastModified: Date.now() }))));
+
+                const dt = new DataTransfer();
+                compressedFiles.forEach(f => dt.items.add(f));
+                fileInput.files = dt.files;
+                displayPreview(fileInput.files);
+            });
 
             function displayPreview(files) {
                 // Tidak kita reset innerHTML karena ada existing images
@@ -1442,6 +2376,28 @@
             }
         }
 
+        // Compress story photos automatically
+        document.querySelectorAll('input[name="story_photo[]"]').forEach(input => {
+            input.addEventListener('change', async function(e) {
+                const file = e.target.files[0];
+                if (!file || !file.type.startsWith('image/')) return;
+
+                try {
+                    const compressedBlob = await compressImage(file);
+                    const compressedFile = new File([compressedBlob], file.name.replace(/\.[^/.]+$/, ".webp"), {
+                        type: "image/webp",
+                        lastModified: Date.now()
+                    });
+
+                    const dt = new DataTransfer();
+                    dt.items.add(compressedFile);
+                    e.target.files = dt.files;
+                } catch (err) {
+                    console.error("Story photo compression failed:", err);
+                }
+            });
+        });
+
         // --- RSVP LOGIC ---
         const enableRsvp = document.getElementById('enable_rsvp');
         const rsvpSettings = document.getElementById('rsvp_settings');
@@ -1452,12 +2408,11 @@
             });
         }
 
-        // --- AUDIO PLAYER LOGIC ---
+         // --- AUDIO PLAYER LOGIC ---
         const musicSelect = document.getElementById('music_id');
         const audioPlayer = document.getElementById('audioPlayer');
 
         if (musicSelect && audioPlayer) {
-             // Init on load
              const initialOption = musicSelect.options[musicSelect.selectedIndex];
              if(initialOption && initialOption.getAttribute('data-audio')) {
                  audioPlayer.src = initialOption.getAttribute('data-audio');
@@ -1583,24 +2538,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
     });
-    document.querySelectorAll('.tab-btn').forEach(btn => {
-    btn.addEventListener('click', function () {
-
-        const tab = this.getAttribute('data-tab');
-
-        // Remove active dari semua
-        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-
-        // Aktifkan yang diklik
-        this.classList.add('active');
-
-        // Tampilkan konten tab (sesuaikan selector)
-        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('show', 'active'));
-        document.getElementById('tab' + tab)?.classList.add('show', 'active');
     });
-});
-
-
 });
 
 </script>
@@ -1647,5 +2585,163 @@ document.addEventListener('click', function (e) {
 });
 </script>
 
+    <script>
+        (function() {
+            const form = document.getElementById('myForm');
+            if (!form) return;
+
+            const saveBtn = document.getElementById('saveButton');
+    </script>
+
+    <script>
+        (function() {
+            const form = document.getElementById('myForm');
+            if (!form) return;
+
+            const saveBtn = document.getElementById('saveButton');
+            const originalText = saveBtn ? saveBtn.innerHTML : '';
+
+            // Real-time preview update on form field changes
+            let previewUpdateTimer;
+            form.addEventListener('input', function(e) {
+                if (e.target.type === 'file') return;
+                clearTimeout(previewUpdateTimer);
+                previewUpdateTimer = setTimeout(function() {
+                    window.reloadPreview();
+                }, 1200);
+            });
+
+            form.addEventListener('change', function(e) {
+                if (e.target.type === 'file') return;
+                window.reloadPreview();
+            });
+
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+
+                if (saveBtn) {
+                    saveBtn.disabled = true;
+                    saveBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Menyimpan...';
+                }
+
+                const formData = new FormData(form);
+                const actionUrl = form.getAttribute('action');
+
+                fetch(actionUrl, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'application/json',
+                    },
+                    body: formData,
+                })
+                .then(response => {
+                    return response.json().then(data => ({
+                        status: response.status,
+                        ok: response.ok,
+                        data: data,
+                    }));
+                })
+                .then(({ status, ok, data }) => {
+                    if (saveBtn) {
+                        saveBtn.disabled = false;
+                        saveBtn.innerHTML = originalText;
+                    }
+
+                    if (ok && data.success) {
+                        const indicator = document.createElement('div');
+                        indicator.style.cssText = 'position:fixed;bottom:20px;left:50%;transform:translateX(-50%);padding:10px 24px;border-radius:8px;background:#28a745;color:#fff;font-size:14px;z-index:9999;box-shadow:0 4px 12px rgba(0,0,0,0.15);transition:opacity 0.3s;';
+                        indicator.innerHTML = '<i class="bi bi-check-circle me-2"></i>Undangan berhasil disimpan';
+                        document.body.appendChild(indicator);
+                        setTimeout(() => { indicator.style.opacity = '0'; setTimeout(() => indicator.remove(), 300); }, 2500);
+
+const previewFrame = document.getElementById('previewFrame');
+                         if (previewFrame) {
+                             window.reloadPreview();
+                         }
+
+                        if (data.invitation && data.invitation.slug) {
+                            const newSlug = data.invitation.slug;
+                            const currentSlug = window.location.pathname.split('/').pop();
+                            if (newSlug !== currentSlug) {
+                                window.history.replaceState(null, '', '/' + newSlug);
+                            }
+                        }
+                    } else {
+                        let errorMessage = 'Gagal menyimpan data';
+                        if (data.message) {
+                            errorMessage = data.message;
+                        } else if (data.errors) {
+                            errorMessage = Object.values(data.errors).flat().join(', ');
+                        }
+                        const errorIndicator = document.createElement('div');
+                        errorIndicator.style.cssText = 'position:fixed;bottom:20px;left:50%;transform:translateX(-50%);padding:10px 24px;border-radius:8px;background:#dc3545;color:#fff;font-size:14px;z-index:9999;box-shadow:0 4px 12px rgba(0,0,0,0.15);transition:opacity 0.3s;max-width:400px;text-align:center;';
+                        errorIndicator.innerHTML = '<i class="bi bi-exclamation-circle me-2"></i>' + errorMessage;
+                        document.body.appendChild(errorIndicator);
+                        setTimeout(() => { errorIndicator.style.opacity = '0'; setTimeout(() => errorIndicator.remove(), 300); }, 4000);
+                    }
+                })
+                .catch(error => {
+                    if (saveBtn) {
+                        saveBtn.disabled = false;
+                        saveBtn.innerHTML = originalText;
+                    }
+                    console.error('Save error:', error);
+                });
+            });
+        })();
+    </script>
+
+    <div class="sticky-save-btn" id="stickySaveBtn">
+        <button type="submit" form="myForm" class="btn btn-primary btn-lg shadow">
+            <i class="bi bi-save me-1"></i> Simpan
+        </button>
+    </div>
+
+    <script>
+        const stickyBtn = document.getElementById('stickySaveBtn');
+        const formEl = document.getElementById('myForm');
+
+        if (stickyBtn && formEl) {
+            const saveBtn = document.getElementById('saveButton');
+            const originalText = saveBtn ? saveBtn.innerHTML : '';
+
+            formEl.addEventListener('submit', function() {
+                stickyBtn.style.opacity = '0.5';
+                stickyBtn.style.pointerEvents = 'none';
+            });
+
+            window.addEventListener('scroll', function() {
+                const scrollTop = window.scrollY || document.documentElement.scrollTop;
+                if (scrollTop > 300) {
+                    stickyBtn.classList.add('visible');
+                } else {
+                    stickyBtn.classList.remove('visible');
+                }
+            });
+        }
+    </script>
+
+      <script>
+          (function() {
+              const previewFrame = document.getElementById('previewFrame');
+              const livePreviewFrame = document.querySelector('.android-frame.live-preview-frame');
+
+             if (!previewFrame || !livePreviewFrame) return;
+
+             // By default, scrollbar is hidden (scrolling="no")
+             previewFrame.scrolling = 'no';
+
+             // On hover: enable scrolling (scrolling="yes")
+             livePreviewFrame.addEventListener('mouseenter', function() {
+                 previewFrame.scrolling = 'yes';
+             });
+             livePreviewFrame.addEventListener('mouseleave', function() {
+                 previewFrame.scrolling = 'no';
+             });
+         })();
+     </script>
 
 </x-app-layout>
+

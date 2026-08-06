@@ -10,8 +10,8 @@
             </div>
 
 
-<!-- MEMPELAI -->
-            <div class="text-center animate-on-scroll px-6">
+  <!-- MEMPELAI -->
+            <div id="mempelai" class="text-center animate-on-scroll px-6">
                 <h2 class="font-serif text-3xl text-primary mb-6">Mempelai</h2>
                 <div class="grid grid-cols-2 gap-6">
                     <div>

@@ -17,12 +17,15 @@ class WeddingController extends Controller
             ->where('slug', $slug)
             ->first();
              if (!$invitation) {
-                    abort(404); // <-- ini wajib
+                    abort(404);
             }
-        // Tentukan view template berdasarkan slug template
+
+        if (!$invitation->template) {
+            abort(404, 'Template tidak ditemukan');
+        }
+
         $templateView = 'templates.' . $invitation->template->slug . '.index';
 
-        // Jika template tidak ada (safety)
         if (!view()->exists($templateView)) {
             abort(404, 'Template tidak ditemukan');
         }

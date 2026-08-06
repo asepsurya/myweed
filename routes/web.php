@@ -42,17 +42,32 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('invitation', [UserInvitationController::class, 'index'])->middleware('role:admin')->name('invitation.index');
     Route::get('invitation/create', [UserInvitationController::class, 'create'])->name('invitation.create');
+    Route::post('invitation/quick-create', [UserInvitationController::class, 'quickCreate'])->name('invitation.quick-create');
     Route::get('invitation/{slug}', [UserInvitationController::class, 'detail'])->name('invitation.detail');
     Route::post('invitation', [UserInvitationController::class, 'store'])->name('invitation.store');
     Route::get('invitation/{invitation}/edit', [UserInvitationController::class, 'edit'])->name('invitation.edit');
     Route::put('invitation/{invitation}', [UserInvitationController::class, 'update'])->name('invitation.update');
     Route::delete('/gallery/{id}', [UserInvitationController::class, 'destroyGallery'])->name('gallery.delete');
+    Route::delete('/invitation/{invitation}', [UserInvitationController::class, 'destroy'])->name('invitation.destroy');
 
+    Route::post('/templates/import-code', [TempelateController::class, 'importCode'])->name('templates.import-code');
     Route::get('theme', [TempelateController::class, 'index'])->middleware('role:admin')->name('tempelate.index');
     Route::get('/templates/upload', [TempelateController::class, 'create']);
     Route::post('/templates/upload', [TempelateController::class, 'store']);
     Route::delete('/templates/{template}', [TempelateController::class, 'destroy'])->name('templates.destroy');
     Route::get('/templates/{slug}/{id}', [TempelateController::class, 'preview'])->name('template.preview');
+    Route::put('/templates/{slug}/{id}', [TempelateController::class, 'previewUpdate'])->name('template.preview.update');
+
+    Route::get('/template-assets/{slug}/{path}', function ($slug, $path) {
+        $basePath = resource_path("views/templates/$slug");
+        $filePath = realpath($basePath . '/' . ltrim($path, '/'));
+
+        if (!$filePath || strpos($filePath, realpath($basePath)) !== 0 || !\Illuminate\Support\Facades\File::exists($filePath)) {
+            abort(404);
+        }
+
+        return response()->file($filePath);
+    })->where('path', '.*')->name('template.asset');
 
     Route::get('/musics', [MusicController::class, 'index'])->middleware('role:admin')->name('music.index');
     Route::post('/music/store', [MusicController::class, 'store'])->name('music.store');
@@ -65,13 +80,15 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/users', [UserController::class, 'index'])->name('user.index')->middleware('role:admin');
     Route::get('/rsvps', [RsvpController::class, 'index'])->name('rsvp.index')->middleware('subscription');
     Route::delete('/rsvp/{rsvp}', [RsvpController::class, 'destroy'])->name('rsvp.destroy')->middleware('subscription');
-    Route::post('/rsvp/{invitation}', [RsvpController::class, 'store'])->name('rsvp.store')->middleware('subscription');
-    Route::get('/invitation/{invitation}/rsvps', [RsvpController::class, 'getRsvps'])->name('rsvp.list');
 
     Route::get('/subscription-plans', [SubscriptionPlanController::class, 'index'])->name('subscribe.page');
     Route::get('/subscription-plans/{planId}', [SubscriptionPlanController::class, 'subscribe'])->name('subscribe');
+    Route::get('/payments', [SubscriptionPlanController::class, 'paymentIndex'])->name('payments.index');
 
 });
+
+Route::post('/rsvp/{invitation}', [RsvpController::class, 'store'])->name('rsvp.store');
+Route::get('/invitation/{invitation}/rsvps', [RsvpController::class, 'getRsvps'])->name('rsvp.list');
 
 Route::get('/auth/google', [GoogleController::class, 'redirect']);
 Route::get('/auth/google/callback', [GoogleController::class, 'callback']);
@@ -80,3 +97,6 @@ Route::get('/{slug}', [WeddingController::class, 'show'])->where('slug', '[A-Za-
 
 
 
+Route::get('/payment/success', [SubscriptionPlanController::class, 'success'])->name('payment.success');
+Route::get('/payment/failed', [SubscriptionPlanController::class, 'failed'])->name('payment.failed');
+Route::get('/payment/pending', [SubscriptionPlanController::class, 'pending'])->name('payment.pending');

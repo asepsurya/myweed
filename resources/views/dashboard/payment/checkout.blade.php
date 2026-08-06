@@ -56,21 +56,26 @@
 </script>
 
 <script>
-document.getElementById('payBtn').addEventListener('click', function () {
-    snap.pay('{{ $snapToken }}', {
-        onSuccess: function(result) {
-            window.location.href = "{{ route('dashboard') }}";
-        },
-        onPending: function(result) {
-            alert('Menunggu pembayaran...');
-        },
-        onError: function(result) {
-            alert('Pembayaran gagal.');
-        },
-        onClose: function() {
-            console.log('Popup ditutup');
-        }
+document.addEventListener('DOMContentLoaded', function () {
+    document.getElementById('payBtn').addEventListener('click', function () {
+        snap.pay('{{ $snapToken }}', {
+            onSuccess: function(result) {
+                window.location.href = "{{ route('dashboard') }}";
+            },
+            onPending: function(result) {
+                window.location.href =
+                    "{{ route('payment.pending') }}?order_id=" + result.order_id;
+            },
+            onError: function() {
+                window.location.href = "{{ route('payment.failed') }}";
+            },
+            onClose: function() {
+                console.log('Popup ditutup');
+            }
+        });
     });
 });
 </script>
+
 </x-app-layout>
+

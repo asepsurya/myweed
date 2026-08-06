@@ -73,9 +73,9 @@ class User extends Authenticatable
             $this->subscription->is_active &&
             $this->subscription->end_date->isFuture();
     }
-    public function invitation()
+    public function invitations()
     {
-        return $this->hasOne(Invitation::class);
+        return $this->hasMany(Invitation::class);
     }
 
     public function subscriptionStatus()

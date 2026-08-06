@@ -24,7 +24,24 @@ class GiftController extends Controller
         ]);
 
         if ($request->hasFile('qr')) {
-            $data['qr'] = $request->file('qr')->store('gifts', 'public');
+            $tempSource = str_replace('\\', '/', sys_get_temp_dir() . '/' . uniqid() . '_' . $request->file('qr')->getClientOriginalName());
+            $request->file('qr')->move(sys_get_temp_dir(), basename($tempSource));
+
+            $destinationPath = storage_path('app/public/gifts');
+            if (!file_exists($destinationPath)) {
+                mkdir($destinationPath, 0755, true);
+            }
+
+            $destFile = $destinationPath . '/' . uniqid() . '.webp';
+
+            $driver = new \Intervention\Image\Drivers\Gd\Driver();
+            $manager = new \Intervention\Image\ImageManager($driver);
+            $image = $manager->read($tempSource);
+            $image->save($destFile, 75, 'webp');
+
+            @unlink($tempSource);
+
+            $data['qr'] = 'gifts/' . basename($destFile);
         }
 
         Gift::create($data);

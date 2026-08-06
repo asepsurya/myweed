@@ -30,12 +30,30 @@ class MusicController extends Controller
     // Upload audio
     $audioPath = $request->file('file')->store('music', 'public');
 
-    // Upload cover
-    $coverPath = $request->file('cover')
-        ? $request->file('cover')->store('covers', 'public')
-        : null;
+    // Upload cover as webp
+    $coverPath = null;
+    if ($request->hasFile('cover')) {
+        $tempSource = str_replace('\\', '/', sys_get_temp_dir() . '/' . uniqid() . '_' . $request->file('cover')->getClientOriginalName());
+        $request->file('cover')->move(sys_get_temp_dir(), basename($tempSource));
 
-    // Auto title from filename (FIX DI SINI)
+        $destinationPath = storage_path('app/public/covers');
+        if (!file_exists($destinationPath)) {
+            mkdir($destinationPath, 0755, true);
+        }
+
+        $destFile = $destinationPath . '/' . uniqid() . '.webp';
+
+        $driver = new \Intervention\Image\Drivers\Gd\Driver();
+        $manager = new \Intervention\Image\ImageManager($driver);
+        $image = $manager->read($tempSource);
+        $image->save($destFile, 75, 'webp');
+
+        @unlink($tempSource);
+
+        $coverPath = 'covers/' . basename($destFile);
+    }
+
+    // Auto title from filename
     $title = pathinfo($request->file('file')->getClientOriginalName(), PATHINFO_FILENAME);
 
     Music::create([

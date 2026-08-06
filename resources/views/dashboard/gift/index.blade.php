@@ -23,32 +23,17 @@
             <p class="text-sm text-gray-500">a.n {{ $gift->name }}</p>
 
             @if($gift->qr)
-            <img src="{{ asset('storage/'.$gift->qr) }}" class="w-32 mt-2">
+            <img src="{{ $gift->qr ? '/storage/'.$gift->qr : '' }}" class="w-32 mt-2">
             @endif
 
-            <button onclick="deleteGift({{ $gift->id }})" class="absolute top-2 right-2 text-red-500">✕</button>
+            <form action="{{ route('gift.destroy', $gift->id) }}" method="POST" class="absolute top-2 right-2"
+                  onsubmit="return confirm('Hapus gift ini? Data yang sudah dihapus tidak dapat dikembalikan.');">
+                @csrf
+                @method('DELETE')
+                <button type="submit" class="text-red-500 hover:text-red-700">✕</button>
+            </form>
         </div>
         @endforeach
     </div>
-<script>
-function deleteGift(id) {
-    Swal.fire({
-        title: 'Hapus gift?',
-        text: 'Data akan dihapus permanen',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonText: 'Hapus'
-    }).then(result => {
-        if (result.isConfirmed) {
-            fetch(`/gifts/${id}`, {
-                method: 'DELETE',
-                headers: {
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                }
-            }).then(res => res.json())
-              .then(() => location.reload());
-        }
-    });
-}
-</script>
 </x-app-layout>
+
