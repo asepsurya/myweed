@@ -18,7 +18,7 @@
                     <img src="{{ asset('tempelate/logo_apps.png') }}" alt="">
                 </figure>
                 <h5 class="mb-1 fw-medium">Weeding Creative</h5>
-                    <p class="small">Digital Wedding Invitation</p>
+                <p class="small">The Investment UI Kit</p>
             </div>
         </div>
 
@@ -58,25 +58,6 @@
                 </a>
             </li>
 
-<<<<<<< HEAD
-
-
-            @role('admin')
-            <li class="nav-item">
-                <a class="nav-link" href="{{ route('tempelate.index') }}" data-bs-toggle="tooltip" data-bs-placement="right" title="Tema & Tampilan">
-                    <i class="menu-icon bi bi-palette me-2"></i>
-                    <span class="menu-name">Tema & Tampilan</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{{ route('music.index') }}" data-bs-toggle="tooltip" data-bs-placement="right" title="Musik Undangan">
-                    <i class="menu-icon bi bi-music-note-beamed me-2"></i>
-                    <span class="menu-name">Musik Undangan</span>
-                </a>
-            </li>
-            @endrole
-=======
->>>>>>> cf03afae4c1d966c8748d360e1034ab498ceeb3b
 
             @role('admin')
             <li class="nav-item">
@@ -84,12 +65,6 @@
                     title="Daftar Pengguna">
                     <i class="menu-icon bi bi-people me-2"></i>
                     <span class="menu-name">Daftar Pengguna</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{{ route('payments.index') }}" data-bs-toggle="tooltip" data-bs-placement="right" title="Daftar Pembayaran">
-                    <i class="menu-icon bi bi-wallet me-2"></i>
-                    <span class="menu-name">Payment</span>
                 </a>
             </li>
             @endrole
@@ -110,9 +85,4 @@
         });
     });
 
-<<<<<<< HEAD
 </script>
-
-=======
-</script>
->>>>>>> cf03afae4c1d966c8748d360e1034ab498ceeb3b
