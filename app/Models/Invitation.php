@@ -21,6 +21,8 @@ class Invitation extends Model
         'template_id',
         'slug',
         'is_default',
+        'status',
+        'primary_color',
         'groom_name',
         'groom_nickname',
         'groom_father_name',

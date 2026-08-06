@@ -13,7 +13,7 @@ use App\Http\Controllers\Controller;
 
 class subscriptionPlanController extends Controller
 {
-     public function index()
+    public function index()
     {
         $plans = SubscriptionPlan::all();
         return view('dashboard.subscriptions.index', compact('plans'));
@@ -34,7 +34,7 @@ class subscriptionPlanController extends Controller
 
         // return redirect()->back()->with('success', 'Berhasil berlangganan!');
         $plan = SubscriptionPlan::findOrFail($planId);
-        if($plan->slug == 'basic'){
+        if ($plan->slug == 'basic') {
             Subscription::updateOrCreate(
                 ['user_id' => auth()->id()],
                 [
@@ -44,8 +44,8 @@ class subscriptionPlanController extends Controller
                     'is_active' => true
                 ]
             );
-             return redirect()->back()->with('success', 'Berhasil berlangganan!');
-        }else{
+            return redirect()->back()->with('success', 'Berhasil berlangganan!');
+        } else {
             $orderId = 'SUB-' . time() . '-' . auth()->id();
 
             $payment = Payment::create([
@@ -83,7 +83,7 @@ class subscriptionPlanController extends Controller
         $notification = new Notification();
 
         $orderId = $notification->order_id;
-        $status  = $notification->transaction_status;
+        $status = $notification->transaction_status;
 
         // Cari payment (JANGAN firstOrFail)
         $payment = Payment::where('order_id', $orderId)->first();
@@ -100,23 +100,19 @@ class subscriptionPlanController extends Controller
                 return response()->json(['message' => 'Plan not found'], 404);
             }
 
-<<<<<<< HEAD
+
             $subscription = Subscription::where('user_id', $payment->user_id)->first();
 
             if ($subscription && $subscription->end_date && $subscription->end_date->isFuture()) {
                 $startDate = $subscription->start_date;
-                $endDate   = $subscription->end_date->addDays($plan->duration);
+                $endDate = $subscription->end_date->addDays($plan->duration);
             } else {
                 $startDate = now();
-                $endDate   = now()->addDays($plan->duration);
+                $endDate = now()->addDays($plan->duration);
             }
 
             Subscription::updateOrCreate(
-                ['user_id' => $payment->user_id], // ✅ BENAR
-=======
-              Subscription::updateOrCreate(
                 ['user_id' => $payment->user_id],
->>>>>>> cf03afae4c1d966c8748d360e1034ab498ceeb3b
                 [
                     'subscription_plan_id' => $plan->id,
                     'start_date' => $startDate,
@@ -131,7 +127,7 @@ class subscriptionPlanController extends Controller
         // WAJIB return cepat
         return response()->json(['success' => true], 200);
     }
-    public function success()
+    public function success(Request $request)
     {
         $orderId = $request->get('order_id');
 
@@ -152,7 +148,8 @@ class subscriptionPlanController extends Controller
         return view('payment.failed');
     }
 
-    public function paymentIndex(Request $request){
+    public function paymentIndex(Request $request)
+    {
         $query = Payment::with('subscriptionPlan');
 
         // user biasa
@@ -170,7 +167,7 @@ class subscriptionPlanController extends Controller
 
         $payments = $query->latest()->get();
 
-         return view('payment.index', compact('payments'));
+        return view('payment.index', compact('payments'));
     }
 
 }

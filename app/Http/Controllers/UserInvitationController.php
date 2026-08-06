@@ -20,7 +20,7 @@ use Intervention\Image\Drivers\Gd\Driver as GdDriver;
 
 class UserInvitationController extends Controller
 {
-     public function index()
+    public function index()
     {
         $invitations = Invitation::with('user')->get();
         return view('dashboard.invitation.index', compact('invitations'));
@@ -35,14 +35,9 @@ class UserInvitationController extends Controller
         }
 
         $music = Music::where('is_active', true)->get();
-<<<<<<< HEAD
         $templates = Template::where('is_active', true)->paginate(6);
-        return view('dashboard.invitation.create', compact('templates', 'music'));
-=======
-        $templates = Template::where('is_active', true)->get();
         $selectedTemplateId = $request->template_id;
         return view('dashboard.invitation.create', compact('templates', 'music', 'selectedTemplateId'));
->>>>>>> cf03afae4c1d966c8748d360e1034ab498ceeb3b
     }
 
     public function quickCreate(Request $request)
@@ -179,11 +174,8 @@ class UserInvitationController extends Controller
             'groom_name' => 'required|string|max:255',
             'wedding_date' => 'required|date',
             'template_id' => 'required|exists:templates,id',
-<<<<<<< HEAD
             'theme_color' => 'nullable|string|max:255',
-=======
             'primary_color' => 'nullable|string|max:7',
->>>>>>> cf03afae4c1d966c8748d360e1034ab498ceeb3b
 
             'gallery.*' => 'nullable|file|mimes:jpeg,jpg,png,gif,webp|max:10240',
             'gallery_cover' => 'nullable|file|mimes:jpeg,jpg,png,webp|max:10240',
@@ -215,9 +207,8 @@ class UserInvitationController extends Controller
             'foto_wanita.max' => 'Foto mempelai wanita tidak boleh melebihi :max kilobyte.',
         ]);
 
-<<<<<<< HEAD
         $baseSlug = Str::slug($request->groom_nickname . '-' . $request->bride_nickname);
-=======
+
         $user = auth()->user();
         // Double check limit for store
         if (!$user->isSubscribed() && Invitation::where('user_id', $user->id)->count() >= 1) {
@@ -229,8 +220,6 @@ class UserInvitationController extends Controller
         if ($template->is_premium && !$user->isSubscribed()) {
             return redirect()->back()->with('error', 'Template Premium hanya tersedia untuk member aktif! ✨');
         }
-
->>>>>>> cf03afae4c1d966c8748d360e1034ab498ceeb3b
 
         // Check if same user already has this slug → redirect to edit
         $existingInvitation = Invitation::where('slug', $baseSlug)
@@ -313,11 +302,7 @@ class UserInvitationController extends Controller
             $invitation = Invitation::create([
                 'user_id' => auth()->user()->id,
                 'template_id' => $request->template_id,
-<<<<<<< HEAD
-=======
                 'status' => 'published',
-                'primary_color' => $request->primary_color,
->>>>>>> cf03afae4c1d966c8748d360e1034ab498ceeb3b
                 'slug' => $slug,
 
                 'groom_name' => $request->groom_name,
@@ -352,20 +337,17 @@ class UserInvitationController extends Controller
                 'enable_rsvp' => $request->has('enable_rsvp'),
                 'enable_gift' => $request->has('enable_gift'),
 
-                'groom_instagram' =>$request->groom_instagram,
-                'groom_username_instagram'=>$request->groom_username_instagram,
-                'bride_instagram' =>$request->bride_instagram,
-                'bride_username_instagram'=>$request->bride_username_instagram,
-                'akad_address'=>$request->akad_address,
-                'resepsi_address'=>$request->resepsi_address,
-<<<<<<< HEAD
+                'groom_instagram' => $request->groom_instagram,
+                'groom_username_instagram' => $request->groom_username_instagram,
+                'bride_instagram' => $request->bride_instagram,
+                'bride_username_instagram' => $request->bride_username_instagram,
+                'akad_address' => $request->akad_address,
+                'resepsi_address' => $request->resepsi_address,
 
                 'rsvp_deadline' => $request->rsvp_deadline,
                 'rsvp_message' => $request->rsvp_message,
                 'rsvp_whatsapp' => $request->rsvp_whatsapp,
-=======
                 'primary_color' => $request->primary_color ?? '#0d9488'
->>>>>>> cf03afae4c1d966c8748d360e1034ab498ceeb3b
 
             ]);
             if ($request->hasFile('foto_pria')) {
@@ -405,35 +387,35 @@ class UserInvitationController extends Controller
             }
 
 
-           if ($request->hasFile('gallery_cover')) {
-               try {
-                $path = "invitations/{$invitation->id}/cover/cover.webp";
+            if ($request->hasFile('gallery_cover')) {
+                try {
+                    $path = "invitations/{$invitation->id}/cover/cover.webp";
 
-                $this->uploadImageAsWebP(
-                    $request->file('gallery_cover'),
-                    $path,
-                    1600
-                );
+                    $this->uploadImageAsWebP(
+                        $request->file('gallery_cover'),
+                        $path,
+                        1600
+                    );
 
-                $invitation->update(['gallery_cover' => $path]);
+                    $invitation->update(['gallery_cover' => $path]);
                 } catch (\Throwable $e) {
                     \Log::error('Gallery cover upload failed: ' . $e->getMessage());
                 }
-           }
+            }
 
 
-           if ($request->hasFile('custom_music')) {
-               $musicPath = $request->file('custom_music')
-                   ->store("invitations/{$invitation->id}/music", 'public');
+            if ($request->hasFile('custom_music')) {
+                $musicPath = $request->file('custom_music')
+                    ->store("invitations/{$invitation->id}/music", 'public');
 
-               $invitation->update(['music' => $musicPath]);
-           }else{
+                $invitation->update(['music' => $musicPath]);
+            } else {
                 $invitation->update([
-                   'music' => $request->music_id,
-               ]);
-           }
+                    'music' => $request->music_id,
+                ]);
+            }
 
-          if ($request->hasFile('gallery')) {
+            if ($request->hasFile('gallery')) {
                 foreach ($request->file('gallery') as $index => $imageFile) {
                     try {
                         $folder = "invitations/{$invitation->id}/gallery";
@@ -501,17 +483,15 @@ class UserInvitationController extends Controller
 
     public function edit(Invitation $invitation)
     {
-         $music = Music::where('is_active', true)->get();
+        $music = Music::where('is_active', true)->get();
         $templates = Template::where('is_active', true)->paginate(6);
 
-        return view('dashboard.invitation.edit', compact('invitation','music','templates'));
+        return view('dashboard.invitation.edit', compact('invitation', 'music', 'templates'));
     }
 
 
     public function update(Request $request, Invitation $invitation)
     {
-<<<<<<< HEAD
-=======
         $user = auth()->user();
         // Check Template Premium Access
         $template = Template::findOrFail($request->template_id);
@@ -519,17 +499,13 @@ class UserInvitationController extends Controller
             return redirect()->back()->with('error', 'Template Premium hanya tersedia untuk member aktif! ✨');
         }
 
->>>>>>> cf03afae4c1d966c8748d360e1034ab498ceeb3b
         $request->validate([
             'bride_name' => 'required|string|max:255',
             'groom_name' => 'required|string|max:255',
             'wedding_date' => 'required|date',
             'template_id' => 'required|exists:templates,id',
-<<<<<<< HEAD
             'theme_color' => 'nullable|string|max:255',
-=======
             'primary_color' => 'nullable|string|max:7',
->>>>>>> cf03afae4c1d966c8748d360e1034ab498ceeb3b
             'gallery.*' => 'nullable|file|mimes:jpeg,jpg,png,gif,webp|max:10240',
             'gallery_cover' => 'nullable|file|mimes:jpeg,jpg,png,webp|max:10240',
             'custom_music' => 'nullable|file|mimes:mp3,wav,ogg|max:10240',
@@ -541,45 +517,38 @@ class UserInvitationController extends Controller
         $uploadErrors = [];
 
         DB::transaction(function () use ($request, $invitation, &$uploadErrors) {
-         $oldStories = is_string($invitation->love_story)
-            ? json_decode($invitation->love_story, true)
-            : $invitation->love_story;
+            $oldStories = is_string($invitation->love_story)
+                ? json_decode($invitation->love_story, true)
+                : $invitation->love_story;
 
-        $oldStories = $oldStories ?? [];
-        $stories = [];
+            $oldStories = $oldStories ?? [];
+            $stories = [];
 
-        if ($request->has('love_story')) {
-            foreach ($request->love_story as $index => $storyText) {
+            if ($request->has('love_story')) {
+                foreach ($request->love_story as $index => $storyText) {
 
-                $photoPath = $oldStories[$index]['photo'] ?? null;
+                    $photoPath = $oldStories[$index]['photo'] ?? null;
 
-                if ($request->hasFile('story_photo.' . $index)) {
+                    if ($request->hasFile('story_photo.' . $index)) {
 
-                    if ($photoPath && Storage::disk('public')->exists($photoPath)) {
-                        Storage::disk('public')->delete($photoPath);
+                        if ($photoPath && Storage::disk('public')->exists($photoPath)) {
+                            Storage::disk('public')->delete($photoPath);
+                        }
+
+                        $photoPath = $this->uploadImageAsWebP(
+                            $request->file('story_photo.' . $index),
+                            "love_story/{$index}_" . uniqid() . '.webp'
+                        );
                     }
 
-                    $photoPath = $this->uploadImageAsWebP(
-                        $request->file('story_photo.' . $index),
-                        "love_story/{$index}_" . uniqid() . '.webp'
-                    );
+                    $stories[] = [
+                        'title' => $request->story_title[$index] ?? null,
+                        'story' => $storyText,
+                        'photo' => $photoPath,
+                    ];
                 }
-
-                $stories[] = [
-                    'title' => $request->story_title[$index] ?? null,
-                    'story' => $storyText,
-                    'photo' => $photoPath,
-                ];
             }
-        }
 
-<<<<<<< HEAD
-            $updateData = [
-                'template_id' => $request->template_id,
-                'slug' => !empty($request->groom_nickname) && !empty($request->bride_nickname)
-                    ? Str::slug($request->groom_nickname . '-' . $request->bride_nickname)
-                    : $invitation->slug,
-=======
             $baseSlug = Str::slug($request->groom_name . '-' . $request->bride_name);
             $slug = $baseSlug;
             $counter = 1;
@@ -588,13 +557,11 @@ class UserInvitationController extends Controller
                 $counter++;
             }
 
-            // Siapkan data untuk diupdate
             $updateData = [
                 'template_id' => $request->template_id,
                 'status' => 'published',
                 'primary_color' => $request->primary_color,
                 'slug' => $slug,
->>>>>>> cf03afae4c1d966c8748d360e1034ab498ceeb3b
 
                 'groom_name' => $request->groom_name,
                 'groom_nickname' => $request->groom_nickname,
@@ -628,7 +595,6 @@ class UserInvitationController extends Controller
                 'enable_rsvp' => $request->has('enable_rsvp'),
                 'enable_gift' => $request->has('enable_gift'),
 
-<<<<<<< HEAD
                 'groom_instagram' => $request->groom_username_instagram ? 'https://www.instagram.com/' . $request->groom_username_instagram : $invitation->groom_instagram,
                 'groom_username_instagram' => $request->groom_username_instagram,
                 'bride_instagram' => $request->bride_username_instagram ? 'https://www.instagram.com/' . $request->bride_username_instagram : $invitation->bride_instagram,
@@ -641,18 +607,9 @@ class UserInvitationController extends Controller
                 'rsvp_whatsapp' => $request->rsvp_whatsapp,
 
                 'music_youtube_url' => $request->music_youtube_url,
-=======
-                'groom_instagram' =>$request->groom_instagram,
-                'groom_username_instagram'=>$request->groom_username_instagram,
-                'bride_instagram' =>$request->bride_instagram,
-                'bride_username_instagram'=>$request->bride_username_instagram,
-                'akad_address'=>$request->akad_address,
-                'resepsi_address'=>$request->resepsi_address,
-                'primary_color' => $request->primary_color
->>>>>>> cf03afae4c1d966c8748d360e1034ab498ceeb3b
             ];
 
-$invitation->update($updateData);
+            $invitation->update($updateData);
 
             \Log::debug('Update foto debug', [
                 'has_foto_pria' => $request->hasFile('foto_pria'),
@@ -758,7 +715,7 @@ $invitation->update($updateData);
                 ]);
             }
 
-        if ($request->hasFile('gallery')) {
+            if ($request->hasFile('gallery')) {
                 foreach ($request->file('gallery') as $index => $imageFile) {
                     try {
                         $folder = "invitations/{$invitation->id}/gallery";
@@ -785,13 +742,12 @@ $invitation->update($updateData);
 
             if ($request->enable_gift == 1) {
 
-                $banks   = $request->bank ?? [];
+                $banks = $request->bank ?? [];
                 $numbers = $request->number ?? [];
-                $names   = $request->name ?? [];
-                $qrs     = $request->file('qr') ?? [];
+                $names = $request->name ?? [];
+                $qrs = $request->file('qr') ?? [];
 
                 foreach ($banks as $i => $bank) {
-<<<<<<< HEAD
 
                     if (
                         empty($numbers[$i]) ||
@@ -800,11 +756,9 @@ $invitation->update($updateData);
                         continue;
                     }
 
-=======
->>>>>>> cf03afae4c1d966c8748d360e1034ab498ceeb3b
                     $data = [
                         'number' => $numbers[$i] ?? null,
-                        'name'   => $names[$i] ?? null,
+                        'name' => $names[$i] ?? null,
                     ];
 
                     if (isset($qrs[$i])) {
@@ -829,34 +783,34 @@ $invitation->update($updateData);
                 }
             }
 
-         });
+        });
 
-          if (!empty($uploadErrors)) {
-               if ($request->ajax()) {
-                   return response()->json([
-                       'success' => false,
-                       'message' => 'Data berhasil diperbarui, tetapi ada masalah pada upload gambar: ' . implode(', ', $uploadErrors),
-                   ]);
-               }
-               return redirect()
-                   ->back()
-                   ->with('warning', 'Data berhasil diperbarui, tetapi ada masalah pada upload gambar: ' . implode(', ', $uploadErrors));
-           }
+        if (!empty($uploadErrors)) {
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Data berhasil diperbarui, tetapi ada masalah pada upload gambar: ' . implode(', ', $uploadErrors),
+                ]);
+            }
+            return redirect()
+                ->back()
+                ->with('warning', 'Data berhasil diperbarui, tetapi ada masalah pada upload gambar: ' . implode(', ', $uploadErrors));
+        }
 
-           if ($request->ajax()) {
-               return response()->json([
-                   'success' => true,
-                   'message' => 'Undangan berhasil diperbarui',
-                   'invitation' => $invitation->fresh(),
-               ]);
-           }
+        if ($request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Undangan berhasil diperbarui',
+                'invitation' => $invitation->fresh(),
+            ]);
+        }
 
-           return redirect()
-               ->back()
-               ->with('success', 'Undangan berhasil diperbarui 💖');
+        return redirect()
+            ->back()
+            ->with('success', 'Undangan berhasil diperbarui 💖');
     }
 
-    public function destroyGallery(Invitation $invitation, Request $request,$id)
+    public function destroyGallery(Invitation $invitation, Request $request, $id)
     {
         $photo = Gallery::findOrFail($id);
 
@@ -867,29 +821,12 @@ $invitation->update($updateData);
         return response()->json(['success' => true]);
     }
 
-    public function destroy(Invitation $invitation)
-    {
-        if ($invitation->is_default) {
-            return redirect()
-                ->back()
-                ->with('error', 'Data default romeo-juliet tidak dapat dihapus.');
-        }
 
-        if ($invitation->foto_pria) {
-            Storage::disk('public')->deleteDirectory("invitations/{$invitation->id}");
-        }
-
-        $invitation->delete();
-
-        return redirect()
-            ->route('invitation.index')
-            ->with('success', 'Undangan berhasil dihapus.');
-    }
     public function detail($slug)
     {
         $invitation = Invitation::where('slug', $slug)->firstOrFail();
         $galleries = Gallery::where('invitation_id', $invitation->id)->get();
-        return view('dashboard.invitation.detail', compact('invitation','galleries'));
+        return view('dashboard.invitation.detail', compact('invitation', 'galleries'));
     }
 
     public function autoSave(Request $request)
@@ -917,13 +854,13 @@ $invitation->update($updateData);
         $data = $request->except(['foto_pria', 'foto_wanita', 'gallery_cover', 'gallery', 'custom_music', 'qr', 'story_photo']);
         $data['user_id'] = auth()->id();
         $data['status'] = 'draft';
-        
+
         // Unique Slug for AutoSave
         $baseSlug = 'draft-' . auth()->id();
         if ($request->groom_name && $request->bride_name) {
             $baseSlug = Str::slug($request->groom_name . '-' . $request->bride_name);
         }
-        
+
         $slug = $baseSlug;
         $counter = 1;
         $existingId = ($invitation) ? $invitation->id : 0;
@@ -940,7 +877,7 @@ $invitation->update($updateData);
         if ($invitation) {
             // Jika sudah ada, jangan ganti slugnya terus menerus kalau sudah punya nama
             if ($invitation->groom_name && $invitation->bride_name && isset($data['slug'])) {
-                 unset($data['slug']);
+                unset($data['slug']);
             }
             $invitation->update($data);
         } else {
@@ -956,29 +893,36 @@ $invitation->update($updateData);
 
     public function destroy(Invitation $invitation)
     {
-        // abort_if($invitation->user_id !== auth()->id() && !auth()->user()->hasRole('admin'), 403);
-        
+        if ($invitation->is_default) {
+            return redirect()
+                ->back()
+                ->with('error', 'Data default romeo-juliet tidak dapat dihapus.');
+        }
+
         DB::transaction(function () use ($invitation) {
             // Hapus file-file terkait
-            if ($invitation->foto_pria) Storage::disk('public')->delete($invitation->foto_pria);
-            if ($invitation->foto_wanita) Storage::disk('public')->delete($invitation->foto_wanita);
-            if ($invitation->gallery_cover) Storage::disk('public')->delete($invitation->gallery_cover);
-            
+            if ($invitation->foto_pria)
+                Storage::disk('public')->delete($invitation->foto_pria);
+            if ($invitation->foto_wanita)
+                Storage::disk('public')->delete($invitation->foto_wanita);
+            if ($invitation->gallery_cover)
+                Storage::disk('public')->delete($invitation->gallery_cover);
+
             // Periksa apakah musik kustom atau ID musik
             if ($invitation->music && !is_numeric($invitation->music)) {
                 Storage::disk('public')->delete($invitation->music);
             }
-            
+
             // Hapus galeri
             foreach ($invitation->galleries as $gallery) {
                 Storage::disk('public')->delete($gallery->image);
                 $gallery->delete();
             }
-            
+
             // Hapus RSVP & Gift
             $invitation->gifts()->delete();
             $invitation->rsvps()->delete();
-            
+
             $invitation->delete();
         });
 
@@ -997,21 +941,24 @@ $invitation->update($updateData);
 
             foreach ($invitations as $invitation) {
                 // abort_if($invitation->user_id !== auth()->id() && !auth()->user()->hasRole('admin'), 403);
-                
+
                 // Hapus file-file terkait
-                if ($invitation->foto_pria) Storage::disk('public')->delete($invitation->foto_pria);
-                if ($invitation->foto_wanita) Storage::disk('public')->delete($invitation->foto_wanita);
-                if ($invitation->gallery_cover) Storage::disk('public')->delete($invitation->gallery_cover);
-                
+                if ($invitation->foto_pria)
+                    Storage::disk('public')->delete($invitation->foto_pria);
+                if ($invitation->foto_wanita)
+                    Storage::disk('public')->delete($invitation->foto_wanita);
+                if ($invitation->gallery_cover)
+                    Storage::disk('public')->delete($invitation->gallery_cover);
+
                 if ($invitation->music && !is_numeric($invitation->music)) {
                     Storage::disk('public')->delete($invitation->music);
                 }
-                
+
                 foreach ($invitation->galleries as $gallery) {
                     Storage::disk('public')->delete($gallery->image);
                     $gallery->delete();
                 }
-                
+
                 $invitation->gifts()->delete();
                 $invitation->rsvps()->delete();
                 $invitation->delete();
@@ -1024,7 +971,7 @@ $invitation->update($updateData);
     public function upgradeToPremium(Request $request)
     {
         $user = auth()->user();
-        
+
         // Buat subscription aktif selama 30 hari
         \App\Models\Subscription::updateOrCreate(
             ['user_id' => $user->id],

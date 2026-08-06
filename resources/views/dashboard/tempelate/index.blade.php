@@ -325,7 +325,6 @@
                         </li>
                     </ul>
 
-<<<<<<< HEAD
                     <div class="tab-content">
                         {{-- ZIP Upload --}}
                         <div class="tab-pane fade show active" id="zip-panel" role="tabpanel">
@@ -355,25 +354,6 @@
                                     <button type="submit" class="btn btn-primary">Upload</button>
                                 </div>
                             </form>
-=======
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold">Template Name</label>
-                            <input type="text" name="name" class="form-control" required>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold">Kategori</label>
-                            <select name="category" class="form-select" required>
-                                <option value="jawa">Adat Jawa</option>
-                                <option value="sunda">Adat Sunda</option>
-                                <option value="minang">Adat Minang</option>
-                                <option value="batak">Adat Batak</option>
-                                <option value="bugis">Adat Bugis</option>
-                                <option value="bali">Adat Bali</option>
-                                <option value="betawi">Adat Betawi</option>
-                                <option value="modern">Modern / Universal</option>
-                            </select>
->>>>>>> cf03afae4c1d966c8748d360e1034ab498ceeb3b
                         </div>
 
                         {{-- Code Import --}}

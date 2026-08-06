@@ -3,9 +3,12 @@
         $firstInvitation = $invitations->first();
         $themeColor = $firstInvitation->theme_color ?? '#FF6B81';
     @endphp
+
     <style>
         :root {
-            --mobile-nav-active-color: {{ $themeColor }};
+            --mobile-nav-active-color:
+                {{ $themeColor }}
+            ;
         }
 
         @media (max-width: 767.98px) {
@@ -57,12 +60,11 @@
                 height: 48px;
             }
         }
-    </style>
-    <style>
+
         .list-group-item {
             padding: 14px 16px !important;
         }
-        
+
         .list-group-item .dropdown-toggle {
             width: 44px;
             height: 44px;
@@ -80,13 +82,13 @@
             padding: 10px 14px;
             font-size: 0.9rem;
         }
-        
+
         @media (max-width: 767.98px) {
             .w-md-100 {
                 width: 100% !important;
             }
         }
-        
+
         @media (max-width: 575.98px) {
             .list-group-item .dropdown-toggle {
                 width: 48px;
@@ -94,8 +96,7 @@
             }
         }
     </style>
-          
-   
+
     <!-- TAB 1: Aktivitas Undangan -->
     <div class="tab-pane fade show active" id="tab1" role="tabpanel" aria-labelledby="tab1-tab">
         <div class="py-10">
@@ -108,7 +109,7 @@
                         @php $status = auth()->user()->subscriptionStatus(); @endphp
                         @if($status == 'active')
                             <span class="badge bg-warning text-dark small mt-1">
-                                <i class="bi bi-star-fill me-1"></i> Premium 
+                                <i class="bi bi-star-fill me-1"></i> Premium
                                 @if(auth()->user()->isAdmin())
                                     (Admin Access)
                                 @elseif(auth()->user()->subscription)
@@ -120,169 +121,174 @@
                         @endif
                     </div>
 
-<<<<<<< HEAD
-                <!-- Container tombol -->
-                <div class="w-md-100 d-flex justify-content-md-end">
-                    @php
-                        $user = auth()->user();
-                        $canCreateMore = $user->isAdmin() || $user->isSubscribed() || $user->invitations->count() < 1;
-                    @endphp
-
-                    @if($canCreateMore)
-                    <button type="button" class="btn btn-sm btn-outline-primary w-md-auto" data-bs-toggle="modal" data-bs-target="#newInvitationModal">
-                        <i class="bi bi-plus-circle me-1"></i> Buat Undangan
-                    </button>
-                    @else
-                    <button type="button" class="btn btn-sm btn-warning w-md-auto" data-bs-toggle="modal" data-bs-target="#upgradeModal">
-                        <i class="bi bi-star me-1"></i> Upgrade ke Premium
-                    </button>
-                    @endif
-=======
                     <!-- Container tombol -->
-                    <div class=" w-md-100 d-flex justify-content-md-end gap-2">
-                        @if($status == 'free' || $status == 'expired')
-                             <a href="{{ route('subscribe.page') }}" class="btn btn-sm btn-warning d-flex align-items-center">
-                                <i class="bi bi-gem me-2"></i> Aktifkan Subscription
-                             </a>
+                    <div class="w-md-100 d-flex justify-content-md-end">
+                        @php
+                            $user = auth()->user();
+                            $canCreateMore = $user->isAdmin() || $user->isSubscribed() || $user->invitations->count() < 1;
+                        @endphp
+
+                        @if($canCreateMore)
+                            <button type="button" class="btn btn-sm btn-outline-primary w-md-auto" data-bs-toggle="modal"
+                                data-bs-target="#newInvitationModal">
+                                <i class="bi bi-plus-circle me-1"></i> Buat Undangan
+                            </button>
+                        @else
+                            <button type="button" class="btn btn-sm btn-warning w-md-auto" data-bs-toggle="modal"
+                                data-bs-target="#upgradeModal">
+                                <i class="bi bi-star me-1"></i> Upgrade ke Premium
+                            </button>
                         @endif
-                        <button type="button" id="bulkDeleteBtn" class="btn btn-sm btn-outline-danger d-none"
-                            onclick="submitBulkDelete()">
-                            <i class="bi bi-trash me-1"></i> Hapus (<span id="selectedCount">0</span>)
-                        </button>
-                        <a href="{{ route('invitation.create') }}" class="btn btn-sm btn-outline-primary  w-md-auto">
-                            <i class="bi bi-plus-circle me-1"></i> Buat Undangan
-                        </a>
                     </div>
->>>>>>> cf03afae4c1d966c8748d360e1034ab498ceeb3b
                 </div>
 
                 <form id="bulkDeleteForm" action="{{ route('invitation.bulk-delete') }}" method="POST">
                     @csrf
-                    <div class="mb-2 px-3 py-2  rounded d-flex align-items-center">
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="selectAll">
-                            <label class="form-check-label small fw-bold" for="selectAll">Pilih Semua</label>
-                        </div>
-<<<<<<< HEAD
 
-                        <!-- Badge Status -->
-
-
-                  <!-- Tombol Aksi -->
-                        <div class="d-flex justify-content-end">
-
-                             <!-- DESKTOP -->
-                             <div class="d-none d-md-flex gap-2">
-                                 <a href="{{ route('invitation.show', $inv->slug) }}"
-                                 class="btn btn-outline-primary btn-sm"
-                                 target="_blank"
-                                 title="Lihat">
-                                     <i class="bi bi-eye"></i>
-                                 </a>
-
-                                 <a href="{{ route('invitation.edit', $inv) }}"
-                                 class="btn btn-outline-primary btn-sm"
-                                 title="Edit">
-                                     <i class="bi bi-pencil"></i>
-                                 </a>
-
-                                 <button type="button"
-                                         class="btn btn-outline-success btn-sm"
-                                         data-bs-toggle="modal"
-                                         data-bs-target="#waModal{{ $inv->id }}"
-                                         title="Bagikan WhatsApp">
-                                     <i class="bi bi-whatsapp"></i>
-                                 </button>
-
-                                 @if(!$inv->is_default)
-                                 <form action="{{ route('invitation.destroy', $inv) }}" method="POST" class="d-inline"
-                                     onsubmit="return confirm('Hapus undangan ini? Data yang sudah dihapus tidak dapat dikembalikan.');">
-                                     @csrf
-                                     @method('DELETE')
-                                     <button type="submit"
-                                         class="btn btn-outline-danger btn-sm"
-                                         title="Hapus">
-                                         <i class="bi bi-trash"></i>
-                                     </button>
-                                 </form>
-                                 @endif
-                             </div>
-
-                            <!-- MOBILE -->
-                            <div class="dropdown d-md-none">
-                                <button class="btn btn-outline-secondary btn-sm"
-                                        type="button"
-                                        data-bs-toggle="dropdown"
-                                        aria-expanded="false">
-                                    <i class="bi bi-three-dots-vertical"></i>
-                                </button>
-
-                                <ul class="dropdown-menu dropdown-menu-end">
-                                    <li>
-                                        <a class="dropdown-item"
-                                        href="{{ route('invitation.show', $inv->slug) }}"
-                                        target="_blank">
-                                            <i class="bi bi-eye me-2"></i> Lihat
-                                        </a>
-                                    </li>
-
-                                    <li>
-                                        <a class="dropdown-item"
-                                        href="{{ route('invitation.edit', $inv) }}">
-                                            <i class="bi bi-pencil me-2"></i> Edit
-                                        </a>
-                                    </li>
-
-                                     <li>
-                                         <button class="dropdown-item text-success"
-                                                 data-bs-toggle="modal"
-                                                 data-bs-target="#waModal{{ $inv->id }}">
-                                             <i class="bi bi-whatsapp me-2"></i> Bagikan WhatsApp
-                                         </button>
-                                     </li>
-
-                                     @if(!$inv->is_default)
-                                     <li>
-                                         <form action="{{ route('invitation.destroy', $inv) }}" method="POST"
-                                             onsubmit="return confirm('Hapus undangan ini? Data yang sudah dihapus tidak dapat dikembalikan.');">
-                                             @csrf
-                                             @method('DELETE')
-                                             <button type="submit" class="dropdown-item text-danger">
-                                                 <i class="bi bi-trash me-2"></i> Hapus
-                                             </button>
-                                         </form>
-                                     </li>
-                                     @endif
-                                </ul>
+                    {{-- Pilihan Select All (Tampilkan jika ada data) --}}
+                    @if($invitations->isNotEmpty())
+                        <div class="mb-2 px-3 py-2 rounded d-flex align-items-center">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="selectAll">
+                                <label class="form-check-label small fw-bold" for="selectAll">Pilih Semua</label>
                             </div>
-
                         </div>
+                    @endif
 
-                    </li>
-                    @empty
-                    <div class="card flex items-center justify-center min-h-[60vh] p-5">
-                        <div class="text-center">
-                            <!-- Icon -->
+                    <ul class="list-group">
+                        @forelse ($invitations as $inv)
+                                            <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap gap-2">
 
-
-                            <!-- Text -->
-                            <h3 class="text-lg font-semibold text-gray-700">
-                                Belum ada undangan yang dibuat
-                            </h3>
-                            <p class="mt-1 text-sm text-gray-500">
-                                Mulai buat undangan pertamamu sekarang
-                            </p>
-
-                            <!-- Button -->
-                            <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#newInvitationModal">
-                                + Buat Undangan
-                            </button>
-                        </div>
-                    </div>
+                                                {{-- Info Kiri (Nama Pengantin) --}}
+                                                <div class="d-flex align-items-center gap-3">
 
 
-                    @endforelse
-                </ul>
+
+                                                    {{-- Checkbox --}}
+                                                    <input type="checkbox" name="ids[]" value="{{ $inv->id }}"
+                                                        class="form-check-input m-0 bulk-checkbox">
+                                                    {{-- Cover --}}
+                                                    @if($inv->gallery_cover)
+                                                        <img src="{{ asset('storage/' . $inv->gallery_cover) }}"
+                                                            class="rounded object-fit-cover flex-shrink-0" style="width: 48px; height: 48px;"
+                                                            alt="Cover">
+                                                    @else
+                                                        <div class="rounded bg-light d-flex align-items-center justify-content-center flex-shrink-0"
+                                                            style="width: 48px; height: 48px;">
+                                                            <i class="bi bi-image text-muted"></i>
+                                                        </div>
+                                                    @endif
+                                                    {{-- Info --}}
+                                                    <div>
+                                                        <h6 class="mb-0">
+                                                            {{ $inv->groom_nickname ?? $inv->groom_name }}
+                                                            &
+                                                            {{ $inv->bride_nickname ?? $inv->bride_name }}
+                                                        </h6>
+                                                        <small class="text-muted">
+                                                            {{ $inv->wedding_date
+                            ? \Carbon\Carbon::parse($inv->wedding_date)->format('d M Y')
+                            : 'Tanggal belum ditentukan' }}
+                                                        </small>
+                                                    </div>
+
+                                                </div>
+
+                                                {{-- Tombol Aksi Kanan --}}
+                                                <div class="d-flex justify-content-end">
+
+                                                    <!-- DESKTOP -->
+                                                    <div class="d-none d-md-flex gap-2">
+                                                        <a href="{{ route('invitation.show', $inv->slug) }}"
+                                                            class="btn btn-outline-primary btn-sm" target="_blank" title="Lihat">
+                                                            <i class="bi bi-eye"></i>
+                                                        </a>
+
+                                                        <a href="{{ route('invitation.edit', $inv) }}"
+                                                            class="btn btn-outline-primary btn-sm" title="Edit">
+                                                            <i class="bi bi-pencil"></i>
+                                                        </a>
+
+                                                        <button type="button" class="btn btn-outline-success btn-sm" data-bs-toggle="modal"
+                                                            data-bs-target="#waModal{{ $inv->id }}" title="Bagikan WhatsApp">
+                                                            <i class="bi bi-whatsapp"></i>
+                                                        </button>
+
+                                                        @if(!$inv->is_default)
+                                                            <form action="{{ route('invitation.destroy', $inv) }}" method="POST"
+                                                                class="d-inline"
+                                                                onsubmit="return confirm('Hapus undangan ini? Data yang sudah dihapus tidak dapat dikembalikan.');">
+                                                                @csrf
+                                                                @method('DELETE')
+                                                                <button type="submit" class="btn btn-outline-danger btn-sm" title="Hapus">
+                                                                    <i class="bi bi-trash"></i>
+                                                                </button>
+                                                            </form>
+                                                        @endif
+                                                    </div>
+
+                                                    <!-- MOBILE -->
+                                                    <div class="dropdown d-md-none">
+                                                        <button class="btn btn-outline-secondary btn-sm" type="button"
+                                                            data-bs-toggle="dropdown" aria-expanded="false">
+                                                            <i class="bi bi-three-dots-vertical"></i>
+                                                        </button>
+
+                                                        <ul class="dropdown-menu dropdown-menu-end">
+                                                            <li>
+                                                                <a class="dropdown-item" href="{{ route('invitation.show', $inv->slug) }}"
+                                                                    target="_blank">
+                                                                    <i class="bi bi-eye me-2"></i> Lihat
+                                                                </a>
+                                                            </li>
+                                                            <li>
+                                                                <a class="dropdown-item" href="{{ route('invitation.edit', $inv) }}">
+                                                                    <i class="bi bi-pencil me-2"></i> Edit
+                                                                </a>
+                                                            </li>
+                                                            <li>
+                                                                <button class="dropdown-item text-success" data-bs-toggle="modal"
+                                                                    data-bs-target="#waModal{{ $inv->id }}">
+                                                                    <i class="bi bi-whatsapp me-2"></i> Bagikan WhatsApp
+                                                                </button>
+                                                            </li>
+
+                                                            @if(!$inv->is_default)
+                                                                <li>
+                                                                    <form action="{{ route('invitation.destroy', $inv) }}" method="POST"
+                                                                        onsubmit="return confirm('Hapus undangan ini? Data yang sudah dihapus tidak dapat dikembalikan.');">
+                                                                        @csrf
+                                                                        @method('DELETE')
+                                                                        <button type="submit" class="dropdown-item text-danger">
+                                                                            <i class="bi bi-trash me-2"></i> Hapus
+                                                                        </button>
+                                                                    </form>
+                                                                </li>
+                                                            @endif
+                                                        </ul>
+                                                    </div>
+
+                                                </div>
+                                            </li>
+                        @empty
+                            <div class="card flex items-center justify-center min-h-[60vh] p-5">
+                                <div class="text-center">
+                                    <h3 class="text-lg font-semibold text-gray-700">
+                                        Belum ada undangan yang dibuat
+                                    </h3>
+                                    <p class="mt-1 text-sm text-gray-500">
+                                        Mulai buat undangan pertamamu sekarang
+                                    </p>
+
+                                    <button type="button" class="btn btn-sm btn-outline-primary mt-3" data-bs-toggle="modal"
+                                        data-bs-target="#newInvitationModal">
+                                        + Buat Undangan
+                                    </button>
+                                </div>
+                            </div>
+                        @endforelse
+                    </ul>
+                </form>
 
             </div>
         </div>
@@ -305,26 +311,31 @@
 
                             <div class="mb-3">
                                 <label class="form-label fw-semibold">Nama Mempelai Pria</label>
-                                <input type="text" name="groom_name" class="form-control" placeholder="Nama lengkap" required>
+                                <input type="text" name="groom_name" class="form-control" placeholder="Nama lengkap"
+                                    required>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label fw-semibold">Nama Panggilan Pria</label>
-                                <input type="text" name="groom_nickname" class="form-control" placeholder="Nama panggilan (opsional)">
+                                <input type="text" name="groom_nickname" class="form-control"
+                                    placeholder="Nama panggilan (opsional)">
                             </div>
 
                             <div class="mb-3">
                                 <label class="form-label fw-semibold">Nama Mempelai Wanita</label>
-                                <input type="text" name="bride_name" class="form-control" placeholder="Nama lengkap" required>
+                                <input type="text" name="bride_name" class="form-control" placeholder="Nama lengkap"
+                                    required>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label fw-semibold">Nama Panggilan Wanita</label>
-                                <input type="text" name="bride_nickname" class="form-control" placeholder="Nama panggilan (opsional)">
+                                <input type="text" name="bride_nickname" class="form-control"
+                                    placeholder="Nama panggilan (opsional)">
                             </div>
 
                             <div id="modal_error" class="alert alert-danger d-none"></div>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Batal</button>
+                            <button type="button" class="btn btn-outline-secondary"
+                                data-bs-dismiss="modal">Batal</button>
                             <button type="submit" class="btn btn-primary" id="quickCreateBtn">
                                 <i class="bi bi-plus-lg me-1"></i> Buat Undangan
                             </button>
@@ -340,11 +351,13 @@
                 <div class="modal-content">
                     <div class="modal-header bg-warning text-white">
                         <h5 class="modal-title"><i class="bi bi-star me-2"></i> Upgrade ke Premium</h5>
-                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Tutup"></button>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                            aria-label="Tutup"></button>
                     </div>
                     <div class="modal-body">
                         <p>Anda telah mencapai batas maksimal <strong>1 undangan</strong> untuk akun gratis.</p>
-                        <p>Upgrade ke berlangganan premium untuk membuat undangan tanpa batas dan mengakses fitur eksklusif lainnya.</p>
+                        <p>Upgrade ke berlangganan premium untuk membuat undangan tanpa batas dan mengakses fitur
+                            eksklusif lainnya.</p>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Nanti</button>
@@ -356,55 +369,59 @@
             </div>
         </div>
 
-        @forelse ($invitations as $inv)
-        <div class="modal fade" id="waModal{{ $inv->id }}" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog modal-lg modal-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-header bg-success text-white">
-                        <h5 class="modal-title"><i class="bi bi-whatsapp me-2"></i> Bagikan Undangan</h5>
-                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Tutup"></button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="form-floating mb-3">
-                            <input type="text" class="form-control" id="recipientName{{ $inv->id }}" placeholder="Nama penerima">
-                            <label for="recipientName{{ $inv->id }}">Nama Penerima</label>
+        {{-- Ulangi Modal WhatsApp untuk setiap data undangan yang ada --}}
+        @foreach ($invitations as $inv)
+            <div class="modal fade" id="waModal{{ $inv->id }}" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-lg modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header bg-success text-white">
+                            <h5 class="modal-title"><i class="bi bi-whatsapp me-2"></i> Bagikan Undangan</h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                                aria-label="Tutup"></button>
                         </div>
-                        <div class="form-floating">
-                            <textarea class="form-control" id="waMessage{{ $inv->id }}" placeholder="Pesan undangan" style="height:200px">
-Assalamu'alaikum Wr. Wb.,
+                        <div class="modal-body">
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control" id="recipientName{{ $inv->id }}"
+                                    placeholder="Nama penerima">
+                                <label for="recipientName{{ $inv->id }}">Nama Penerima</label>
+                            </div>
+                            <div class="form-floating">
+                                <textarea class="form-control" id="waMessage{{ $inv->id }}" placeholder="Pesan undangan"
+                                    style="height:200px">
+                                                                        Assalamu'alaikum Wr. Wb.,
 
-Dengan hormat, kami mengundang Bapak/Ibu/Saudara/i [nama] untuk hadir dalam acara pernikahan kami.
+                                                                        Dengan hormat, kami mengundang Bapak/Ibu/Saudara/i [nama] untuk hadir dalam acara pernikahan kami.
 
-Detail acara dapat dilihat di tautan berikut:
-{{ route('invitation.show', [$inv->slug]) }}?to=[nama]
+                                                                        Detail acara dapat dilihat di tautan berikut:
+                                                                        {{ route('invitation.show', [$inv->slug]) }}?to=[nama]
 
-Kami merasa bahagia dan terhormat apabila Bapak/Ibu/Saudara/i berkenan hadir serta memberikan doa restu.
+                                                                        Kami merasa bahagia dan terhormat apabila Bapak/Ibu/Saudara/i berkenan hadir serta memberikan doa restu.
 
-Hormat kami,
-Maisaroh & Aceng Fikri
+                                                                        Hormat kami,
+                                                                        {{ $inv->groom_nickname }} & {{ $inv->bride_nickname }}
 
-Wassalamu'alaikum Wr. Wb.
-                            </textarea>
-                            <label for="waMessage{{ $inv->id }}">Pesan Undangan</label>
+                                                                        Wassalamu'alaikum Wr. Wb.
+                                                                                                    </textarea>
+                                <label for="waMessage{{ $inv->id }}">Pesan Undangan</label>
+                            </div>
                         </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                        <button type="button" class="btn btn-success" onclick="shareWAWithRecipient('recipientName{{ $inv->id }}','waMessage{{ $inv->id }}')">
-                            <i class="bi bi-whatsapp me-1"></i> Share via WhatsApp
-                        </button>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                            <button type="button" class="btn btn-success"
+                                onclick="shareWAWithRecipient('recipientName{{ $inv->id }}','waMessage{{ $inv->id }}')">
+                                <i class="bi bi-whatsapp me-1"></i> Share via WhatsApp
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-        @empty
-        @endforelse
+        @endforeach
 
         <script>
             document.addEventListener('DOMContentLoaded', function () {
                 const quickCreateForm = document.getElementById('quickCreateForm');
                 if (quickCreateForm) {
-                    quickCreateForm.addEventListener('submit', async function(e) {
+                    quickCreateForm.addEventListener('submit', async function (e) {
                         e.preventDefault();
 
                         const errorDiv = document.getElementById('modal_error');
@@ -429,7 +446,7 @@ Wassalamu'alaikum Wr. Wb.
                             if (!response.ok) {
                                 let errorMsg = result.message || 'Terjadi kesalahan.';
                                 if (result.errors) {
-                                    errorMsg += '<br><ul class="mb-0">' + Object.values(result.errors).map(function(e) { return '<li>' + e[0] + '</li>'; }).join('') + '</ul>';
+                                    errorMsg += '<br><ul class="mb-0">' + Object.values(result.errors).map(function (e) { return '<li>' + e[0] + '</li>'; }).join('') + '</ul>';
                                 }
                                 errorDiv.innerHTML = errorMsg;
                                 errorDiv.classList.remove('d-none');
@@ -447,7 +464,7 @@ Wassalamu'alaikum Wr. Wb.
                                 confirmButtonColor: '#FF6B81',
                                 timer: 1500,
                                 showConfirmButton: false,
-                            }).then(function() {
+                            }).then(function () {
                                 window.location.href = '/home';
                             });
 
@@ -463,198 +480,6 @@ Wassalamu'alaikum Wr. Wb.
                     });
                 }
             });
-=======
-                    </div>
-                    <ul class="list-group">
-                        @forelse ($invitations as $inv)
-                            <li class="list-group-item list-group-item-action d-flex justify-content-between align-items-center mb-2 shadow-sm rounded"
-                                style="transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-2px)'"
-                                onmouseout="this.style.transform='translateY(0)'">
-                                <div class="d-flex align-items-center flex-grow-1 gap-3">
-                                    <div class="form-check me-2">
-                                        <input class="form-check-input row-checkbox" type="checkbox" name="ids[]"
-                                            value="{{ $inv->id }}">
-                                    </div>
-
-                                    <!-- Info Undangan -->
-                                    <div class="d-flex align-items-center gap-3">
-                                        <i class="bi bi-person-circle fs-3 text-primary"></i>
-                                        <div>
-                                            <p class="mb-0 fw-semibold">
-                                                <a href="{{ route('invitation.detail', $inv->slug) }}">
-                                                    {{ ($inv->bride_name ?: 'Mempelai Wanita') }} & {{ ($inv->groom_name ?: 'Mempelai Pria') }}
-                                                </a>
-                                            </p>
-                                            <small class="text-muted">Tanggal Nikah: {{ $inv->wedding_date ?: '-' }}</small>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Badge Status -->
-
-
-                                <!-- Tombol Aksi -->
-                                <div class="d-flex justify-content-end">
-
-                                    <!-- DESKTOP -->
-                                    <div class="d-none d-md-flex gap-2">
-                                        <a href="{{ route('invitation.show', $inv->slug) }}"
-                                            class="btn btn-outline-primary btn-sm" target="_blank" title="Lihat">
-                                            <i class="bi bi-eye"></i>
-                                        </a>
-
-                                        <a href="{{ route('invitation.edit', $inv) }}"
-                                            class="btn btn-outline-primary btn-sm" title="Edit">
-                                            <i class="bi bi-pencil"></i>
-                                        </a>
-
-                                        <button type="button" class="btn btn-outline-success btn-sm" data-bs-toggle="modal"
-                                            data-bs-target="#waModal{{ $inv->id }}" title="Bagikan WhatsApp">
-                                            <i class="bi bi-whatsapp"></i>
-                                        </button>
-
-                                        <!-- Tombol Hapus (Desktop) -->
-                                        <button type="button"
-                                            onclick="confirmDelete('{{ route('invitation.destroy', $inv) }}')"
-                                            class="btn btn-outline-danger btn-sm" title="Hapus">
-                                            <i class="bi bi-trash"></i>
-                                        </button>
-                                    </div>
-
-                                    <!-- MOBILE -->
-                                    <div class="dropdown d-md-none">
-                                        <button class="btn btn-outline-secondary btn-sm" type="button"
-                                            data-bs-toggle="dropdown" aria-expanded="false">
-                                            <i class="bi bi-three-dots-vertical"></i>
-                                        </button>
-
-                                        <ul class="dropdown-menu dropdown-menu-end">
-                                            <li>
-                                                <a class="dropdown-item" href="{{ route('invitation.show', $inv->slug) }}"
-                                                    target="_blank">
-                                                    <i class="bi bi-eye me-2"></i> Lihat
-                                                </a>
-                                            </li>
-
-                                            <li>
-                                                <a class="dropdown-item" href="{{ route('invitation.edit', $inv) }}">
-                                                    <i class="bi bi-pencil me-2"></i> Edit
-                                                </a>
-                                            </li>
-
-                                            <li>
-                                                <button class="dropdown-item text-success" data-bs-toggle="modal"
-                                                    data-bs-target="#waModal{{ $inv->id }}">
-                                                    <i class="bi bi-whatsapp me-2"></i> Bagikan WhatsApp
-                                                </button>
-                                            </li>
-
-                                            <li>
-                                                <hr class="dropdown-divider">
-                                            </li>
-
-                                            <li>
-                                                <button type="button"
-                                                    onclick="confirmDelete('{{ route('invitation.destroy', $inv) }}')"
-                                                    class="dropdown-item text-danger">
-                                                    <i class="bi bi-trash me-2"></i> Hapus
-                                                </button>
-                                            </li>
-                                        </ul>
-                                    </div>
-
-                                </div>
-
-                            </li>
-
-                            <!-- Modal WhatsApp -->
-                            <div class="modal fade" id="waModal{{ $inv->id }}" tabindex="-1" aria-hidden="true">
-                                <div class="modal-dialog modal-lg modal-dialog-centered">
-                                    <div class="modal-content">
-                                        <div class="modal-header bg-success text-white">
-                                            <h5 class="modal-title"><i class="bi bi-whatsapp me-2"></i> Bagikan Undangan
-                                            </h5>
-                                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                                                aria-label="Tutup"></button>
-                                        </div>
-                                        <div class="modal-body">
-                                            <div class="form-floating mb-3">
-                                                <input type="text" class="form-control" id="recipientName{{ $inv->id }}"
-                                                    placeholder="Nama penerima">
-                                                <label for="recipientName{{ $inv->id }}">Nama Penerima</label>
-                                            </div>
-                                            <div class="form-floating">
-                                                <textarea class="form-control" id="waMessage{{ $inv->id }}"
-                                                    placeholder="Pesan undangan" style="height:250px">Assalamu’alaikum Wr. Wb.
-
-Tanpa mengurangi rasa hormat, perkenankan kami mengundang Bapak/Ibu/Saudara/i [nama] untuk menghadiri acara pernikahan kami:
-
-{{ $inv->bride_name }} & {{ $inv->groom_name }}
-
-Detail acara dan lokasi dapat dilihat melalui tautan undangan digital berikut:
-{{ route('invitation.show', [$inv->slug]) }}?to=[nama]
-
-Merupakan suatu kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir dan memberikan doa restu.
-
-Terima kasih.
-Wassalamu’alaikum Wr. Wb.</textarea>
-                                                <label for="waMessage{{ $inv->id }}">Pesan Undangan</label>
-                                            </div>
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary"
-                                                data-bs-dismiss="modal">Batal</button>
-                                            <button type="button" class="btn btn-success"
-                                                onclick="shareWAWithRecipient('recipientName{{ $inv->id }}','waMessage{{ $inv->id }}')">
-                                                <i class="bi bi-whatsapp me-1"></i> Share via WhatsApp
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        @empty
-                            <div class="card flex items-center justify-center min-h-[60vh] p-5">
-                                <div class="text-center">
-                                    <!-- Icon -->
-
-
-                                    <!-- Text -->
-                                    <h3 class="text-lg font-semibold text-gray-700">
-                                        Belum ada undangan yang dibuat
-                                    </h3>
-                                    <p class="mt-1 text-sm text-gray-500">
-                                        Mulai buat undangan pertamamu sekarang
-                                    </p>
-
-                                    <!-- Button -->
-                                    <a href="{{ route('invitation.create') }}" class="btn btn-sm  btn-outline-primary">
-                                        + Buat Undangan
-                                    </a>
-                                </div>
-                            </div>
-
-
-                        @endforelse
-                    </ul>
-                </form>
-
-            </div>
-        </div>
-        <!-- Hidden form for single delete -->
-        <form id="deleteForm" method="POST" style="display:none">
-            @csrf
-            @method('DELETE')
-        </form>
-
-        <script>
-            function confirmDelete(url) {
-                if (confirm('Hapus undangan ini? Semua data akan hilang permanen.')) {
-                    const form = document.getElementById('deleteForm');
-                    form.action = url;
-                    form.submit();
-                }
-            }
->>>>>>> cf03afae4c1d966c8748d360e1034ab498ceeb3b
 
             function shareWAWithRecipient(recipientId, messageId) {
                 const recipient = document.getElementById(recipientId).value.trim();
@@ -669,45 +494,6 @@ Wassalamu’alaikum Wr. Wb.</textarea>
                 const waUrl = "https://wa.me/?text=" + encodeURIComponent(message);
                 window.open(waUrl, '_blank');
             }
-<<<<<<< HEAD
         </script>
     </div>
-=======
-
-            // --- Bulk Delete Logic ---
-            const selectAll = document.getElementById('selectAll');
-            const rowCheckboxes = document.querySelectorAll('.row-checkbox');
-            const bulkDeleteBtn = document.getElementById('bulkDeleteBtn');
-            const selectedCount = document.getElementById('selectedCount');
-
-            function updateBulkDeleteUI() {
-                const checkedCount = document.querySelectorAll('.row-checkbox:checked').length;
-                selectedCount.textContent = checkedCount;
-                if (checkedCount > 0) {
-                    bulkDeleteBtn.classList.remove('d-none');
-                } else {
-                    bulkDeleteBtn.classList.add('d-none');
-                }
-            }
-
-            if (selectAll) {
-                selectAll.addEventListener('change', function () {
-                    rowCheckboxes.forEach(cb => {
-                        cb.checked = this.checked;
-                    });
-                    updateBulkDeleteUI();
-                });
-            }
-
-            rowCheckboxes.forEach(cb => {
-                cb.addEventListener('change', updateBulkDeleteUI);
-            });
-
-            function submitBulkDelete() {
-                if (confirm('Hapus ' + document.querySelectorAll('.row-checkbox:checked').length + ' undangan terpilih?')) {
-                    document.getElementById('bulkDeleteForm').submit();
-                }
-            }
-        </script>
->>>>>>> cf03afae4c1d966c8748d360e1034ab498ceeb3b
 </x-app-layout>

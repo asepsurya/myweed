@@ -115,24 +115,8 @@ class TempelateController extends Controller
             mkdir($dir, 0755, true);
         }
 
-<<<<<<< HEAD
         $filename = $slug . '-placeholder.png';
         $path = $dir . '/' . $filename;
-=======
-    // Simpan thumbnail
-    $thumb = $request->file('thumbnail')->store('templates', 'public');
-    $preview = $request->file('preview')->store('preview', 'public');
-    // Simpan ke database
-    Template::create([
-        'name' => $request->name,
-        'slug' => $folderName,
-        'thumbnail' => $thumb,
-        'preview' => $preview,
-        'category' => $request->category,
-        'sections' => ["hero","couple","event","gallery","rsvp","music"],
-        'is_active' => true
-    ]);
->>>>>>> cf03afae4c1d966c8748d360e1034ab498ceeb3b
 
         if (!file_exists($path)) {
             $img = imagecreatetruecolor(400, 300);
@@ -220,12 +204,7 @@ class TempelateController extends Controller
         $template = Template::findOrFail($id);
         $template->increment('views_count');
 
-<<<<<<< HEAD
-        if ($invitation->template_id != $template->id) {
-=======
-        // Update template_id (Hanya jika login)
         if (auth()->check() && $invitation->template_id != $template->id) {
->>>>>>> cf03afae4c1d966c8748d360e1034ab498ceeb3b
             $invitation->update([
                 'template_id' => $template->id
             ]);

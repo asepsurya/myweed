@@ -19,54 +19,56 @@ class TempelateSeed extends Seeder
     {
 
         $templates = [
-        [
-            'name' => 'Simple',
-            'slug' => 'simple-theme',
-            'thumb' => 'elegant-thumb.png',
-            'preview' => 'simple_preview.png',
-        ],
-        [
-            'name' => 'Luxe Amour',
-            'slug' => 'luxe-amour',
-            'thumb' => 'elegant-thumb.png',
-            'preview' => 'elegant_preview.webp',
-        ],
-        [
-            'name' => 'Elegant Classic',
-            'slug' => 'elegant_tempelate',
-            'thumb' => 'elegant-thumb.png',
-            'preview' => 'simple_preview.png',
-        ],
-        [
-            'name' => 'Anime Tempelate',
-            'slug' => 'anime',
-            'thumb' => 'elegant-thumb.png',
-            'preview' => 'simple_preview.png',
-        ],
-        [
-            'name' => 'Adat Tempelate',
-            'slug' => 'adat',
-            'thumb' => 'elegant-thumb.png',
-            'preview' => 'simple_preview.png',
-        ],
-        [
-            'name' => 'Element Tempelate',
-            'slug' => 'element',
-            'thumb' => 'elegant-thumb.png',
-            'preview' => 'simple_preview.png',
-        ],
-        [
-            'name' => 'Sample Tempelate',
-            'slug' => 'sample',
-            'thumb' => 'elegant-thumb.png',
-            'preview' => 'simple_preview.png',
-        ],
-    ];
+            [
+                'name' => 'Simple',
+                'slug' => 'simple-theme',
+                'thumb' => 'elegant-thumb.png',
+                'preview' => 'simple_preview.png',
+            ],
+            [
+                'name' => 'Luxe Amour',
+                'slug' => 'luxe-amour',
+                'thumb' => 'elegant-thumb.png',
+                'preview' => 'elegant_preview.webp',
+            ],
+            [
+                'name' => 'Java dreams Maroon',
+                'slug' => 'java-dream-maroon',
+                'thumb' => 'elegant-thumb.png',
+                'preview' => 'elegant_preview.webp',
+            ],
+            [
+                'name' => 'Romantic Anime Dreams',
+                'slug' => 'romantic-anime',
+                'thumb' => 'elegant-thumb.png',
+                'preview' => 'elegant_preview.webp',
+            ],
+            [
+                'name' => 'Sweety Lovely',
+                'slug' => 'sweet-lovely',
+                'thumb' => 'elegant-thumb.png',
+                'preview' => 'elegant_preview.webp',
+            ],
+
+            [
+                'name' => 'Adat Tempelate',
+                'slug' => 'adat',
+                'thumb' => 'elegant-thumb.png',
+                'preview' => 'simple_preview.png',
+            ],
+
+            [
+                'name' => 'Sample Tempelate',
+                'slug' => 'sample',
+                'thumb' => 'elegant-thumb.png',
+                'preview' => 'simple_preview.png',
+            ],
+        ];
 
 
-      foreach ($templates as $tpl) {
+        foreach ($templates as $tpl) {
 
-            $thumbSource   = public_path('tempelate/thumb/' . $tpl['thumb']);
+            $thumbSource = public_path('tempelate/thumb/' . $tpl['thumb']);
             $previewSource = public_path('tempelate/preview/' . $tpl['preview']);
 
             // Simpan thumbnail
@@ -84,11 +86,11 @@ class TempelateSeed extends Seeder
             Template::updateOrCreate(
                 ['slug' => $tpl['slug']],
                 [
-                    'name'       => $tpl['name'],
-                    'thumbnail'  => $thumb,
-                    'preview'    => $preview,
-                    'sections'   => ["hero", "couple", "event", "gallery", "rsvp", "music"],
-                    'is_active'  => true
+                    'name' => $tpl['name'],
+                    'thumbnail' => $thumb,
+                    'preview' => $preview,
+                    'sections' => ["hero", "couple", "event", "gallery", "rsvp", "music"],
+                    'is_active' => true
                 ]
             );
         }
