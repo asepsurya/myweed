@@ -227,25 +227,6 @@
         .comment-content h5 { font-size: 0.95rem; color: var(--primary-color); margin-bottom: 4px; font-family: 'Playfair Display', serif; font-weight: 600; }
         .comment-content p { font-size: 0.85rem; color: #555; line-height: 1.5; word-wrap: break-word; }
 
-        /* Music Control */
-        .music-control {
-            position: fixed; bottom: 20px; right: 20px; width: 50px; height: 50px;
-            background-color: var(--primary-color); border-radius: 50%;
-            display: flex; align-items: center; justify-content: center; cursor: pointer;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); z-index: 9999;
-            border: 2px solid white; color: white; font-size: 24px;
-            transition: transform 0.3s;
-        }
-        .music-control.playing { animation: spin 4s linear infinite; }
-
-        .youtube-player-container {
-            position: absolute;
-            left: -9999px;
-            width: 2px;
-            height: 2px;
-            overflow: hidden;
-        }
-
         /* Footer */
         footer { background-color: var(--primary-color); color: var(--white); padding: 60px 20px; text-align: center; }
 
@@ -303,11 +284,6 @@
     </style>
 </head>
 <body>
-
-    <!-- Audio Control -->
-    <div id="musicBtn" class="music-control">
-        <i class="ti ti-player-play" id="musicIcon"></i>
-    </div>
 
     <!-- Main Container -->
     <div class="mobile-container">
@@ -605,32 +581,7 @@
 
     </div> <!-- End Mobile Container -->
 
-    <!-- Audio Element -->
-    @if(!empty($invitation->music_youtube_url))
-        @php
-            preg_match('/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|v\/|u\/\w\/|shorts\/)(?<id>[A-Za-z0-9_-]{11}))/i', $invitation->music_youtube_url, $ytMatches);
-            $youtubeId = $ytMatches['id'] ?? '';
-        @endphp
-        @if($youtubeId)
-        <div id="youtubePlayerContainer" class="youtube-player-container">
-            <iframe id="youtubeIframe" width="2" height="2"
-                src="https://www.youtube.com/embed/{{ $youtubeId }}?enablejsapi=1&autoplay=1&loop=1&playlist={{ $youtubeId }}&controls=0&modestbranding=1&rel=0&mute=1"
-                frameborder="0" allow="autoplay; encrypted-media; picture-in-picture"
-                onload="window.ytIframeReady = true;">
-            </iframe>
-        </div>
-        @endif
-    @else
-    <audio id="bgMusic" loop>
-        @if(!empty($invitation->music) && $invitation->music == 0)
-            <source src="{{ asset('storage/'.$invitation->music) }}" type="audio/mpeg">
-        @elseif(!empty($invitation->musicPreset))
-            <source src="{{ asset('storage/'.$invitation->musicPreset->audio_url) }}" type="audio/mpeg">
-        @else
-            <source src="https://www.bensound.com/bensound-music/bensound-romantic.mp3" type="audio/mpeg">
-        @endif
-    </audio>
-    @endif
+    <x-music-player :invitation="$invitation" />
 
     <!-- JavaScript Logic -->
     <script>
@@ -651,115 +602,6 @@
                     console.error('Gagal menyalin', err);
                 });
             };
-
-            /* --- 2. MUSIC PLAYER --- */
-            @if(!empty($invitation->music_youtube_url))
-            @if(!empty($youtubeId))
-            const musicBtn = document.getElementById('musicBtn');
-            const musicIcon = document.getElementById('musicIcon');
-            let ytPlaying = false;
-            let ytMuted = true;
-
-            const toggleMusicIcon = (isPlaying) => {
-                if(isPlaying) {
-                    musicIcon.classList.remove('ti-player-play');
-                    musicIcon.classList.add('ti-player-pause');
-                    musicBtn.classList.add('playing');
-                } else {
-                    musicIcon.classList.remove('ti-player-pause');
-                    musicIcon.classList.add('ti-player-play');
-                    musicBtn.classList.remove('playing');
-                }
-            };
-
-            function sendYtCommand(command) {
-                const ytIframe = document.getElementById('youtubeIframe');
-                if (!ytIframe) return;
-                const msg = JSON.stringify({ event: 'command', func: command, args: [] });
-                if (window.ytIframeReady) {
-                    setTimeout(() => ytIframe.contentWindow.postMessage(msg, '*'), 200);
-                } else {
-                    const check = setInterval(() => {
-                        if (window.ytIframeReady) { clearInterval(check); setTimeout(() => ytIframe.contentWindow.postMessage(msg, '*'), 200); }
-                    }, 100);
-                    setTimeout(() => { clearInterval(check); setTimeout(() => ytIframe.contentWindow.postMessage(msg, '*'), 500); }, 2000);
-                }
-            }
-
-            function pauseYoutube() { sendYtCommand('pauseVideo'); sendYtCommand('pause'); ytPlaying = false; toggleMusicIcon(false); }
-            function playYoutube() { sendYtCommand('playVideo'); sendYtCommand('play'); ytPlaying = true; toggleMusicIcon(true); }
-
-            window.addEventListener('scroll', () => { if (!ytPlaying) { playYoutube(); } }, { once: true });
-
-            musicBtn.addEventListener('click', () => {
-                if (ytPlaying) {
-                    pauseYoutube();
-                } else {
-                    if (ytMuted) { sendYtCommand('unMute'); ytMuted = false; }
-                    playYoutube();
-                }
-            });
-
-            document.addEventListener("visibilitychange", () => {
-                if (document.hidden) {
-                    pauseYoutube();
-                } else if (hasInteracted) {
-                    playYoutube();
-                }
-            });
-            @endif
-            @else
-            const bgMusic = document.getElementById('bgMusic');
-            const musicBtn = document.getElementById('musicBtn');
-            const musicIcon = document.getElementById('musicIcon');
-            let hasInteracted = false;
-
-            const toggleMusicIcon = (isPlaying) => {
-                if(isPlaying) {
-                    musicIcon.classList.remove('ti-player-play');
-                    musicIcon.classList.add('ti-player-pause');
-                    musicBtn.classList.add('playing');
-                } else {
-                    musicIcon.classList.remove('ti-player-pause');
-                    musicIcon.classList.add('ti-player-play');
-                    musicBtn.classList.remove('playing');
-                }
-            };
-
-            window.addEventListener('scroll', () => {
-                if (!hasInteracted && bgMusic.paused) {
-                    bgMusic.play().then(() => {
-                        toggleMusicIcon(true);
-                        hasInteracted = true;
-                    }).catch(e => console.log("Autoplay dicegah browser"));
-                }
-            }, { once: true });
-
-            musicBtn.addEventListener('click', () => {
-                if (bgMusic.paused) {
-                    bgMusic.play();
-                    toggleMusicIcon(true);
-                } else {
-                    bgMusic.pause();
-                    toggleMusicIcon(false);
-                }
-            });
-
-            document.addEventListener("visibilitychange", () => {
-                if (document.hidden) {
-                    if (!bgMusic.paused) {
-                        bgMusic.pause();
-                        toggleMusicIcon(false);
-                    }
-                } else {
-                    if (hasInteracted) {
-                        bgMusic.play().then(() => {
-                            toggleMusicIcon(true);
-                        }).catch(() => {});
-                    }
-                }
-            });
-            @endif
 
             /* --- 3. COUNTDOWN TIMER --- */
             const weddingDateString = "{{ $invitation->wedding_date ?? '' }}";

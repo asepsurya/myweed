@@ -340,24 +340,6 @@
         .badge-hadir { font-size: 0.7rem; background: var(--accent-color); color: var(--primary-color); padding: 2px 8px; border-radius: 10px; font-family: 'Lato', sans-serif; }
         .badge-tidak { font-size: 0.7rem; background: #ccc; color: #333; padding: 2px 8px; border-radius: 10px; font-family: 'Lato', sans-serif; }
 
-        /* Music Control */
-        .music-control {
-            position: fixed; bottom: 20px; right: 20px; width: 50px; height: 50px;
-            background-color: var(--primary-color); border-radius: 50%;
-            display: flex; align-items: center; justify-content: center; cursor: pointer;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); z-index: 9999;
-            border: 2px solid var(--accent-color); color: var(--accent-color); font-size: 24px;
-        }
-        .music-control.playing { animation: spin 4s linear infinite; }
-
-        .youtube-player-container {
-            position: absolute;
-            left: -9999px;
-            width: 2px;
-            height: 2px;
-            overflow: hidden;
-        }
-
         footer {
             background-color: var(--primary-color);
             color: var(--accent-color);
@@ -396,10 +378,6 @@
 </head>
 
 <body>
-
-    <div id="musicBtn" class="music-control">
-        <i class="ti ti-player-play" id="musicIcon"></i>
-    </div>
 
     <div class="mobile-container">
 
@@ -599,25 +577,7 @@
         <div id="toast">Pesan terkirim dengan sukses.</div>
     </div>
 
-    @if(!empty($invitation->music_youtube_url))
-        @php
-            preg_match('/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|v\/|u\/\w\/|shorts\/)(?<id>[A-Za-z0-9_-]{11}))/i', $invitation->music_youtube_url, $ytMatches);
-            $youtubeId = $ytMatches['id'] ?? '';
-        @endphp
-        @if($youtubeId)
-        <div id="youtubePlayerContainer" class="youtube-player-container">
-            <iframe id="youtubeIframe" width="2" height="2"
-                src="https://www.youtube.com/embed/{{ $youtubeId }}?enablejsapi=1&autoplay=1&loop=1&playlist={{ $youtubeId }}&controls=0&modestbranding=1&rel=0&mute=1"
-                frameborder="0" allow="autoplay; encrypted-media; picture-in-picture"
-                onload="window.ytIframeReady = true;">
-            </iframe>
-        </div>
-        @endif
-    @else
-    <audio id="bgMusic" loop>
-        <source src="{{ $invitation->musicPreset ? asset('storage/' . $invitation->musicPreset->audio_url) : 'https://www.bensound.com/bensound-music/bensound-romantic.mp3' }}" type="audio/mpeg">
-    </audio>
-    @endif
+    <x-music-player :invitation="$invitation" />
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
@@ -642,65 +602,6 @@
                 entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
             }, { threshold: 0.1 });
             document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
-
-            // 3. Music
-            @if(!empty($invitation->music_youtube_url))
-            @if(!empty($youtubeId))
-            const musicBtn = document.getElementById('musicBtn');
-            const musicIcon = document.getElementById('musicIcon');
-            let ytPlaying = false;
-            let ytMuted = true;
-
-            function toggleMusicIcon(isPlaying) {
-                if(isPlaying) {
-                    musicIcon.classList.replace('ti-player-play', 'ti-player-pause');
-                    musicBtn.classList.add('playing');
-                } else {
-                    musicIcon.classList.replace('ti-player-pause', 'ti-player-play');
-                    musicBtn.classList.remove('playing');
-                }
-            }
-
-            function sendYtCommand(command) {
-                const ytIframe = document.getElementById('youtubeIframe');
-                if (!ytIframe) return;
-                const msg = JSON.stringify({ event: 'command', func: command, args: [] });
-                if (window.ytIframeReady) {
-                    setTimeout(() => ytIframe.contentWindow.postMessage(msg, '*'), 200);
-                } else {
-                    const check = setInterval(() => {
-                        if (window.ytIframeReady) { clearInterval(check); setTimeout(() => ytIframe.contentWindow.postMessage(msg, '*'), 200); }
-                    }, 100);
-                    setTimeout(() => { clearInterval(check); setTimeout(() => ytIframe.contentWindow.postMessage(msg, '*'), 500); }, 2000);
-                }
-            }
-
-            function pauseYoutube() { sendYtCommand('pauseVideo'); sendYtCommand('pause'); ytPlaying = false; toggleMusicIcon(false); }
-            function playYoutube() { sendYtCommand('playVideo'); sendYtCommand('play'); ytPlaying = true; toggleMusicIcon(true); }
-
-            window.addEventListener('scroll', () => { if (!ytPlaying) { playYoutube(); } }, { once: true });
-            musicBtn.addEventListener('click', () => {
-                if (ytPlaying) {
-                    pauseYoutube();
-                } else {
-                    if (ytMuted) { sendYtCommand('unMute'); ytMuted = false; }
-                    playYoutube();
-                }
-            });
-            document.addEventListener('visibilitychange', () => { if (document.hidden) { pauseYoutube(); } else if (ytPlaying) { playYoutube(); } });
-            @endif
-            @else
-            const bgMusic = document.getElementById('bgMusic');
-            const musicBtn = document.getElementById('musicBtn');
-            const musicIcon = document.getElementById('musicIcon');
-            let hasInteracted = false;
-
-            const playMusic = () => { bgMusic.play().catch(()=>{}); musicIcon.classList.replace('ti-player-play', 'ti-player-pause'); musicBtn.classList.add('playing'); };
-            const pauseMusic = () => { bgMusic.pause(); musicIcon.classList.replace('ti-player-pause', 'ti-player-play'); musicBtn.classList.remove('playing'); };
-            
-            window.addEventListener('scroll', () => { if (!hasInteracted) { playMusic(); hasInteracted = true; } }, { once: true });
-            musicBtn.onclick = () => { if (bgMusic.paused) playMusic(); else pauseMusic(); };
-            @endif
 
             // 4. RSVP Logic (Terbaru di Atas)
             const invId = "{{ $invitation->id }}";

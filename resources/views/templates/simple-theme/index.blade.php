@@ -66,9 +66,6 @@
 </head>
 <body class="bg-gray-300 flex justify-center font-sans">
 
-    <!-- Music Control -->
-    <div id="musicBtn" class="fixed bottom-6 left-6 w-12 h-12 bg-primary text-white rounded-full flex items-center justify-center shadow-2xl cursor-pointer z-50">▶</div>
-
     <div class="w-full max-w-[420px] min-h-screen bg-[#fdfaf6] relative overflow-hidden shadow-2xl">
         
         <!-- Hero Section -->
@@ -263,19 +260,7 @@
     </div>
 
     <!-- Audio -->
-    @if($invitation->youtube_url)
-        @php
-            if (preg_match('%(?:youtube(?:-nocookie)?\.com/(?:[^/]+/.+/|(?:v|e(?:mbed)?)/|.*[?&]v=)|youtu\.be/)([^"&?/ ]{11})%i', $invitation->youtube_url, $match)) {
-                $videoId = $match[1];
-            }
-        @endphp
-        @if(isset($videoId))
-            <iframe id="ytIframe" width="0" height="0" src="https://www.youtube.com/embed/{{ $videoId }}?enablejsapi=1&autoplay=1&loop=1&playlist={{ $videoId }}" frameborder="0" allow="autoplay" style="display:none"></iframe>
-        @endif
-    @endif
-    <audio id="bgMusic" loop>
-        <source src="{{ $invitation->musicPreset ? asset('storage/'.$invitation->musicPreset->audio_url) : 'https://www.bensound.com/bensound-music/bensound-romantic.mp3' }}" type="audio/mpeg">
-    </audio>
+    <x-music-player :invitation="$invitation" />
 
     <script>
         // Scroll Animation
@@ -295,32 +280,6 @@
             document.getElementById("minutes").innerText = String(Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60))).padStart(2, '0');
             document.getElementById("seconds").innerText = String(Math.floor((distance % (1000 * 60)) / 1000)).padStart(2, '0');
         }, 1000);
-
-        // Music Logic
-        const bgMusic = document.getElementById('bgMusic');
-        const musicBtn = document.getElementById('musicBtn');
-        const ytIframe = document.getElementById('ytIframe');
-        let hasInteracted = false;
-        let isYoutube = {{ $invitation->youtube_url ? 'true' : 'false' }};
-
-        window.copyToClipboard = (text) => {
-            navigator.clipboard.writeText(text).then(() => {
-                alert("Berhasil disalin!");
-            });
-        };
-
-        function playMusic() {
-            if (isYoutube && ytIframe) { ytIframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*'); }
-            else if (bgMusic) { bgMusic.play().catch(e => console.log("Autoplay blocked")); }
-            musicBtn.innerHTML = '⏸';
-        }
-        function pauseMusic() {
-            if (isYoutube && ytIframe) { ytIframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*'); }
-            else if (bgMusic) { bgMusic.pause(); }
-            musicBtn.innerHTML = '▶';
-        }
-        window.addEventListener('scroll', () => { if (!hasInteracted) { playMusic(); hasInteracted = true; } }, { once: true });
-        musicBtn.onclick = () => { if (musicBtn.innerHTML === '▶') playMusic(); else pauseMusic(); };
 
         // RSVP Logic
         const invId = "{{ $invitation->id }}";

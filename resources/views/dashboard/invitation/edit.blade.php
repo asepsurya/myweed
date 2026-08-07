@@ -502,7 +502,7 @@
                         @csrf
                         @method('PUT')
                         <input type="hidden" name="id" value="{{ $invitation->id }}">
-                        @include('dashboard.invitation.form_tabs', ['invitation' => $invitation])
+                        @include('dashboard.invitation.form_tabs', ['invitation' => $invitation, 'music' => $music, 'templates' => $templates])
                         <input type="hidden" name="template_id" id="template_id_hidden"
                             value="{{ $invitation->template_id }}">
                     </form>

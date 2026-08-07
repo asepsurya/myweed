@@ -20,6 +20,10 @@ class DashboardController extends Controller
             'rsvpNo'           => Rsvp::where('attending', '2')->count(),
             'invitations'     => Invitation::latest()->take(5)->get(),
             'recentRsvps'     => Rsvp::latest()->take(5)->get(),
+            'totalMusic'      => Music::count(),
+            'activeMusic'     => Music::where('is_active', true)->count(),
+            'inactiveMusic'   => Music::where('is_active', false)->count(),
+            'totalMusicSize'  => Music::sum('file_size') ?? 0,
         ]);
     }
     public function indexUser(){

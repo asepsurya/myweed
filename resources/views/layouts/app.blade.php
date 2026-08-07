@@ -102,7 +102,182 @@
             border-top-color: var(--wedding-pink) !important;
         }
 
-       
+        /* =============================================
+           MUSIC PLAYER
+        ============================================= */
+        .wedding-music-player {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            z-index: 1050;
+            width: 320px;
+            max-width: calc(100vw - 40px);
+        }
+
+        .music-player-inner {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            border-radius: 16px;
+            padding: 12px 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+        }
+
+        [data-bs-theme="dark"] .music-player-inner {
+            background: rgba(33, 37, 41, 0.95);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .music-toggle-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: none;
+            background: linear-gradient(135deg, var(--wedding-pink, #FF6B81), var(--wedding-pink-dark, #e84a6a));
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            flex-shrink: 0;
+            box-shadow: 0 4px 12px rgba(255, 107, 129, 0.4);
+            transition: transform 0.2s ease;
+        }
+
+        .music-toggle-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .music-toggle-btn svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .music-player-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .music-cover {
+            width: 40px;
+            height: 40px;
+            object-fit: cover;
+            flex-shrink: 0;
+        }
+
+        .music-details {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .music-title {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            color: #1e293b;
+        }
+
+        .music-artist {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .music-player-controls {
+            display: none;
+        }
+
+        .music-progress {
+            height: 4px;
+            accent-color: var(--wedding-pink, #FF6B81);
+            cursor: pointer;
+        }
+
+        .music-time {
+            font-size: 10px;
+            white-space: nowrap;
+        }
+
+        .music-volume-control {
+            display: none;
+        }
+
+        @media (min-width: 576px) {
+            .wedding-music-player {
+                width: 380px;
+            }
+
+            .music-player-controls {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                flex: 1;
+                min-width: 0;
+            }
+
+            .music-progress {
+                flex: 1;
+                min-width: 60px;
+            }
+
+            .music-volume-control {
+                display: flex;
+                align-items: center;
+                gap: 4px;
+            }
+
+            .music-volume {
+                width: 60px;
+                height: 4px;
+                accent-color: var(--wedding-pink, #FF6B81);
+                cursor: pointer;
+            }
+        }
+
+        @media (max-width: 575.98px) {
+            .wedding-music-player {
+                bottom: 80px;
+                left: 10px;
+                width: calc(100vw - 20px);
+            }
+
+            .music-player-inner {
+                padding: 10px 12px;
+                gap: 8px;
+            }
+
+            .music-toggle-btn {
+                width: 38px;
+                height: 38px;
+            }
+
+            .music-cover {
+                width: 32px;
+                height: 32px;
+            }
+
+            .music-title {
+                font-size: 12px;
+            }
+
+            .music-artist {
+                font-size: 10px;
+            }
+
+            .music-time {
+                font-size: 9px;
+            }
+
+            .music-progress {
+                height: 3px;
+            }
+        }
     </style>
 </head>
 <!-- roundedui -->

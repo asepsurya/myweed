@@ -183,6 +183,18 @@
         }
         .stat-icon.red::after { background: var(--danger); }
 
+        .stat-icon.pink {
+            background: linear-gradient(135deg, #fce7f3, #fbcfe8);
+            color: #db2777;
+        }
+        .stat-icon.pink::after { background: #db2777; }
+
+        .stat-icon.teal {
+            background: linear-gradient(135deg, #ccfbf1, #99f6e4);
+            color: #0d9488;
+        }
+        .stat-icon.teal::after { background: #0d9488; }
+
         .stat-number {
             font-family: 'Lexend', sans-serif;
             font-weight: 700;
@@ -716,6 +728,34 @@
                         <div class="stat-label">Tidak Hadir</div>
                     </div>
                 </div>
+            </div>
+
+            <div class="col-6 col-md-6 col-lg-3">
+                <a href="{{ route('music.index') }}" class="text-decoration-none">
+                    <div class="card stat-card">
+                        <div class="card-body">
+                            <div class="stat-icon pink">
+                                <i class="bi bi-music-note-list"></i>
+                            </div>
+                            <div class="stat-number">{{ $totalMusic ?? 0 }}</div>
+                            <div class="stat-label">Total Lagu</div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+            <div class="col-6 col-md-6 col-lg-3">
+                <a href="{{ route('music.index') }}" class="text-decoration-none">
+                    <div class="card stat-card">
+                        <div class="card-body">
+                            <div class="stat-icon teal">
+                                <i class="bi bi-check-circle-fill"></i>
+                            </div>
+                            <div class="stat-number">{{ $activeMusic ?? 0 }}</div>
+                            <div class="stat-label">Lagu Aktif</div>
+                        </div>
+                    </div>
+                </a>
             </div>
 
             {{-- ============================================== --}}

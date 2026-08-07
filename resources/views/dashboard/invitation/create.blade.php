@@ -896,7 +896,7 @@ function selectTemplateCard(card) {
                                                 <select id="music_id" name="music_id" class="form-select">
                                                     <option value="">-- Pilih Lagu --</option>
                                                     @foreach ($music as $item)
-                                                    <option value="{{ $item->id }}"                                                         data-audio="{{ asset('storage/' . $item->audio_url) }}">
+                                                    <option value="{{ $item->id }}" data-audio="{{ $item->full_audio_url }}">
                                                         {{ $item->title }}
                                                     </option>
                                                     @endforeach

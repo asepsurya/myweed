@@ -402,22 +402,25 @@
                         style="max-height: 250px; overflow-y: auto; padding-right: 5px;">
                         @foreach ($music as $m)
                             <div class="music-list-item {{ ($inv && $inv->music == $m->id) ? 'selected' : '' }}"
-                                data-id="{{ $m->id }}" data-url="{{ asset('storage/' . $m->audio_url) }}"
+                                data-id="{{ $m->id }}" data-url="{{ $m->full_audio_url }}"
+                                data-cover="{{ $m->full_cover_url ?? asset('tempelate/no_sound.webp') }}"
+                                data-artist="{{ $m->artist }}" data-title="{{ $m->title }}"
                                 onclick="handleMusicClick(this)">
                                 <div class="music-icon-box">
                                     <i class="bi bi-music-note-beamed"></i>
                                 </div>
                                 <div class="flex-grow-1 overflow-hidden">
                                     <p class="mb-0 fw-bold music-title-clamp">{{ $m->title }}</p>
-                                    <p class="mb-0 text-muted" style="font-size: 11px;">{{ $m->category ?? 'Romantis' }}</p>
+                                    <p class="mb-0 text-muted" style="font-size: 11px;">{{ $m->artist }}</p>
                                 </div>
                                 <div class="music-play-btn"
-                                    onclick="event.stopPropagation(); previewAudio('{{ asset('storage/' . $m->audio_url) }}')">
+                                    onclick="event.stopPropagation(); previewAudio('{{ $m->full_audio_url }}')">
                                     <i class="bi bi-play-circle-fill fs-4"></i>
                                 </div>
                             </div>
                         @endforeach
                     </div>
+                    <small class="text-muted d-block mt-2">Pilih lagu latar yang akan ditampilkan di undangan.</small>
                 </div>
 
                 {{-- Konten: YouTube --}}

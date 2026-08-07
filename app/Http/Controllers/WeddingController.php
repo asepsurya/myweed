@@ -12,7 +12,8 @@ class WeddingController extends Controller
         $invitation = Invitation::with([
                 'template',
                 'galleries',
-                'rsvps'
+                'rsvps',
+                'musicPreset'
             ])
             ->where('slug', $slug)
             ->first();

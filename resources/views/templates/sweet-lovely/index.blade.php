@@ -128,34 +128,6 @@
             display: none;
         }
 
-        .music-control {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            width: 50px;
-            height: 50px;
-            background-color: #68002b;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            z-index: 9999;
-            border: 2px solid white;
-            color: white;
-            font-size: 24px;
-            transition: transform 0.3s;
-        }
-
-        .music-control.playing {
-            animation: musicSpin 4s linear infinite;
-        }
-
-        @keyframes musicSpin {
-            100% { transform: rotate(360deg); }
-        }
-
         .fade-in {
             opacity: 0;
             transform: translateY(30px);
@@ -209,19 +181,7 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        .youtube-player-container {
-            position: absolute;
-            left: -9999px;
-            width: 2px;
-            height: 2px;
-            overflow: hidden;
-        }
-
         @media (max-width: 768px) {
-            .music-control {
-                top: 20px;
-                bottom: auto;
-            }
         }
     </style>
 </head>
@@ -272,11 +232,6 @@
     </nav>
 
     <main class="w-full mx-auto">
-
-<!-- Audio Control -->
-    <div id="musicBtn" class="music-control">
-        <span class="material-symbols-outlined" id="musicIcon">play_arrow</span>
-    </div>
 
         <!-- Hero Section -->
         <section class="h-screen flex flex-col items-center text-center relative overflow-hidden text-on-primary px-margin-mobile" id="home">
@@ -619,32 +574,7 @@
     <!-- Toast -->
     <div id="toast">Pesan terkirim dengan terima kasih.</div>
 
-    <!-- Audio Element -->
-    @if(!empty($invitation->music_youtube_url))
-        @php
-            preg_match('/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|v\/|u\/\w\/|shorts\/)(?<id>[A-Za-z0-9_-]{11}))/i', $invitation->music_youtube_url, $ytMatches);
-            $youtubeId = $ytMatches['id'] ?? '';
-        @endphp
-        @if($youtubeId)
-        <div id="youtubePlayerContainer" class="youtube-player-container">
-            <iframe id="youtubeIframe" width="2" height="2"
-                src="https://www.youtube.com/embed/{{ $youtubeId }}?enablejsapi=1&amp;autoplay=1&amp;loop=1&amp;playlist={{ $youtubeId }}&amp;controls=0&amp;modestbranding=1&amp;rel=0&amp;mute=1"
-                frameborder="0" allow="autoplay; encrypted-media; picture-in-picture"
-                onload="window.ytIframeReady = true;">
-            </iframe>
-        </div>
-        @endif
-    @else
-    <audio id="bgMusic" loop>
-        @if(!empty($invitation->music) && !isset($invitation->musicPreset))
-            <source src="{{ '/storage/' . $invitation->music }}" type="audio/mpeg" />
-        @elseif(!empty($invitation->musicPreset->audio_url))
-            <source src="{{ '/storage/' . $invitation->musicPreset->audio_url }}" type="audio/mpeg" />
-        @else
-            <source src="https://www.bensound.com/bensound-music/bensound-romantic.mp3" type="audio/mpeg" />
-        @endif
-    </audio>
-    @endif
+    <x-music-player :invitation="$invitation" />
 
     <script>
     document.addEventListener('DOMContentLoaded', () => {
@@ -688,59 +618,6 @@
             if (months < 12) return months + ' bulan yang lalu';
             return Math.floor(months / 12) + ' tahun yang lalu';
         }
-
-        /* ---------- 2. MUSIC PLAYER ---------- */
-        @if(!empty($invitation->music_youtube_url) && !empty($youtubeId))
-        let ytIframe = document.getElementById('youtubeIframe');
-        let ytMuted = true;
-        const musicBtn = document.getElementById('musicBtn');
-        const musicIcon = document.getElementById('musicIcon');
-        let hasInteracted = false;
-
-        function toggleMusicIcon(isPlaying) {
-            musicIcon.textContent = isPlaying ? 'pause' : 'play_arrow';
-            musicBtn.classList.toggle('playing', isPlaying);
-        }
-
-        function sendYtCommand(command) {
-            if (!ytIframe) return;
-            const msg = JSON.stringify({ event: 'command', func: command, args: [] });
-            if (window.ytIframeReady) {
-                setTimeout(() => ytIframe.contentWindow.postMessage(msg, '*'), 200);
-            } else {
-                const check = setInterval(() => {
-                    if (window.ytIframeReady) { clearInterval(check); setTimeout(() => ytIframe.contentWindow.postMessage(msg, '*'), 200); }
-                }, 100);
-                setTimeout(() => { clearInterval(check); setTimeout(() => ytIframe.contentWindow.postMessage(msg, '*'), 500); }, 2000);
-            }
-        }
-
-        function pauseYoutube() { sendYtCommand('pauseVideo'); sendYtCommand('pause'); toggleMusicIcon(false); }
-        function playYoutube() {
-            if (ytMuted) { sendYtCommand('unMute'); ytMuted = false; }
-            sendYtCommand('playVideo'); sendYtCommand('play'); toggleMusicIcon(true);
-        }
-
-        window.addEventListener('scroll', () => { if (!hasInteracted) { playYoutube(); hasInteracted = true; } }, { once: true });
-        musicBtn.addEventListener('click', () => { if (ytMuted || !hasInteracted) { playYoutube(); hasInteracted = true; } else { pauseYoutube(); } });
-        document.addEventListener('visibilitychange', () => { if (document.hidden) { pauseYoutube(); } else if (hasInteracted && !ytMuted) { playYoutube(); } });
-        @else
-        const bgMusic = document.getElementById('bgMusic');
-        const musicBtn = document.getElementById('musicBtn');
-        const musicIcon = document.getElementById('musicIcon');
-        let hasInteracted = false;
-
-        function toggleMusicIcon(isPlaying) {
-            musicIcon.textContent = isPlaying ? 'pause' : 'play_arrow';
-            musicBtn.classList.toggle('playing', isPlaying);
-        }
-
-        musicBtn.addEventListener('click', () => { if (bgMusic.paused) { bgMusic.play(); toggleMusicIcon(true); } else { bgMusic.pause(); toggleMusicIcon(false); } });
-        bgMusic.play().then(() => { toggleMusicIcon(true); }).catch(() => {});
-        document.addEventListener('visibilitychange', () => {
-            if (document.hidden) { if (!bgMusic.paused) { bgMusic.pause(); toggleMusicIcon(false); } }
-        });
-        @endif
 
         /* ---------- 3. COUNTDOWN ---------- */
         const weddingDate = new Date('{{ \Carbon\Carbon::parse($invitation->wedding_date)->format("Y-m-d H:i:s") }}').getTime();

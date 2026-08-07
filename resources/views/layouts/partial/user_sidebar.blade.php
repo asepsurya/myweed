@@ -40,6 +40,14 @@
                     <span class="menu-name">Daftar Pasangan</span>
                 </a>
             </li>
+
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('music.index') }}" data-bs-toggle="tooltip"
+                    data-bs-placement="right" title="Music Library">
+                    <i class="menu-icon bi bi-music-note-list me-2"></i>
+                    <span class="menu-name">Music Library</span>
+                </a>
+            </li>
             @endrole
 
             <li class="nav-item">

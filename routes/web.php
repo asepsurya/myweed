@@ -79,8 +79,12 @@ Route::middleware(['auth'])->group(function () {
     })->where('path', '.*')->name('template.asset');
 
     Route::get('/musics', [MusicController::class, 'index'])->middleware('role:admin')->name('music.index');
-    Route::post('/music/store', [MusicController::class, 'store'])->name('music.store');
-    Route::delete('music/destroy/{id}', [MusicController::class, 'destroy'])->name('music.destroy');
+    Route::get('/music/create', [MusicController::class, 'create'])->middleware('role:admin')->name('music.create');
+    Route::post('/music/store', [MusicController::class, 'store'])->middleware('role:admin')->name('music.store');
+    Route::get('/music/{music}/edit', [MusicController::class, 'edit'])->middleware('role:admin')->name('music.edit');
+    Route::put('/music/{music}', [MusicController::class, 'update'])->middleware('role:admin')->name('music.update');
+    Route::delete('music/destroy/{id}', [MusicController::class, 'destroy'])->middleware('role:admin')->name('music.destroy');
+    Route::post('/music/sync-r2', [MusicController::class, 'syncR2'])->middleware('role:admin')->name('music.sync-r2');
 
     Route::get('/gifts', [GiftController::class, 'index'])->name('gift.index')->middleware('subscription');
     Route::post('/gifts', [GiftController::class, 'store'])->name('gift.store')->middleware('subscription');
