@@ -125,19 +125,17 @@ class MusicController extends Controller
     public function destroy(Music $music)
     {
         try {
-            DB::transaction(function () use ($music) {
-                if ($music->audio_url) {
-                    $this->uploader->delete($music->audio_url);
-                }
-                if ($music->music_url && $music->music_url !== $music->audio_url) {
-                    $this->uploader->delete($music->music_url);
-                }
-                if ($music->cover_url) {
-                    $this->uploader->delete($music->cover_url);
-                }
+            if ($music->audio_url) {
+                $this->uploader->delete($music->audio_url);
+            }
+            if ($music->music_url && $music->music_url !== $music->audio_url) {
+                $this->uploader->delete($music->music_url);
+            }
+            if ($music->cover_url) {
+                $this->uploader->delete($music->cover_url);
+            }
 
-                $music->delete();
-            });
+            $music->delete();
 
             if (request()->wantsJson() || request()->ajax()) {
                 return response()->json(['success' => true, 'message' => 'Lagu berhasil dihapus.']);

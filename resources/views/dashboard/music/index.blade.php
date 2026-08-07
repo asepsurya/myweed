@@ -187,7 +187,7 @@
                                             <div class="text-muted small" id="preview-artist-{{ $music->id }}"></div>
                                             <div class="d-flex flex-column flex-sm-row align-items-start align-items-sm-center gap-2 mt-2">
                                                 <audio id="preview-audio-{{ $music->id }}" controls class="flex-grow-1"
-                                                    style="max-width: 400px; min-width: 200px;" crossorigin="anonymous"></audio>
+                                                    style="max-width: 400px; min-width: 200px;"></audio>
                                             </div>
                                             <div id="waveform-wrapper-{{ $music->id }}" class="waveform-wrapper mt-2">
                                                 <canvas id="visualizer-{{ $music->id }}" width="600" height="80"
@@ -278,7 +278,6 @@
                 const waveformWrapper = document.getElementById('waveform-wrapper-' + id);
                 const canvas = document.getElementById('visualizer-' + id);
 
-                audio.crossOrigin = 'anonymous';
                 audio.src = url;
                 audio.load();
 
@@ -350,7 +349,7 @@
                     dataArray = new Uint8Array(analyser.frequencyBinCount);
                     isInitialized = true;
                 } catch (e) {
-                    console.error('Web Audio API not supported:', e);
+                    console.error('Visualizer init failed (CORS?):', e);
                 }
             }
 
@@ -492,46 +491,15 @@
             audio.id = 'directAudioPlayer';
             audio.controls = true;
             audio.style.cssText = 'position:fixed; bottom:20px; right:20px; z-index:9999; width:320px; max-width:calc(100vw - 40px); box-shadow:0 4px 12px rgba(0,0,0,0.15); border-radius:8px;';
+            audio.src = url;
             document.body.appendChild(audio);
 
-            function tryPlay(crossOrigin) {
-                return new Promise((resolve, reject) => {
-                    audio.crossOrigin = crossOrigin;
-                    audio.src = url;
-
-                    const onCanPlay = () => {
-                        audio.removeEventListener('canplay', onCanPlay);
-                        audio.removeEventListener('error', onError);
-                        audio.play().then(() => resolve()).catch(reject);
-                    };
-
-                    const onError = (e) => {
-                        audio.removeEventListener('canplay', onCanPlay);
-                        audio.removeEventListener('error', onError);
-                        reject(new Error('Audio playback failed with crossOrigin=' + crossOrigin));
-                    };
-
-                    audio.addEventListener('canplay', onCanPlay);
-                    audio.addEventListener('error', onError);
-                    audio.load();
-                });
-            }
-
-            tryPlay('anonymous')
-                .then(() => {
-                    console.log('Playing with CORS:', url);
-                })
-                .catch(() => {
-                    console.warn('CORS playback failed, retrying without CORS...');
-                    return tryPlay(null);
-                })
-                .then(() => {
-                    console.log('Playing (fallback):', url);
-                })
-                .catch(err => {
-                    console.error('Playback failed:', err);
-                    alert('Gagal memutar audio.\n\nPastikan:\n1. File ada di R2 dan public\n2. CORS bucket mengizinkan akses\n3. URL tidak memerlukan login');
-                });
+            audio.play().then(() => {
+                console.log('Playing:', url);
+            }).catch(err => {
+                console.error('Playback failed:', err);
+                alert('Gagal memutar audio. Pastikan file tidak diproteksi dan URL valid.');
+            });
         }
     </script>
 </x-app-layout>

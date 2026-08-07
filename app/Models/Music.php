@@ -28,24 +28,17 @@ class Music extends Model
 
     public function getMusicUrlAttribute()
     {
-        return $this->attributes['music_url'] ?: $this->attributes['audio_url'];
+        return $this->attributes['music_url'] ?? $this->attributes['audio_url'] ?? null;
     }
 
     public function getFullAudioUrlAttribute()
     {
-        $url = $this->attributes['music_url'] ?: $this->attributes['audio_url'];
+        $url = $this->attributes['music_url'] ?? $this->attributes['audio_url'] ?? null;
         if (!$url) return null;
         if (filter_var($url, FILTER_VALIDATE_URL)) {
             return $url;
         }
-
-        $disk = config('music.disk', 'r2');
-
-        if ($disk === 'local' || $disk === 'public') {
-            return asset('storage/' . $url);
-        }
-
-        return Storage::disk($disk)->url($url);
+        return Storage::disk('r2')->url($url);
     }
 
     public function getFullCoverUrlAttribute()

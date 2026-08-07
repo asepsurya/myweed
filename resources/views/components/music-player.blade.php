@@ -222,7 +222,7 @@
                 waveformAnalyser.connect(waveformAudioCtx.destination);
                 waveformDataArray = new Uint8Array(waveformAnalyser.frequencyBinCount);
             } catch (e) {
-                console.error('Waveform init failed:', e);
+                console.error('Waveform init failed (CORS?):', e);
                 return;
             }
         }
