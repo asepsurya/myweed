@@ -5,6 +5,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>{{ $invitation->groom_nickname ?? 'Pasangan' }} &amp; {{ $invitation->bride_nickname ?? 'Pasangan' }} | The Wedding</title>
+    
+    <!-- Tambahkan Google Fonts untuk Handwriting -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
     <style>
         :root {
             --color-bg: #EAE3D6;
@@ -12,7 +18,8 @@
             --color-accent: #D7C4A3;
             --color-text-box: #F5F1E9;
             --color-text: #4A3E35;
-            --font-main: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            --font-main: 'Poppins', sans-serif;
+            --font-handwriting: 'Great Vibes', cursive;
         }
 
         * {
@@ -33,14 +40,9 @@
             display: flex;
             justify-content: center;
             align-items: center;
-
         }
 
-
-
-
         #mobile-app {
-
             width: 100%;
             max-width: 430px;
             height: 100vh;
@@ -70,7 +72,6 @@
                 top: -10%;
                 transform: translateX(0) rotate(0deg);
             }
-
             100% {
                 opacity: 0.2;
                 top: 105%;
@@ -78,6 +79,7 @@
             }
         }
 
+        /* LAYER COVER & THANK YOU SCREEN */
         #cover-screen,
         #thankyou-screen {
             position: absolute;
@@ -104,64 +106,103 @@
         }
 
         .cover-card {
-            background: var(--color-text-box);
-            padding: 20px 15px;
-            border-radius: 18px;
-            border: 3px solid var(--color-primary);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            background: rgba(245, 241, 233, 0.95);
+            padding: 30px 25px;
+            border-radius: 12px;
+            border: 1px solid var(--color-primary);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
             width: 100%;
             display: flex;
             flex-direction: column;
             align-items: center;
             z-index: 102;
+            position: relative;
+        }
+
+        /* Dekorasi garis bingkai dalam */
+        .cover-card::before {
+            content: '';
+            position: absolute;
+            top: 6px; left: 6px; right: 6px; bottom: 6px;
+            border: 1px solid var(--color-accent);
+            border-radius: 8px;
+            pointer-events: none;
+        }
+
+        .cover-subtitle {
+            font-size: 0.7em;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--color-primary);
+            margin-bottom: 10px;
+            font-weight: 500;
         }
 
         .cover-title {
-            font-size: 1.4em;
-            color: var(--color-primary);
-            margin: 6px 0;
-            font-weight: bold;
+            font-family: var(--font-handwriting);
+            font-size: 3em;
+            color: var(--color-text);
+            margin: 0;
+            font-weight: 400;
+            line-height: 1.2;
+        }
+
+        .cover-divider {
+            width: 50px;
+            height: 1px;
+            background-color: var(--color-primary);
+            margin: 15px 0;
         }
 
         .couple-preview {
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 10px;
-            margin: 8px 0;
+            gap: 15px;
+            margin: 5px 0 15px 0;
         }
 
         .couple-preview img {
-            width: 70px;
-            height: 70px;
+            width: 75px;
+            height: 75px;
             border-radius: 50%;
             object-fit: cover;
-            border: 3px solid var(--color-primary);
+            border: 2px solid var(--color-primary);
             background-color: white;
-            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .couple-preview span {
+            font-family: var(--font-handwriting);
+            font-size: 2.5em;
+            color: var(--color-primary);
         }
 
         .guest-tag {
-            background-color: var(--color-accent);
-            padding: 4px 12px;
-            border-radius: 15px;
+            background-color: transparent;
+            border: 1px dashed var(--color-primary);
+            padding: 6px 15px;
+            border-radius: 20px;
             font-size: 0.8em;
-            margin: 4px 0 10px 0;
+            margin: 5px 0 20px 0;
             font-weight: 600;
+            color: var(--color-primary);
         }
 
+        /* TOMBOL */
         .btn-main {
             background-color: var(--color-primary);
             color: white;
             border: none;
-            padding: 10px 14px;
+            padding: 12px 16px;
             font-size: 0.8em;
-            border-radius: 8px;
+            border-radius: 20px;
             cursor: pointer;
-            font-weight: bold;
+            font-weight: 600;
             width: 100%;
-            margin-bottom: 6px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 8px;
+            box-shadow: 0 4px 8px rgba(142, 124, 108, 0.2);
+            transition: transform 0.2s;
         }
 
         .btn-main:active {
@@ -171,16 +212,16 @@
         .btn-secondary {
             background-color: transparent;
             color: var(--color-primary);
-            border: 1.5px solid var(--color-primary);
-            padding: 7px 12px;
+            border: 1px solid var(--color-primary);
+            padding: 8px 14px;
             font-size: 0.75em;
-            border-radius: 8px;
+            border-radius: 20px;
             cursor: pointer;
             width: 100%;
             font-weight: 600;
         }
 
-        /* OVERLAY MEKAR BUKA SURAT SATU LAYAR */
+        /* OVERLAY MEKAR BUKA SURAT */
         #fullscreen-envelope-overlay {
             position: absolute;
             top: 0;
@@ -196,29 +237,26 @@
             pointer-events: none;
         }
 
-        .full-flap-top {
+        .full-flap-top,
+        .full-flap-bottom {
             position: absolute;
-            top: 0;
             left: 0;
             width: 100%;
             height: 50%;
             background-color: var(--color-primary);
-            transform-origin: top;
             transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
             z-index: 122;
+        }
+
+        .full-flap-top {
+            top: 0;
+            transform-origin: top;
             border-bottom: 3px solid var(--color-accent);
         }
 
         .full-flap-bottom {
-            position: absolute;
             bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 50%;
-            background-color: var(--color-primary);
             transform-origin: bottom;
-            transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-            z-index: 122;
             border-top: 3px solid var(--color-accent);
         }
 
@@ -254,6 +292,7 @@
             transform: scale(1);
         }
 
+        /* KONTROL AUDIO */
         .audio-control {
             position: absolute;
             top: 10px;
@@ -270,6 +309,7 @@
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
+        /* MODAL */
         .modal {
             position: absolute;
             top: 0;
@@ -286,7 +326,7 @@
 
         .modal-card {
             background: var(--color-text-box);
-            padding: 16px;
+            padding: 20px;
             border-radius: 14px;
             border: 3px solid var(--color-primary);
             width: 100%;
@@ -299,10 +339,10 @@
         .modal-card select,
         .modal-card textarea {
             width: 100%;
-            padding: 8px;
-            margin: 5px 0;
+            padding: 10px;
+            margin: 8px 0;
             border: 1.5px solid var(--color-primary);
-            border-radius: 6px;
+            border-radius: 8px;
             font-size: 0.8em;
             font-family: inherit;
         }
@@ -329,6 +369,7 @@
             border: 2px solid var(--color-primary);
         }
 
+        /* AREA GAME */
         #game-container {
             background-image: url('{{ url('template-assets/romantic-anime/image/bg1.jpg') }}');
             background-size: cover;
@@ -338,6 +379,7 @@
             position: relative;
             display: flex;
             justify-content: center;
+            overflow: hidden;
         }
 
         /* KOTAK TEKS DIALOG */
@@ -349,51 +391,50 @@
             white-space: pre-line;
             flex-grow: 1;
             padding-right: 6px;
-
-            /* Kustomisasi Scrollbar untuk Firefox */
             scrollbar-width: thin;
             scrollbar-color: rgba(142, 124, 108, 0.4) transparent;
         }
 
-        /* Kustomisasi Scrollbar untuk Webkit (Chrome, Safari, Edge, Mobile Browser) */
         #dialog-text::-webkit-scrollbar {
             width: 3px;
-            /* Dikecilkan sangat tipis */
         }
 
         #dialog-text::-webkit-scrollbar-track {
             background: transparent;
-            /* Area track transparan agar blend */
         }
 
         #dialog-text::-webkit-scrollbar-thumb {
             background-color: rgba(142, 124, 108, 0.35);
-            /* Warna primary dengan transparansi halus */
             border-radius: 10px;
-            /* Sudut melengkung halus */
         }
 
         #dialog-text::-webkit-scrollbar-thumb:hover {
             background-color: rgba(142, 124, 108, 0.6);
-            /* Sedikit lebih tegas saat di-hover/touch */
         }
 
+        /* KARAKTER */
         .character-container {
             position: absolute;
-            bottom: 100px;
+            bottom: 0;
+            left: 0;
             width: 100%;
+            height: 100%;
             display: flex;
             justify-content: space-between;
-            padding: 0 15px;
+            align-items: flex-end;
+            padding: 0 5px;
             z-index: 5;
+            pointer-events: none;
         }
 
         .character {
-            height: 40vh;
-            max-height: 380px;
+            height: auto;
+            max-height: 45vh;
+            max-width: 45%;
+            object-fit: contain;
+            margin-bottom: 135px;
             filter: grayscale(100%) opacity(0.35);
             transition: filter 0.3s ease, transform 0.25s ease, opacity 0.3s ease;
-            object-fit: contain;
         }
 
         .character.active {
@@ -438,16 +479,6 @@
             flex-shrink: 0;
         }
 
-        #dialog-text {
-            font-size: 0.8em;
-            line-height: 1.4;
-            overflow-y: auto;
-            word-wrap: break-word;
-            white-space: pre-line;
-            flex-grow: 1;
-            padding-right: 3px;
-        }
-
         .next-arrow {
             align-self: flex-end;
             font-size: 0.65em;
@@ -457,15 +488,8 @@
         }
 
         @keyframes blink {
-
-            0%,
-            100% {
-                opacity: 0;
-            }
-
-            50% {
-                opacity: 1;
-            }
+            0%, 100% { opacity: 0; }
+            50% { opacity: 1; }
         }
 
         #options-container {
@@ -484,8 +508,8 @@
             background-color: var(--color-primary);
             color: white;
             border: none;
-            padding: 8px 12px;
-            border-radius: 8px;
+            padding: 10px 12px;
+            border-radius: 20px;
             font-size: 0.78em;
             cursor: pointer;
             text-align: center;
@@ -497,15 +521,46 @@
             background-color: var(--color-text);
         }
 
-        .comment-item { display: flex; gap: 15px; background: #f9f9f9; padding: 15px; border-radius: 12px; margin-bottom: 15px; border: 1px solid #eee; }
-        .comment-avatar { width: 40px; height: 40px; border-radius: 50%; background: #ddd; flex-shrink: 0; overflow: hidden; display: flex; align-items: center; justify-content: center; }
-        .comment-content h5 { font-size: 0.95rem; color: var(--color-primary); margin-bottom: 4px; font-weight: 600; }
-        .comment-content p { font-size: 0.85rem; color: #555; line-height: 1.5; word-wrap: break-word; }
+        /* KOMENTAR RSVP */
+        .comment-item {
+            display: flex;
+            gap: 15px;
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            border: 1px solid #eee;
+        }
+
+        .comment-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #ddd;
+            flex-shrink: 0;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .comment-content h5 {
+            font-size: 0.95rem;
+            color: var(--color-primary);
+            margin-bottom: 4px;
+            font-weight: 600;
+        }
+
+        .comment-content p {
+            font-size: 0.85rem;
+            color: #555;
+            line-height: 1.5;
+            word-wrap: break-word;
+        }
     </style>
 </head>
 
 <body>
-
     <div id="mobile-app">
         <div id="flower-container"></div>
 
@@ -527,46 +582,44 @@
         <!-- COVER SCREEN AWAL -->
         <div id="cover-screen">
             <div class="cover-card">
-                <sub style="letter-spacing: 1px; color: var(--color-primary); font-size: 0.7em;">UNDANGAN
-                    PERNIKAHAN</sub>
+                <div class="cover-subtitle">The Wedding Of</div>
                 <div class="cover-title">{{ $invitation->groom_nickname ?? 'Pasangan' }} &amp; {{ $invitation->bride_nickname ?? 'Pasangan' }}</div>
+                
+                <div class="cover-divider"></div>
 
                 <div class="couple-preview">
-                    <img src="{{ asset('storage/' . ($invitation->foto_pria ?? 'default/groom.jpg')) }}"
-                        alt="Pengantin Pria">
-                    <span style="font-weight: bold; color: var(--color-primary); font-size: 0.9em;">&</span>
-                    <img src="{{ asset('storage/' . ($invitation->foto_wanita ?? 'default/bride.jpg')) }}"
-                        alt="Pengantin Wanita">
+                    <img src="{{ asset('storage/' . ($invitation->foto_pria ?? 'default/groom.jpg')) }}" alt="Pengantin Pria">
+                    <span>&</span>
+                    <img src="{{ asset('storage/' . ($invitation->foto_wanita ?? 'default/bride.jpg')) }}" alt="Pengantin Wanita">
                 </div>
 
-                <p style="margin: 2px 0; font-size: 0.8em;">Kepada Yth.</p>
+                <p style="margin: 2px 0; font-size: 0.7em; letter-spacing: 1px; text-transform: uppercase;">Kepada Yth.</p>
                 <div class="guest-tag" id="display-guest-name">{{ request('penerima') ?? 'Keluarga Besar' }}</div>
 
                 <button class="btn-main" onclick="openInvitation()">✉️ Buka Surat Undangan</button>
-                <button class="btn-secondary" onclick="toggleModal('generator-modal', true)">🔗 Buat Link
-                    Kustom</button>
+                <button class="btn-secondary" onclick="toggleModal('generator-modal', true)">🔗 Buat Link Kustom</button>
             </div>
         </div>
 
         <!-- THANK YOU SCREEN AKHIR -->
         <div id="thankyou-screen">
             <div class="cover-card">
-                <div class="cover-title">Terima Kasih! ✨</div>
+                <div class="cover-subtitle">Terima Kasih</div>
+                <div class="cover-title" style="font-size: 2.2em;">Untuk Hadirmu ✨</div>
+
+                <div class="cover-divider"></div>
 
                 <div class="couple-preview">
-                    <img src="{{ asset('storage/' . ($invitation->foto_pria ?? 'default/groom.jpg')) }}"
-                        alt="Pengantin Pria">
-                    <span style="font-weight: bold; color: var(--color-primary); font-size: 0.9em;">&</span>
-                    <img src="{{ asset('storage/' . ($invitation->foto_wanita ?? 'default/bride.jpg')) }}"
-                        alt="Pengantin Wanita">
+                    <img src="{{ asset('storage/' . ($invitation->foto_pria ?? 'default/groom.jpg')) }}" alt="Pengantin Pria">
+                    <span>&</span>
+                    <img src="{{ asset('storage/' . ($invitation->foto_wanita ?? 'default/bride.jpg')) }}" alt="Pengantin Wanita">
                 </div>
 
-                <p style="margin: 8px 0; line-height: 1.35; font-size: 0.8em;">
-                    Terima kasih banyak telah menyempatkan waktu untuk membuka undangan interaktif kami.<br><br>
+                <p style="margin: 8px 0; line-height: 1.5; font-size: 0.8em;">
+                    Terima kasih banyak telah menyempatkan waktu untuk membuka undangan interaktif kami.<br>
                     Kehadiran serta doa restu kalian sangat berarti bagi kami.
                 </p>
-                <button class="btn-main" style="margin-bottom: 6px;" onclick="addGoogleCalendar()">🗓️ Simpan ke Google
-                    Calendar</button>
+                <button class="btn-main" style="margin-top: 10px;" onclick="addGoogleCalendar()">🗓️ Simpan ke Google Calendar</button>
                 <button class="btn-secondary" onclick="restartGame()">🔄 Putar Ulang Percakapan</button>
             </div>
         </div>
@@ -577,8 +630,7 @@
                 <h4 style="margin-top: 0; color: var(--color-primary); font-size: 0.9em;">Setel Pengingat Kalender</h4>
                 <button class="btn-main" onclick="addGoogleCalendar()">📅 Google Calendar</button>
                 <button class="btn-secondary" onclick="downloadICSFile()">🍏 Apple / Outlook (.ics)</button>
-                <button class="btn-secondary" style="margin-top: 6px;"
-                    onclick="toggleModal('calendar-modal', false)">Batal</button>
+                <button class="btn-secondary" style="margin-top: 6px;" onclick="toggleModal('calendar-modal', false)">Batal</button>
             </div>
         </div>
 
@@ -596,9 +648,9 @@
                 <h4 style="margin-top: 0; color: var(--color-primary); font-size: 0.9em;">Galeri Foto Momen</h4>
                 <div class="gallery-grid">
                     @forelse($invitation->galleries as $photo)
-                    <img src="{{ asset('storage/' . $photo->image) }}" alt="Wedding Moment">
+                        <img src="{{ asset('storage/' . $photo->image) }}" alt="Wedding Moment">
                     @empty
-                    <p class="text-center text-gray-500">Belum ada foto galeri.</p>
+                        <p class="text-center text-gray-500">Belum ada foto galeri.</p>
                     @endforelse
                 </div>
                 <button class="btn-main" onclick="toggleModal('gallery-modal', false)">Kembali ke Game</button>
@@ -615,19 +667,16 @@
                             $youtubeVideoId = $ytVideoMatches['id'] ?? '';
                         @endphp
                         @if($youtubeVideoId)
-                        <iframe width="100%" height="160" src="https://www.youtube.com/embed/{{ $youtubeVideoId }}?enablejsapi=1&loop=1&playlist={{ $youtubeVideoId }}&controls=1&modestbranding=1&rel=0" frameborder="0" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>
+                            <iframe width="100%" height="160" src="https://www.youtube.com/embed/{{ $youtubeVideoId }}?enablejsapi=1&loop=1&playlist={{ $youtubeVideoId }}&controls=1&modestbranding=1&rel=0" frameborder="0" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>
                         @else
-                        <video controls poster="{{ asset('storage/' . ($invitation->gallery_cover ?? 'default/cover.jpg')) }}">
-                            <source src="{{ asset('storage/' . $invitation->video_link) }}" type="video/mp4">
-                        </video>
+                            <video controls poster="{{ asset('storage/' . ($invitation->gallery_cover ?? 'default/cover.jpg')) }}">
+                                <source src="{{ asset('storage/' . $invitation->video_link) }}" type="video/mp4">
+                            </video>
                         @endif
                     @else
-                    <video controls
-                        poster="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=600&q=80">
-                        <source
-                            src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4"
-                            type="video/mp4">
-                    </video>
+                        <video controls poster="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=600&q=80">
+                            <source src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4" type="video/mp4">
+                        </video>
                     @endif
                 </div>
                 <button class="btn-main" onclick="toggleModal('video-modal', false)">Kembali ke Game</button>
@@ -653,13 +702,15 @@
                     </div>
                 </form>
                 <div id="rsvpMessage" class="text-center mt-4 text-sm font-bold hidden"></div>
+                
                 @if(!empty($invitation->resepsi_maps))
-                <div class="text-center mt-4">
-                    <a href="{{ $invitation->resepsi_maps }}" target="_blank" class="btn-main" style="background: transparent; display: inline-flex; align-items: center; justify-content: center; gap: 8px;">
-                        <span>📍 Petunjuk Lokasi Maps</span>
-                    </a>
-                </div>
+                    <div class="text-center mt-4">
+                        <a href="{{ $invitation->resepsi_maps }}" target="_blank" class="btn-main" style="background: transparent; display: inline-flex; align-items: center; justify-content: center; gap: 8px;">
+                            <span>📍 Petunjuk Lokasi Maps</span>
+                        </a>
+                    </div>
                 @endif
+                
                 <div class="mt-6 bg-white rounded-lg mx-auto p-4" style="border: 1px solid #eee;">
                     <h4 class="text-center serif-font text-lg mb-4" style="color: var(--color-primary);">Tinggalkan kami doa terbaik anda untuk momen bahagia kami</h4>
                     <div id="rsvpList" class="space-y-4" style="max-height: 400px; overflow-y: auto; padding-right: 5px;" data-url="{{ route('rsvp.list', $invitation) }}"></div>
@@ -667,8 +718,7 @@
                         <span class="text-xs text-gray-400">({{ $invitation->rsvps->count() }} Ucapan)</span>
                     </div>
                 </div>
-                <button class="btn-secondary" style="margin-top: 4px;"
-                    onclick="toggleModal('rsvp-modal', false)">Batal</button>
+                <button class="btn-secondary" style="margin-top: 4px;" onclick="toggleModal('rsvp-modal', false)">Batal</button>
             </div>
         </div>
 
@@ -693,18 +743,18 @@
     </div>
 
     <script>
+        // ================= KONFIGURASI & VARIABEL GLOBAL =================
         const IMAGE_BASE = "{{ url('template-assets/romantic-anime/image') }}/";
-        /* DAFTAR GAMBAR POSE KARAKTER */
         const CHARACTER_POSES = {
             bride: {
-                default: IMAGE_BASE + "woman.png",      // Pose diam/mendengarkan
-                happy: IMAGE_BASE + "woman.png",  // Pose tersenyum bahagia
-                talk: IMAGE_BASE + "woman_bicara.png"     // Pose bicara/menjelaskan
+                default: IMAGE_BASE + "woman.png",
+                happy: IMAGE_BASE + "woman.png",
+                talk: IMAGE_BASE + "woman_bicara.png"
             },
             groom: {
-                default: IMAGE_BASE + "man.png",        // Pose diam/mendengarkan
-                happy: IMAGE_BASE + "man.png",    // Pose tersenyum bahagia
-                talk: IMAGE_BASE + "man_bicara.png"       // Pose bicara/menjelaskan
+                default: IMAGE_BASE + "man.png",
+                happy: IMAGE_BASE + "man.png",
+                talk: IMAGE_BASE + "man_bicara.png"
             }
         };
 
@@ -713,16 +763,35 @@
         let currentLine = 0;
         let isAudioEnabled = true;
         let typingTimeout;
-
         let audioCtx;
 
+        const eventData = {
+            title: "{{ $invitation->groom_nickname ?? 'Pasangan' }} & {{ $invitation->bride_nickname ?? 'Pasangan' }} Wedding",
+            description: "Akad & Resepsi Pernikahan {{ $invitation->groom_nickname ?? 'Pasangan' }} & {{ $invitation->bride_nickname ?? 'Pasangan' }}. Ditunggu kehadirannya!",
+            location: "{{ $invitation->resepsi_location ?? 'Gedung Pernikahan Impian' }}",
+            startISO: "{{ \Carbon\Carbon::parse($invitation->wedding_date)->format('Ymd') }}T{{ \Carbon\Carbon::parse($invitation->akad_time)->format('Hi') }}00",
+            endISO: "{{ \Carbon\Carbon::parse($invitation->wedding_date)->format('Ymd') }}T{{ \Carbon\Carbon::parse(($invitation->resepsi_time_end === 'Selesai' || !$invitation->resepsi_time_end) ? '1400' : $invitation->resepsi_time_end)->format('Hi') }}00"
+        };
+
+        // ================= DOM ELEMENTS =================
+        const nameEl = document.getElementById('speaker-name');
+        const textEl = document.getElementById('dialog-text');
+        const charBride = document.getElementById('char-bride');
+        const charGroom = document.getElementById('char-groom');
+        const optionsEl = document.getElementById('options-container');
+        const gifEl = document.getElementById('reaction-gif');
+        const bgmPlayer = document.getElementById('bgm-player');
+        const voicePlayer = document.getElementById('voice-player');
+
+        bgmPlayer.volume = 0.3;
+
+        // ================= FUNGSI AUDIO =================
         function initAudioCtx() {
             if (!audioCtx) {
                 audioCtx = new (window.AudioContext || window.webkitAudioContext)();
             }
         }
 
-        /* SOUND EFFECT KLIK TOMBOL UI */
         function playClickSound() {
             if (!isAudioEnabled) return;
             initAudioCtx();
@@ -746,25 +815,26 @@
             } catch (e) { }
         }
 
-        const eventData = {
-            title: "{{ $invitation->groom_nickname ?? 'Pasangan' }} & {{ $invitation->bride_nickname ?? 'Pasangan' }} Wedding",
-            description: "Akad & Resepsi Pernikahan {{ $invitation->groom_nickname ?? 'Pasangan' }} & {{ $invitation->bride_nickname ?? 'Pasangan' }}. Ditunggu kehadirannya!",
-            location: "{{ $invitation->resepsi_location ?? 'Gedung Pernikahan Impian' }}",
-            startISO: "{{ \Carbon\Carbon::parse($invitation->wedding_date)->format('Ymd') }}T{{\Carbon\Carbon::parse($invitation->akad_time)->format('Hi')}}00",
-            endISO: "{{ \Carbon\Carbon::parse($invitation->wedding_date)->format('Ymd') }}T{{\Carbon\Carbon::parse(($invitation->resepsi_time_end === 'Selesai' || !$invitation->resepsi_time_end) ? '1400' : $invitation->resepsi_time_end)->format('Hi')}}00"
-        };
+        function toggleAudio() {
+            playClickSound();
+            isAudioEnabled = !isAudioEnabled;
+            document.getElementById('audio-btn').textContent = isAudioEnabled ? "🎵 Audio: ON" : "🔇 Audio: OFF";
+            if (isAudioEnabled) { 
+                bgmPlayer.play(); 
+            } else { 
+                bgmPlayer.pause(); 
+                voicePlayer.pause(); 
+            }
+        }
 
-        const nameEl = document.getElementById('speaker-name');
-        const textEl = document.getElementById('dialog-text');
-        const charBride = document.getElementById('char-bride');
-        const charGroom = document.getElementById('char-groom');
-        const optionsEl = document.getElementById('options-container');
-        const gifEl = document.getElementById('reaction-gif');
-        const bgmPlayer = document.getElementById('bgm-player');
-        const voicePlayer = document.getElementById('voice-player');
+        function playVoice(voiceUrl) {
+            if (!isAudioEnabled || !voiceUrl) return;
+            voicePlayer.src = voiceUrl;
+            voicePlayer.currentTime = 0;
+            voicePlayer.play().catch(e => console.log("Autoplay blocked"));
+        }
 
-        bgmPlayer.volume = 0.3;
-
+        // ================= EFEK VISUAL =================
         function createFlowerPetals() {
             const container = document.getElementById('flower-container');
             const petalCount = 18;
@@ -788,36 +858,21 @@
             }
         }
 
-        window.onload = function () {
-            createFlowerPetals();
-            const urlParams = new URLSearchParams(window.location.search);
-            const nameParam = urlParams.get('to');
-            if (nameParam) {
-                guestName = nameParam;
-                document.getElementById('display-guest-name').textContent = guestName;
+        function adjustCharacterHeight() {
+            const dialogBox = document.getElementById('dialog-box');
+            const characters = document.querySelectorAll('.character');
+            if (dialogBox && characters.length > 0) {
+                const dialogTop = dialogBox.offsetTop;
+                const margin = 10; 
+                const maxHeight = dialogTop - margin;
+                
+                characters.forEach(char => {
+                    char.style.maxHeight = `${maxHeight}px`;
+                });
             }
-            document.getElementById('rsvp-name').value = guestName;
-            loadRsvpList();
-            const rsvpForm = document.getElementById('rsvp-form');
-            if (rsvpForm) {
-                rsvpForm.addEventListener('submit', submitRSVP);
-            }
-        };
-
-        function toggleAudio() {
-            playClickSound();
-            isAudioEnabled = !isAudioEnabled;
-            document.getElementById('audio-btn').textContent = isAudioEnabled ? "🎵 Audio: ON" : "🔇 Audio: OFF";
-            if (isAudioEnabled) { bgmPlayer.play(); } else { bgmPlayer.pause(); voicePlayer.pause(); }
         }
 
-        function playVoice(voiceUrl) {
-            if (!isAudioEnabled || !voiceUrl) return;
-            voicePlayer.src = voiceUrl;
-            voicePlayer.currentTime = 0;
-            voicePlayer.play().catch(e => console.log("Autoplay blocked"));
-        }
-
+        // ================= GAME ENGINE =================
         function typeWriter(text, index = 0) {
             if (index < text.length) {
                 textEl.textContent += text.charAt(index);
@@ -837,14 +892,13 @@
             setTimeout(() => {
                 if (isAudioEnabled) { bgmPlayer.play().catch(e => console.log("Music blocked")); }
 
-                /* ATRIBUT POSE TERHUBUNG DENGAN KARAKTER BERSANGKUTAN */
                 dialog = [
                     {
                         speaker: "???",
                         text: `Permisi... Apakah kamu yang bernama ${guestName}?`,
                         char: "both",
                         pose: { bride: "default", groom: "default" },
-                         voice: "https://cdn.freesound.org/previews/411/411642_5121236-lq.mp3"
+                        voice: "https://cdn.freesound.org/previews/411/411642_5121236-lq.mp3"
                     },
                     {
                         speaker: "{{ $invitation->bride_nickname }} (Pengantin Wanita)",
@@ -874,8 +928,8 @@
                         pose: { bride: "happy", groom: "happy" },
                         options: [
                             { text: "📸 Lihat Galeri Foto", action: () => toggleModal('gallery-modal', true) },
-                            { text: "🎬 Tonton Video Prewedding", action: () => toggleModal('video-modal', true) },
-                            { text: "Lanjut ke Detail Acara ⏩", action: () => nextLine() }
+                            { text: "🎥 Tonton Video Prewedding", action: () => toggleModal('video-modal', true) },
+                            { text: "▶️ Lanjut ke Detail Acara", action: () => nextLine() }
                         ]
                     },
                     {
@@ -886,12 +940,12 @@
                     },
                     {
                         speaker: "Detail Acara",
-                        text: "🗓️ Tanggal: {{ \Carbon\Carbon::parse($invitation->wedding_date)->locale('id')->translatedFormat('l, d F Y') }}\n⏰ Waktu: {{ $invitation->akad_time }} - {{ $invitation->resepsi_time_end }}\n📍 Lokasi: {{ $invitation->resepsi_location ?? 'Gedung Pernikahan Impian' }}",
+                        text: "Tanggal: {{ \Carbon\Carbon::parse($invitation->wedding_date)->locale('id')->translatedFormat('l, d F Y') }}\n⏰ Waktu: {{ $invitation->akad_time }} - {{ $invitation->resepsi_time_end }}\n📍 Lokasi: {{ $invitation->resepsi_location ?? 'Gedung Pernikahan Impian' }}",
                         char: "both",
                         pose: { bride: "happy", groom: "happy" },
                         options: [
-                            { text: "🗓️ Simpan Tanggal ke Kalender", action: () => toggleModal('calendar-modal', true) },
-                            { text: "Lanjut Konfirmasi RSVP ⏩", action: () => nextLine() }
+                            { text: "📅 Simpan Tanggal ke Kalender", action: () => toggleModal('calendar-modal', true) },
+                            { text: "▶️ Lanjut Percakapan", action: () => nextLine() }
                         ]
                     },
                     {
@@ -907,7 +961,7 @@
                         pose: { bride: "default", groom: "talk" },
                         options: [
                             { text: "✍️ Isi Form RSVP Kehadiran", action: () => toggleModal('rsvp-modal', true) },
-                            { text: "📍 Petunjuk Lokasi Maps", action: () => window.open('https://maps.google.com', '_blank') }
+                            { text: "📍 Petunjuk Lokasi Maps", action: () => window.open('{{ $invitation->resepsi_maps ?? 'https://maps.google.com' }}', '_blank') }
                         ]
                     }
                 ];
@@ -919,6 +973,7 @@
 
                 currentLine = 0;
                 showLine();
+                adjustCharacterHeight();
             }, 1400);
         }
 
@@ -932,18 +987,12 @@
 
             typeWriter(line.text);
 
-            /* MENGUBAH POSE KARAKTER SECARA DINAMIS */
             const bridePose = (line.pose && line.pose.bride) ? line.pose.bride : "default";
             const groomPose = (line.pose && line.pose.groom) ? line.pose.groom : "default";
 
-            if (CHARACTER_POSES.bride[bridePose]) {
-                charBride.src = CHARACTER_POSES.bride[bridePose];
-            }
-            if (CHARACTER_POSES.groom[groomPose]) {
-                charGroom.src = CHARACTER_POSES.groom[groomPose];
-            }
+            if (CHARACTER_POSES.bride[bridePose]) charBride.src = CHARACTER_POSES.bride[bridePose];
+            if (CHARACTER_POSES.groom[groomPose]) charGroom.src = CHARACTER_POSES.groom[groomPose];
 
-            /* SOROTAN KARAKTER AKTIF */
             charBride.classList.remove('active');
             charGroom.classList.remove('active');
 
@@ -1005,6 +1054,7 @@
             document.getElementById('cover-screen').style.display = 'flex';
         }
 
+        // ================= MODAL & RSVP =================
         function toggleModal(modalId, show) {
             playClickSound();
             document.getElementById(modalId).style.display = show ? 'flex' : 'none';
@@ -1017,37 +1067,94 @@
         }
 
         function loadRsvpList() {
-            var rsvpList = document.getElementById('rsvpList');
+            const rsvpList = document.getElementById('rsvpList');
             if (!rsvpList) return;
 
-            var listUrl = rsvpList.getAttribute('data-url');
+            const listUrl = rsvpList.getAttribute('data-url');
             if (!listUrl) return;
 
-            fetch(listUrl, {
-                headers: { 'X-Requested-With': 'XMLHttpRequest' }
-            })
-            .then(function(response) { return response.json(); })
-            .then(function(data) {
-                if (data && data.length > 0) {
-                    rsvpList.innerHTML = data.map(function(item) {
-                        return '<div class="comment-item">'
-                            + '<div class="comment-avatar">'
-                            + '<span style="color: #999;">👤</span>'
-                            + '</div>'
-                            + '<div style="flex: 1; min-width: 0;">'
-                            + '<p style="font-weight: 600; color: var(--color-primary); margin-bottom: 4px;">' + item.name + '</p>'
-                            + '<p style="font-size: 0.85rem; color: #555; line-height: 1.5; word-wrap: break-word;">' + item.message + '</p>'
-                            + '<p style="font-size: 0.75rem; color: #999; margin-top: 4px;">' + timeAgo(item.created_at) + '</p>'
-                            + '</div>'
-                            + '</div>';
-                    }).join('');
-                } else {
-                    rsvpList.innerHTML = '<p class="text-center text-gray-500 mb-2">Belum ada ucapan. Jadilah yang pertama!</p><span class="material-symbols-outlined text-primary block text-center">favorite</span>';
-                }
-            })
-            .catch(function(err) { console.error('Failed to load RSVP list:', err); });
+            fetch(listUrl, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+                .then(response => response.json())
+                .then(data => {
+                    if (data && data.length > 0) {
+                        rsvpList.innerHTML = data.map(item => `
+                            <div class="comment-item">
+                                <div class="comment-avatar">
+                                    <span style="color: #999;">👤</span>
+                                </div>
+                                <div style="flex: 1; min-width: 0;">
+                                    <p style="font-weight: 600; color: var(--color-primary); margin-bottom: 4px;">${item.name}</p>
+                                    <p style="font-size: 0.85rem; color: #555; line-height: 1.5; word-wrap: break-word;">${item.message}</p>
+                                    <p style="font-size: 0.75rem; color: #999; margin-top: 4px;">${timeAgo(item.created_at)}</p>
+                                </div>
+                            </div>
+                        `).join('');
+                    } else {
+                        rsvpList.innerHTML = '<p class="text-center text-gray-500 mb-2">Belum ada ucapan. Jadilah yang pertama!</p><span class="material-symbols-outlined text-primary block text-center">favorite</span>';
+                    }
+                })
+                .catch(err => console.error('Failed to load RSVP list:', err));
         }
 
+        function submitRSVP(event) {
+            event.preventDefault();
+            playClickSound();
+            const form = event.target;
+            const formData = new FormData(form);
+            const submitUrl = form.getAttribute('action');
+            const rsvpButton = document.getElementById('rsvpButton');
+            const buttonText = document.getElementById('buttonText');
+            const rsvpMessage = document.getElementById('rsvpMessage');
+
+            if (!submitUrl) {
+                alert('URL form tidak ditemukan.');
+                return;
+            }
+
+            buttonText.textContent = 'Mengirim...';
+            rsvpButton.disabled = true;
+            rsvpMessage.classList.add('hidden');
+
+            fetch(submitUrl, {
+                method: 'POST',
+                body: formData,
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(data => {
+                        throw new Error(data.message || 'Gagal mengirim ucapan.');
+                    }).catch(err => {
+                        if (err.message && err.message !== 'Gagal mengirim ucapan.') throw err;
+                        throw new Error('Gagal mengirim ucapan. Silakan coba lagi.');
+                    });
+                }
+                return response.json();
+            })
+            .then(data => {
+                rsvpMessage.textContent = 'Terima kasih! Ucapan Anda telah terkirim.';
+                rsvpMessage.style.color = '#22c55e';
+                rsvpMessage.classList.remove('hidden');
+                form.reset();
+                document.getElementById('rsvp-name').value = guestName;
+                setTimeout(() => {
+                    toggleModal('rsvp-modal', false);
+                    showThankYouScreen();
+                }, 1500);
+            })
+            .catch(err => {
+                rsvpMessage.textContent = err.message || 'Terjadi kesalahan jaringan. Silakan coba lagi.';
+                rsvpMessage.style.color = '#ef4444';
+                rsvpMessage.classList.remove('hidden');
+                setTimeout(() => { rsvpMessage.classList.add('hidden'); }, 5000);
+            })
+            .finally(() => {
+                buttonText.textContent = 'Kirim Ucapan';
+                rsvpButton.disabled = false;
+            });
+        }
+
+        // ================= KALENDAR & LINK =================
         function addGoogleCalendar() {
             playClickSound();
             const googleUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(eventData.title)}&dates=${eventData.startISO}/${eventData.endISO}&details=${encodeURIComponent(eventData.description)}&location=${encodeURIComponent(eventData.location)}`;
@@ -1093,63 +1200,28 @@ END:VCALENDAR`;
             });
         }
 
-        function submitRSVP(event) {
-            event.preventDefault();
-            playClickSound();
-            const form = event.target;
-            const formData = new FormData(form);
-            const submitUrl = form.getAttribute('action');
-            const rsvpButton = document.getElementById('rsvpButton');
-            const buttonText = document.getElementById('buttonText');
-            const rsvpMessage = document.getElementById('rsvpMessage');
-
-            if (!submitUrl) {
-                alert('URL form tidak ditemukan.');
-                return;
+        // ================= INITIALIZATION =================
+        window.onload = function () {
+            createFlowerPetals();
+            
+            const urlParams = new URLSearchParams(window.location.search);
+            const nameParam = urlParams.get('to');
+            if (nameParam) {
+                guestName = nameParam;
+                document.getElementById('display-guest-name').textContent = guestName;
+            }
+            
+            document.getElementById('rsvp-name').value = guestName;
+            loadRsvpList();
+            
+            const rsvpForm = document.getElementById('rsvp-form');
+            if (rsvpForm) {
+                rsvpForm.addEventListener('submit', submitRSVP);
             }
 
-            buttonText.textContent = 'Mengirim...';
-            rsvpButton.disabled = true;
-            rsvpMessage.classList.add('hidden');
-
-            fetch(submitUrl, {
-                method: 'POST',
-                body: formData,
-                headers: { 'X-Requested-With': 'XMLHttpRequest' }
-            })
-            .then(function(response) {
-                if (!response.ok) {
-                    return response.json().then(function(data) {
-                        throw new Error(data.message || 'Gagal mengirim ucapan.');
-                    }).catch(function(err) {
-                        if (err.message && err.message !== 'Gagal mengirim ucapan.') throw err;
-                        throw new Error('Gagal mengirim ucapan. Silakan coba lagi.');
-                    });
-                }
-                return response.json();
-            })
-            .then(function(data) {
-                rsvpMessage.textContent = 'Terima kasih! Ucapan Anda telah terkirim.';
-                rsvpMessage.style.color = '#22c55e';
-                rsvpMessage.classList.remove('hidden');
-                form.reset();
-                document.getElementById('rsvp-name').value = guestName;
-                setTimeout(function() {
-                    toggleModal('rsvp-modal', false);
-                    showThankYouScreen();
-                }, 1500);
-            })
-            .catch(function(err) {
-                rsvpMessage.textContent = err.message || 'Terjadi kesalahan jaringan. Silakan coba lagi.';
-                rsvpMessage.style.color = '#ef4444';
-                rsvpMessage.classList.remove('hidden');
-                setTimeout(function() { rsvpMessage.classList.add('hidden'); }, 5000);
-            })
-            .finally(function() {
-                buttonText.textContent = 'Kirim Ucapan';
-                rsvpButton.disabled = false;
-            });
-        }
+            adjustCharacterHeight();
+            window.addEventListener('resize', adjustCharacterHeight);
+        };
     </script>
 </body>
 

@@ -1555,6 +1555,33 @@ body.locked {
     text-transform: uppercase;
 }
 
+/* Music Control */
+.music-control {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 50px;
+    height: 50px;
+    background-color: #8b1111;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    z-index: 9999;
+    border: 2px solid #ff4444;
+    color: #ff4444;
+    font-size: 24px;
+}
+.music-control.playing {
+    animation: spin 4s linear infinite;
+}
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
 /* ========================
    DECORATIVE ANIMATIONS (CONTINUOUS)
    ======================== */
@@ -1910,6 +1937,11 @@ body.locked {
         </nav>
 
     </div>
+
+    <div id="musicBtn" class="music-control">
+        <svg id="musicIcon" viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M8 5v14l11-7z"/></svg>
+    </div>
+
    <!-- Audio Element -->
     @if(!empty($invitation->music_youtube_url))
         @php
@@ -2117,6 +2149,56 @@ body.locked {
             this.style.height = 'auto';
             this.style.height = Math.min(this.scrollHeight, 300) + 'px';
         });
+    }
+
+    // Music Control
+    const musicBtn = document.getElementById('musicBtn');
+    const musicIcon = document.getElementById('musicIcon');
+    const youtubeIframe = document.getElementById('youtubeIframe');
+    const bgMusic = document.getElementById('bgMusic');
+    let ytPlaying = false;
+    let ytMuted = true;
+
+    function toggleMusicIcon(isPlaying) {
+        if (isPlaying) {
+            musicIcon.innerHTML = '<path d="M6 4h4v16H6zM14 4h4v16h-4z"/>';
+            musicBtn.classList.add('playing');
+        } else {
+            musicIcon.innerHTML = '<path d="M8 5v14l11-7z"/>';
+            musicBtn.classList.remove('playing');
+        }
+    }
+
+    function sendYtCommand(command) {
+        if (!youtubeIframe) return;
+        const msg = JSON.stringify({ event: 'command', func: command, args: [] });
+        if (window.ytIframeReady) {
+            setTimeout(() => youtubeIframe.contentWindow.postMessage(msg, '*'), 200);
+        } else {
+            const check = setInterval(() => {
+                if (window.ytIframeReady) { clearInterval(check); setTimeout(() => youtubeIframe.contentWindow.postMessage(msg, '*'), 200); }
+            }, 100);
+            setTimeout(() => { clearInterval(check); setTimeout(() => youtubeIframe.contentWindow.postMessage(msg, '*'), 500); }, 2000);
+        }
+    }
+
+    function pauseYoutube() { sendYtCommand('pauseVideo'); sendYtCommand('pause'); ytPlaying = false; toggleMusicIcon(false); }
+    function playYoutube() { sendYtCommand('playVideo'); sendYtCommand('play'); ytPlaying = true; toggleMusicIcon(true); }
+
+    if (youtubeIframe) {
+        window.addEventListener('scroll', () => { if (!ytPlaying) { playYoutube(); } }, { once: true });
+        musicBtn.addEventListener('click', () => {
+            if (ytPlaying) {
+                pauseYoutube();
+            } else {
+                if (ytMuted) { sendYtCommand('unMute'); ytMuted = false; }
+                playYoutube();
+            }
+        });
+    } else if (bgMusic) {
+        const playMusic = () => { bgMusic.play().catch(()=>{}); toggleMusicIcon(true); };
+        const pauseMusic = () => { bgMusic.pause(); toggleMusicIcon(false); };
+        musicBtn.addEventListener('click', () => { if (bgMusic.paused) playMusic(); else pauseMusic(); });
     }
     </script>
 </body>

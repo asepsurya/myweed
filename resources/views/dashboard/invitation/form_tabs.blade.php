@@ -352,6 +352,24 @@
         background: rgba(var(--bs-primary-rgb), 0.05);
         transform: translateY(-2px);
     }
+
+    /* === Country Code Dropdown === */
+    .country-dropdown-btn {
+        min-width: 120px;
+        border-radius: 0.5rem 0 0 0.5rem;
+    }
+
+    .country-dropdown-btn .flag-emoji {
+        font-size: 1.1rem;
+    }
+
+    .country-dropdown-menu .flag-emoji {
+        font-size: 1.1rem;
+    }
+
+    .country-dropdown-menu .country-option:hover {
+        background-color: var(--bs-primary-bg-subtle);
+    }
 </style>
 {{-- 4. MUSIK --}}
 <div id="tab-4" class="tab-content d-none">
@@ -408,8 +426,8 @@
                     <div class="input-group mb-2">
                         <span class="input-group-text bg-danger text-white border-0"><i
                                 class="bi bi-youtube"></i></span>
-                        <input type="text" name="youtube_url" class="form-control"
-                            placeholder="https://www.youtube.com/watch?v=..." value="{{ $inv->youtube_url ?? '' }}"
+                        <input type="text" name="music_youtube_url" class="form-control"
+                            placeholder="https://www.youtube.com/watch?v=..." value="{{ $inv->music_youtube_url ?? '' }}"
                             oninput="updateLivePreview()">
                     </div>
                     <small class="text-muted d-block">Masukkan link YouTube untuk musik latar undangan.</small>
@@ -454,12 +472,129 @@
                 <input type="date" name="rsvp_deadline" value="{{ $inv->rsvp_deadline ?? '' }}" class="form-control">
                 <small class="text-muted">Tanggal batas akhir tamu mengirimkan konfirmasi kehadiran.</small>
             </div>
-            <div class="mb-3">
-                <label class="form-label fw-semibold mb-2">Nomor WhatsApp Notifikasi</label>
-                <input type="text" name="rsvp_whatsapp" value="{{ $inv->rsvp_whatsapp ?? '' }}" placeholder="628..."
-                    class="form-control">
-                <small class="text-muted">Nomor HP untuk menerima notifikasi RSVP dari tamu.</small>
+           <div class="mb-3">
+                <label class="form-label fw-semibold mb-2">
+                    Nomor WhatsApp Notifikasi
+                </label>
+
+                <div class="input-group">
+                    <!-- Hidden native select (for value reference) -->
+                    <select class="d-none" id="countryCode">
+                        <option value="+62">🇮🇩 +62</option>
+                        <option value="+60">🇲🇾 +60</option>
+                        <option value="+65">🇸🇬 +65</option>
+                        <option value="+66">🇹🇭 +66</option>
+                        <option value="+1">🇺🇸 +1</option>
+                        <option value="+81">🇯🇵 +81</option>
+                        <option value="+82">🇰🇷 +82</option>
+                        <option value="+44">🇬🇧 +44</option>
+                        <option value="+91">🇮🇳 +91</option>
+                    </select>
+
+                    <!-- Custom country code dropdown with flag icons -->
+                    <button type="button"
+                        class="btn btn-outline-secondary dropdown-toggle country-dropdown-btn flex-shrink-0"
+                        id="countryDropdownBtn"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false">
+                        <span id="selectedFlagCountry" class="flag-emoji">🇮🇩</span>
+                        <span class="ms-1" id="selectedCodeCountry">+62</span>
+                    </button>
+                    <ul class="dropdown-menu country-dropdown-menu"
+                        aria-labelledby="countryDropdownBtn">
+                        <li><a class="dropdown-item country-option d-flex align-items-center gap-2" href="#" data-code="+62" data-flag="🇮🇩"><span class="flag-emoji">🇮🇩</span> <span class="fw-medium">+62</span> <span class="text-muted ms-2">Indonesia</span></a></li>
+                        <li><a class="dropdown-item country-option d-flex align-items-center gap-2" href="#" data-code="+60" data-flag="🇲🇾"><span class="flag-emoji">🇲🇾</span> <span class="fw-medium">+60</span> <span class="text-muted ms-2">Malaysia</span></a></li>
+                        <li><a class="dropdown-item country-option d-flex align-items-center gap-2" href="#" data-code="+65" data-flag="🇸🇬"><span class="flag-emoji">🇸🇬</span> <span class="fw-medium">+65</span> <span class="text-muted ms-2">Singapura</span></a></li>
+                        <li><a class="dropdown-item country-option d-flex align-items-center gap-2" href="#" data-code="+66" data-flag="🇹🇭"><span class="flag-emoji">🇹🇭</span> <span class="fw-medium">+66</span> <span class="text-muted ms-2">Thailand</span></a></li>
+                        <li><a class="dropdown-item country-option d-flex align-items-center gap-2" href="#" data-code="+1" data-flag="🇺🇸"><span class="flag-emoji">🇺🇸</span> <span class="fw-medium">+1</span> <span class="text-muted ms-2">USA/Canada</span></a></li>
+                        <li><a class="dropdown-item country-option d-flex align-items-center gap-2" href="#" data-code="+81" data-flag="🇯🇵"><span class="flag-emoji">🇯🇵</span> <span class="fw-medium">+81</span> <span class="text-muted ms-2">Jepang</span></a></li>
+                        <li><a class="dropdown-item country-option d-flex align-items-center gap-2" href="#" data-code="+82" data-flag="🇰🇷"><span class="flag-emoji">🇰🇷</span> <span class="fw-medium">+82</span> <span class="text-muted ms-2">Korea</span></a></li>
+                        <li><a class="dropdown-item country-option d-flex align-items-center gap-2" href="#" data-code="+44" data-flag="🇬🇧"><span class="flag-emoji">🇬🇧</span> <span class="fw-medium">+44</span> <span class="text-muted ms-2">Inggris</span></a></li>
+                        <li><a class="dropdown-item country-option d-flex align-items-center gap-2" href="#" data-code="+91" data-flag="🇮🇳"><span class="flag-emoji">🇮🇳</span> <span class="fw-medium">+91</span> <span class="text-muted ms-2">India</span></a></li>
+                    </ul>
+
+                    <input
+                        type="tel"
+                        id="phoneNumber"
+                        class="form-control"
+                        placeholder="81234567890"
+                        autocomplete="off">
+                </div>
+
+                {{-- Yang akan disimpan --}}
+                <input
+                    type="hidden"
+                    name="rsvp_whatsapp"
+                    id="fullPhone"
+                    value="{{ $inv->rsvp_whatsapp ?? '' }}">
+
+                <small class="text-muted">
+                    Nomor HP untuk menerima notifikasi RSVP dari tamu.
+                </small>
             </div>
+            <script>
+document.addEventListener('DOMContentLoaded', function () {
+    const country = document.getElementById('countryCode');
+    const phone = document.getElementById('phoneNumber');
+    const full = document.getElementById('fullPhone');
+    const flagEl = document.getElementById('selectedFlagCountry');
+    const codeEl = document.getElementById('selectedCodeCountry');
+    const dropdownBtn = document.getElementById('countryDropdownBtn');
+
+    let selectedCountryCode = '+62';
+
+    // Isi data lama
+    if (full.value) {
+        const match = full.value.match(/^(\+\d+)(.*)$/);
+
+        if (match) {
+            selectedCountryCode = match[1];
+            country.value = match[1];
+            phone.value = match[2].trim();
+        } else {
+            phone.value = full.value.replace('+', '');
+        }
+    }
+
+    // Sync tampilan dengan nilai terpilih
+    function syncDisplay(code) {
+        const opt = document.querySelector('.country-option[data-code="' + code + '"]');
+        if (opt) {
+            flagEl.textContent = opt.getAttribute('data-flag');
+            codeEl.textContent = code;
+            country.value = code;
+        }
+    }
+
+    // Klik pada opsi negara
+    document.querySelectorAll('.country-option').forEach(function(opt) {
+        opt.addEventListener('click', function(e) {
+            e.preventDefault();
+            selectedCountryCode = this.getAttribute('data-code');
+            syncDisplay(selectedCountryCode);
+            updateValue();
+            var dd = bootstrap.Dropdown.getInstance(dropdownBtn);
+            if (dd) dd.hide();
+            if (typeof updateLivePreview === 'function') updateLivePreview();
+        });
+    });
+
+    function updateValue() {
+        let number = phone.value.replace(/\D/g, '');
+
+        // Hilangkan angka 0 depan
+        number = number.replace(/^0+/, '');
+
+        phone.value = number;
+        full.value = selectedCountryCode + number;
+    }
+
+    phone.addEventListener('input', updateValue);
+
+    syncDisplay(selectedCountryCode);
+    updateValue();
+});
+</script>
             <div class="mb-3">
                 <label class="form-label fw-semibold mb-2">Pesan Konfirmasi</label>
                 <textarea name="rsvp_message" rows="3" class="form-control">{{ $inv->rsvp_message ?? '' }}</textarea>

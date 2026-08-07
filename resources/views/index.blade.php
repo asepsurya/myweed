@@ -970,7 +970,7 @@
                             <img src="{{ $template->thumbnail ? asset('storage/' . $template->thumbnail) : 'https://placehold.co/600x450?text=No+Thumbnail' }}"
                                 alt="{{ $template->name }}" loading="lazy">
                             <div class="template-overlay">
-                                <a href="{{ route('template.demo', ['slug' => $template->slug]) }}" target="_blank"
+                                <a href="{{ route('template.preview', ['slug' => 'romeo-juliet', 'id' => $template->id]) }}" target="_blank"
                                     class="btn btn-light rounded-pill px-4 fw-bold shadow-sm">Pratinjau</a>
                                 <a href="{{ route('invitation.create', ['template_id' => $template->id]) }}"
                                     class="btn btn-gold rounded-pill px-4 fw-bold shadow-sm">Gunakan</a>

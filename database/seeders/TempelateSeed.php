@@ -22,7 +22,7 @@ class TempelateSeed extends Seeder
             [
                 'name' => 'Simple',
                 'slug' => 'simple-theme',
-                'thumb' => 'elegant-thumb.png',
+                'thumb' => 'simple-theme.png',
                 'preview' => 'simple_preview.png',
             ],
             [
@@ -34,19 +34,19 @@ class TempelateSeed extends Seeder
             [
                 'name' => 'Java dreams Maroon',
                 'slug' => 'java-dream-maroon',
-                'thumb' => 'elegant-thumb.png',
+                'thumb' => 'java-dream-maroon.png',
                 'preview' => 'elegant_preview.webp',
             ],
             [
                 'name' => 'Romantic Anime Dreams',
                 'slug' => 'romantic-anime',
-                'thumb' => 'elegant-thumb.png',
+                'thumb' => 'romantic-anime.png',
                 'preview' => 'elegant_preview.webp',
             ],
             [
                 'name' => 'Sweety Lovely',
                 'slug' => 'sweet-lovely',
-                'thumb' => 'elegant-thumb.png',
+                'thumb' => 'sweet-lovely.png',
                 'preview' => 'elegant_preview.webp',
             ],
 

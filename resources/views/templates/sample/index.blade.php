@@ -224,10 +224,26 @@
         </div>
     </div>
 
-    <!-- Audio -->
+    <!-- Audio / YouTube Music -->
+    @if(!empty($invitation->music_youtube_url))
+        @php
+            preg_match('/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|v\/|u\/\w\/|shorts\/)(?<id>[A-Za-z0-9_-]{11}))/i', $invitation->music_youtube_url, $ytMatches);
+            $youtubeId = $ytMatches['id'] ?? '';
+        @endphp
+        @if($youtubeId)
+        <div id="youtubePlayerContainer" style="position:absolute; left:-9999px; width:2px; height:2px; overflow:hidden;">
+            <iframe id="youtubeIframe" width="2" height="2"
+                src="https://www.youtube.com/embed/{{ $youtubeId }}?enablejsapi=1&autoplay=1&loop=1&playlist={{ $youtubeId }}&controls=0&modestbranding=1&rel=0&mute=1"
+                frameborder="0" allow="autoplay; encrypted-media; picture-in-picture"
+                onload="window.ytIframeReady = true;">
+            </iframe>
+        </div>
+        @endif
+    @else
     <audio id="bgMusic" loop>
         <source src="{{ $invitation->musicPreset ? asset('storage/'.$invitation->musicPreset->audio_url) : 'https://www.bensound.com/bensound-music/bensound-romantic.mp3' }}" type="audio/mpeg">
     </audio>
+    @endif
 
     <script>
         // Scroll
@@ -246,18 +262,42 @@
         }, 1e3);
 
         // Music
-        const bgM = document.getElementById('bgMusic'), mB = document.getElementById('musicBtn');
-        let hasI = false;
-        
-        window.copyToClipboard = (text) => {
-            navigator.clipboard.writeText(text).then(() => {
-                alert("Berhasil disalin!");
+        const youtubeIframe = document.getElementById('youtubeIframe');
+        const bgMusic = document.getElementById('bgMusic');
+        const musicBtn = document.getElementById('musicBtn');
+        let ytPlaying = false;
+        let ytMuted = true;
+
+        function sendYtCommand(command) {
+            if (!youtubeIframe) return;
+            const msg = JSON.stringify({ event: 'command', func: command, args: [] });
+            if (window.ytIframeReady) {
+                setTimeout(() => youtubeIframe.contentWindow.postMessage(msg, '*'), 200);
+            } else {
+                const check = setInterval(() => {
+                    if (window.ytIframeReady) { clearInterval(check); setTimeout(() => youtubeIframe.contentWindow.postMessage(msg, '*'), 200); }
+                }, 100);
+                setTimeout(() => { clearInterval(check); setTimeout(() => youtubeIframe.contentWindow.postMessage(msg, '*'), 500); }, 2000);
+            }
+        }
+
+        function pauseYoutube() { sendYtCommand('pauseVideo'); sendYtCommand('pause'); ytPlaying = false; musicBtn.innerHTML = '▶'; }
+        function playYoutube() { sendYtCommand('playVideo'); sendYtCommand('play'); ytPlaying = true; musicBtn.innerHTML = '⏸'; }
+
+        if (youtubeIframe) {
+            window.addEventListener('scroll', () => { if (!ytPlaying) { playYoutube(); } }, { once: true });
+            musicBtn.addEventListener('click', () => {
+                if (ytPlaying) {
+                    pauseYoutube();
+                } else {
+                    if (ytMuted) { sendYtCommand('unMute'); ytMuted = false; }
+                    playYoutube();
+                }
             });
-        };
-        function play() { bgM.play().catch(() => {}); mB.innerHTML = '⏸'; }
-        function pause() { bgM.pause(); mB.innerHTML = '▶'; }
-        window.addEventListener('scroll', () => { if (!hasI) { play(); hasI = true; } }, { once: true });
-        mB.onclick = () => mB.innerHTML === '▶' ? play() : pause();
+        } else if (bgMusic) {
+            window.addEventListener('scroll', () => { if (!hasI) { bgMusic.play().catch(() => {}); musicBtn.innerHTML = '⏸'; hasI = true; } }, { once: true });
+            musicBtn.onclick = () => musicBtn.innerHTML === '▶' ? (bgMusic.play().catch(() => {}), musicBtn.innerHTML = '⏸') : (bgMusic.pause(), musicBtn.innerHTML = '▶');
+        }
 
         // RSVP
         const id = "{{ $invitation->id }}";

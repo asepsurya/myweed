@@ -722,7 +722,6 @@
         }
 
         window.addEventListener('scroll', () => { if (!hasInteracted) { playYoutube(); hasInteracted = true; } }, { once: true });
-        if (!hasInteracted) { playYoutube(); hasInteracted = true; }
         musicBtn.addEventListener('click', () => { if (ytMuted || !hasInteracted) { playYoutube(); hasInteracted = true; } else { pauseYoutube(); } });
         document.addEventListener('visibilitychange', () => { if (document.hidden) { pauseYoutube(); } else if (hasInteracted && !ytMuted) { playYoutube(); } });
         @else

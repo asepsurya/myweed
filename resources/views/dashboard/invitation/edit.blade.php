@@ -129,7 +129,6 @@
             box-shadow: 10px 0 30px rgba(0, 0, 0, 0.05);
         }
 
-        /* Diubah ke variabel Bootstrap agar adaptif terhadap Dark Mode */
         .sidebar-content-pane {
             padding: 10px;
             background-color: var(--bs-tertiary-bg);
@@ -233,7 +232,6 @@
             align-items: center;
             justify-content: center;
             background: var(--bs-tertiary-bg);
-            /* Adaptif */
             border-radius: 0.5rem;
             color: #0d9488;
         }
@@ -272,6 +270,7 @@
             background: var(--bs-card-bg);
         }
 
+        /* --- AREA PREVIEW YANG DIRAPIHKAN --- */
         .builder-canvas {
             flex: 1;
             display: flex;
@@ -279,32 +278,51 @@
             align-items: center;
             justify-content: center;
             position: relative;
-            background: rgba(var(--bs-tertiary-bg-rgb), 0.1);
+            background-color: var(--bs-tertiary-bg);
+            background-image: radial-gradient(var(--bs-border-color) 1px, transparent 1px);
+            background-size: 24px 24px;
             backdrop-filter: blur(10px);
+            overflow: hidden;
+            padding: 1.5rem;
         }
 
-        /* Mode mobile preview */
+        .preview-device {
+            display: inline-block;
+            transform-origin: center center;
+            transition: transform 0.3s ease-in-out;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+
         .preview-window {
-            /* Diubah ke variabel Bootstrap agar adaptif */
             background: var(--bs-body-bg);
-            overflow: auto;
+            overflow: hidden; /* Diubah ke hidden agar wadah luar tidak ada scrollbar */
             transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
             position: relative;
-            box-shadow: 0 50px 100px -20px rgba(0, 0, 0, 0.25);
             width: 375px;
             height: 750px;
-            border-radius: 3.5rem;
-            border: 12px solid var(--bs-emphasis-color);
-            /* Warna border mengikuti tema */
+            border-radius: 3rem;
+            border: 10px solid var(--bs-emphasis-color);
             outline: 1px solid var(--bs-border-color);
+        }
+
+        .preview-notch {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 95px;
+            height: 22px;
+            background: var(--bs-emphasis-color);
+            border-radius: 1rem;
+            z-index: 30;
         }
 
         .preview-iframe {
             width: 100%;
             height: 100%;
             border: none;
-            /* Mewarisi warna body Bootstrap agar konten di dalam iframe juga gelap jika temanya gelap */
             background-color: var(--bs-body-bg);
+            border-radius: 2rem;
         }
 
         #previewLoader {
@@ -313,13 +331,14 @@
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: 50;
+            z-index: 40;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            background: rgba(var(--bs-body-bg-rgb), 0.8);
+            background: rgba(var(--bs-body-bg-rgb), 0.85);
             backdrop-filter: blur(4px);
+            border-radius: 2.5rem;
         }
 
         .template-card-selector {
@@ -396,6 +415,17 @@
             font-size: 8px !important;
             letter-spacing: 0.5px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        /* === Template Gallery Pagination === */
+        .pagination-hidden {
+            display: none !important;
+        }
+
+        #prevPage:disabled,
+        #nextPage:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
         }
     </style>
 
@@ -481,13 +511,16 @@
         </div>
 
         <!-- Builder Canvas (Preview Only Mobile) -->
-        <div class="builder-canvas p-3">
-            <div id="previewWindow" class="preview-window no-scrollbar">
-                <iframe id="livePreviewIframe" name="livePreviewIframe" class="preview-iframe no-scrollbar"
-                    src="about:blank"></iframe>
-                <div id="previewLoader" class="d-none">
-                    <div class="spinner-border text-teal mb-3" role="status" style="color: #0d9488;"></div>
-                    <p class="small fw-bold">Updating...</p>
+        <div class="builder-canvas">
+            <div class="preview-device">
+                <div id="previewWindow" class="preview-window no-scrollbar">
+                    <div class="preview-notch"></div>
+                    <iframe id="livePreviewIframe" name="livePreviewIframe" class="preview-iframe no-scrollbar"
+                        src="about:blank"></iframe>
+                    <div id="previewLoader" class="d-none">
+                        <div class="spinner-border text-teal mb-3" role="status" style="color: #0d9488;"></div>
+                        <p class="small fw-bold">Updating...</p>
+                    </div>
                 </div>
             </div>
             <form id="previewForm" action="{{ route('invitation.live-preview') }}" method="POST"
@@ -577,6 +610,42 @@
                 const matchesCat = (cat === 'all' || item.dataset.category === cat);
                 item.classList.toggle('d-none', !(matchesQuery && matchesCat));
             });
+
+            // Reset to halaman pertama dan render ulang pagination
+            currentPage = 1;
+            renderPagination();
+        }
+
+        // --- Template Gallery Pagination ---
+        const ITEMS_PER_PAGE = 12;
+        let currentPage = 1;
+
+        function renderPagination() {
+            const gallery = document.getElementById('templateGallery');
+            if (!gallery) return;
+
+            const items = Array.from(gallery.querySelectorAll('.template-selector-item'));
+            const visibleItems = items.filter(item => !item.classList.contains('d-none'));
+
+            const totalPages = Math.max(1, Math.ceil(visibleItems.length / ITEMS_PER_PAGE));
+            if (currentPage > totalPages) currentPage = 1;
+
+            visibleItems.forEach(function(item, index) {
+                const pageIndex = Math.floor(index / ITEMS_PER_PAGE) + 1;
+                if (pageIndex === currentPage) {
+                    item.classList.remove('pagination-hidden');
+                } else {
+                    item.classList.add('pagination-hidden');
+                }
+            });
+
+            const pageInfo = document.getElementById('pageInfo');
+            if (pageInfo) pageInfo.textContent = 'Halaman ' + currentPage + ' dari ' + totalPages;
+
+            const prevBtn = document.getElementById('prevPage');
+            const nextBtn = document.getElementById('nextPage');
+            if (prevBtn) prevBtn.disabled = (currentPage <= 1);
+            if (nextBtn) nextBtn.disabled = (currentPage >= totalPages);
         }
 
         function selectTemplate(el, id) {
@@ -705,6 +774,23 @@
             }, 300);
         }
 
+        function scaleLivePreview() {
+            const device = document.querySelector('.preview-device');
+            if (!device) return;
+            const canvas = device.closest('.builder-canvas');
+            if (!canvas) return;
+            
+            const padding = 60;
+            const cw = canvas.clientWidth - padding;
+            const ch = canvas.clientHeight - padding;
+            
+            const deviceW = 375 + 20;
+            const deviceH = 750 + 20;
+            
+            const scale = Math.min(cw / deviceW, ch / deviceH, 1);
+            device.style.transform = `scale(${scale})`;
+        }
+
         function dbAutoSave() {
             clearTimeout(saveTimer);
             saveTimer = setTimeout(() => {
@@ -767,6 +853,34 @@
             const searchTemplate = document.getElementById('searchTemplate');
             if (categorySelect) categorySelect.onchange = filterTemplates;
             if (searchTemplate) searchTemplate.oninput = filterTemplates;
+
+            // Template gallery pagination
+            const prevPageBtn = document.getElementById('prevPage');
+            const nextPageBtn = document.getElementById('nextPage');
+            if (prevPageBtn) {
+                prevPageBtn.addEventListener('click', function () {
+                    if (currentPage > 1) {
+                        currentPage--;
+                        renderPagination();
+                    }
+                });
+            }
+            if (nextPageBtn) {
+                nextPageBtn.addEventListener('click', function () {
+                    var gallery = document.getElementById('templateGallery');
+                    if (!gallery) return;
+                    var visibleItems = Array.from(gallery.querySelectorAll('.template-selector-item'))
+                        .filter(function(item) { return !item.classList.contains('d-none'); });
+                    var totalPages = Math.max(1, Math.ceil(visibleItems.length / ITEMS_PER_PAGE));
+                    if (currentPage < totalPages) {
+                        currentPage++;
+                        renderPagination();
+                    }
+                });
+            }
+
+            // Initial pagination render
+            renderPagination();
 
             const selectAllTemplates = document.getElementById('selectAllTemplates');
             if (selectAllTemplates) {
@@ -839,11 +953,41 @@
                 });
             }
 
-            const tab2 = document.querySelector('[data-tab="2"]');
+            const tab2 = document.querySelector('[data-tab="tab-2"]');
             if (tab2) tab2.click();
 
             // Trigger initial load
             updateLivePreview();
+
+            // --- Sembunyikan scrollbar di dalam iframe ---
+            const livePreviewIframe = document.getElementById('livePreviewIframe');
+            if (livePreviewIframe) {
+                livePreviewIframe.addEventListener('load', function() {
+                    try {
+                        const css = `
+                            ::-webkit-scrollbar { display: none !important; }
+                            html, body { 
+                                scrollbar-width: none !important; 
+                                -ms-overflow-style: none !important; 
+                                overflow-y: auto !important; 
+                            }
+                        `;
+                        const style = this.contentWindow.document.createElement('style');
+                        style.innerHTML = css;
+                        this.contentWindow.document.head.appendChild(style);
+                    } catch (e) {
+                        console.warn("Tidak dapat menyembunyikan scrollbar iframe (kemungkinan masalah Cross-origin).");
+                    }
+                });
+            }
+
+            scaleLivePreview();
+            
+            let resizeTimer;
+            window.addEventListener('resize', () => {
+                clearTimeout(resizeTimer);
+                resizeTimer = setTimeout(scaleLivePreview, 100);
+            });
         });
 
         // --- Media Handlers ---
@@ -913,7 +1057,6 @@
 
         window.addLoveStory = () => {
             const div = document.createElement('div');
-            // Diubah dari bg-light ke bg-body-tertiary agar mendukung dark mode
             div.className = 'love-story-item border rounded p-2 mb-2 bg-body-tertiary';
             div.innerHTML = `
                 <input type="text" name="story_title[]" class="form-control form-control-sm mb-1" placeholder="Judul">
@@ -926,7 +1069,6 @@
 
         window.addGift = () => {
             const div = document.createElement('div');
-            // Diubah dari bg-light ke bg-body-tertiary agar mendukung dark mode
             div.className = 'gift-item border rounded p-3 mb-2 bg-body-tertiary position-relative shadow-sm';
             div.innerHTML = `
                 <button type="button" class="btn-close x-small position-absolute top-0 end-0 m-2" onclick="this.closest('.gift-item').remove(); updateLivePreview();"></button>
@@ -970,7 +1112,7 @@
 
             document.getElementById('cropModal').addEventListener('shown.bs.modal', () => {
                 if (cropper) cropper.destroy();
-                const aspect = (currentTarget === 'cover') ? 16 / 9 : 1;
+                const aspect = (currentTarget === 'cover') ? 9 / 16 : 1;
                 cropper = new Cropper(image, {
                     aspectRatio: aspect,
                     viewMode: 1,

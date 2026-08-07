@@ -294,56 +294,88 @@
         </div>
 
         <!-- Modal: New Invitation -->
-        <div class="modal fade" id="newInvitationModal" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-                    <form id="quickCreateForm" action="{{ route('invitation.quick-create') }}" method="POST">
-                        @csrf
-                        <div class="modal-header">
-                            <h5 class="modal-title mb-0">
-                                <i class="bi bi-heart-heart me-2"></i>
-                                Undangan Baru
-                            </h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
-                        </div>
-                        <div class="modal-body">
-                            <p class="text-muted small mb-3">Masukkan nama pengantin untuk memulai.</p>
-
-                            <div class="mb-3">
-                                <label class="form-label fw-semibold">Nama Mempelai Pria</label>
-                                <input type="text" name="groom_name" class="form-control" placeholder="Nama lengkap"
-                                    required>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label fw-semibold">Nama Panggilan Pria</label>
-                                <input type="text" name="groom_nickname" class="form-control"
-                                    placeholder="Nama panggilan (opsional)">
-                            </div>
-
-                            <div class="mb-3">
-                                <label class="form-label fw-semibold">Nama Mempelai Wanita</label>
-                                <input type="text" name="bride_name" class="form-control" placeholder="Nama lengkap"
-                                    required>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label fw-semibold">Nama Panggilan Wanita</label>
-                                <input type="text" name="bride_nickname" class="form-control"
-                                    placeholder="Nama panggilan (opsional)">
-                            </div>
-
-                            <div id="modal_error" class="alert alert-danger d-none"></div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-outline-secondary"
-                                data-bs-dismiss="modal">Batal</button>
-                            <button type="submit" class="btn btn-primary" id="quickCreateBtn">
-                                <i class="bi bi-plus-lg me-1"></i> Buat Undangan
-                            </button>
-                        </div>
-                    </form>
+<!-- Modal: New Invitation -->
+<div class="modal fade" id="newInvitationModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border: none; border-radius: 16px; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.2);">
+            <form id="quickCreateForm" action="{{ route('invitation.quick-create') }}" method="POST">
+                @csrf
+                
+                <!-- Modal Header -->
+                <div class="modal-header text-center" style="background-color: #053B2D; color: #D4AF37; border-bottom: 3px solid #D4AF37; padding: 20px;">
+                    <h5 class="modal-title w-100 fw-bold" style="font-family: 'Cinzel', serif; letter-spacing: 1px;">
+                        <i class="bi bi-suit-heart-fill me-2" style="color: #D4AF37;"></i> 
+                        Bangun Mimpimu
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Tutup" style="opacity: 0.8;"></button>
                 </div>
-            </div>
+
+                <!-- Modal Body -->
+                <div class="modal-body p-4 p-md-5" style="background-color: #F7FDF9;">
+                    <p class="text-muted small text-center mb-4" style="font-style: italic;">Mulai perjalanan indah Anda dengan mengisi data berikut.</p>
+
+                    <!-- Section Mempelai Pria -->
+                    <div class="mb-4">
+                        <h6 class="text-uppercase mb-3 d-flex align-items-center" style="color: #053B2D; font-weight: 700; letter-spacing: 1px; font-size: 0.85rem;">
+                            <i class="bi bi-gender-male me-2" style="font-size: 1.2rem; color: #10B981;"></i> Mempelai Pria
+                        </h6>
+                        <div class="input-group mb-2">
+                            <span class="input-group-text bg-white border-end-0" style="border-color: #d1ede1; border-radius: 10px 0 0 10px;">
+                                <i class="bi bi-person" style="color: #10B981;"></i>
+                            </span>
+                            <input type="text" name="groom_name" class="form-control border-start-0 py-2" placeholder="Nama lengkap" required style="border-color: #d1ede1; border-radius: 0 10px 10px 0;">
+                        </div>
+                        <div class="input-group">
+                            <span class="input-group-text bg-white border-end-0" style="border-color: #d1ede1; border-radius: 10px 0 0 10px;">
+                                <i class="bi bi-person-badge" style="color: #10B981;"></i>
+                            </span>
+                            <input type="text" name="groom_nickname" class="form-control border-start-0 py-2" placeholder="Nama panggilan (opsional)" style="border-color: #d1ede1; border-radius: 0 10px 10px 0;">
+                        </div>
+                    </div>
+
+                    <!-- Pemisah Hati -->
+                    <div class="text-center my-3">
+                        <div style="display: inline-block; background: #F7FDF9; padding: 0 15px; margin-top: -25px; position: relative; z-index: 2;">
+                            <i class="bi bi-suit-heart-fill" style="color: #D4AF37; font-size: 1.4rem;"></i>
+                        </div>
+                        <hr style="margin-top: -12px; border-color: #D4AF37; opacity: 0.3;">
+                    </div>
+
+                    <!-- Section Mempelai Wanita -->
+                    <div class="mb-3">
+                        <h6 class="text-uppercase mb-3 d-flex align-items-center" style="color: #053B2D; font-weight: 700; letter-spacing: 1px; font-size: 0.85rem;">
+                            <i class="bi bi-gender-female me-2" style="font-size: 1.2rem; color: #10B981;"></i> Mempelai Wanita
+                        </h6>
+                        <div class="input-group mb-2">
+                            <span class="input-group-text bg-white border-end-0" style="border-color: #d1ede1; border-radius: 10px 0 0 10px;">
+                                <i class="bi bi-person" style="color: #10B981;"></i>
+                            </span>
+                            <input type="text" name="bride_name" class="form-control border-start-0 py-2" placeholder="Nama lengkap" required style="border-color: #d1ede1; border-radius: 0 10px 10px 0;">
+                        </div>
+                        <div class="input-group">
+                            <span class="input-group-text bg-white border-end-0" style="border-color: #d1ede1; border-radius: 10px 0 0 10px;">
+                                <i class="bi bi-person-badge" style="color: #10B981;"></i>
+                            </span>
+                            <input type="text" name="bride_nickname" class="form-control border-start-0 py-2" placeholder="Nama panggilan (opsional)" style="border-color: #d1ede1; border-radius: 0 10px 10px 0;">
+                        </div>
+                    </div>
+
+                    <div id="modal_error" class="alert alert-danger d-none mt-3" style="border-radius: 10px;"></div>
+                </div>
+
+                <!-- Modal Footer -->
+                <div class="modal-footer d-flex justify-content-between align-items-center" style="background-color: #F7FDF9; border-top: none; padding: 0 2rem 2rem 2rem;">
+                    <button type="button" class="btn btn-link text-decoration-none text-muted" data-bs-dismiss="modal" style="font-weight: 600;">
+                        Batal
+                    </button>
+                    <button type="submit" class="btn px-4 py-2 fw-bold shadow-sm" id="quickCreateBtn" style="background-color: #053B2D; color: #D4AF37; border-radius: 50px; letter-spacing: 1px; font-size: 0.9rem;">
+                        <i class="bi bi-stars me-1"></i> Buat Undangan
+                    </button>
+                </div>
+            </form>
         </div>
+    </div>
+</div>
 
         <!-- Modal: Upgrade to Premium -->
         <div class="modal fade" id="upgradeModal" tabindex="-1" aria-hidden="true">

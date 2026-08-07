@@ -10,22 +10,14 @@
     <meta property="og:type" content="website">
     <meta property="og:url" content="{{ url()->current() }}">
     <meta property="og:title" content="{{ $invitation->groom_nickname }} & {{ $invitation->bride_nickname }} Wedding Invitation">
-    <meta property="og:description" content="You are invited to the wedding of {{ $invitation->groom_nickname }} & {{ $invitation->bride_nickname }}. Click to see the details.">
+    <meta property="og:description" content="You are invited to the wedding of {{ $invitation->groom_nickname }} & {{ $invitation->bride_nickname }}.">
     <meta property="og:image" content="{{ asset('storage/' . $invitation->gallery_cover) }}">
 
-    <!-- Twitter -->
-    <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="{{ url()->current() }}">
-    <meta property="twitter:title" content="{{ $invitation->groom_nickname }} & {{ $invitation->bride_nickname }} Wedding Invitation">
-    <meta property="twitter:description" content="You are invited to the wedding of {{ $invitation->groom_nickname }} & {{ $invitation->bride_nickname }}. Click to see the details.">
-    <meta property="twitter:image" content="{{ asset('storage/' . $invitation->gallery_cover) }}">
-
-    <!-- Google Fonts: Playfair Display (Klasik) & Prata (Nuansa Kuno) -->
+    <!-- Google Fonts: Cinzel (Ukiran) & Cormorant (Elegan) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Prata&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Lato:wght@300;400&display=swap" rel="stylesheet">
+    
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
@@ -33,44 +25,35 @@
 
     <style>
         :root {
-            /* Palet Warna Adat Jawa (Maroon & Gold) */
-            --primary-color: #5D3A36;
-            /* Coklat Maroon Tua */
-            --accent-color: #Cfb997;
-            /* Emas Pudar */
-            --secondary-color: #8D6E63;
-            /* Coklat Sedang */
-            --bg-color: #Fdfbf7;
-            /* Kertas Tua Krem */
-            --text-dark: #3E2723;
-            --text-gold: #B7860B;
+            /* Palet Warna Adat Jawa (Sogan & Emas) */
+            --primary-color: #4A1018;   /* Marun Sogan Tua */
+            --accent-color: #C4A668;    /* Emas Kuning Tua */
+            --secondary-color: #8B5E3C; /* Coklat Kayu */
+            --bg-color: #FBF7F0;        /* Krem Kertas Tua */
+            --text-dark: #2C1810;
+            --text-gold: #A67C00;
             --white: #FFFFFF;
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            font-family: 'Lato', sans-serif;
+            font-family: 'Cormorant Garamond', serif;
             background-color: #e0dcd5;
-            background-image: radial-gradient(var(--accent-color) 15%, transparent 16%), radial-gradient(var(--accent-color) 15%, transparent 16%);
+            background-image: 
+                radial-gradient(var(--accent-color) 15%, transparent 16%), 
+                radial-gradient(var(--accent-color) 15%, transparent 16%);
             background-size: 20px 20px;
             background-position: 0 0, 10px 10px;
             display: flex;
             justify-content: center;
             min-height: 100vh;
             color: var(--text-dark);
-            /* Hide Scrollbar */
             -ms-overflow-style: none;
             scrollbar-width: none;
         }
 
-        body::-webkit-scrollbar {
-            display: none;
-        }
+        body::-webkit-scrollbar { display: none; }
 
         .mobile-container {
             width: 100%;
@@ -82,64 +65,52 @@
             overflow-x: hidden;
             display: flex;
             flex-direction: column;
-            border: 10px solid white;
-            outline: 1px solid var(--accent-color);
+            
+           
         }
 
-        h1,
-        h2,
-        h3,
-        .serif-font {
-            font-family: 'Playfair Display', serif;
+        h1, h2, h3, .ancient-font {
+            font-family: 'Cinzel', serif;
             color: var(--primary-color);
-            font-weight: 700;
+            font-weight: 600;
+            letter-spacing: 1px;
         }
 
-        .ancient-font {
-            font-family: 'Prata', serif;
+        .text-center { text-align: center; }
+
+        .section-padding {
+            padding: 70px 25px;
+            position: relative;
         }
 
-        .text-center {
-            text-align: center;
-        }
+        .mb-5 { margin-bottom: 50px; }
 
-        .divider-gunungan {
+        /* Ornamen Pemisah Batik */
+        .batik-divider {
             display: flex;
             justify-content: center;
             align-items: center;
-            margin: 30px 0;
+            margin: 40px 0;
             position: relative;
         }
-
-        .divider-line {
-            height: 1px;
-            background: var(--accent-color);
+        .batik-line {
+            height: 2px;
             width: 100%;
-            position: absolute;
-            z-index: 0;
+            background: linear-gradient(to right, transparent, var(--accent-color), transparent);
         }
-
-        .gunungan-icon {
-            width: 40px;
-            height: auto;
+        .batik-icon {
+            width: 50px;
+            height: 50px;
             fill: var(--primary-color);
-            z-index: 1;
             background: var(--bg-color);
             padding: 0 10px;
+            z-index: 1;
         }
 
-        .section-padding {
-            padding: 60px 25px;
-            position: relative;
-        }
-
-        .mb-5 {
-            margin-bottom: 50px;
-        }
-
+        /* Hero Section */
         .hero {
             height: 100vh;
-            background: linear-gradient(rgba(93, 58, 54, 0.8), rgba(93, 58, 54, 0.6)), url('{{ asset('storage/' . $invitation->gallery_cover) }}');
+            background: linear-gradient(rgba(74, 16, 24, 0.85), rgba(74, 16, 24, 0.6)), url('{{ asset('storage/' . $invitation->gallery_cover) }}');
             background-size: cover;
             background-position: center;
             display: flex;
@@ -151,25 +122,27 @@
             position: relative;
         }
 
-        .flower-ornament {
-            width: 100px;
+        .hero-ornament {
+            width: 120px;
             margin-bottom: 20px;
-            opacity: 0.8;
+            stroke: var(--accent-color);
+            fill: none;
+            stroke-width: 1.5;
+            opacity: 0.9;
         }
 
         .hero h1 {
-            font-size: 2.8rem;
+            font-size: 2.5rem;
             color: var(--accent-color);
-            line-height: 1.2;
+            line-height: 1.3;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
             margin-bottom: 10px;
         }
 
         .hero-sub {
-            font-family: 'Prata', serif;
+            font-family: 'Cormorant Garamond', serif;
             font-style: italic;
-            font-size: 1.2rem;
-            letter-spacing: 1px;
+            font-size: 1.3rem;
             border-top: 1px solid var(--accent-color);
             border-bottom: 1px solid var(--accent-color);
             padding: 10px 20px;
@@ -186,452 +159,268 @@
             cursor: pointer;
         }
 
+        /* Quote Section */
         .quote-section {
             background-color: var(--white);
             text-align: center;
-            font-family: 'Prata', serif;
+            font-family: 'Cormorant Garamond', serif;
             font-style: italic;
             color: var(--secondary-color);
-            border-bottom: 2px solid var(--primary-color);
-            position: relative;
+            border-bottom: 1px solid var(--accent-color);
         }
+        .quote-section h3 { font-size: 1.8rem; margin-bottom: 20px; }
+        .quote-section p { font-size: 1.2rem; line-height: 1.8; }
 
+        /* Couple Section */
         .couple-wrapper {
             display: flex;
             flex-direction: column;
-            gap: 50px;
+            gap: 60px;
         }
+        .couple-card { text-align: center; }
 
-        .couple-card {
-            text-align: center;
-        }
-
+        /* Bingkai Foto Gaya Ukiran Jawa */
         .photo-frame-javanese {
             position: relative;
             display: inline-block;
             padding: 15px;
-            border: 2px solid var(--accent-color);
             background: white;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+            border: 2px solid var(--accent-color);
         }
-
-        .photo-frame-javanese::before,
-        .photo-frame-javanese::after,
-        .photo-frame-inner::before,
-        .photo-frame-inner::after {
+        /* Ornamen Sudut (Tumpal) */
+        .photo-frame-javanese::before, .photo-frame-javanese::after {
             content: '';
             position: absolute;
-            width: 20px;
-            height: 20px;
-            border: 3px solid var(--primary-color);
+            width: 25px;
+            height: 25px;
+            border: 3px double var(--primary-color);
+            background: var(--bg-color);
         }
-
-        .photo-frame-javanese::before {
-            top: 5px;
-            left: 5px;
-            border-right: none;
-            border-bottom: none;
-        }
-
-        .photo-frame-javanese::after {
-            top: 5px;
-            right: 5px;
-            border-left: none;
-            border-bottom: none;
-        }
-
-        .photo-frame-javanese .photo-frame-inner {
-            position: relative;
-            display: block;
-        }
-
-        .photo-frame-javanese .photo-frame-inner::before {
-            bottom: 5px;
-            left: 5px;
-            border-right: none;
-            border-top: none;
-        }
-
-        .photo-frame-javanese .photo-frame-inner::after {
-            bottom: 5px;
-            right: 5px;
-            border-left: none;
-            border-top: none;
-        }
+        .photo-frame-javanese::before { top: -12px; left: -12px; }
+        .photo-frame-javanese::after { bottom: -12px; right: -12px; }
 
         .couple-img {
-            width: 200px;
-            height: 250px;
+            width: 220px;
+            height: 270px;
             object-fit: cover;
-            filter: sepia(30%) contrast(90%);
+            filter: sepia(20%) contrast(90%);
             display: block;
         }
 
-        .couple-name {
-            font-size: 1.8rem;
-            margin-top: 20px;
-            margin-bottom: 5px;
-            color: var(--primary-color);
-        }
-
-        .parent-name {
-            font-size: 0.9rem;
-            color: var(--secondary-color);
-            font-family: 'Prata', serif;
-        }
+        .couple-name { font-size: 2rem; margin-top: 25px; margin-bottom: 5px; }
+        .parent-name { font-size: 1rem; color: var(--secondary-color); }
 
         .connector-symbol {
-            font-size: 2.5rem;
+            font-size: 3rem;
             color: var(--accent-color);
-            font-family: 'Playfair Display', serif;
-            line-height: 1;
-            margin-top: -30px;
+            font-family: 'Cinzel', serif;
+            margin-top: -40px;
         }
 
+        /* Event Card */
         .event-card {
             border: 1px solid var(--accent-color);
-            padding: 30px 15px;
+            padding: 35px 20px;
             text-align: center;
             margin-bottom: 30px;
             background: white;
             position: relative;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
         }
-
         .event-card::before {
             content: '';
             position: absolute;
-            top: 5px;
-            left: 5px;
-            right: 5px;
-            bottom: 5px;
+            top: 5px; left: 5px; right: 5px; bottom: 5px;
             border: 1px solid var(--primary-color);
             pointer-events: none;
         }
-
-        .event-title {
-            font-family: 'Prata', serif;
-            font-size: 1.4rem;
-            color: var(--primary-color);
-            margin-bottom: 10px;
-        }
-
-        .event-time {
-            font-size: 1.1rem;
-            font-weight: bold;
-            color: var(--text-gold);
-            margin-bottom: 15px;
-            display: block;
-        }
-
+        .event-title { font-size: 1.5rem; color: var(--primary-color); margin-bottom: 15px; }
+        .event-time { font-size: 1.2rem; font-weight: bold; color: var(--text-gold); margin-bottom: 15px; display: block; }
+        
         .btn-map {
             display: inline-block;
             margin-top: 15px;
-            padding: 8px 20px;
+            padding: 10px 25px;
             background-color: var(--primary-color);
-            color: var(--bg-color);
+            color: var(--accent-color);
             text-decoration: none;
+            font-family: 'Cinzel', serif;
             font-size: 0.8rem;
-            text-transform: uppercase;
             letter-spacing: 1px;
             border: 1px solid var(--primary-color);
             transition: all 0.3s;
         }
+        .btn-map:hover { background: transparent; color: var(--primary-color); }
 
-        .btn-map:hover {
-            background-color: var(--accent-color);
-            color: var(--primary-color);
-            border-color: var(--accent-color);
-        }
-
+        /* Countdown */
         .countdown-section {
             background-color: var(--primary-color);
             color: var(--accent-color);
             text-align: center;
-            padding: 50px 20px;
-            border-top: 5px solid var(--accent-color);
-            border-bottom: 5px solid var(--accent-color);
+            padding: 60px 20px;
             background-image: repeating-linear-gradient(45deg, rgba(0, 0, 0, 0.05) 0px, rgba(0, 0, 0, 0.05) 10px, transparent 10px, transparent 20px);
         }
-
-        .countdown-timer {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            margin-top: 30px;
-        }
-
+        .countdown-timer { display: flex; justify-content: center; gap: 15px; margin-top: 30px; }
         .timer-box {
-            background: rgba(0, 0, 0, 0.2);
+            background: rgba(0, 0, 0, 0.3);
             padding: 15px 10px;
             border: 1px solid var(--accent-color);
-            min-width: 60px;
+            min-width: 65px;
         }
+        .timer-val { font-family: 'Cinzel', serif; font-size: 1.8rem; display: block; }
+        .timer-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px; }
 
-        .timer-val {
-            font-family: 'Prata', serif;
-            font-size: 1.8rem;
-            display: block;
-        }
+        /* Gallery */
+        .masonry-gallery { column-count: 2; column-gap: 15px; }
+        .masonry-item { width: 100%; margin-bottom: 15px; display: block; border-radius: 4px; overflow: hidden; border: 3px solid white; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        .masonry-item img { width: 100%; display: block; filter: sepia(20%); transition: 0.3s; }
+        .masonry-item:hover img { filter: sepia(0%); transform: scale(1.05); }
 
-        .timer-label {
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .gallery-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
-        }
-
-        .gallery-item {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-            border: 4px solid white;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            filter: sepia(20%);
-            transition: all 0.3s;
-        }
-
-        .gallery-item:hover {
-            transform: scale(1.03);
-            filter: sepia(0%);
-            border-color: var(--accent-color);
-        }
-
+        /* Gift */
         .gift-card {
             background: white;
-            padding: 20px;
+            padding: 25px;
             border: 1px solid var(--accent-color);
-            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
             margin-bottom: 20px;
             text-align: center;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            position: relative;
         }
 
+        /* RSVP */
         .rsvp-form {
-            background: #fff;
+            background: white;
             padding: 30px;
-            border: 1px solid var(--secondary-color);
+            border: 1px solid var(--accent-color);
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
         }
-
         .form-control {
             width: 100%;
-            padding: 10px 0;
+            padding: 12px 5px;
             margin-bottom: 20px;
             border: none;
             border-bottom: 1px solid var(--primary-color);
             background: transparent;
-            font-family: 'Prata', serif;
-            font-size: 1rem;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.1rem;
             color: var(--text-dark);
         }
-
-        .form-control:focus {
-            outline: none;
-            border-bottom: 2px solid var(--accent-color);
-        }
-
+        .form-control:focus { outline: none; border-bottom: 2px solid var(--accent-color); }
+        
         .btn-submit {
             width: 100%;
-            padding: 12px;
+            padding: 15px;
             background-color: var(--primary-color);
             color: var(--accent-color);
             border: none;
-            font-family: 'Playfair Display', serif;
-            font-weight: bold;
+            font-family: 'Cinzel', serif;
+            font-weight: 600;
             letter-spacing: 1px;
             cursor: pointer;
             transition: background 0.3s;
         }
+        .btn-submit:hover { background-color: var(--secondary-color); }
 
+        .rsvp-list { max-height: 500px; overflow-y: auto; padding-right: 10px; margin-top: 30px; }
+        .rsvp-list::-webkit-scrollbar { width: 4px; }
+        .rsvp-list::-webkit-scrollbar-thumb { background: var(--accent-color); border-radius: 4px; }
+        
+        .comment-item {
+            background: #FBF7F0;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid var(--primary-color);
+            margin-bottom: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            animation: slideIn 0.5s ease-out;
+        }
+        .comment-item h5 { font-family: 'Cinzel', serif; font-size: 1rem; color: var(--primary-color); margin-bottom: 5px; display: flex; justify-content: space-between; align-items: center; }
+        .comment-item p { font-size: 1rem; color: #555; line-height: 1.5; font-family: 'Cormorant Garamond', serif; }
+        .badge-hadir { font-size: 0.7rem; background: var(--accent-color); color: var(--primary-color); padding: 2px 8px; border-radius: 10px; font-family: 'Lato', sans-serif; }
+        .badge-tidak { font-size: 0.7rem; background: #ccc; color: #333; padding: 2px 8px; border-radius: 10px; font-family: 'Lato', sans-serif; }
+
+        /* Music Control */
         .music-control {
-            position: fixed;
-            bottom: 25px;
-            right: 25px;
-            width: 50px;
-            height: 50px;
-            background-color: var(--primary-color);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-            z-index: 9999;
-            border: 2px solid var(--accent-color);
-            color: var(--accent-color);
-            font-size: 24px;
+            position: fixed; bottom: 20px; right: 20px; width: 50px; height: 50px;
+            background-color: var(--primary-color); border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); z-index: 9999;
+            border: 2px solid var(--accent-color); color: var(--accent-color); font-size: 24px;
+        }
+        .music-control.playing { animation: spin 4s linear infinite; }
+
+        .youtube-player-container {
+            position: absolute;
+            left: -9999px;
+            width: 2px;
+            height: 2px;
+            overflow: hidden;
         }
 
         footer {
             background-color: var(--primary-color);
             color: var(--accent-color);
-            padding: 40px 20px;
+            padding: 60px 20px;
             text-align: center;
         }
 
-        .fade-in {
-            opacity: 0;
-            transform: translateY(20px);
-            transition: all 1s;
-        }
+        .fade-in { opacity: 0; transform: translateY(30px); transition: all 1s ease-out; }
+        .fade-in.visible { opacity: 1; transform: translateY(0); }
 
-        .fade-in.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        @keyframes bounce {
-
-            0%,
-            20%,
-            50%,
-            80%,
-            100% {
-                transform: translateY(0);
-            }
-
-            40% {
-                transform: translateY(-15px);
-            }
-
-            60% {
-                transform: translateY(-7px);
-            }
-        }
+        @keyframes bounce { 0%,20%,50%,80%,100% {transform: translateY(0);} 40% {transform: translateY(-15px);} 60% {transform: translateY(-7px);} }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
 
         #toast {
-            visibility: hidden;
-            min-width: 200px;
-            background-color: var(--primary-color);
-            color: var(--accent-color);
-            text-align: center;
-            padding: 16px;
-            position: fixed;
-            z-index: 99;
-            left: 50%;
-            bottom: 30px;
-            transform: translateX(-50%);
-            font-family: 'Prata', serif;
-            border: 1px solid var(--accent-color);
+            visibility: hidden; min-width: 200px; background-color: var(--primary-color); color: var(--accent-color);
+            text-align: center; padding: 16px; position: fixed; z-index: 99; left: 50%; bottom: 30px;
+            transform: translateX(-50%); font-family: 'Cinzel', serif; border: 1px solid var(--accent-color);
         }
+        #toast.show { visibility: visible; animation: fadein 0.5s, fadeout 0.5s 2.5s; }
+        @keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 30px; opacity: 1;} }
+        @keyframes fadeout { from {bottom: 30px; opacity: 1;} to {bottom: 0; opacity: 0;} }
 
-        #toast.show {
-            visibility: visible;
-            animation: fadein 0.5s, fadeout 0.5s 2.5s;
-        }
-
-        @keyframes fadein {
-            from {
-                bottom: 0;
-                opacity: 0;
-            }
-
-            to {
-                bottom: 30px;
-                opacity: 1;
-            }
-        }
-
-        @keyframes fadeout {
-            from {
-                bottom: 30px;
-                opacity: 1;
-            }
-
-            to {
-                bottom: 0;
-                opacity: 0;
-            }
-        }
-
-        /* --- Desktop Layout (Split Screen) --- */
+        /* Desktop Layout */
         @media (min-width: 1024px) {
-            body {
-                background: #e0dcd5;
-                height: 100vh;
-                overflow: hidden;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-            }
-
-            .mobile-container {
-                max-width: 1000px !important;
-                flex-direction: row !important;
-                display: flex !important;
-                height: 90vh;
-                border-radius: 20px;
-                overflow: hidden;
-                border: 10px solid white;
-                outline: 1px solid var(--accent-color);
-            }
-
-            .hero {
-                flex: 1.2;
-                height: 100% !important;
-                background-attachment: scroll;
-            }
-
-            .content-wrapper {
-                flex: 1;
-                height: 100%;
-                overflow-y: auto;
-                background: var(--bg-color);
-                scrollbar-width: thin;
-                scrollbar-color: var(--primary-color) transparent;
-            }
-
-            .content-wrapper::-webkit-scrollbar {
-                width: 5px;
-            }
-
-            .content-wrapper::-webkit-scrollbar-thumb {
-                background: var(--primary-color);
-                border-radius: 10px;
-            }
-
-            .section-padding {
-                padding: 60px 30px;
-            }
-
-            .hero h1 {
-                font-size: 3.5rem;
-            }
+            body { height: 100vh; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+            .mobile-container { max-width: 1000px !important; flex-direction: row !important; display: flex !important; height: 90vh; border-radius: 0; overflow: hidden; }
+            .hero { flex: 1.2; height: 100% !important; background-attachment: scroll; }
+            .content-wrapper { flex: 1; height: 100%; overflow-y: auto; background: var(--bg-color); scrollbar-width: thin; scrollbar-color: var(--primary-color) transparent; }
+            .content-wrapper::-webkit-scrollbar { width: 5px; }
+            .content-wrapper::-webkit-scrollbar-thumb { background: var(--primary-color); border-radius: 10px; }
+            .section-padding { padding: 70px 40px; }
+            .hero h1 { font-size: 3.5rem; }
         }
     </style>
 </head>
 
 <body>
 
-    <!-- Music Control -->
     <div id="musicBtn" class="music-control">
         <i class="ti ti-player-play" id="musicIcon"></i>
     </div>
 
     <div class="mobile-container">
 
-        <!-- Hero Section -->
+        <!-- Hero -->
         <header id="preview-hero-bg" class="hero">
-            <svg class="flower-ornament" viewBox="0 0 100 50">
-                <path d="M50 50 C 20 50 0 30 0 10 C 20 0 40 0 50 20 C 60 0 80 0 100 10 C 100 30 80 50 50 50" fill="none"
-                    stroke="#Cfb997" stroke-width="2" />
+            <!-- Ornamen Bunga Melati SVG -->
+            <svg class="hero-ornament fade-in" viewBox="0 0 100 50">
+                <path d="M50 50 C 30 30, 10 30, 0 50 M50 50 C 70 30, 90 30, 100 50 M50 0 V 50 M40 20 Q 50 10 60 20" />
+                <circle cx="50" cy="10" r="3" fill="currentColor" stroke="none" />
             </svg>
 
-            <p class="fade-in" style="font-size: 0.9rem; letter-spacing: 2px;">The Wedding of</p>
-            <h1 class="fade-in" style="margin-top: 10px;">
+            <p class="fade-in" style="font-family: 'Cinzel', serif; font-size: 0.9rem; letter-spacing: 3px;">The Wedding Of</p>
+            <h1 class="fade-in" style="margin-top: 15px;">
                 {{ $invitation->groom_nickname }}<br>&<br>{{ $invitation->bride_nickname }}</h1>
 
             <div class="hero-sub fade-in">
                 Kepada Yth. Bapak/Ibu/Saudara/i<br>
-                <span style="font-weight: 700; font-size: 1.2rem; display: inline-block; margin-top: 5px;">{{ request('penerima') ?? 'Tamu Undangan' }}</span>
+                <span style="font-weight: 700; font-size: 1.3rem; display: inline-block; margin-top: 5px; color: white;">{{ request('penerima') ?? 'Tamu Undangan' }}</span>
             </div>
 
-            <div class="hero-sub fade-in" style="margin-top: 20px;">
+            <div class="hero-sub fade-in" style="margin-top: 25px; border: none; font-size: 1.1rem;">
                 {{ \Carbon\Carbon::parse($invitation->wedding_date)->locale('id')->translatedFormat('l, d F Y') }}
             </div>
 
@@ -641,77 +430,67 @@
         </header>
 
         <div class="content-wrapper">
-            <!-- Mangayu Bagya (Quote) -->
+            
+            <!-- Quote -->
             <section id="quote" class="section-padding quote-section">
                 <div class="fade-in">
-                    <h3 style="font-family: 'Prata', serif; font-size: 1.5rem; margin-bottom: 15px;">Mangayu Bagya</h3>
-                    <p style="font-size: 1.1rem; line-height: 1.6;">
-                        {!! nl2br(e($invitation->wedding_quote)) !!}
-                    </p>
+                    <h3>Mangayu Bagya</h3>
+                    <p>"{!! nl2br(e($invitation->wedding_quote)) !!}"</p>
                 </div>
             </section>
 
+            <!-- Pemisah Batik -->
+            <div class="batik-divider">
+                <div class="batik-line"></div>
+                <svg class="batik-icon" viewBox="0 0 50 50">
+                    <path d="M25 0 L30 20 L50 25 L30 30 L25 50 L20 30 L0 25 L20 20 Z" fill="currentColor"/>
+                </svg>
+                <div class="batik-line"></div>
+            </div>
+
             <!-- Mempelai -->
-            <section class="section-padding">
+            <section class="section-padding" style="background: var(--bg-color);">
                 <div class="couple-wrapper fade-in">
-                    <!-- Groom -->
                     <div class="couple-card">
                         <div class="photo-frame-javanese">
-                            <span class="photo-frame-inner"></span>
-                            <img id="preview-foto-pria" src="{{ asset('storage/' . $invitation->foto_pria) }}"
-                                alt="{{ $invitation->groom_name }}" class="couple-img">
+                            <img id="preview-foto-pria" src="{{ asset('storage/' . $invitation->foto_pria) }}" alt="{{ $invitation->groom_name }}" class="couple-img">
                         </div>
-                        <h3 class="couple-name ancient-font">{{ $invitation->groom_name }}</h3>
-                        <p class="parent-name">Putra dari Bpk. {{ $invitation->groom_father_name }} & Ibu
-                            {{ $invitation->groom_mother_name }}</p>
+                        <h3 class="couple-name">{{ $invitation->groom_name }}</h3>
+                        <p class="parent-name">Putra dari Bpk. {{ $invitation->groom_father_name }}<br>& Ibu {{ $invitation->groom_mother_name }}</p>
                     </div>
 
                     <div class="text-center connector-symbol">&</div>
 
-                    <!-- Bride -->
                     <div class="couple-card">
                         <div class="photo-frame-javanese">
-                            <span class="photo-frame-inner"></span>
-                            <img id="preview-foto-wanita" src="{{ asset('storage/' . $invitation->foto_wanita) }}"
-                                alt="{{ $invitation->bride_name }}" class="couple-img">
+                            <img id="preview-foto-wanita" src="{{ asset('storage/' . $invitation->foto_wanita) }}" alt="{{ $invitation->bride_name }}" class="couple-img">
                         </div>
-                        <h3 class="couple-name ancient-font">{{ $invitation->bride_name }}</h3>
-                        <p class="parent-name">Putri dari Bpk. {{ $invitation->bride_father_name }} & Ibu
-                            {{ $invitation->bride_mother_name }}</p>
+                        <h3 class="couple-name">{{ $invitation->bride_name }}</h3>
+                        <p class="parent-name">Putri dari Bpk. {{ $invitation->bride_father_name }}<br>& Ibu {{ $invitation->bride_mother_name }}</p>
                     </div>
                 </div>
             </section>
 
-            <!-- Divider Gunungan -->
-            <div class="divider-gunungan">
-                <div class="divider-line"></div>
-                <svg class="gunungan-icon" viewBox="0 0 50 100">
-                    <path
-                        d="M25 100 Q 0 50, 25 0 Q 50 50, 25 100 M25 20 C 10 20, 5 40, 15 60 C 10 50, 0 60, 10 80 M25 20 C 40 20, 45 40, 35 60 C 40 50, 50 60, 40 80"
-                        fill="currentColor" />
-                </svg>
-            </div>
-
             <!-- Acara -->
             <section class="section-padding" style="background-color: #f7f7f7;">
                 <div class="text-center mb-5 fade-in">
-                    <h2 class="ancient-font" style="font-size: 2rem;">Rangkaian Acara</h2>
+                    <h2 style="font-size: 2rem;">Rangkaian Acara</h2>
+                    <div class="batik-line" style="width: 50px; margin: 15px auto;"></div>
                 </div>
 
                 <div class="fade-in">
                     <div class="event-card">
                         <div class="event-title">Akad Nikah</div>
                         <span class="event-time">{{ $invitation->akad_time }} - {{ $invitation->akad_time_end }}</span>
-                        <p style="font-size: 0.9rem; color: #555;">
+                        <p style="font-size: 1.1rem; color: #555;">
                             {{ $invitation->akad_location }}<br>{{ $invitation->akad_address }}</p>
                         <a href="{{ $invitation->akad_maps }}" target="_blank" class="btn-map">Lihat Lokasi</a>
                     </div>
 
                     <div class="event-card">
                         <div class="event-title">Resepsi</div>
-                        <span class="event-time">{{ $invitation->resepsi_time }} -
-                            {{ $invitation->resepsi_time_end }}</span>
-                        <p style="font-size: 0.9rem; color: #555;">
+                        <span class="event-time">{{ $invitation->resepsi_time }} - {{ $invitation->resepsi_time_end }}</span>
+                        <p style="font-size: 1.1rem; color: #555;">
                             {{ $invitation->resepsi_location }}<br>{{ $invitation->resepsi_address }}</p>
                         <a href="{{ $invitation->resepsi_maps }}" target="_blank" class="btn-map">Lihat Lokasi</a>
                     </div>
@@ -721,80 +500,21 @@
             <!-- Countdown -->
             <section class="countdown-section">
                 <div class="fade-in">
-                    <h3 class="ancient-font" style="font-size: 1.8rem;">Hitung Mundur</h3>
+                    <h3 style="color: var(--accent-color); font-size: 1.8rem;">Hitung Mundur</h3>
                     <div class="countdown-timer" id="timer">
-                        <div class="timer-box"><span class="timer-val" id="days">00</span><span
-                                class="timer-label">Hari</span></div>
-                        <div class="timer-box"><span class="timer-val" id="hours">00</span><span
-                                class="timer-label">Jam</span></div>
-                        <div class="timer-box"><span class="timer-val" id="minutes">00</span><span
-                                class="timer-label">Menit</span></div>
-                        <div class="timer-box"><span class="timer-val" id="seconds">00</span><span
-                                class="timer-label">Detik</span></div>
+                        <div class="timer-box"><span class="timer-val" id="days">00</span><span class="timer-label">Hari</span></div>
+                        <div class="timer-box"><span class="timer-val" id="hours">00</span><span class="timer-label">Jam</span></div>
+                        <div class="timer-box"><span class="timer-val" id="minutes">00</span><span class="timer-label">Menit</span></div>
+                        <div class="timer-box"><span class="timer-val" id="seconds">00</span><span class="timer-label">Detik</span></div>
                     </div>
                 </div>
             </section>
-
-            <!-- Love Story -->
-            @php
-                $loveStories = is_array($invitation->love_story) ? $invitation->love_story : json_decode($invitation->love_story, true);
-            @endphp
-            @if(!empty($loveStories))
-                <section class="section-padding">
-                    <div class="text-center mb-5 fade-in">
-                        <h2 class="ancient-font" style="font-size: 2rem;">Kisah Cinta</h2>
-                    </div>
-                    @foreach($loveStories as $story)
-                        @if(!empty($story['title']))
-                            <div class="fade-in"
-                                style="background:white; padding:20px; border:1px solid var(--accent-color); margin-bottom: 20px;">
-                                <h4 class="ancient-font" style="color:var(--primary-color);">{{ $story['title'] }}</h4>
-                                <p style="font-size: 0.9rem; margin-top:10px;">{{ $story['story'] }}</p>
-                                @if(!empty($story['photo']))
-                                    <img src="{{ asset('storage/' . $story['photo']) }}"
-                                        style="width:100%; border-radius:10px; margin-top:15px;">
-                                @endif
-                            </div>
-                        @endif
-                    @endforeach
-                </section>
-            @endif
-
-            <!-- Gallery -->
-            <section class="section-padding">
-                <div class="text-center mb-5 fade-in">
-                    <h2 class="ancient-font" style="font-size: 2rem;">Dokumentasi</h2>
-                </div>
-                <div class="gallery-grid fade-in">
-                    @foreach($invitation->galleries as $photo)
-                        <img src="{{ asset('storage/' . $photo->image) }}" class="gallery-item" alt="Gallery Photo">
-                    @endforeach
-                </div>
-            </section>
-
-            <!-- Gifts -->
-            @if($invitation->enable_gift == 1 && $invitation->gifts->count())
-                <section class="section-padding" style="background:#f7f7f7;">
-                    <div class="text-center mb-5 fade-in">
-                        <h2 class="ancient-font" style="font-size: 2rem;">Wedding Gift</h2>
-                    </div>
-                    @foreach($invitation->gifts as $gift)
-                        <div class="gift-card fade-in">
-                            <h4 class="ancient-font">{{ $gift->bank }}</h4>
-                            <p style="font-size: 1.2rem; font-weight: bold; margin: 10px 0;">{{ $gift->number }}</p>
-                            <p>A/N: {{ $gift->name }}</p>
-                            <button onclick="copyToClipboard('{{ $gift->number }}')" class="btn-map"
-                                style="padding: 5px 15px; font-size: 0.7rem; margin-top: 10px;">Salin No. Rekening</button>
-                        </div>
-                    @endforeach
-                </section>
-            @endif
-
 
             <!-- Galeri -->
             <section class="section-padding" style="background-color: var(--white);">
                 <div class="text-center mb-5 fade-in">
-                    <h2 class="ancient-font" style="font-size: 2rem;">Galeri Momen</h2>
+                    <h2 style="font-size: 2rem;">Dokumentasi</h2>
+                    <div class="batik-line" style="width: 50px; margin: 15px auto;"></div>
                 </div>
                 <div class="masonry-gallery fade-in" id="gallery-container">
                     @forelse ($invitation->galleries as $photo)
@@ -807,179 +527,299 @@
                 </div>
             </section>
 
+            <!-- Gifts -->
+            @if($invitation->enable_gift == 1 && $invitation->gifts->count())
+            <section class="section-padding" style="background:#f7f7f7;">
+                <div class="text-center mb-5 fade-in">
+                    <h2 style="font-size: 2rem;">Wedding Gift</h2>
+                    <div class="batik-line" style="width: 50px; margin: 15px auto;"></div>
+                </div>
+                @foreach($invitation->gifts as $gift)
+                    <div class="gift-card fade-in">
+                        <h4 class="ancient-font">{{ $gift->bank }}</h4>
+                        <p style="font-size: 1.4rem; font-weight: bold; margin: 10px 0; font-family: 'Cinzel', serif;">{{ $gift->number }}</p>
+                        <p>A/N: {{ $gift->name }}</p>
+                        <button onclick="copyToClipboard('{{ $gift->number }}')" class="btn-map" style="padding: 8px 20px; font-size: 0.8rem; margin-top: 15px;">Salin No. Rekening</button>
+                    </div>
+                @endforeach
+            </section>
+            @endif
+
             <!-- RSVP -->
             @if($invitation->enable_rsvp == 1)
-                <section class="section-padding" style="background: #f0ebe5;">
-                    <div class="text-center mb-5 fade-in">
-                        <h2 class="ancient-font" style="font-size: 2rem;">Ucapan & Doa</h2>
-                    </div>
+            <section class="section-padding" style="background: var(--bg-color);">
+                <div class="text-center mb-5 fade-in">
+                    <h2 style="font-size: 2rem;">Ucapan & Doa</h2>
+                    <div class="batik-line" style="width: 50px; margin: 15px auto;"></div>
+                </div>
 
-                    <div class="rsvp-form fade-in">
-                        <form id="rsvpForm">
-                            @csrf
-                            <input type="text" name="name" class="form-control" placeholder="Nama Anda" required>
-                            <select name="attending" class="form-control">
-                                <option value="1">Hadir</option>
-                                <option value="0">Berhalangan</option>
-                            </select>
-                            
-                            <div class="emoji-picker" style="margin-bottom: 10px; display: flex; gap: 10px; justify-content: center;">
-                                <button type="button" onclick="addEmoji('🎉')" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">🎉</button>
-                                <button type="button" onclick="addEmoji('❤️')" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">❤️</button>
-                                <button type="button" onclick="addEmoji('🥳')" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">🥳</button>
-                                <button type="button" onclick="addEmoji('✨')" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">✨</button>
-                                <button type="button" onclick="addEmoji('🙏')" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">🙏</button>
-                            </div>
+                <div class="rsvp-form fade-in">
+                    <form id="rsvpForm">
+                        @csrf
+                        <input type="text" name="name" id="rsvpName" class="form-control" placeholder="Nama Anda" required>
+                        <select name="attending" id="rsvpAttending" class="form-control">
+                            <option value="1">Hadir</option>
+                            <option value="0">Berhalangan</option>
+                        </select>
+                        
+                        <div class="emoji-picker" style="margin-bottom: 15px; display: flex; gap: 15px; justify-content: center;">
+                            <button type="button" onclick="addEmoji('🎉')" style="background: none; border: none; font-size: 1.5rem; cursor: pointer;">🎉</button>
+                            <button type="button" onclick="addEmoji('❤️')" style="background: none; border: none; font-size: 1.5rem; cursor: pointer;">❤️</button>
+                            <button type="button" onclick="addEmoji('🥳')" style="background: none; border: none; font-size: 1.5rem; cursor: pointer;">🥳</button>
+                            <button type="button" onclick="addEmoji('🙏')" style="background: none; border: none; font-size: 1.5rem; cursor: pointer;">🙏</button>
+                        </div>
 
-                            <textarea name="message" class="form-control" rows="3" placeholder="Tulis ucapan selamat..." required></textarea>
-                            <button type="submit" id="rsvpButton" class="btn-submit">Kirim Ucapan</button>
-                        </form>
+                        <textarea name="message" id="rsvpMessage" class="form-control" rows="3" placeholder="Tulis ucapan selamat..." required></textarea>
+                        <button type="submit" id="rsvpButton" class="btn-submit">Kirim Ucapan</button>
+                    </form>
+                </div>
+
+                <div class="fade-in" style="margin-top: 40px;">
+                    <div id="rsvpList" class="rsvp-list">
+                        <div class="text-center" id="emptyRsvp" style="color: #888; font-style: italic;">Belum ada ucapan. Jadilah yang pertama!</div>
                     </div>
-                    <div class="mt-5 fade-in">
-                        <div id="rsvpList" style="max-height: 400px; overflow-y: auto;"></div>
-                    </div>
-                </section>
+                </div>
+            </section>
             @endif
 
             <!-- Footer -->
             <footer>
                 <div class="fade-in">
-                    <h2 class="ancient-font" style="font-size: 2rem; color: #Cfb997;">{{ $invitation->groom_nickname }}
-                        & {{ $invitation->bride_nickname }}</h2>
-                    <div class="divider-gunungan" style="margin: 15px 0;">
-                        <div class="divider-line" style="background: rgba(255,255,255,0.3);"></div>
-                        <svg class="gunungan-icon" style="fill: #Cfb997; padding:0 5px;" viewBox="0 0 50 100">
-                            <path
-                                d="M25 100 Q 0 50, 25 0 Q 50 50, 25 100 M25 20 C 10 20, 5 40, 15 60 C 10 50, 0 60, 10 80 M25 20 C 40 20, 45 40, 35 60 C 40 50, 50 60, 40 80" />
-                        </svg>
-                    </div>
-                    <p style="font-size: 0.85rem;">Terima kasih atas doa restu Bapak/Ibu/Saudara/i.</p>
+                    <svg class="hero-ornament" style="margin-bottom: 20px; stroke: var(--accent-color); fill: none; stroke-width: 1.5; width: 80px;" viewBox="0 0 100 50">
+                        <path d="M50 50 C 30 30, 10 30, 0 50 M50 50 C 70 30, 90 30, 100 50 M50 0 V 50 M40 20 Q 50 10 60 20" />
+                    </svg>
+                    <h2 style="font-size: 2rem; color: var(--accent-color);">{{ $invitation->groom_nickname }} & {{ $invitation->bride_nickname }}</h2>
+                    <p style="font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; margin-top: 15px; opacity: 0.9;">Matur nuwun ingkang agung ngaturaken pangestu lan kehadiripun.</p>
                     <br>
-                    <small style="opacity: 0.5;">&copy; {{ date('Y') }} Undangan Pernikahan Adat</small>
+                    <small style="opacity: 0.5; font-family: 'Lato', sans-serif;">&copy; {{ date('Y') }} Undangan Pernikahan Adat Jawa</small>
                 </div>
             </footer>
         </div>
 
-        <!-- Toast -->
-        <div id="toast">Nomor rekening berhasil disalin!</div>
+        <div id="toast">Pesan terkirim dengan sukses.</div>
     </div>
 
-    <!-- Audio Element -->
+    @if(!empty($invitation->music_youtube_url))
+        @php
+            preg_match('/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|v\/|u\/\w\/|shorts\/)(?<id>[A-Za-z0-9_-]{11}))/i', $invitation->music_youtube_url, $ytMatches);
+            $youtubeId = $ytMatches['id'] ?? '';
+        @endphp
+        @if($youtubeId)
+        <div id="youtubePlayerContainer" class="youtube-player-container">
+            <iframe id="youtubeIframe" width="2" height="2"
+                src="https://www.youtube.com/embed/{{ $youtubeId }}?enablejsapi=1&autoplay=1&loop=1&playlist={{ $youtubeId }}&controls=0&modestbranding=1&rel=0&mute=1"
+                frameborder="0" allow="autoplay; encrypted-media; picture-in-picture"
+                onload="window.ytIframeReady = true;">
+            </iframe>
+        </div>
+        @endif
+    @else
     <audio id="bgMusic" loop>
-        <source
-            src="{{ $invitation->musicPreset ? asset('storage/' . $invitation->musicPreset->audio_url) : 'https://www.bensound.com/bensound-music/bensound-romantic.mp3' }}"
-            type="audio/mpeg">
+        <source src="{{ $invitation->musicPreset ? asset('storage/' . $invitation->musicPreset->audio_url) : 'https://www.bensound.com/bensound-music/bensound-romantic.mp3' }}" type="audio/mpeg">
     </audio>
+    @endif
 
     <script>
-        // --- 1. Countdown Logic ---
-        const weddingDate = new Date("{{ $invitation->wedding_date }}").getTime();
-        const timerInterval = setInterval(function () {
-            const now = new Date().getTime();
-            const distance = weddingDate - now;
-            if (distance < 0) {
-                clearInterval(timerInterval);
-                document.getElementById("timer").innerHTML = "<h3>Acara Dimulai</h3>";
-                return;
+        document.addEventListener('DOMContentLoaded', () => {
+            // 1. Countdown
+            const weddingDate = new Date("{{ $invitation->wedding_date }}").getTime();
+            const timerInterval = setInterval(() => {
+                const now = new Date().getTime();
+                const distance = weddingDate - now;
+                if (distance < 0) {
+                    clearInterval(timerInterval);
+                    document.getElementById("timer").innerHTML = "<h3>Acara Dimulai</h3>";
+                    return;
+                }
+                document.getElementById("days").innerText = String(Math.floor(distance / (1000 * 60 * 60 * 24))).padStart(2, '0');
+                document.getElementById("hours").innerText = String(Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))).padStart(2, '0');
+                document.getElementById("minutes").innerText = String(Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60))).padStart(2, '0');
+                document.getElementById("seconds").innerText = String(Math.floor((distance % (1000 * 60)) / 1000)).padStart(2, '0');
+            }, 1000);
+
+            // 2. Scroll Animation
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
+            }, { threshold: 0.1 });
+            document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+            // 3. Music
+            @if(!empty($invitation->music_youtube_url))
+            @if(!empty($youtubeId))
+            const musicBtn = document.getElementById('musicBtn');
+            const musicIcon = document.getElementById('musicIcon');
+            let ytPlaying = false;
+            let ytMuted = true;
+
+            function toggleMusicIcon(isPlaying) {
+                if(isPlaying) {
+                    musicIcon.classList.replace('ti-player-play', 'ti-player-pause');
+                    musicBtn.classList.add('playing');
+                } else {
+                    musicIcon.classList.replace('ti-player-pause', 'ti-player-play');
+                    musicBtn.classList.remove('playing');
+                }
             }
-            document.getElementById("days").innerText = String(Math.floor(distance / (1000 * 60 * 60 * 24))).padStart(2, '0');
-            document.getElementById("hours").innerText = String(Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))).padStart(2, '0');
-            document.getElementById("minutes").innerText = String(Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60))).padStart(2, '0');
-            document.getElementById("seconds").innerText = String(Math.floor((distance % (1000 * 60)) / 1000)).padStart(2, '0');
-        }, 1000);
 
-        // --- 2. Scroll Animation ---
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
-        }, { threshold: 0.15 });
-        document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+            function sendYtCommand(command) {
+                const ytIframe = document.getElementById('youtubeIframe');
+                if (!ytIframe) return;
+                const msg = JSON.stringify({ event: 'command', func: command, args: [] });
+                if (window.ytIframeReady) {
+                    setTimeout(() => ytIframe.contentWindow.postMessage(msg, '*'), 200);
+                } else {
+                    const check = setInterval(() => {
+                        if (window.ytIframeReady) { clearInterval(check); setTimeout(() => ytIframe.contentWindow.postMessage(msg, '*'), 200); }
+                    }, 100);
+                    setTimeout(() => { clearInterval(check); setTimeout(() => ytIframe.contentWindow.postMessage(msg, '*'), 500); }, 2000);
+                }
+            }
 
-        // --- 3. Music Control ---
-        const bgMusic = document.getElementById('bgMusic');
-        const musicBtn = document.getElementById('musicBtn');
-        const musicIcon = document.getElementById('musicIcon');
-        let hasInteracted = false;
+            function pauseYoutube() { sendYtCommand('pauseVideo'); sendYtCommand('pause'); ytPlaying = false; toggleMusicIcon(false); }
+            function playYoutube() { sendYtCommand('playVideo'); sendYtCommand('play'); ytPlaying = true; toggleMusicIcon(true); }
 
-        function playMusic() {
-            bgMusic.play().catch(() => { });
-            musicIcon.classList.replace('ti-player-play', 'ti-player-pause');
-            musicBtn.classList.add('playing');
-        }
-        function pauseMusic() {
-            bgMusic.pause();
-            musicIcon.classList.replace('ti-player-pause', 'ti-player-play');
-            musicBtn.classList.remove('playing');
-        }
-        window.addEventListener('scroll', () => { if (!hasInteracted) { playMusic(); hasInteracted = true; } }, { once: true });
-        musicBtn.onclick = () => { if (bgMusic.paused) playMusic(); else pauseMusic(); };
-
-        // --- 4. RSVP Logic ---
-        const invId = "{{ $invitation->id }}";
-        function loadRSVPs() {
-            fetch(`/invitation/${invId}/rsvps`).then(r => r.json()).then(data => {
-                document.getElementById('rsvpList').innerHTML = data.map(r => `
-                    <div style="background: white; padding: 15px; border-radius: 10px; border-left: 5px solid var(--primary-color); margin-bottom: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">
-                        <div style="font-weight: bold; color: var(--primary-color);">${r.name} <span style="font-size: 0.7rem; background: #eee; padding: 2px 8px; border-radius: 5px; float: right;">${r.attending ? 'Hadir' : 'Absen'}</span></div>
-                        <p style="font-size: 0.85rem; margin-top: 5px; color: #666;">${r.message}</p>
-                    </div>
-                `).join('');
+            window.addEventListener('scroll', () => { if (!ytPlaying) { playYoutube(); } }, { once: true });
+            musicBtn.addEventListener('click', () => {
+                if (ytPlaying) {
+                    pauseYoutube();
+                } else {
+                    if (ytMuted) { sendYtCommand('unMute'); ytMuted = false; }
+                    playYoutube();
+                }
             });
-        }
-        document.getElementById('rsvpForm').onsubmit = (e) => {
-            e.preventDefault();
-            const btn = document.getElementById('rsvpButton');
-            btn.disabled = true; btn.innerText = "Mengirim...";
-            fetch(`/invitation/${invId}/rsvp`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-                body: JSON.stringify(Object.fromEntries(new FormData(e.target)))
-            }).then(() => { e.target.reset(); loadRSVPs(); }).finally(() => { btn.disabled = false; btn.innerText = "Kirim Ucapan"; });
-        };
-        loadRSVPs();
+            document.addEventListener('visibilitychange', () => { if (document.hidden) { pauseYoutube(); } else if (ytPlaying) { playYoutube(); } });
+            @endif
+            @else
+            const bgMusic = document.getElementById('bgMusic');
+            const musicBtn = document.getElementById('musicBtn');
+            const musicIcon = document.getElementById('musicIcon');
+            let hasInteracted = false;
 
-        // --- 5. Clipboard ---
-        window.copyToClipboard = (text) => {
-            navigator.clipboard.writeText(text).then(() => {
+            const playMusic = () => { bgMusic.play().catch(()=>{}); musicIcon.classList.replace('ti-player-play', 'ti-player-pause'); musicBtn.classList.add('playing'); };
+            const pauseMusic = () => { bgMusic.pause(); musicIcon.classList.replace('ti-player-pause', 'ti-player-play'); musicBtn.classList.remove('playing'); };
+            
+            window.addEventListener('scroll', () => { if (!hasInteracted) { playMusic(); hasInteracted = true; } }, { once: true });
+            musicBtn.onclick = () => { if (bgMusic.paused) playMusic(); else pauseMusic(); };
+            @endif
+
+            // 4. RSVP Logic (Terbaru di Atas)
+            const invId = "{{ $invitation->id }}";
+            const rsvpListEl = document.getElementById('rsvpList');
+            const form = document.getElementById('rsvpForm');
+            const rsvpButton = document.getElementById('rsvpButton');
+            let loadedRsvpIds = new Set();
+
+            function createRsvpHtml(r) {
+                const badgeClass = r.attending == 1 ? 'badge-hadir' : 'badge-tidak';
+                const badgeText = r.attending == 1 ? 'Hadir' : 'Tidak Hadir';
+                return `
+                    <div class="comment-item" data-id="${r.id}">
+                        <h5>${r.name} <span class="${badgeClass}">${badgeText}</span></h5>
+                        <p>${r.message}</p>
+                    </div>
+                `;
+            }
+
+            function loadRSVPs() {
+                fetch(`/invitation/${invId}/rsvps`)
+                    .then(res => res.json())
+                    .then(data => {
+                        if (!data || data.length === 0) {
+                            if (loadedRsvpIds.size === 0) {
+                                rsvpListEl.innerHTML = `<div class="text-center" id="emptyRsvp" style="color: #888; font-style: italic;">Belum ada ucapan. Jadilah yang pertama!</div>`;
+                            }
+                            return;
+                        }
+
+                        // Sort ID Descending (Terbesar/Terbaru di atas)
+                        data.sort((a, b) => b.id - a.id);
+
+                        const emptyMsg = document.getElementById('emptyRsvp');
+                        if (emptyMsg) emptyMsg.remove();
+
+                        // Cek reset jika ada data yang dihapus dari DB
+                        if (data.length < loadedRsvpIds.size) {
+                            rsvpListEl.innerHTML = '';
+                            loadedRsvpIds.clear();
+                        }
+
+                        // Filter hanya yang belum ditampilkan
+                        const newItems = data.filter(rsvp => !loadedRsvpIds.has(rsvp.id));
+
+                        if (newItems.length > 0) {
+                            const html = newItems.map(r => createRsvpHtml(r)).join('');
+                            // Sisipkan di ATAS (afterbegin)
+                            rsvpListEl.insertAdjacentHTML('afterbegin', html);
+                            newItems.forEach(item => loadedRsvpIds.add(item.id));
+                        }
+                    });
+            }
+
+            if (form) {
+                form.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    rsvpButton.disabled = true;
+                    rsvpButton.innerText = "Mengirim...";
+                    
+                    fetch(`/invitation/${invId}/rsvp`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                        body: JSON.stringify(Object.fromEntries(new FormData(e.target)))
+                    })
+                    .then(res => res.json())
+                    .then(() => { 
+                        e.target.reset(); 
+                        loadRSVPs(); 
+                        showToast("Ucapan berhasil dikirim!"); 
+                    })
+                    .finally(() => { 
+                        rsvpButton.disabled = false; 
+                        rsvpButton.innerText = "Kirim Ucapan"; 
+                    });
+                });
+            }
+
+            // Polling setiap 10 detik
+            loadRSVPs();
+            setInterval(loadRSVPs, 10000);
+
+            // 5. Toast & Copy
+            window.copyToClipboard = (text) => {
+                navigator.clipboard.writeText(text).then(() => showToast("Nomor rekening berhasil disalin!"));
+            };
+
+            function showToast(msg) {
                 const toast = document.getElementById('toast');
+                toast.innerText = msg;
                 toast.className = 'show';
                 setTimeout(() => { toast.className = ''; }, 3000);
-            });
-        };
+            }
 
-        // --- 6. Live Preview Sync ---
-        window.addEventListener('message', function (event) {
-            if (event.data.type === 'syncImages') {
-                const imgs = event.data.images;
-                if (imgs.pria) {
-                    const el = document.getElementById('preview-foto-pria');
-                    if (el) el.src = imgs.pria;
-                }
-                if (imgs.wanita) {
-                    const el = document.getElementById('preview-foto-wanita');
-                    if (el) el.src = imgs.wanita;
-                }
-                if (imgs.cover) {
-                    const el = document.getElementById('preview-hero-bg');
-                    if (el) el.style.backgroundImage = `linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.5)), url('${imgs.cover}')`;
-                }
-                if (imgs.gallery && imgs.gallery.length > 0) {
-                    const galleryContainer = document.getElementById('gallery-container');
-                    if (galleryContainer) {
-                        galleryContainer.innerHTML = imgs.gallery.map(src => `
-                            <a href="${src}" data-fancybox="gallery" class="masonry-item">
-                                <img src="${src}" alt="Gallery">
-                            </a>
-                        `).join('');
+            // 6. Live Preview Sync
+            window.addEventListener('message', function (event) {
+                if (event.data.type === 'syncImages') {
+                    const imgs = event.data.images;
+                    if (imgs.pria) { const el = document.getElementById('preview-foto-pria'); if(el) el.src = imgs.pria; }
+                    if (imgs.wanita) { const el = document.getElementById('preview-foto-wanita'); if(el) el.src = imgs.wanita; }
+                    if (imgs.cover) {
+                        const el = document.getElementById('preview-hero-bg');
+                        if(el) el.style.backgroundImage = `linear-gradient(rgba(74,16,24,0.85), rgba(74,16,24,0.6)), url('${imgs.cover}')`;
+                    }
+                    if (imgs.gallery && imgs.gallery.length > 0) {
+                        const galleryContainer = document.getElementById('gallery-container');
+                        if (galleryContainer) {
+                            galleryContainer.innerHTML = imgs.gallery.map(src => `<a href="${src}" data-fancybox="gallery" class="masonry-item"><img src="${src}" alt="Gallery"></a>`).join('');
+                        }
                     }
                 }
-            }
-        });
+            });
 
-        function addEmoji(emoji) {
-            const textarea = document.querySelector('textarea[name="message"]');
-            textarea.value += emoji;
-            textarea.focus();
-        }
+            window.addEmoji = (emoji) => {
+                const textarea = document.getElementById('rsvpMessage');
+                textarea.value += emoji;
+                textarea.focus();
+            };
+        });
     </script>
 </body>
 
