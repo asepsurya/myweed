@@ -10,7 +10,7 @@
     }
     $isCustomUpload = $musicId && !is_numeric($musicId);
     $apiMusicId = $isCustomUpload ? '' : $musicId;
-    $customAudioUrl = $isCustomUpload ? ($musicId ? Storage::disk(config('music.disk', 'public'))->url($musicId) : '') : '';
+    $customAudioUrl = $isCustomUpload ? ($musicId ? Storage::disk('public')->url($musicId) : '') : '';
 @endphp
 
 <style>
@@ -273,6 +273,7 @@
         bgMusic.volume = (musicVolume ? musicVolume.value / 100 : 0.4);
         bgMusic.play().then(() => {
             console.log('playAudio: success');
+            hasInteracted = true;
             isPlaying = true;
             setPauseIcon();
             startWaveformAnimation();
@@ -333,6 +334,11 @@
             if (musicData.audio) {
                 bgMusic.src = musicData.audio;
                 bgMusic.load();
+                const tryPlayWhenReady = () => {
+                    if (!hasInteracted) playAudio();
+                    bgMusic.removeEventListener('canplay', tryPlayWhenReady);
+                };
+                bgMusic.addEventListener('canplay', tryPlayWhenReady);
                 if (!hasInteracted) {
                     setTimeout(() => {
                         if (!hasInteracted && bgMusic.src) playAudio();
@@ -427,8 +433,8 @@
 
     function tryAutoplay() {
         if (hasInteracted) return;
-        hasInteracted = true;
         if (isYoutube) {
+            hasInteracted = true;
             playYoutube();
         } else if (bgMusic && bgMusic.src) {
             playAudio();
@@ -442,8 +448,11 @@
         loadCustomAudio();
         setTimeout(tryAutoplay, 800);
     } else {
-        loadMusicData();
-        setTimeout(tryAutoplay, 800);
+        loadMusicData().then(() => {
+            setTimeout(tryAutoplay, 800);
+        }).catch(() => {
+            setTimeout(tryAutoplay, 800);
+        });
     }
 })();
 </script>

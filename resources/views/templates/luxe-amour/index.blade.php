@@ -342,7 +342,7 @@
                             <img id="preview-foto-pria" src="{{ asset('storage/' . ($invitation->foto_pria ?? 'default/groom.jpg')) }}" alt="{{ $invitation->groom_name ?? 'Groom' }}" class="couple-img" loading="lazy">
                         </div>
                         <h3 class="couple-name">{{ $invitation->groom_name ?? 'Groom Name' }}</h3>
-                        <p class="parent-name">Putra dari Bpk. {{ $invitation->groom_father_name ?? '-' }} & Ibu {{ $invitation->groom_mother_name ?? '-' }}</p>
+                        <p class="parent-name">{{ $invitation->groom_child_order_text ? 'Putra ' . $invitation->groom_child_order_text . ' dari' : 'Putra dari' }} Bpk. {{ $invitation->groom_father_name ?? '-' }} & Ibu {{ $invitation->groom_mother_name ?? '-' }}</p>
                         @if(!empty($invitation->groom_instagram))
                         <a href="{{ $invitation->groom_instagram }}" target="_blank" style="color: var(--text-muted); font-size: 0.9rem;margin-top:10px;">
                             <i class="ti ti-brand-instagram"></i> Instagram
@@ -358,7 +358,7 @@
                             <img id="preview-foto-wanita" src="{{ asset('storage/' . ($invitation->foto_wanita ?? 'default/bride.jpg')) }}" alt="{{ $invitation->bride_name ?? 'Bride' }}" class="couple-img" loading="lazy">
                         </div>
                         <h3 class="couple-name">{{ $invitation->bride_name ?? 'Bride Name' }}</h3>
-                        <p class="parent-name">Putri dari Bpk. {{ $invitation->bride_father_name ?? '-' }} & Ibu {{ $invitation->bride_mother_name ?? '-' }}</p>
+                        <p class="parent-name">{{ $invitation->bride_child_order_text ? 'Putri ' . $invitation->bride_child_order_text . ' dari' : 'Putri dari' }} Bpk. {{ $invitation->bride_father_name ?? '-' }} & Ibu {{ $invitation->bride_mother_name ?? '-' }}</p>
                         @if(!empty($invitation->bride_instagram))
                         <a href="{{ $invitation->bride_instagram }}" target="_blank" style="color: var(--text-muted); font-size: 0.9rem;margin-top:10px;">
                             <i class="ti ti-brand-instagram"></i> Instagram

@@ -323,7 +323,7 @@
 
     <!-- Music Player -->
     @if(isset($invitation->music_url) && $invitation->music_url)
-    <audio id="bg-music" src="{{ $invitation->music_url }}" loop></audio>
+    <audio id="bg-music" src="{{ $invitation->music_url }}" loop autoplay></audio>
     <button id="music-toggle" class="btn btn-outline" style="position:fixed;bottom:20px;right:20px;">Music</button>
     @endif
 
@@ -359,9 +359,25 @@
             document.getElementById('seconds').innerText = seconds.toString().padStart(2,'0');
         },1000);
 
-        // Music Player Toggle
-        const musicBtn = document.getElementById('music-toggle');
+        // Auto play background music
         const bgMusic = document.getElementById('bg-music');
+        const musicBtn = document.getElementById('music-toggle');
+        if (bgMusic && musicBtn) {
+            bgMusic.play().then(() => {
+                musicBtn.textContent = 'Pause Music';
+            }).catch(() => {
+                const playOnInteraction = () => {
+                    bgMusic.play();
+                    musicBtn.textContent = 'Pause Music';
+                    document.removeEventListener('click', playOnInteraction);
+                    document.removeEventListener('touchstart', playOnInteraction);
+                };
+                document.addEventListener('click', playOnInteraction, { once: true });
+                document.addEventListener('touchstart', playOnInteraction, { once: true });
+            });
+        }
+
+        // Music Player Toggle
         if(musicBtn && bgMusic){
             musicBtn.addEventListener('click',()=> {
                 if(bgMusic.paused){

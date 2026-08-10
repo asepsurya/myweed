@@ -1692,7 +1692,7 @@ body.locked {
             <img loading="lazy" class="rectangle-8" src="{{ url('template-assets/' . $invitation->template->slug . '/images/rectangle-80.svg') }}" />
             <div class="adinda-mawaria">{{ $invitation->groom_name }}</div>
             <div class="bapak-sanusi-s-m-ibu-jubaedah-dari-london-utara">
-                Bapak {{ $invitation->groom_father_name ?? 'Fulan' }} &amp; Ibu {{ $invitation->groom_mother_name ?? 'Fulana' }}
+                {{ $invitation->groom_child_order_text ? 'Putra ' . $invitation->groom_child_order_text . ' dari' : 'Putra dari' }} Bapak {{ $invitation->groom_father_name ?? 'Fulan' }} &amp; Ibu {{ $invitation->groom_mother_name ?? 'Fulana' }}
                 <br />
                 {{ $invitation->groom_username_instagram ? 'dari ' . $invitation->groom_username_instagram : '' }}
             </div>
@@ -1700,7 +1700,7 @@ body.locked {
             <img loading="lazy" class="rectangle-82" src="{{ url('template-assets/' . $invitation->template->slug . '/images/rectangle-81.svg') }}" />
             <div class="adinda-mawaria2">{{ $invitation->bride_name }}</div>
             <div class="bapak-sanusi-s-m-ibu-jubaedah-dari-london-utara2">
-                Bapak {{ $invitation->bride_father_name ?? 'Surya' }} &amp; Ibu {{ $invitation->bride_mother_name ?? 'Dewi' }}
+                {{ $invitation->bride_child_order_text ? 'Putri ' . $invitation->bride_child_order_text . ' dari' : 'Putri dari' }} Bapak {{ $invitation->bride_father_name ?? 'Surya' }} &amp; Ibu {{ $invitation->bride_mother_name ?? 'Dewi' }}
                 <br />
                 {{ $invitation->bride_username_instagram ? 'dari ' . $invitation->bride_username_instagram : '' }}
             </div>

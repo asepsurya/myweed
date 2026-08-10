@@ -402,14 +402,15 @@
 
         /* ===== Real Wedding Slider ===== */
         .real-wedding-section {
-            padding: 80px 0;
-            background: var(--white);
+            padding: 100px 0;
+            background: linear-gradient(180deg, var(--white) 0%, var(--bg) 100%);
             border-bottom: 1px solid var(--border);
+            overflow: hidden;
         }
 
         .section-header-center {
             text-align: center;
-            margin-bottom: 50px;
+            margin-bottom: 60px;
         }
 
         .section-subtitle {
@@ -437,33 +438,43 @@
 
         .wedding-slider {
             display: flex;
-            gap: 40px;
+            gap: 50px;
             overflow-x: auto;
-            padding: 20px 0 30px;
+            padding: 30px 0 40px;
             scrollbar-width: none;
             justify-content: center;
+            scroll-snap-type: x mandatory;
         }
 
         .wedding-slider::-webkit-scrollbar { display: none; }
 
         .wedding-item {
             text-align: center;
-            min-width: 140px;
-            transition: transform var(--speed) ease;
+            min-width: 160px;
+            transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+            scroll-snap-align: center;
+            cursor: pointer;
+            padding: 20px;
+            border-radius: var(--radius-lg);
+            background: transparent;
         }
 
         .wedding-item:hover {
-            transform: translateY(-8px);
+            transform: translateY(-12px);
         }
 
         .couple-avatar-group {
             position: relative;
-            width: 110px;
-            height: 110px;
-            margin: 0 auto 15px;
-            animation: float 6s infinite ease-in-out;
+            width: 140px;
+            height: 140px;
+            margin: 0 auto 20px;
+            transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1);
         }
         
+        .wedding-item:hover .couple-avatar-group {
+            transform: scale(1.05);
+        }
+
         .wedding-item:nth-child(even) .couple-avatar-group {
             animation-delay: 2s;
         }
@@ -471,23 +482,35 @@
         .couple-avatar-group::before {
             content: '';
             position: absolute;
-            inset: -8px;
-            border: 1px dashed var(--gold);
+            inset: -12px;
+            border: 2px dashed var(--gold);
             border-radius: 50%;
-            opacity: 0.5;
-            animation: spin 20s linear infinite; /* Slow spin for ring */
+            opacity: 0.4;
+            animation: spin 25s linear infinite;
+            transition: all 0.5s ease;
+        }
+
+        .wedding-item:hover .couple-avatar-group::before {
+            opacity: 0.8;
+            inset: -16px;
+            border-width: 3px;
         }
         
         @keyframes spin { 100% { transform: rotate(360deg); } }
 
         .couple-avatar {
-            width: 85px;
-            height: 85px;
+            width: 100px;
+            height: 100px;
             border-radius: 50%;
             border: 4px solid var(--white);
-            box-shadow: 0 4px 15px rgba(27, 42, 74, 0.1);
+            box-shadow: 0 8px 25px rgba(27, 42, 74, 0.15);
             object-fit: cover;
             position: absolute;
+            transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        .wedding-item:hover .couple-avatar {
+            box-shadow: 0 12px 35px rgba(27, 42, 74, 0.25);
         }
 
         .avatar-1 { top: 0; left: 0; z-index: 2; }
@@ -495,18 +518,43 @@
 
         .couple-names {
             font-family: var(--font-display);
-            font-size: 1rem;
+            font-size: 1.1rem;
             font-weight: 600;
             color: var(--navy);
-            margin-bottom: 4px;
+            margin-bottom: 6px;
             white-space: nowrap;
+            transition: color 0.3s ease;
+        }
+
+        .wedding-item:hover .couple-names {
+            color: var(--gold-dark);
         }
 
         .wedding-date {
-            font-size: 0.75rem;
+            font-size: 0.8rem;
             color: var(--text-muted);
             font-weight: 500;
             letter-spacing: 0.5px;
+            transition: color 0.3s ease;
+        }
+
+        .wedding-item:hover .wedding-date {
+            color: var(--text-secondary);
+        }
+
+        .wedding-divider {
+            width: 30px;
+            height: 2px;
+            background: var(--gold);
+            margin: 8px auto;
+            border-radius: 2px;
+            opacity: 0;
+            transition: all 0.4s ease;
+        }
+
+        .wedding-item:hover .wedding-divider {
+            opacity: 1;
+            width: 40px;
         }
 
         /* ===== Features Section ===== */
@@ -930,6 +978,7 @@
                         </div>
                         <div class="couple-names">{{ $invitation->groom_nickname ?? $invitation->groom_name }} &
                             {{ $invitation->bride_nickname ?? $invitation->bride_name }}</div>
+                        <div class="wedding-divider"></div>
                         <div class="wedding-date">{{ \Carbon\Carbon::parse($invitation->wedding_date)->format('d M Y') }}
                         </div>
                     </a>
@@ -943,6 +992,7 @@
                                 <img src="https://i.pravatar.cc/150?u={{ $i + 10 }}" class="couple-avatar avatar-2" alt="">
                             </div>
                             <div class="couple-names">Pasangan Baru</div>
+                            <div class="wedding-divider"></div>
                             <div class="wedding-date">Segera Datang</div>
                         </div>
                     @endfor

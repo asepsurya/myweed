@@ -108,7 +108,7 @@
                         <div class="absolute -bottom-4 -right-4 bg-primary text-white p-3 rounded-full shadow-lg"><i class="ti ti-men text-xl"></i></div>
                     </div>
                     <h3 class="text-3xl font-serif mt-8 text-gray-800 italic">{{ $invitation->groom_name }}</h3>
-                    <p class="text-sm text-gray-600 mt-2 font-serif uppercase tracking-tighter">Putra dari Bpk. {{ $invitation->groom_father_name }} & Ibu {{ $invitation->groom_mother_name }}</p>
+                    <p class="text-sm text-gray-600 mt-2 font-serif uppercase tracking-tighter">{{ $invitation->groom_child_order_text ? 'Putra ' . $invitation->groom_child_order_text . ' dari' : 'Putra dari' }} Bpk. {{ $invitation->groom_father_name }} & Ibu {{ $invitation->groom_mother_name }}</p>
                     <a href="https://instagram.com/{{ $invitation->groom_instagram }}" target="_blank" class="inline-flex items-center gap-2 mt-4 text-primary font-bold text-xs"><i class="ti ti-brand-instagram"></i> @ {{ $invitation->groom_instagram }}</a>
                 </div>
 
@@ -121,7 +121,7 @@
                         <div class="absolute -bottom-4 -left-4 bg-primary text-white p-3 rounded-full shadow-lg"><i class="ti ti-woman text-xl"></i></div>
                     </div>
                     <h3 class="text-3xl font-serif mt-8 text-gray-800 italic">{{ $invitation->bride_name }}</h3>
-                    <p class="text-sm text-gray-600 mt-2 font-serif uppercase tracking-tighter">Putri dari Bpk. {{ $invitation->bride_father_name }} & Ibu {{ $invitation->bride_mother_name }}</p>
+                    <p class="text-sm text-gray-600 mt-2 font-serif uppercase tracking-tighter">{{ $invitation->bride_child_order_text ? 'Putri ' . $invitation->bride_child_order_text . ' dari' : 'Putri dari' }} Bpk. {{ $invitation->bride_father_name }} & Ibu {{ $invitation->bride_mother_name }}</p>
                     <a href="https://instagram.com/{{ $invitation->bride_instagram }}" target="_blank" class="inline-flex items-center gap-2 mt-4 text-primary font-bold text-xs"><i class="ti ti-brand-instagram"></i> @ {{ $invitation->bride_instagram }}</a>
                 </div>
             </div>

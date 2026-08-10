@@ -1,20 +1,25 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AiChatController;
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\Auth\GoogleController;
+use App\Http\Controllers\Auth\NewPasswordController;
+use App\Http\Controllers\Auth\PasswordResetLinkController;
+use App\Http\Controllers\Auth\VerifyEmailController;
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\GiftController;
-use App\Http\Controllers\RsvpController;
-use App\Http\Controllers\UserController;
+use App\Http\Controllers\LandingController;
 use App\Http\Controllers\MusicController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\WeddingController;
-use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\TempelateController;
-use App\Http\Controllers\Auth\GoogleController;
-use App\Http\Controllers\UserInvitationController;
+use App\Http\Controllers\RsvpController;
 use App\Http\Controllers\SubscriptionPlanController;
-use App\Http\Controllers\Auth\AuthenticatedSessionController;
-
-use App\Http\Controllers\LandingController;
+use App\Http\Controllers\TempelateController;
+use App\Http\Controllers\TemplateCreatorController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\UserInvitationController;
+use App\Http\Controllers\WeedingPlanController;
+use App\Http\Controllers\WeddingController;
 
 Route::get('/', [LandingController::class, 'index'])->name('landing');
 
@@ -24,6 +29,10 @@ Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
 Route::get('/dashboard', [DashboardController::class, 'index'])
     ->middleware(['auth', 'role:admin'])
     ->name('dashboard');
+
+Route::get('/dashboard/check-update', [DashboardController::class, 'checkUpdate'])
+    ->middleware(['auth', 'role:admin'])
+    ->name('dashboard.check-update');
 
 Route::get('/home', [DashboardController::class, 'indexUser'])
     ->middleware(['auth'])
@@ -116,6 +125,14 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/subscription-plans', [SubscriptionPlanController::class, 'index'])->name('subscribe.page');
     Route::get('/subscription-plans/{planId}', [SubscriptionPlanController::class, 'subscribe'])->name('subscribe');
     Route::get('/payments', [SubscriptionPlanController::class, 'paymentIndex'])->name('payments.index');
+
+    Route::get('/weeding-plan', [WeedingPlanController::class, 'index'])->name('weeding-plan.index');
+    Route::get('/weeding-plan/create', [WeedingPlanController::class, 'create'])->name('weeding-plan.create');
+    Route::post('/weeding-plan', [WeedingPlanController::class, 'store'])->name('weeding-plan.store');
+    Route::get('/weeding-plan/{weedingPlan}/edit', [WeedingPlanController::class, 'edit'])->name('weeding-plan.edit');
+    Route::put('/weeding-plan/{weedingPlan}', [WeedingPlanController::class, 'update'])->name('weeding-plan.update');
+    Route::delete('/weeding-plan/{weedingPlan}', [WeedingPlanController::class, 'destroy'])->name('weeding-plan.destroy');
+    Route::post('/weeding-plan/{weedingPlan}/toggle', [WeedingPlanController::class, 'toggleStatus'])->name('weeding-plan.toggle');
 
 });
 

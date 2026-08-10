@@ -103,16 +103,14 @@
                     <div class="fade-in">
                         <img loading="lazy" id="preview-foto-pria" src="{{ asset('storage/' . $invitation->foto_pria) }}" alt="Groom" class="w-full h-80 object-cover grayscale border border-primary/30 p-2">
                         <h4 class="font-serif text-2xl mt-8">{{ $invitation->groom_name }}</h4>
-                        <div class="minimal-line"></div>
-                        <p class="text-xs uppercase tracking-widest opacity-60">Putra dari Bpk. {{ $invitation->groom_father_name }} & Ibu {{ $invitation->groom_mother_name }}</p>
+                        <p class="text-xs uppercase tracking-widest opacity-60">{{ $invitation->groom_child_order_text ? 'Putra ' . $invitation->groom_child_order_text . ' dari' : 'Putra dari' }} Bpk. {{ $invitation->groom_father_name }} & Ibu {{ $invitation->groom_mother_name }}</p>
                     </div>
 
                     <!-- Bride -->
                     <div class="fade-in">
                         <img loading="lazy" id="preview-foto-wanita" src="{{ asset('storage/' . $invitation->foto_wanita) }}" alt="Bride" class="w-full h-80 object-cover grayscale border border-primary/30 p-2">
                         <h4 class="font-serif text-2xl mt-8">{{ $invitation->bride_name }}</h4>
-                        <div class="minimal-line"></div>
-                        <p class="text-xs uppercase tracking-widest opacity-60">Putri dari Bpk. {{ $invitation->bride_father_name }} & Ibu {{ $invitation->bride_mother_name }}</p>
+                        <p class="text-xs uppercase tracking-widest opacity-60">{{ $invitation->bride_child_order_text ? 'Putri ' . $invitation->bride_child_order_text . ' dari' : 'Putri dari' }} Bpk. {{ $invitation->bride_father_name }} & Ibu {{ $invitation->bride_mother_name }}</p>
                     </div>
                 </div>
             </section>

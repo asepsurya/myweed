@@ -263,7 +263,7 @@
                         </tr>
                         <tr id="preview-row-{{ $music->id }}" class="d-none">
                             <td colspan="7" class="p-0">
-                                <div class="p-3 bg-light border-top">
+                                <div class="p-3 border-top">
                                     <div class="d-flex flex-column flex-sm-row align-items-start align-items-sm-center gap-3">
                                         <img id="preview-img-{{ $music->id }}" src="" class="rounded-circle border flex-shrink-0"
                                             style="width:48px;height:48px;object-fit:cover;">
@@ -598,14 +598,23 @@
             audio.volume = 1.0;
             audio.preload = 'auto';
             audio.style.cssText = 'position:fixed; bottom:20px; right:20px; z-index:9999; width:320px; max-width:calc(100vw - 40px); box-shadow:0 4px 12px rgba(0,0,0,0.15); border-radius:8px;';
-            audio.src = encodeURI(url);
+            audio.src = url;
             document.body.appendChild(audio);
+
+            const onError = (msg) => {
+                console.error(msg, url);
+                alert('Gagal memutar audio.\n\nURL: ' + url + '\n\nPastikan:\n1. File ada di R2 dan public\n2. CORS bucket mengizinkan akses\n3. URL tidak memerlukan login');
+            };
+
+            audio.addEventListener('error', function () {
+                onError('Audio playback error');
+            });
 
             audio.play().then(() => {
                 console.log('Playing:', url);
             }).catch(err => {
                 console.error('Playback failed:', err);
-                alert('Gagal memutar audio. Pastikan file tidak diproteksi dan URL valid.');
+                onError('Playback failed: ' + err.message);
             });
         }
     </script>

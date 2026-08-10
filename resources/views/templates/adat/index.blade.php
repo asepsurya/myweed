@@ -434,7 +434,7 @@
                             <img loading="lazy" id="preview-foto-pria" src="{{ asset('storage/' . $invitation->foto_pria) }}" alt="{{ $invitation->groom_name }}" class="couple-img">
                         </div>
                         <h3 class="couple-name">{{ $invitation->groom_name }}</h3>
-                        <p class="parent-name">Putra dari Bpk. {{ $invitation->groom_father_name }}<br>& Ibu {{ $invitation->groom_mother_name }}</p>
+                        <p class="parent-name">{{ $invitation->groom_child_order_text ? 'Putra ' . $invitation->groom_child_order_text . ' dari' : 'Putra dari' }} Bpk. {{ $invitation->groom_father_name }}<br>& Ibu {{ $invitation->groom_mother_name }}</p>
                     </div>
 
                     <div class="text-center connector-symbol">&</div>
@@ -444,7 +444,7 @@
                             <img loading="lazy" id="preview-foto-wanita" src="{{ asset('storage/' . $invitation->foto_wanita) }}" alt="{{ $invitation->bride_name }}" class="couple-img">
                         </div>
                         <h3 class="couple-name">{{ $invitation->bride_name }}</h3>
-                        <p class="parent-name">Putri dari Bpk. {{ $invitation->bride_father_name }}<br>& Ibu {{ $invitation->bride_mother_name }}</p>
+                        <p class="parent-name">{{ $invitation->bride_child_order_text ? 'Putri ' . $invitation->bride_child_order_text . ' dari' : 'Putri dari' }} Bpk. {{ $invitation->bride_father_name }}<br>& Ibu {{ $invitation->bride_mother_name }}</p>
                     </div>
                 </div>
             </section>

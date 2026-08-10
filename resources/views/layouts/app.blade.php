@@ -280,6 +280,37 @@
                 height: 3px;
             }
         }
+
+        /* GitHub Update Badge */
+        #update-dropdown .update-badge {
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #dc3545;
+            color: #fff;
+            font-size: 10px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
+        }
+
+        #update-btn.text-warning {
+            color: #f59f00 !important;
+        }
+
+        #update-btn.text-warning i {
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
     </style>
 </head>
 <!-- roundedui -->

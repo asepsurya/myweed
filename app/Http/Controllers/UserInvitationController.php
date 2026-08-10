@@ -47,6 +47,8 @@ class UserInvitationController extends Controller
             'bride_name' => 'required|string|max:255',
             'groom_nickname' => 'nullable|string|max:255',
             'bride_nickname' => 'nullable|string|max:255',
+            'groom_child_order' => 'nullable|string|max:255',
+            'bride_child_order' => 'nullable|string|max:255',
             'template_id' => 'nullable|exists:templates,id',
         ], [
             'groom_name.required' => 'Nama mempelai pria wajib diisi.',
@@ -93,8 +95,10 @@ class UserInvitationController extends Controller
                 'template_id' => $templateId,
                 'groom_name' => $request->groom_name,
                 'groom_nickname' => $request->groom_nickname,
+                'groom_child_order' => $request->groom_child_order,
                 'bride_name' => $request->bride_name,
                 'bride_nickname' => $request->bride_nickname,
+                'bride_child_order' => $request->bride_child_order,
             ]
         );
 
@@ -177,6 +181,8 @@ class UserInvitationController extends Controller
             'template_id' => 'required|exists:templates,id',
             'theme_color' => 'nullable|string|max:255',
             'primary_color' => 'nullable|string|max:7',
+            'groom_child_order' => 'nullable|string|max:255',
+            'bride_child_order' => 'nullable|string|max:255',
 
             'gallery.*' => 'nullable|file|mimes:jpeg,jpg,png,gif,webp|max:10240',
             'gallery_cover' => 'nullable|file|mimes:jpeg,jpg,png,webp|max:10240',
@@ -192,6 +198,10 @@ class UserInvitationController extends Controller
             'groom_name.required' => 'Nama mempelai pria wajib diisi.',
             'groom_name.string' => 'Nama mempelai pria harus berupa teks.',
             'groom_name.max' => 'Nama mempelai pria tidak boleh melebihi :max karakter.',
+            'groom_child_order.string' => 'Urutan anak mempelai pria harus berupa teks.',
+            'groom_child_order.max' => 'Urutan anak mempelai pria tidak boleh melebihi :max karakter.',
+            'bride_child_order.string' => 'Urutan anak mempelai wanita harus berupa teks.',
+            'bride_child_order.max' => 'Urutan anak mempelai wanita tidak boleh melebihi :max karakter.',
             'wedding_date.required' => 'Tanggal pernikahan wajib diisi.',
             'wedding_date.date' => 'Tanggal pernikahan harus berupa tanggal yang valid.',
             'template_id.required' => 'Template undangan wajib dipilih.',
@@ -310,11 +320,13 @@ class UserInvitationController extends Controller
                 'groom_nickname' => $request->groom_nickname,
                 'groom_father_name' => $request->groom_father_name,
                 'groom_mother_name' => $request->groom_mother_name,
+                'groom_child_order' => $request->groom_child_order,
 
                 'bride_name' => $request->bride_name,
                 'bride_nickname' => $request->bride_nickname,
                 'bride_father_name' => $request->bride_father_name,
                 'bride_mother_name' => $request->bride_mother_name,
+                'bride_child_order' => $request->bride_child_order,
 
                 'wedding_date' => $request->wedding_date,
 
@@ -513,6 +525,8 @@ class UserInvitationController extends Controller
             'music_youtube_url' => 'nullable|url',
             'foto_pria' => 'nullable|file|mimes:jpeg,jpg,png,webp|max:10240',
             'foto_wanita' => 'nullable|file|mimes:jpeg,jpg,png,webp|max:10240',
+            'groom_child_order' => 'nullable|string|max:255',
+            'bride_child_order' => 'nullable|string|max:255',
         ]);
 
         $uploadErrors = [];
@@ -568,11 +582,13 @@ class UserInvitationController extends Controller
                 'groom_nickname' => $request->groom_nickname,
                 'groom_father_name' => $request->groom_father_name,
                 'groom_mother_name' => $request->groom_mother_name,
+                'groom_child_order' => $request->groom_child_order,
 
                 'bride_name' => $request->bride_name,
                 'bride_nickname' => $request->bride_nickname,
                 'bride_father_name' => $request->bride_father_name,
                 'bride_mother_name' => $request->bride_mother_name,
+                'bride_child_order' => $request->bride_child_order,
 
                 'wedding_date' => $request->wedding_date,
 

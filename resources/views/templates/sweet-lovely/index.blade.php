@@ -355,7 +355,7 @@
                             <img alt="{{ $invitation->groom_name }}" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110" src="{{ '/storage/' . ($invitation->foto_pria ?? 'default/groom.jpg') }}" loading="lazy" />
                         </div>
                         <h3 class="font-headline-md text-headline-md text-primary mb-2">{{ $invitation->groom_name }}</h3>
-                        <p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-4 max-w-[200px]">Putra dari Bpk. {{ $invitation->groom_father_name }} &amp; Ibu {{ $invitation->groom_mother_name }}</p>
+                        <p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-4 max-w-[200px]">{{ $invitation->groom_child_order_text ? 'Putra ' . $invitation->groom_child_order_text . ' dari' : 'Putra dari' }} Bpk. {{ $invitation->groom_father_name }} &amp; Ibu {{ $invitation->groom_mother_name }}</p>
                         @if($invitation->groom_instagram)
                         <a class="inline-flex items-center gap-1 text-on-surface-variant hover:text-primary text-sm" href="{{ $invitation->groom_instagram }}" target="_blank">
                             <svg aria-hidden="true" class="w-4 h-4" fill="currentColor" viewbox="0 0 24 24">
@@ -373,7 +373,7 @@
                             <img alt="{{ $invitation->bride_name }}" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110" src="{{ '/storage/' . ($invitation->foto_wanita ?? 'default/bride.jpg') }}" loading="lazy" />
                         </div>
                         <h3 class="font-headline-md text-headline-md text-primary mb-2">{{ $invitation->bride_name }}</h3>
-                        <p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-4 max-w-[200px]">Putri dari Bpk. {{ $invitation->bride_father_name }} &amp; Ibu {{ $invitation->bride_mother_name }}</p>
+                        <p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-4 max-w-[200px]">{{ $invitation->bride_child_order_text ? 'Putri ' . $invitation->bride_child_order_text . ' dari' : 'Putri dari' }} Bpk. {{ $invitation->bride_father_name }} &amp; Ibu {{ $invitation->bride_mother_name }}</p>
                         @if($invitation->bride_instagram)
                         <a class="inline-flex items-center gap-1 text-on-surface-variant hover:text-primary text-sm" href="{{ $invitation->bride_instagram }}" target="_blank">
                             <svg aria-hidden="true" class="w-4 h-4" fill="currentColor" viewbox="0 0 24 24">

@@ -596,7 +596,7 @@
 
             <!-- Terms -->
             <p class="terms-text">
-                Dengan mendaftar, Anda menyetujui <a href="#">Syarat & Ketentuan</a> dan <a href="#">Kebijakan Privasi</a> kami.
+                Dengan mendaftar, Anda menyetujui <a href="{{ route('pages.syarat-ketentuan') }}">Syarat & Ketentuan</a> dan <a href="{{ route('pages.kebijakan-privasi') }}">Kebijakan Privasi</a> kami.
             </p>
         </div>
 

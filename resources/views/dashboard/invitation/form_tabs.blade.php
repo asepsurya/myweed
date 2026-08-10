@@ -34,8 +34,24 @@
                 <div class="col-md-6">
                     <label for="groom_mother_name" class="form-label fw-semibold mb-2">Nama Ibu</label>
                     <input type="text" id="groom_mother_name" name="groom_mother_name"
-                        value="{{ old('groom_mother_name', $inv->groom_mother_name ?? '') }}"
-                        placeholder="Contoh: Siti Rahayu" class="form-control">
+                        value="{{ old('groom_mother_name', $inv->groom_mother_name ?? '') }}" class="form-control">
+                </div>
+                <div class="col-12">
+                    <label class="form-label fw-semibold mb-2">Anak ke-...</label>
+                    <div class="d-flex gap-2 align-items-center">
+                        <select id="groom_child_order_select" class="form-select" onchange="handleChildOrderChange('groom', this.value)">
+                            <option value="">-- Pilih --</option>
+                            <option value="Anak pertama">Anak pertama</option>
+                            <option value="Anak ke-2">Anak ke-2</option>
+                            <option value="Anak ke-3">Anak ke-3</option>
+                            <option value="Anak ke-4">Anak ke-4</option>
+                            <option value="Anak ke-5">Anak ke-5</option>
+                            <option value="__other__">Lebih dari 5...</option>
+                        </select>
+                        <input type="number" id="groom_child_order_number" class="form-control" style="display: none; max-width: 120px;" placeholder="Nomor" min="6" oninput="formatChildOrderNumber('groom', this.value)">
+                        <input type="hidden" id="groom_child_order" name="groom_child_order" value="{{ old('groom_child_order', $inv->groom_child_order ?? '') }}">
+                    </div>
+                    <small class="text-muted">Tulis urutan anak mempelai pria dalam keluarganya.</small>
                 </div>
                 <div class="col-12">
                     <label for="groom_username_instagram" class="form-label fw-semibold mb-2">Instagram Username</label>
@@ -726,6 +742,23 @@ document.addEventListener('DOMContentLoaded', function () {
                         value="{{ old('bride_mother_name', $inv->bride_mother_name ?? '') }}" class="form-control">
                 </div>
                 <div class="col-12">
+                    <label class="form-label fw-semibold mb-2">Anak ke-...</label>
+                    <div class="d-flex gap-2 align-items-center">
+                        <select id="bride_child_order_select" class="form-select" onchange="handleChildOrderChange('bride', this.value)">
+                            <option value="">-- Pilih --</option>
+                            <option value="Anak pertama">Anak pertama</option>
+                            <option value="Anak ke-2">Anak ke-2</option>
+                            <option value="Anak ke-3">Anak ke-3</option>
+                            <option value="Anak ke-4">Anak ke-4</option>
+                            <option value="Anak ke-5">Anak ke-5</option>
+                            <option value="__other__">Lebih dari 5...</option>
+                        </select>
+                        <input type="number" id="bride_child_order_number" class="form-control" style="display: none; max-width: 120px;" placeholder="Nomor" min="6" oninput="formatChildOrderNumber('bride', this.value)">
+                        <input type="hidden" id="bride_child_order" name="bride_child_order" value="{{ old('bride_child_order', $inv->bride_child_order ?? '') }}">
+                    </div>
+                    <small class="text-muted">Tulis urutan anak mempelai wanita dalam keluarganya.</small>
+                </div>
+                <div class="col-12">
                     <label for="bride_username_instagram" class="form-label fw-semibold mb-2">Instagram Username</label>
                     <div class="input-group">
                         <span class="input-group-text bg-light">@</span>
@@ -955,5 +988,66 @@ document.addEventListener('DOMContentLoaded', function () {
     if (document.getElementById('resepsi_maps') && document.getElementById('resepsi_maps').value) {
         updateMapEmbed('resepsi_maps', 'resepsi_map_embed');
     }
+
+    initChildOrder('groom');
+    initChildOrder('bride');
 });
+
+function initChildOrder(type) {
+    const select = document.getElementById(type + '_child_order_select');
+    const numberInput = document.getElementById(type + '_child_order_number');
+    const hiddenInput = document.getElementById(type + '_child_order');
+    if (!select || !numberInput || !hiddenInput) return;
+
+    const val = hiddenInput.value.trim();
+    if (!val) return;
+
+    const match = val.match(/^Anak\s+ke-(\d+)$/);
+    if (match) {
+        const num = parseInt(match[1]);
+        if (num >= 6) {
+            select.style.display = 'none';
+            numberInput.style.display = 'block';
+            numberInput.value = num;
+        } else {
+            select.value = val;
+        }
+    } else {
+        select.value = val;
+    }
+}
+
+function handleChildOrderChange(type, value) {
+    const select = document.getElementById(type + '_child_order_select');
+    const numberInput = document.getElementById(type + '_child_order_number');
+    const hiddenInput = document.getElementById(type + '_child_order');
+    if (!select || !numberInput || !hiddenInput) return;
+
+    if (value === '__other__') {
+        select.style.display = 'none';
+        numberInput.style.display = 'block';
+        numberInput.value = '';
+        hiddenInput.value = '';
+        numberInput.focus();
+    } else {
+        select.style.display = 'block';
+        numberInput.style.display = 'none';
+        hiddenInput.value = value;
+        if (typeof updateLivePreview === 'function') updateLivePreview();
+    }
+}
+
+function formatChildOrderNumber(type, value) {
+    const numberInput = document.getElementById(type + '_child_order_number');
+    const hiddenInput = document.getElementById(type + '_child_order');
+    if (!numberInput || !hiddenInput) return;
+
+    const num = parseInt(value);
+    if (!isNaN(num) && num >= 6) {
+        hiddenInput.value = 'Anak ke-' + num;
+    } else {
+        hiddenInput.value = '';
+    }
+    if (typeof updateLivePreview === 'function') updateLivePreview();
+}
 </script>

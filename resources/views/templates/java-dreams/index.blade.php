@@ -255,7 +255,7 @@
                             alt="{{ $invitation->groom_name ?? 'Groom' }}" loading="lazy">
                     </div>
                     <h3 class="font-headline-md text-on-background mb-2">{{ $invitation->groom_name }}</h3>
-                    <p class="font-body-md text-on-surface-variant mb-4">Putra dari Bpk. {{ $invitation->groom_father_name }} &amp; Ibu {{ $invitation->groom_mother_name }}</p>
+                    <p class="font-body-md text-on-surface-variant mb-4">{{ $invitation->groom_child_order_text ? 'Putra ' . $invitation->groom_child_order_text . ' dari' : 'Putra dari' }} Bpk. {{ $invitation->groom_father_name }} &amp; Ibu {{ $invitation->groom_mother_name }}</p>
                     @if($invitation->groom_instagram)
                     <a class="font-label-sm text-secondary hover:text-primary hover-scale transition-colors flex items-center gap-2"
                         href="https://instagram.com/{{ $invitation->groom_instagram }}" target="_blank">
@@ -278,7 +278,7 @@
                             alt="{{ $invitation->bride_name ?? 'Bride' }}" loading="lazy">
                     </div>
                     <h3 class="font-headline-md text-on-background mb-2">{{ $invitation->bride_name }}</h3>
-                    <p class="font-body-md text-on-surface-variant mb-4">Putri dari Bpk. {{ $invitation->bride_father_name }} &amp; Ibu {{ $invitation->bride_mother_name }}</p>
+                    <p class="font-body-md text-on-surface-variant mb-4">{{ $invitation->bride_child_order_text ? 'Putri ' . $invitation->bride_child_order_text . ' dari' : 'Putri dari' }} Bpk. {{ $invitation->bride_father_name }} &amp; Ibu {{ $invitation->bride_mother_name }}</p>
                     @if($invitation->bride_instagram)
                     <a class="font-label-sm text-secondary hover:text-primary hover-scale transition-colors flex items-center gap-2"
                         href="https://instagram.com/{{ $invitation->bride_instagram }}" target="_blank">

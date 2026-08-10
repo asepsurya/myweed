@@ -248,7 +248,7 @@
                     <img src="{{ asset('storage/'.$invitation->bride_photo) }}" alt="Foto {{ $invitation->bride_name }}">
                     @endif
                     <p class="name">{{ $invitation->bride_name ?? 'Nama Mempelai Wanita' }}</p>
-                    <p class="parents">Putri dari {{ $invitation->bride_father ?? 'Ayah' }} &amp; {{ $invitation->bride_mother ?? 'Ibu' }}</p>
+                    <p class="parents">{{ $invitation->bride_child_order_text ? 'Putri ' . $invitation->bride_child_order_text . ' dari' : 'Putri dari' }} {{ $invitation->bride_father ?? 'Ayah' }} &amp; {{ $invitation->bride_mother ?? 'Ibu' }}</p>
                     @if($invitation->bride_instagram)
                     <a href="https://instagram.com/{{ $invitation->bride_instagram }}" target="_blank"><i class="ti ti-brand-instagram"></i> @{{ $invitation->bride_instagram }}</a>
                     @endif
@@ -258,7 +258,7 @@
                     <img src="{{ asset('storage/'.$invitation->groom_photo) }}" alt="Foto {{ $invitation->groom_name }}">
                     @endif
                     <p class="name">{{ $invitation->groom_name ?? 'Nama Mempelai Pria' }}</p>
-                    <p class="parents">Putra dari {{ $invitation->groom_father ?? 'Ayah' }} &amp; {{ $invitation->groom_mother ?? 'Ibu' }}</p>
+                    <p class="parents">{{ $invitation->groom_child_order_text ? 'Putra ' . $invitation->groom_child_order_text . ' dari' : 'Putra dari' }} {{ $invitation->groom_father ?? 'Ayah' }} &amp; {{ $invitation->groom_mother ?? 'Ibu' }}</p>
                     @if($invitation->groom_instagram)
                     <a href="https://instagram.com/{{ $invitation->groom_instagram }}" target="_blank"><i class="ti ti-brand-instagram"></i> @{{ $invitation->groom_instagram }}</a>
                     @endif
@@ -380,7 +380,7 @@
     @if($invitation->music_url)
     <!-- Music Player -->
     <div class="music-player">
-        <audio id="bg-music" src="{{ asset('storage/'.$invitation->music_url) }}" loop></audio>
+        <audio id="bg-music" src="{{ asset('storage/'.$invitation->music_url) }}" loop autoplay></audio>
         <button id="music-toggle" class="btn"><i class="ti ti-player-play"></i></button>
         <span>Musik Latar</span>
     </div>
@@ -418,6 +418,20 @@
         const music = document.getElementById('bg-music');
         const toggleBtn = document.getElementById('music-toggle');
         let playing = false;
+        music.play().then(() => {
+            playing = true;
+            toggleBtn.innerHTML = '<i class="ti ti-player-pause"></i>';
+        }).catch(() => {
+            const playOnInteraction = () => {
+                music.play();
+                playing = true;
+                toggleBtn.innerHTML = '<i class="ti ti-player-pause"></i>';
+                document.removeEventListener('click', playOnInteraction);
+                document.removeEventListener('touchstart', playOnInteraction);
+            };
+            document.addEventListener('click', playOnInteraction, { once: true });
+            document.addEventListener('touchstart', playOnInteraction, { once: true });
+        });
         toggleBtn.addEventListener('click',()=>{
             if(playing){
                 music.pause();

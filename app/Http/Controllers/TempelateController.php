@@ -238,9 +238,9 @@ class TempelateController extends Controller
         if ($invitation) {
             $updateableFields = [
                 'groom_name', 'groom_nickname', 'groom_father_name', 'groom_mother_name',
-                'groom_username_instagram',
+                'groom_child_order', 'groom_username_instagram',
                 'bride_name', 'bride_nickname', 'bride_father_name', 'bride_mother_name',
-                'bride_username_instagram',
+                'bride_child_order', 'bride_username_instagram',
                 'wedding_date', 'akad_location', 'akad_time', 'akad_time_end',
                 'akad_maps', 'akad_address', 'resepsi_location', 'resepsi_time',
                 'resepsi_time_end', 'resepsi_maps', 'resepsi_address',

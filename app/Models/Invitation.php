@@ -27,12 +27,14 @@ class Invitation extends Model
         'groom_nickname',
         'groom_father_name',
         'groom_mother_name',
+        'groom_child_order',
         'foto_pria',
         'foto_wanita',
         'bride_name',
         'bride_nickname',
         'bride_father_name',
         'bride_mother_name',
+        'bride_child_order',
         'wedding_date',
         'akad_location',
         'akad_time',
@@ -87,6 +89,38 @@ class Invitation extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function getGroomChildOrderTextAttribute()
+    {
+        return $this->childOrderText($this->groom_child_order);
+    }
+
+    public function getBrideChildOrderTextAttribute()
+    {
+        return $this->childOrderText($this->bride_child_order);
+    }
+
+    private function childOrderText($value)
+    {
+        if (empty($value)) return '';
+
+        if ($value === 'Anak pertama') {
+            return 'Pertama';
+        }
+
+        if (preg_match('/^Anak ke-(\d+)$/', $value, $match)) {
+            $num = (int) $match[1];
+            $map = [
+                1 => 'Pertama', 2 => 'Kedua', 3 => 'Ketiga', 4 => 'Keempat',
+                5 => 'Kelima', 6 => 'Keenam', 7 => 'Ketujuh', 8 => 'Kedelapan',
+                9 => 'Kesembilan', 10 => 'Kesepuluh', 11 => 'Kesebelas',
+            ];
+
+            return $map[$num] ?? 'Ke-' . $num;
+        }
+
+        return $value;
     }
 
     public static function createDefault($userId)

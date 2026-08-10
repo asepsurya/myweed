@@ -44,13 +44,32 @@
                       <i data-feather="search"></i>
                   </button> --}}
 
-                  <!-- dark mode -->
-                  <button class="btn btn-link btn-square btnsunmoon btn-link-header" id="btn-layout-modes-dark-page">
-                      <i class="sun mx-auto" data-feather="sun"></i>
-                      <i class="moon mx-auto" data-feather="moon"></i>
-                  </button>
+                   <!-- dark mode -->
+                   <button class="btn btn-link btn-square btnsunmoon btn-link-header" id="btn-layout-modes-dark-page">
+                       <i class="sun mx-auto" data-feather="sun"></i>
+                       <i class="moon mx-auto" data-feather="moon"></i>
+                   </button>
 
-                  <!-- application list dropdown -->
+                   <!-- github update check -->
+                   <div class="dropdown d-none d-sm-inline-block" id="update-dropdown">
+                       <button class="btn btn-link btn-square btn-icon btn-link-header dropdown-toggle no-caret" type="button" data-bs-toggle="dropdown" aria-expanded="false" id="update-btn">
+                           <i class="bi bi-github"></i>
+                           <span class="update-badge d-none" id="update-badge">!</span>
+                       </button>
+                       <div class="dropdown-menu dropdown-menu-end width-300 pt-0 px-0">
+                           <div class="bg-theme-1-space rounded py-3 mb-2 dropdown-dontclose text-center">
+                               <p class="mb-0">Update Tersedia</p>
+                               <p class="opacity-50 small" id="update-version">v1.0.0</p>
+                           </div>
+                           <div class="text-center">
+                               <a class="btn btn-theme btn-sm" href="https://github.com/asepsurya/myweed/releases" target="_blank">
+                                   <i class="bi bi-arrow-down-circle me-1"></i> Update Sekarang
+                               </a>
+                           </div>
+                       </div>
+                   </div>
+
+                   <!-- application list dropdown -->
                   <div class="dropdown d-none d-sm-inline-block">
                       <button class="btn btn-link btn-square btn-icon btn-link-header dropdown-toggle no-caret" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                           <i data-feather="grid"></i>
@@ -433,10 +452,36 @@
                                   </div>
                               </div>
                           </div>
-                      </div>
-                  </div>
-              </div>
-          </div>
-      </div>
-  </header>
+                       </div>
+                   </div>
+               </div>
+           </div>
+       </div>
+   </header>
+
+   <script>
+   (function() {
+       const updateBtn = document.getElementById('update-btn');
+       const updateBadge = document.getElementById('update-badge');
+       const updateVersion = document.getElementById('update-version');
+       const updateDropdown = document.getElementById('update-dropdown');
+
+       if (!updateBtn) return;
+
+       fetch("{{ route('dashboard.check-update') }}")
+           .then(res => res.json())
+           .then(data => {
+               if (data.has_update) {
+                   updateBadge.classList.remove('d-none');
+                   if (updateVersion) {
+                       updateVersion.textContent = 'v' + data.latest_version;
+                   }
+                   if (updateDropdown) {
+                       updateDropdown.querySelector('.dropdown-toggle').classList.add('text-warning');
+                   }
+               }
+           })
+           .catch(() => {});
+   })();
+   </script>
 

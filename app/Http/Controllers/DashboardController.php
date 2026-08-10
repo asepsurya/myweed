@@ -8,10 +8,11 @@ use App\Models\Template;
 use App\Models\Invitation;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Http;
 
 class DashboardController extends Controller
 {
-   public function index()
+    public function index()
     {
         return view('dashboard', [
             'totalInvitations' => Invitation::count(),
@@ -35,5 +36,43 @@ class DashboardController extends Controller
     public function temaIndex(){
         $templates = Template::where('is_active', true)->paginate(12);
         return view('dashboard.tema.index', compact('templates'));
+    }
+
+    public function checkUpdate()
+    {
+        $githubRepo = 'asepsurya/myweed';
+        $currentVersion = config('app.version', '1.0.0');
+
+        try {
+            $response = Http::timeout(10)
+                ->accept('application/vnd.github.v3+json')
+                ->get("https://api.github.com/repos/{$githubRepo}/releases/latest");
+
+            if ($response->successful()) {
+                $latest = $response->json();
+                $latestVersion = ltrim($latest['tag_name'] ?? '1.0.0', 'v');
+                $hasUpdate = version_compare($latestVersion, $currentVersion, '>');
+
+                return response()->json([
+                    'has_update' => $hasUpdate,
+                    'current_version' => $currentVersion,
+                    'latest_version' => $latestVersion,
+                    'release_url' => $latest['html_url'] ?? "https://github.com/{$githubRepo}/releases",
+                    'release_name' => $latest['name'] ?? $latestVersion,
+                    'published_at' => $latest['published_at'] ?? null,
+                ]);
+            }
+        } catch (\Exception $e) {
+            return response()->json([
+                'has_update' => false,
+                'error' => $e->getMessage(),
+            ]);
+        }
+
+        return response()->json([
+            'has_update' => false,
+            'current_version' => $currentVersion,
+            'latest_version' => $currentVersion,
+        ]);
     }
 }
