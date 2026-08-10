@@ -74,19 +74,21 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/templates/upload', [TempelateController::class, 'store']);
     Route::delete('/templates/{template}', [TempelateController::class, 'destroy'])->name('templates.destroy');
 
-    Route::get('/template-creator', [App\Http\Controllers\TemplateCreatorController::class, 'index'])->name('template-creator.index');
-    Route::get('/template-creator/create', [App\Http\Controllers\TemplateCreatorController::class, 'create'])->name('template-creator.create');
-    Route::post('/template-creator/generate', [App\Http\Controllers\TemplateCreatorController::class, 'generateWithAI'])->name('template-creator.generate');
-    Route::get('/template-creator/generate', function () {
-        return redirect()->route('template-creator.index');
+    Route::middleware(['role:admin'])->prefix('template-creator')->group(function () {
+        Route::get('/', [App\Http\Controllers\TemplateCreatorController::class, 'index'])->name('template-creator.index');
+        Route::get('/create', [App\Http\Controllers\TemplateCreatorController::class, 'create'])->name('template-creator.create');
+        Route::post('/generate', [App\Http\Controllers\TemplateCreatorController::class, 'generateWithAI'])->name('template-creator.generate');
+        Route::get('/generate', function () {
+            return redirect()->route('template-creator.index');
+        });
+        Route::post('/improve-prompt', [App\Http\Controllers\TemplateCreatorController::class, 'improvePrompt'])->name('template-creator.improve-prompt');
+        Route::post('/', [App\Http\Controllers\TemplateCreatorController::class, 'store'])->name('template-creator.store');
+        Route::get('/{template}/edit', [App\Http\Controllers\TemplateCreatorController::class, 'edit'])->name('template-creator.edit');
+        Route::put('/{template}', [App\Http\Controllers\TemplateCreatorController::class, 'update'])->name('template-creator.update');
+        Route::delete('/{template}', [App\Http\Controllers\TemplateCreatorController::class, 'destroy'])->name('template-creator.destroy');
+        Route::get('/{template}/preview', [App\Http\Controllers\TemplateCreatorController::class, 'preview'])->name('template-creator.preview');
+        Route::post('/preview-code', [App\Http\Controllers\TemplateCreatorController::class, 'previewCode'])->name('template-creator.preview-code');
     });
-    Route::post('/template-creator/improve-prompt', [App\Http\Controllers\TemplateCreatorController::class, 'improvePrompt'])->name('template-creator.improve-prompt');
-    Route::post('/template-creator', [App\Http\Controllers\TemplateCreatorController::class, 'store'])->name('template-creator.store');
-    Route::get('/template-creator/{template}/edit', [App\Http\Controllers\TemplateCreatorController::class, 'edit'])->name('template-creator.edit');
-    Route::put('/template-creator/{template}', [App\Http\Controllers\TemplateCreatorController::class, 'update'])->name('template-creator.update');
-    Route::delete('/template-creator/{template}', [App\Http\Controllers\TemplateCreatorController::class, 'destroy'])->name('template-creator.destroy');
-    Route::get('/template-creator/{template}/preview', [App\Http\Controllers\TemplateCreatorController::class, 'preview'])->name('template-creator.preview');
-    Route::post('/template-creator/preview-code', [App\Http\Controllers\TemplateCreatorController::class, 'previewCode'])->name('template-creator.preview-code');
 
     Route::get('/categories', [CategoryController::class, 'index'])->middleware('role:admin')->name('categories.index');
     Route::post('/categories', [CategoryController::class, 'store'])->middleware('role:admin')->name('categories.store');

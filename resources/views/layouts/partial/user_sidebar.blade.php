@@ -67,14 +67,6 @@
             </li>
 
             <li class="nav-item">
-                <a class="nav-link" href="{{ route('template-creator.index') }}" data-bs-toggle="tooltip" data-bs-placement="right"
-                    title="Template Creator">
-                    <i class="menu-icon bi bi-palette me-2"></i>
-                    <span class="menu-name">Template Saya</span>
-                </a>
-            </li>
-
-            <li class="nav-item">
                 <a class="nav-link" href="{{ route('rsvp.index') }}" data-bs-toggle="tooltip" data-bs-placement="right"
                     title="Ucapan & Doa">
                     <i class="menu-icon bi bi-clipboard-check me-2"></i>
