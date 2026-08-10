@@ -666,7 +666,7 @@
                 return `
                     <div class="rsvp-list-item comment-item" data-id="${rsvp.id}">
                         <div class="avatar-placeholder">
-                            <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(rsvp.name)}&background=random" alt="User" style="width:100%; height:100%; object-fit:cover;">
+                            <img loading="lazy" src="https://ui-avatars.com/api/?name=${encodeURIComponent(rsvp.name)}&background=random" alt="User" style="width:100%; height:100%; object-fit:cover;">
                         </div>
                         <div>
                             <p class="font-bold text-sm" style="color:var(--primary-color)">${rsvp.name}</p>
@@ -846,7 +846,7 @@
                         if (galleryContainer) {
                             galleryContainer.innerHTML = imgs.gallery.map(src => `
                                 <a href="${src}" data-fancybox="gallery" class="masonry-item">
-                                    <img src="${src}" alt="Gallery Photo">
+                                    <img loading="lazy" src="${src}" alt="Gallery Photo">
                                 </a>
                             `).join('');
                         }

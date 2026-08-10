@@ -27,6 +27,7 @@ class WeddingDefaultUserSeeder extends Seeder
                 'email' => 'admin@wedding.com',
                 'role' => 'admin',
                 'password' => Hash::make('password123'), // ganti sesuai kebutuhan
+                'email_verified_at' => now(),
             ]);
             $admin->assignRole($adminRole);
         }

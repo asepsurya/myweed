@@ -138,6 +138,35 @@
             overflow: hidden;
         }
 
+        .mobile-next-prev {
+            display: none;
+        }
+
+        @media (max-width: 991px) {
+            .mobile-next-prev {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 0.5rem;
+                padding: 0.75rem;
+                background: var(--bs-card-bg);
+                border-top: 1px solid var(--bs-border-color);
+            }
+
+            .mobile-next-prev .btn {
+                flex: 1;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .mobile-next-prev #mobileTabLabel {
+                flex: 0 0 auto;
+                text-align: center;
+                min-width: 50px;
+            }
+        }
+
         [data-theme=dark] .sidebar-content-pane {
             background-color: var(--bs-dark);
         }
@@ -507,6 +536,16 @@
                             value="{{ $invitation->template_id }}">
                     </form>
                 </div>
+
+                <div class="mobile-next-prev">
+                    <button type="button" id="mobilePrevBtn" class="btn btn-outline-secondary btn-sm">
+                        Sebelumnya
+                    </button>
+                    <span id="mobileTabLabel" class="small fw-semibold text-muted">Tema</span>
+                    <button type="button" id="mobileNextBtn" class="btn btn-sm" style="background-color: {{ $inv->primary_color ?? '#0d9488' }}; border-color: {{ $inv->primary_color ?? '#0d9488' }}; color: #fff;">
+                        Selanjutnya
+                    </button>
+                </div>
             </div>
         </div>
 
@@ -587,9 +626,55 @@
                             target.classList.add('active');
                         }, 10);
                     }
+
+                    updateMobileTabLabel(targetId);
                 });
             });
         }
+
+        const tabOrder = ['tab-2', 'tab-1', 'tab-7', 'tab-6', 'tab-3', 'tab-4', 'tab-8', 'tab-5', 'tab-9'];
+        const tabLabels = {
+            'tab-1': 'Pria',
+            'tab-2': 'Tema',
+            'tab-3': 'Galeri',
+            'tab-4': 'Musik',
+            'tab-5': 'RSVP',
+            'tab-6': 'Acara',
+            'tab-7': 'Wanita',
+            'tab-8': 'Kisah',
+            'tab-9': 'Hadiah',
+        };
+
+        function updateMobileTabLabel(tabId) {
+            const label = document.getElementById('mobileTabLabel');
+            if (label && tabId && tabLabels[tabId]) {
+                label.textContent = tabLabels[tabId];
+            }
+        }
+
+        function getCurrentTabId() {
+            const activeContent = document.querySelector('.tab-content:not(.d-none)');
+            return activeContent ? activeContent.id : 'tab-2';
+        }
+
+        function goToTab(tabId) {
+            const link = document.querySelector(`.nav-vertical-link[data-tab="${tabId}"]`);
+            if (link) link.click();
+        }
+
+        window.goNextTab = function () {
+            const current = getCurrentTabId();
+            const idx = tabOrder.indexOf(current);
+            const next = tabOrder[idx + 1];
+            if (next) goToTab(next);
+        };
+
+        window.goPrevTab = function () {
+            const current = getCurrentTabId();
+            const idx = tabOrder.indexOf(current);
+            const prev = tabOrder[idx - 1];
+            if (prev) goToTab(prev);
+        };
 
         window.toggleSettings = (id, isChecked) => {
             const el = document.getElementById(id);
@@ -617,7 +702,7 @@
         }
 
         // --- Template Gallery Pagination ---
-        const ITEMS_PER_PAGE = 12;
+        const ITEMS_PER_PAGE = 6;
         let currentPage = 1;
 
         function renderPagination() {
@@ -662,6 +747,25 @@
             }
 
             updateLivePreview();
+        }
+
+        function autoSelectTemplate(templateId) {
+            const items = Array.from(document.querySelectorAll('.template-selector-item'))
+                .filter(item => !item.classList.contains('d-none'));
+
+            const targetItem = items.find(item => item.dataset.templateId == templateId);
+            if (!targetItem) return;
+
+            const index = items.indexOf(targetItem);
+            const targetPage = Math.floor(index / ITEMS_PER_PAGE) + 1;
+
+            currentPage = targetPage;
+            renderPagination();
+
+            const card = targetItem.querySelector('.template-card-selector');
+            if (card) {
+                selectTemplate(card, templateId);
+            }
         }
 
         window.showPremiumAlert = function () {
@@ -882,6 +986,12 @@
             // Initial pagination render
             renderPagination();
 
+            const urlParams = new URLSearchParams(window.location.search);
+            const templateId = urlParams.get('template_id') || '{{ $invitation->template_id }}';
+            if (templateId) {
+                autoSelectTemplate(templateId);
+            }
+
             const selectAllTemplates = document.getElementById('selectAllTemplates');
             if (selectAllTemplates) {
                 selectAllTemplates.addEventListener('change', function () {
@@ -954,7 +1064,20 @@
             }
 
             const tab2 = document.querySelector('[data-tab="tab-2"]');
-            if (tab2) tab2.click();
+            if (tab2) {
+                tab2.click();
+                updateMobileTabLabel('tab-2');
+            }
+
+            // Mobile next/prev
+            const mobileNextBtn = document.getElementById('mobileNextBtn');
+            const mobilePrevBtn = document.getElementById('mobilePrevBtn');
+            if (mobileNextBtn) {
+                mobileNextBtn.addEventListener('click', window.goNextTab);
+            }
+            if (mobilePrevBtn) {
+                mobilePrevBtn.addEventListener('click', window.goPrevTab);
+            }
 
             // Trigger initial load
             updateLivePreview();
@@ -1061,6 +1184,10 @@
             div.innerHTML = `
                 <input type="text" name="story_title[]" class="form-control form-control-sm mb-1" placeholder="Judul">
                 <textarea name="love_story[]" rows="2" class="form-control form-control-sm x-small mb-1"></textarea>
+                <div class="mb-2">
+                    <label class="form-label fw-semibold mb-1" style="font-size: 12px;">Foto Kisah</label>
+                    <input type="file" name="story_photo[]" accept="image/*" class="form-control form-control-sm">
+                </div>
                 <button type="button" class="btn btn-link text-danger btn-xs p-0" onclick="this.closest('.love-story-item').remove(); updateLivePreview();">Hapus</button>
             `;
             document.getElementById('loveStoryWrapper').appendChild(div);
@@ -1142,5 +1269,9 @@
                 updateLivePreview();
             }, 'image/jpeg');
         };
+
+        document.addEventListener('DOMContentLoaded', function () {
+            document.body.classList.add('adminuiux-sidebar-close');
+        });
     </script>
 </x-app-layout>

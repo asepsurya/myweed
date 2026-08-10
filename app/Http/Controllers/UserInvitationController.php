@@ -103,6 +103,7 @@ class UserInvitationController extends Controller
                 'success' => true,
                 'message' => 'Undangan berhasil dibuat',
                 'invitation' => $invitation,
+                'redirect_url' => route('invitation.edit', $invitation),
             ]);
         }
 
@@ -484,7 +485,7 @@ class UserInvitationController extends Controller
     public function edit(Invitation $invitation)
     {
         $music = Music::where('is_active', true)->get();
-        $templates = Template::where('is_active', true)->paginate(6);
+        $templates = Template::where('is_active', true)->with('category')->get();
 
         return view('dashboard.invitation.edit', compact('invitation', 'music', 'templates'));
     }

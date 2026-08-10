@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\Music\StoreMusicRequest;
 use App\Http\Requests\Music\UpdateMusicRequest;
 use App\Models\Music;
-use App\Services\R2UploadService;
+use App\Services\MusicUploadService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -13,11 +13,11 @@ use Illuminate\Support\Str;
 
 class MusicController extends Controller
 {
-    protected R2UploadService $uploader;
+    protected MusicUploadService $uploader;
 
     public function __construct()
     {
-        $this->uploader = new R2UploadService();
+        $this->uploader = new MusicUploadService();
     }
 
     public function index(Request $request)
@@ -56,8 +56,6 @@ class MusicController extends Controller
             $music = new Music();
             $music->title = $request->title;
             $music->artist = $request->artist;
-            $music->album = $request->album;
-            $music->duration = $request->duration;
             $music->is_active = $request->boolean('is_active', true);
 
             if ($request->hasFile('music_file')) {
@@ -92,8 +90,6 @@ class MusicController extends Controller
         DB::transaction(function () use ($request, $music) {
             $music->title = $request->title;
             $music->artist = $request->artist;
-            $music->album = $request->album;
-            $music->duration = $request->duration;
             $music->is_active = $request->boolean('is_active', true);
 
             if ($request->hasFile('music_file')) {
@@ -154,7 +150,7 @@ class MusicController extends Controller
     public function apiIndex(Request $request)
     {
         $musics = Music::where('is_active', true)
-            ->select('id', 'title', 'artist', 'album', 'cover_url', 'audio_url', 'music_url', 'duration', 'is_active')
+            ->select('id', 'title', 'artist', 'cover_url', 'audio_url', 'music_url', 'is_active')
             ->orderBy('created_at', 'desc')
             ->get()
             ->map(function ($m) {
@@ -162,10 +158,8 @@ class MusicController extends Controller
                     'id' => $m->id,
                     'title' => $m->title,
                     'artist' => $m->artist,
-                    'album' => $m->album,
                     'cover' => $this->uploader->getUrl($m->cover_url),
                     'audio' => $this->uploader->getUrl($m->music_url ?? $m->audio_url),
-                    'duration' => (int) ($m->duration ?? 0),
                 ];
             });
 
@@ -178,16 +172,14 @@ class MusicController extends Controller
             'id' => $music->id,
             'title' => $music->title,
             'artist' => $music->artist,
-            'album' => $music->album,
             'cover' => $this->uploader->getUrl($music->cover_url),
             'audio' => $this->uploader->getUrl($music->music_url ?? $music->audio_url),
-            'duration' => (int) ($music->duration ?? 0),
         ]);
     }
 
-    public function syncR2(Request $request)
+    public function syncLocal(Request $request)
     {
-        $disk = config('music.disk', 'r2');
+        $disk = config('music.disk', 'public');
         $onlyMp3 = true;
 
         try {

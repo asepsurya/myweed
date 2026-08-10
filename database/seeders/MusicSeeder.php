@@ -38,9 +38,10 @@ class MusicSeeder extends Seeder
                 'title'     => pathinfo($filename, PATHINFO_FILENAME),
                 'artist'    => 'Wedding Music',
                 'audio_url' => $path,
-                'duration'  => 'Auto',
-                'category'  => 'Wedding',
-                'mood'      => 'Romantic'
+                'music_url' => $path,
+                'file_size' => $file->getSize(),
+                'mime_type' => File::mimeType($file->getPathname()),
+                'is_active' => true,
             ]);
         }
 

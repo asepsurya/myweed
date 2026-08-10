@@ -101,7 +101,7 @@
                 <div class="space-y-24">
                     <!-- Groom -->
                     <div class="fade-in">
-                        <img id="preview-foto-pria" src="{{ asset('storage/' . $invitation->foto_pria) }}" alt="Groom" class="w-full h-80 object-cover grayscale border border-primary/30 p-2">
+                        <img loading="lazy" id="preview-foto-pria" src="{{ asset('storage/' . $invitation->foto_pria) }}" alt="Groom" class="w-full h-80 object-cover grayscale border border-primary/30 p-2">
                         <h4 class="font-serif text-2xl mt-8">{{ $invitation->groom_name }}</h4>
                         <div class="minimal-line"></div>
                         <p class="text-xs uppercase tracking-widest opacity-60">Putra dari Bpk. {{ $invitation->groom_father_name }} & Ibu {{ $invitation->groom_mother_name }}</p>
@@ -109,7 +109,7 @@
 
                     <!-- Bride -->
                     <div class="fade-in">
-                        <img id="preview-foto-wanita" src="{{ asset('storage/' . $invitation->foto_wanita) }}" alt="Bride" class="w-full h-80 object-cover grayscale border border-primary/30 p-2">
+                        <img loading="lazy" id="preview-foto-wanita" src="{{ asset('storage/' . $invitation->foto_wanita) }}" alt="Bride" class="w-full h-80 object-cover grayscale border border-primary/30 p-2">
                         <h4 class="font-serif text-2xl mt-8">{{ $invitation->bride_name }}</h4>
                         <div class="minimal-line"></div>
                         <p class="text-xs uppercase tracking-widest opacity-60">Putri dari Bpk. {{ $invitation->bride_father_name }} & Ibu {{ $invitation->bride_mother_name }}</p>
@@ -159,7 +159,7 @@
                 <div class="grid grid-cols-2 gap-4 fade-in" id="gallery-container">
                     @foreach($invitation->galleries as $photo)
                     <a href="{{ asset('storage/' . $photo->image) }}" data-fancybox="gallery">
-                        <img src="{{ asset('storage/' . $photo->image) }}" alt="Gallery" class="w-full border border-primary/20 p-1 grayscale hover:grayscale-0 transition duration-500">
+                        <img loading="lazy" src="{{ asset('storage/' . $photo->image) }}" alt="Gallery" class="w-full border border-primary/20 p-1 grayscale hover:grayscale-0 transition duration-500">
                     </a>
                     @endforeach
                 </div>
@@ -283,7 +283,7 @@
                     if (galleryContainer) {
                         galleryContainer.innerHTML = imgs.gallery.map(src => `
                             <a href="${src}" data-fancybox="gallery">
-                                <img src="${src}" alt="Gallery" class="w-full border border-primary/20 p-1 grayscale hover:grayscale-0 transition duration-500">
+                                <img loading="lazy" src="${src}" alt="Gallery" class="w-full border border-primary/20 p-1 grayscale hover:grayscale-0 transition duration-500">
                             </a>
                         `).join('');
                     }

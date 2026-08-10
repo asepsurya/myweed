@@ -588,9 +588,9 @@
                 <div class="cover-divider"></div>
 
                 <div class="couple-preview">
-                    <img src="{{ asset('storage/' . ($invitation->foto_pria ?? 'default/groom.jpg')) }}" alt="Pengantin Pria">
+                    <img loading="lazy" src="{{ asset('storage/' . ($invitation->foto_pria ?? 'default/groom.jpg')) }}" alt="Pengantin Pria">
                     <span>&</span>
-                    <img src="{{ asset('storage/' . ($invitation->foto_wanita ?? 'default/bride.jpg')) }}" alt="Pengantin Wanita">
+                    <img loading="lazy" src="{{ asset('storage/' . ($invitation->foto_wanita ?? 'default/bride.jpg')) }}" alt="Pengantin Wanita">
                 </div>
 
                 <p style="margin: 2px 0; font-size: 0.7em; letter-spacing: 1px; text-transform: uppercase;">Kepada Yth.</p>
@@ -610,9 +610,9 @@
                 <div class="cover-divider"></div>
 
                 <div class="couple-preview">
-                    <img src="{{ asset('storage/' . ($invitation->foto_pria ?? 'default/groom.jpg')) }}" alt="Pengantin Pria">
+                    <img loading="lazy" src="{{ asset('storage/' . ($invitation->foto_pria ?? 'default/groom.jpg')) }}" alt="Pengantin Pria">
                     <span>&</span>
-                    <img src="{{ asset('storage/' . ($invitation->foto_wanita ?? 'default/bride.jpg')) }}" alt="Pengantin Wanita">
+                    <img loading="lazy" src="{{ asset('storage/' . ($invitation->foto_wanita ?? 'default/bride.jpg')) }}" alt="Pengantin Wanita">
                 </div>
 
                 <p style="margin: 8px 0; line-height: 1.5; font-size: 0.8em;">
@@ -648,7 +648,7 @@
                 <h4 style="margin-top: 0; color: var(--color-primary); font-size: 0.9em;">Galeri Foto Momen</h4>
                 <div class="gallery-grid">
                     @forelse($invitation->galleries as $photo)
-                        <img src="{{ asset('storage/' . $photo->image) }}" alt="Wedding Moment">
+                        <img loading="lazy" src="{{ asset('storage/' . $photo->image) }}" alt="Wedding Moment">
                     @empty
                         <p class="text-center text-gray-500">Belum ada foto galeri.</p>
                     @endforelse
@@ -725,11 +725,11 @@
         <!-- GAMEPLAY AREA -->
         <div id="game-container">
             <button class="audio-control" onclick="toggleAudio()" id="audio-btn">🎵 Audio: ON</button>
-            <img id="reaction-gif" src="" alt="Reaction GIF">
+            <img loading="lazy" id="reaction-gif" src="" alt="Reaction GIF">
 
             <div class="character-container">
-                <img id="char-bride" class="character" src="{{ url('template-assets/romantic-anime/image/woman.png') }}" alt="Pengantin Wanita">
-                <img id="char-groom" class="character" src="{{ url('template-assets/romantic-anime/image/man.png') }}" alt="Pengantin Pria">
+                <img loading="lazy" id="char-bride" class="character" src="{{ url('template-assets/romantic-anime/image/woman.png') }}" alt="Pengantin Wanita">
+                <img loading="lazy" id="char-groom" class="character" src="{{ url('template-assets/romantic-anime/image/man.png') }}" alt="Pengantin Pria">
             </div>
 
             <div id="options-container"></div>

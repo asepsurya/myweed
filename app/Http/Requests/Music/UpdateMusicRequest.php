@@ -16,9 +16,7 @@ class UpdateMusicRequest extends FormRequest
         return [
             'title' => ['required', 'string', 'max:255'],
             'artist' => ['required', 'string', 'max:255'],
-            'album' => ['nullable', 'string', 'max:255'],
             'cover' => ['nullable', 'file', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
-            'duration' => ['nullable', 'integer', 'min:0'],
             'is_active' => ['boolean'],
         ];
     }
@@ -30,10 +28,8 @@ class UpdateMusicRequest extends FormRequest
             'title.max' => 'Judul lagu tidak boleh melebihi 255 karakter.',
             'artist.required' => 'Nama penyanyi wajib diisi.',
             'artist.max' => 'Nama penyanyi tidak boleh melebihi 255 karakter.',
-            'album.max' => 'Nama album tidak boleh melebihi 255 karakter.',
             'cover.mimes' => 'Cover lagu harus berformat JPG, JPEG, PNG, atau WebP.',
             'cover.max' => 'Cover lagu tidak boleh melebihi 5 MB.',
-            'duration.integer' => 'Durasi harus berupa angka.',
         ];
     }
 }

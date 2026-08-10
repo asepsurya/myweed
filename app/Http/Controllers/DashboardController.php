@@ -31,4 +31,9 @@ class DashboardController extends Controller
         $templates = Template::where('is_active', true)->get();
         return view('guest.index', compact('invitations', 'templates'));
     }
+
+    public function temaIndex(){
+        $templates = Template::where('is_active', true)->paginate(12);
+        return view('dashboard.tema.index', compact('templates'));
+    }
 }

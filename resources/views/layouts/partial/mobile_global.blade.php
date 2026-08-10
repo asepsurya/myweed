@@ -229,10 +229,10 @@
         <span>Ucapan</span>
     </a>
 
-    <a href="{{ route('gift.index') }}"
-       class="nav-item {{ request()->routeIs('gift.*') ? 'active' : '' }}">
-        <i class="bi bi-gift"></i>
-        <span>Hadiah</span>
+    <a href="{{ route('tema.index') }}"
+       class="nav-item {{ request()->routeIs('tema.*') ? 'active' : '' }}">
+        <i class="bi bi-palette"></i>
+        <span>Tema</span>
     </a>
 
     @role('admin')

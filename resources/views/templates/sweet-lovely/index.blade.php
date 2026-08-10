@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 
 <html lang="id">
 
@@ -122,6 +122,13 @@
             bottom: -24px;
             width: 2px;
             background-color: theme('colors.outline-variant');
+            transform: scaleY(0); /* Start hidden */
+            transform-origin: top;
+            transition: transform 0.8s ease-out;
+        }
+
+        .timeline-item.visible .timeline-line::before {
+            transform: scaleY(1); /* Draw line when visible */
         }
 
         .timeline-item:last-child .timeline-line::before {
@@ -138,6 +145,73 @@
             opacity: 1;
             transform: translateY(0);
         }
+
+        /* ===== TAMBAHAN ANIMASI ===== */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .hero-stagger {
+            opacity: 0;
+            animation: fadeInUp 1s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+        }
+        .delay-100 { animation-delay: 0.2s; }
+        .delay-200 { animation-delay: 0.4s; }
+        .delay-300 { animation-delay: 0.6s; }
+        .delay-400 { animation-delay: 0.8s; }
+        .delay-500 { animation-delay: 1.0s; }
+
+        @keyframes pulseScale {
+            0% { transform: scale(1); color: #ffffff; }
+            50% { transform: scale(1.2); color: #add461; } /* secondary-fixed-dim */
+            100% { transform: scale(1); color: #ffffff; }
+        }
+
+        .countdown-num {
+            display: inline-block;
+            transition: transform 0.3s ease;
+        }
+        .countdown-num.pulse {
+            animation: pulseScale 0.5s ease;
+        }
+
+        @keyframes floatY {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-12px); }
+        }
+        .float-anim {
+            animation: floatY 4s ease-in-out infinite;
+        }
+
+        .gift-card {
+            opacity: 0;
+            transform: translateX(-40px);
+            transition: all 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+        .gift-card:nth-child(even) {
+            transform: translateX(40px);
+        }
+        .gift-card.visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .hover-zoom {
+            transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+        .hover-zoom:hover {
+            transform: scale(1.03);
+        }
+
+        .event-card {
+            transition: all 0.4s ease;
+        }
+        .event-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 35px rgba(104, 0, 43, 0.15);
+        }
+        /* ============================= */
 
         #toast {
             visibility: hidden;
@@ -179,9 +253,6 @@
         @keyframes slideIn {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
-        }
-
-        @media (max-width: 768px) {
         }
     </style>
 </head>
@@ -238,17 +309,17 @@
             <div class="absolute inset-0 z-[-1] bg-[url('{{ '/storage/' . ($invitation->gallery_cover ?? 'default/cover.jpg') }}')] bg-cover bg-center">
                 <div class="absolute inset-0 bg-primary/40 backdrop-blur-sm"></div>
             </div>
-            <div class="flex-1 flex flex-col items-center justify-center mt-20 fade-in">
-                <p class="font-label-lg text-label-lg tracking-widest uppercase mb-4">The Wedding Of</p>
-                <h1 class="font-display-lg-mobile md:font-display-lg text-display-lg-mobile md:text-display-lg mb-8 font-headline-lg">{{ $invitation->groom_nickname }} &amp; {{ $invitation->bride_nickname }}</h1>
-                <p class="font-body-md text-body-md mb-2">Kepada Yth.</p>
-                <p class="font-body-lg text-body-lg font-bold mb-6">Bapak / Ibu / Saudara</p>
-                <div class="border border-on-primary/30 rounded-lg p-4 backdrop-blur-md bg-surface/10 mb-8 inline-block min-w-[280px]">
+            <div class="flex-1 flex flex-col items-center justify-center mt-20">
+                <p class="hero-stagger delay-100 font-label-lg text-label-lg tracking-widest uppercase mb-4">The Wedding Of</p>
+                <h1 class="hero-stagger delay-200 font-display-lg-mobile md:font-display-lg text-display-lg-mobile md:text-display-lg mb-8 font-headline-lg">{{ $invitation->groom_nickname }} &amp; {{ $invitation->bride_nickname }}</h1>
+                <p class="hero-stagger delay-300 font-body-md text-body-md mb-2">Kepada Yth.</p>
+                <p class="hero-stagger delay-300 font-body-lg text-body-lg font-bold mb-6">Bapak / Ibu / Saudara</p>
+                <div class="hero-stagger delay-400 border border-on-primary/30 rounded-lg p-4 backdrop-blur-md bg-surface/10 mb-8 inline-block min-w-[280px]">
                     <p class="font-body-md text-body-md mb-2">{{ request('penerima') ?? 'Keluarga Besar' }}</p>
                     <p class="font-headline-md text-headline-md italic font-headline-md">{{ \Carbon\Carbon::parse($invitation->wedding_date)->locale('id')->translatedFormat('l, d F Y') }}</p>
                 </div>
                 <br />
-                <button id="reminderBtn" class="bg-surface text-primary px-6 py-2 rounded-full font-label-lg text-label-lg font-semibold inline-flex items-center gap-2 hover:bg-surface-variant transition-colors shadow-sm">
+                <button id="reminderBtn" class="hero-stagger delay-500 bg-surface text-primary px-6 py-2 rounded-full font-label-lg text-label-lg font-semibold inline-flex items-center gap-2 hover:bg-surface-variant transition-colors shadow-sm">
                     <span class="material-symbols-outlined text-sm">calendar_today</span> Setel Pengingat
                 </button>
             </div>
@@ -280,8 +351,8 @@
                 <div class="flex flex-col md:flex-row items-center justify-center gap-stack-md fade-in">
                     <!-- Groom -->
                     <div class="text-center flex flex-col items-center">
-                        <div class="w-48 h-64 md:w-64 md:h-80 border-4 border-outline-variant/30 p-2 mb-6">
-                            <img alt="{{ $invitation->groom_name }}" class="w-full h-full object-cover" src="{{ '/storage/' . ($invitation->foto_pria ?? 'default/groom.jpg') }}" loading="lazy" />
+                        <div class="w-48 h-64 md:w-64 md:h-80 border-4 border-outline-variant/30 p-2 mb-6 hover-zoom overflow-hidden">
+                            <img alt="{{ $invitation->groom_name }}" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110" src="{{ '/storage/' . ($invitation->foto_pria ?? 'default/groom.jpg') }}" loading="lazy" />
                         </div>
                         <h3 class="font-headline-md text-headline-md text-primary mb-2">{{ $invitation->groom_name }}</h3>
                         <p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-4 max-w-[200px]">Putra dari Bpk. {{ $invitation->groom_father_name }} &amp; Ibu {{ $invitation->groom_mother_name }}</p>
@@ -294,12 +365,12 @@
                         </a>
                         @endif
                     </div>
-                    <div class="font-headline-lg text-headline-lg text-tertiary-fixed-dim hidden md:block">&amp;</div>
-                    <div class="font-headline-lg text-headline-lg text-tertiary-fixed-dim md:hidden my-4">&amp;</div>
+                    <div class="float-anim font-headline-lg text-headline-lg text-tertiary-fixed-dim hidden md:block">&amp;</div>
+                    <div class="float-anim font-headline-lg text-headline-lg text-tertiary-fixed-dim md:hidden my-4">&amp;</div>
                     <!-- Bride -->
                     <div class="text-center flex flex-col items-center">
-                        <div class="w-48 h-64 md:w-64 md:h-80 border-4 border-outline-variant/30 p-2 mb-6">
-                            <img alt="{{ $invitation->bride_name }}" class="w-full h-full object-cover" src="{{ '/storage/' . ($invitation->foto_wanita ?? 'default/bride.jpg') }}" loading="lazy" />
+                        <div class="w-48 h-64 md:w-64 md:h-80 border-4 border-outline-variant/30 p-2 mb-6 hover-zoom overflow-hidden">
+                            <img alt="{{ $invitation->bride_name }}" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110" src="{{ '/storage/' . ($invitation->foto_wanita ?? 'default/bride.jpg') }}" loading="lazy" />
                         </div>
                         <h3 class="font-headline-md text-headline-md text-primary mb-2">{{ $invitation->bride_name }}</h3>
                         <p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-4 max-w-[200px]">Putri dari Bpk. {{ $invitation->bride_father_name }} &amp; Ibu {{ $invitation->bride_mother_name }}</p>
@@ -322,7 +393,7 @@
                 <h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary mb-12">Waktu &amp; Tempat</h2>
                 <div class="max-w-4xl mx-auto flex flex-col md:flex-row gap-8 justify-center">
                     <!-- Akad Nikah -->
-                    <div class="bg-surface border border-outline-variant/30 rounded-xl p-8 flex-1 shadow-sm">
+                    <div class="event-card bg-surface border border-outline-variant/30 rounded-xl p-8 flex-1 shadow-sm">
                         <h3 class="font-label-lg text-label-lg text-primary tracking-widest uppercase mb-4">Akad Nikah</h3>
                         <p class="font-headline-md text-headline-md text-tertiary-fixed-dim mb-4">{{ $invitation->akad_time }} - {{ $invitation->akad_time_end }}</p>
                         <p class="font-body-md text-body-md font-semibold text-on-surface mb-1">{{ $invitation->akad_location }}</p>
@@ -332,7 +403,7 @@
                         @endif
                     </div>
                     <!-- Reception -->
-                    <div class="bg-surface border border-outline-variant/30 rounded-xl p-8 flex-1 shadow-sm">
+                    <div class="event-card bg-surface border border-outline-variant/30 rounded-xl p-8 flex-1 shadow-sm">
                         <h3 class="font-label-lg text-label-lg text-primary tracking-widest uppercase mb-4">Wedding Reception</h3>
                         <p class="font-headline-md text-headline-md text-tertiary-fixed-dim mb-4">{{ $invitation->resepsi_time }} - {{ $invitation->resepsi_time_end }}</p>
                         <p class="font-body-md text-body-md font-semibold text-on-surface mb-1">{{ $invitation->resepsi_location }}</p>
@@ -352,19 +423,19 @@
                 <h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg mb-6">Menuju Bahagia</h2>
                 <div id="countdownGrid" class="grid grid-cols-4 gap-4 max-w-md mx-auto mb-4">
                     <div class="text-center">
-                        <p id="days" class="font-headline-lg text-headline-lg">00</p>
+                        <p id="days" class="countdown-num font-headline-lg text-headline-lg">00</p>
                         <p class="font-label-sm text-label-sm uppercase tracking-wider opacity-70">Hari</p>
                     </div>
                     <div class="text-center">
-                        <p id="hours" class="font-headline-lg text-headline-lg">00</p>
+                        <p id="hours" class="countdown-num font-headline-lg text-headline-lg">00</p>
                         <p class="font-label-sm text-label-sm uppercase tracking-wider opacity-70">Jam</p>
                     </div>
                     <div class="text-center">
-                        <p id="minutes" class="font-headline-lg text-headline-lg">00</p>
+                        <p id="minutes" class="countdown-num font-headline-lg text-headline-lg">00</p>
                         <p class="font-label-sm text-label-sm uppercase tracking-wider opacity-70">Menit</p>
                     </div>
                     <div class="text-center">
-                        <p id="seconds" class="font-headline-lg text-headline-lg">00</p>
+                        <p id="seconds" class="countdown-num font-headline-lg text-headline-lg">00</p>
                         <p class="font-label-sm text-label-sm uppercase tracking-wider opacity-70">Detik</p>
                     </div>
                 </div>
@@ -390,7 +461,7 @@
                 </div>
                 <div class="relative pl-6 fade-in">
                     @foreach($loveStories as $index => $story)
-                    <div class="{{ $index < count($loveStories) - 1 ? 'mb-8' : '' }} relative timeline-item {{ $index < count($loveStories) - 1 ? 'timeline-line' : '' }}">
+                    <div class="timeline-item {{ $index < count($loveStories) - 1 ? 'mb-8' : '' }} relative {{ $index < count($loveStories) - 1 ? 'timeline-line' : '' }}">
                         <div class="absolute -left-6 top-1 w-6 h-6 rounded-full border-2 border-tertiary-fixed-dim bg-surface flex items-center justify-center z-10">
                             <div class="w-2 h-2 rounded-full bg-tertiary-fixed-dim"></div>
                         </div>
@@ -415,10 +486,10 @@
                 </div>
                 <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 fade-in" id="galleryGrid">
                     @forelse($invitation->galleries as $index => $photo)
-                    <div class="gallery-item {{ $index >= 6 ? 'hidden' : '' }}" data-gallery-index="{{ $index }}">
+                    <div class="gallery-item {{ $index >= 6 ? 'hidden' : '' }} hover-zoom" data-gallery-index="{{ $index }}">
                         <div class="{{ $index === 2 ? 'aspect-[4/3] rounded-lg overflow-hidden md:col-span-2' : ($index % 2 === 0 ? 'aspect-[3/4] rounded-lg overflow-hidden' : 'aspect-square rounded-lg overflow-hidden') }}">
                             <a href="{{ '/storage/' . $photo->image }}" data-fancybox="gallery" data-caption="Wedding Moment">
-                                <img alt="Wedding Moment" class="w-full h-full object-cover hover:scale-105 transition-transform duration-500" src="{{ '/storage/' . $photo->image }}" loading="lazy" />
+                                <img alt="Wedding Moment" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110" src="{{ '/storage/' . $photo->image }}" loading="lazy" />
                             </a>
                         </div>
                     </div>
@@ -448,9 +519,9 @@
                     <p class="font-label-sm text-label-sm text-outline tracking-widest uppercase mb-2">Beri Hadiah</p>
                     <h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary">Wedding Gifts</h2>
                 </div>
-                <div class="space-y-4 fade-in">
+                <div class="space-y-4">
                     @foreach($invitation->gifts as $gift)
-                    <div class="bg-surface-variant/50 rounded-xl p-6 relative overflow-hidden">
+                    <div class="gift-card bg-surface-variant/50 rounded-xl p-6 relative overflow-hidden">
                         <div class="absolute right-4 top-4 font-bold text-primary text-xl italic">{{ $gift->bank }}</div>
                         <p class="font-label-sm text-label-sm text-on-surface-variant uppercase mb-1">{{ $gift->name }}</p>
                         <p class="font-headline-md text-headline-md text-on-surface mb-4">{{ $gift->number }}</p>
@@ -551,7 +622,7 @@
                     <h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary">Video Pernikahan</h2>
                 </div>
                 <div class="fade-in relative aspect-video rounded-xl overflow-hidden bg-surface-container-high cursor-pointer" data-fancybox="video" data-src="https://www.youtube.com/embed/{{ $youtubeVideoId }}?enablejsapi=1&amp;autoplay=1&amp;loop=1&amp;playlist={{ $youtubeVideoId }}&amp;controls=1&amp;modestbranding=1&amp;rel=0">
-                    <img src="https://img.youtube.com/vi/{{ $youtubeVideoId }}/hqdefault.jpg" alt="Video Pernikahan" class="w-full h-full object-cover" />
+                    <img loading="lazy" src="https://img.youtube.com/vi/{{ $youtubeVideoId }}/hqdefault.jpg" alt="Video Pernikahan" class="w-full h-full object-cover" />
                     <div class="absolute inset-0 flex items-center justify-center bg-primary/30">
                         <span class="material-symbols-outlined text-white text-6xl">play_circle</span>
                     </div>
@@ -632,19 +703,36 @@
                 countdownPassed.classList.remove('hidden');
                 return;
             }
-            document.getElementById('days').textContent = String(Math.floor(distance / (1000 * 60 * 60 * 24))).padStart(2, '0');
-            document.getElementById('hours').textContent = String(Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))).padStart(2, '0');
-            document.getElementById('minutes').textContent = String(Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60))).padStart(2, '0');
-            document.getElementById('seconds').textContent = String(Math.floor((distance % (1000 * 60)) / 1000)).padStart(2, '0');
+            
+            const d = document.getElementById('days');
+            const h = document.getElementById('hours');
+            const m = document.getElementById('minutes');
+            const s = document.getElementById('seconds');
+
+            const newD = String(Math.floor(distance / (1000 * 60 * 60 * 24))).padStart(2, '0');
+            const newH = String(Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))).padStart(2, '0');
+            const newM = String(Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60))).padStart(2, '0');
+            const newS = String(Math.floor((distance % (1000 * 60)) / 1000)).padStart(2, '0');
+
+            if (d.textContent !== newD) { d.textContent = newD; d.classList.add('pulse'); setTimeout(() => d.classList.remove('pulse'), 500); }
+            if (h.textContent !== newH) { h.textContent = newH; h.classList.add('pulse'); setTimeout(() => h.classList.remove('pulse'), 500); }
+            if (m.textContent !== newM) { m.textContent = newM; m.classList.add('pulse'); setTimeout(() => m.classList.remove('pulse'), 500); }
+            if (s.textContent !== newS) { s.textContent = newS; s.classList.add('pulse'); setTimeout(() => s.classList.remove('pulse'), 500); }
         }
         updateCountdown();
         setInterval(updateCountdown, 1000);
 
         /* ---------- 4. SCROLL ANIMATIONS ---------- */
         const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('visible'); } });
+            entries.forEach(entry => { 
+                if (entry.isIntersecting) { 
+                    entry.target.classList.add('visible'); 
+                } 
+            });
         }, { threshold: 0.1 });
-        document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+        
+        // Target multiple classes for animation
+        document.querySelectorAll('.fade-in, .timeline-item, .gift-card').forEach(el => observer.observe(el));
 
         /* ---------- 4b. BOTTOM NAV HIDE/SHOW ---------- */
         const bottomNav = document.getElementById('bottomNav');

@@ -26,13 +26,15 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link href="https://unpkg.com/cropperjs@1.6.1/dist/cropper.min.css" rel="stylesheet">
     <script src="https://unpkg.com/cropperjs@1.6.1/dist/cropper.min.js"></script>
-    <script defer src="https://unpkg.com/face-api.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
 
     <!-- AdminUIUX Framework -->
     <link href="{{ asset('assets/css/app435e.css?1096aad991449c8654b2') }}" rel="stylesheet">
     <script defer src="{{ asset('assets/js/app435e.js?1096aad991449c8654b2') }}"></script>
-
+    <link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <!-- WeddingInv Theme Overrides -->
+ 
     <style>
         :root {
             --adminuiux-content-font: "Inter", sans-serif;
@@ -311,6 +313,31 @@
                     </div>
                 @endif
 
+                @if(auth()->check() && !auth()->user()->hasVerifiedEmail() && !auth()->user()->isAdmin())
+                    <div class="alert alert-warning d-flex align-items-center justify-content-between gap-2" role="alert">
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="bi bi-envelope-exclamation-fill flex-shrink-0"></i>
+                            <div>
+                                Email Anda belum diverifikasi.
+                                <a href="{{ route('verification.notice') }}" class="alert-link">Verifikasi sekarang</a>
+                            </div>
+                        </div>
+                        <form method="POST" action="{{ route('verification.send') }}" class="d-inline">
+                            @csrf
+                            <button type="submit" class="btn btn-sm btn-outline-warning">
+                                <i class="bi bi-send me-1"></i>Kirim Ulang
+                            </button>
+                        </form>
+                    </div>
+                @endif
+
+                @if(request()->has('verified'))
+                    <div class="alert alert-success d-flex align-items-center gap-2" role="alert">
+                        <i class="bi bi-check-circle-fill flex-shrink-0"></i>
+                        <div>Email Anda berhasil diverifikasi.</div>
+                    </div>
+                @endif
+
                 {{ $slot }}
 
                 @include('layouts.partial.toastr')
@@ -368,8 +395,10 @@
 
         });
     </script>
+    
+   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="{{ asset('assets/js/component/component-toasts.js') }}"></script>
 
-    <script src="{{ asset('assets/js/component/component-toasts.js') }}"></script>
 </body>
 
 </html>

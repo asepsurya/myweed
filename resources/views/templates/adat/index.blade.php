@@ -431,7 +431,7 @@
                 <div class="couple-wrapper fade-in">
                     <div class="couple-card">
                         <div class="photo-frame-javanese">
-                            <img id="preview-foto-pria" src="{{ asset('storage/' . $invitation->foto_pria) }}" alt="{{ $invitation->groom_name }}" class="couple-img">
+                            <img loading="lazy" id="preview-foto-pria" src="{{ asset('storage/' . $invitation->foto_pria) }}" alt="{{ $invitation->groom_name }}" class="couple-img">
                         </div>
                         <h3 class="couple-name">{{ $invitation->groom_name }}</h3>
                         <p class="parent-name">Putra dari Bpk. {{ $invitation->groom_father_name }}<br>& Ibu {{ $invitation->groom_mother_name }}</p>
@@ -441,7 +441,7 @@
 
                     <div class="couple-card">
                         <div class="photo-frame-javanese">
-                            <img id="preview-foto-wanita" src="{{ asset('storage/' . $invitation->foto_wanita) }}" alt="{{ $invitation->bride_name }}" class="couple-img">
+                            <img loading="lazy" id="preview-foto-wanita" src="{{ asset('storage/' . $invitation->foto_wanita) }}" alt="{{ $invitation->bride_name }}" class="couple-img">
                         </div>
                         <h3 class="couple-name">{{ $invitation->bride_name }}</h3>
                         <p class="parent-name">Putri dari Bpk. {{ $invitation->bride_father_name }}<br>& Ibu {{ $invitation->bride_mother_name }}</p>
@@ -709,7 +709,7 @@
                     if (imgs.gallery && imgs.gallery.length > 0) {
                         const galleryContainer = document.getElementById('gallery-container');
                         if (galleryContainer) {
-                            galleryContainer.innerHTML = imgs.gallery.map(src => `<a href="${src}" data-fancybox="gallery" class="masonry-item"><img src="${src}" alt="Gallery"></a>`).join('');
+                            galleryContainer.innerHTML = imgs.gallery.map(src => `<a href="${src}" data-fancybox="gallery" class="masonry-item"><img loading="lazy" src="${src}" alt="Gallery"></a>`).join('');
                         }
                     }
                 }

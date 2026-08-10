@@ -49,7 +49,7 @@
                 </div>
                 <div class="col-12">
                     <label class="form-label fw-semibold mb-2">Foto Mempelai Pria</label>
-                    <div class="upload-zone border rounded p-4 text-center bg-light {{ ($inv && $inv->foto_pria) ? 'd-none' : '' }}"
+                    <div class="upload-zone border rounded p-4 text-center{{ ($inv && $inv->foto_pria) ? 'd-none' : '' }}"
                         id="uploadBoxGroomContainer">
                         <label for="foto_pria" class="cursor-pointer mb-0 d-block">
                             <i class="bi bi-cloud-upload fs-3 text-primary"></i>
@@ -85,7 +85,7 @@
                 <label class="form-label fw-semibold mb-2">Kategori</label>
                 <select id="categorySelect" class="form-select">
                     <option value="all">Semua Kategori</option>
-                    @php $categories = $templates->pluck('category')->unique()->filter(); @endphp
+                    @php $categories = $templates->load('category')->pluck('category.name')->filter()->unique(); @endphp
                     @foreach($categories as $cat)
                         <option value="{{ $cat }}">{{ ucfirst($cat) }}</option>
                     @endforeach
@@ -98,9 +98,10 @@
                         $isSubscribed = auth()->user()->isSubscribed();
                         $isLocked = $template->is_premium && !$isSubscribed;
                     @endphp
-                    <div class="col-6 template-selector-item" data-category="{{ $template->category ?? 'modern' }}"
+                    <div class="col-6 template-selector-item" data-category="{{ $template->category->name ?? 'modern' }}"
                         data-name="{{ strtolower($template->name) }}"
-                        data-color="{{ $template->primary_color ?? '#0d9488' }}">
+                        data-color="{{ $template->primary_color ?? '#0d9488' }}"
+                        data-template-id="{{ $template->id }}">
                         <div class="card template-card-selector h-100 {{ $isLocked ? 'locked opacity-75' : '' }} {{ ($inv && $inv->template_id == $template->id) ? 'selected' : '' }}"
                             onclick="{{ $isLocked ? 'showPremiumAlert()' : 'selectTemplate(this, ' . $template->id . ')' }}">
 
@@ -141,18 +142,20 @@
                 @endforeach
             </div>
 
-            <div class="d-flex justify-content-between align-items-center mt-4 mb-4">
-                <button type="button" class="btn btn-sm btn-outline-secondary" id="prevPage"><i
-                        class="bi bi-chevron-left"></i></button>
-                <span class="text-muted" id="pageInfo">Halaman 1</span>
-                <button type="button" class="btn btn-sm btn-outline-secondary" id="nextPage"><i
-                        class="bi bi-chevron-right"></i></button>
+            <div class="d-flex justify-content-center align-items-center gap-3 mt-4 mb-4">
+                <button type="button" id="prevPage" class="btn btn-sm btn-outline-secondary" disabled>
+                    <i class="bi bi-chevron-left"></i> Sebelumnya
+                </button>
+                <span id="pageInfo" class="small text-muted">Halaman 1 dari 1</span>
+                <button type="button" id="nextPage" class="btn btn-sm btn-outline-secondary" disabled>
+                    Selanjutnya <i class="bi bi-chevron-right"></i>
+                </button>
             </div>
 
             <hr class="my-4">
             <div class="mb-4">
                 <label class="form-label fw-semibold mb-2">Background Header (Sampul)</label>
-                <div class="upload-zone border rounded p-4 text-center bg-light {{ ($inv && $inv->gallery_cover) ? 'd-none' : '' }}"
+                <div class="upload-zone border rounded p-4 text-center  {{ ($inv && $inv->gallery_cover) ? 'd-none' : '' }}"
                     id="uploadBoxCoverContainer">
                     <label for="gallery_cover" class="cursor-pointer mb-0 d-block">
                         <i class="bi bi-image fs-3 text-primary"></i>
@@ -197,7 +200,7 @@
             @endif
         </div>
         <div class="card-body p-0">
-            <div id="gallery-dropzone" class="border border-dashed p-5 text-center rounded cursor-pointer bg-light">
+            <div id="gallery-dropzone" class="border border-dashed p-5 text-center rounded cursor-pointer">
                 <i class="bi bi-images fs-3 text-muted"></i>
                 <p class="mb-0 mt-2">Klik atau drag & drop foto di sini</p>
                 <input type="file" id="gallery-input" name="gallery[]" multiple accept="image/*" class="d-none">
@@ -398,28 +401,28 @@
                 {{-- Konten: Library --}}
                 <div id="source-library" class="music-source-div {{ $musicSource != 'library' ? 'd-none' : '' }}">
                     <label class="form-label fw-semibold mb-2">Pilih Lagu dari Library</label>
-                    <div id="musicListContainer" class="d-flex flex-column gap-2"
-                        style="max-height: 250px; overflow-y: auto; padding-right: 5px;">
-                        @foreach ($music as $m)
-                            <div class="music-list-item {{ ($inv && $inv->music == $m->id) ? 'selected' : '' }}"
-                                data-id="{{ $m->id }}" data-url="{{ $m->full_audio_url }}"
-                                data-cover="{{ $m->full_cover_url ?? asset('tempelate/no_sound.webp') }}"
-                                data-artist="{{ $m->artist }}" data-title="{{ $m->title }}"
-                                onclick="handleMusicClick(this)">
-                                <div class="music-icon-box">
-                                    <i class="bi bi-music-note-beamed"></i>
-                                </div>
-                                <div class="flex-grow-1 overflow-hidden">
-                                    <p class="mb-0 fw-bold music-title-clamp">{{ $m->title }}</p>
-                                    <p class="mb-0 text-muted" style="font-size: 11px;">{{ $m->artist }}</p>
-                                </div>
-                                <div class="music-play-btn"
-                                    onclick="event.stopPropagation(); previewAudio('{{ $m->full_audio_url }}')">
-                                    <i class="bi bi-play-circle-fill fs-4"></i>
-                                </div>
+                <div id="musicListContainer" class="d-flex flex-column gap-2"
+                    style="max-height: 250px; overflow-y: auto; padding-right: 5px;">
+                    @foreach ($music as $m)
+                        <div class="music-list-item {{ ($inv && $inv->music == $m->id) ? 'selected' : '' }}"
+                            data-id="{{ $m->id }}" data-url="{{ $m->full_audio_url }}"
+                            data-cover="{{ $m->full_cover_url ?? asset('tempelate/no_sound.webp') }}"
+                            data-artist="{{ $m->artist }}" data-title="{{ $m->title }}"
+                            onclick="handleMusicClick(this)">
+                            <div class="music-icon-box">
+                                <i class="bi bi-music-note-beamed"></i>
                             </div>
-                        @endforeach
-                    </div>
+                            <div class="flex-grow-1 overflow-hidden">
+                                <p class="mb-0 fw-bold music-title-clamp">{{ $m->title }}</p>
+                                <p class="mb-0 text-muted" style="font-size: 11px;">{{ $m->artist }}</p>
+                            </div>
+                            <div class="music-play-btn"
+                                onclick="event.stopPropagation(); previewAudio('{{ $m->full_audio_url }}')">
+                                <i class="bi bi-play-circle-fill fs-4"></i>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
                     <small class="text-muted d-block mt-2">Pilih lagu latar yang akan ditampilkan di undangan.</small>
                 </div>
 
@@ -639,13 +642,18 @@ document.addEventListener('DOMContentLoaded', function () {
                     <div class="col-6">
                         <small class="text-muted d-block mb-1">Waktu Selesai</small>
                         <input type="time" name="akad_time_end" value="{{ $inv->akad_time_end ?? '' }}"
-                            class="form-control">
+                            class="form-control time-end">
+                        <div class="form-check mt-2">
+                            <input class="form-check-input sampai-selesai" type="checkbox" id="akad_time_end_done">
+                            <label class="form-check-label" for="akad_time_end_done">Selesai</label>
+                        </div>
                     </div>
                 </div>
 
                 <input type="text" name="akad_maps" value="{{ $inv->akad_maps ?? '' }}" placeholder="Link Google Maps"
-                    class="form-control mt-3">
+                    class="form-control mt-3" oninput="updateMapEmbed('akad_maps', 'akad_map_embed')">
                 <small class="text-muted">Link peta lokasi akad nikah.</small>
+                <div id="akad_map_embed" class="mt-2 rounded overflow-hidden border" style="height: 0; transition: height 0.3s;"></div>
             </div>
 
             <hr class="my-4">
@@ -667,13 +675,18 @@ document.addEventListener('DOMContentLoaded', function () {
                     <div class="col-6">
                         <small class="text-muted d-block mb-1">Waktu Selesai</small>
                         <input type="time" name="resepsi_time_end" value="{{ $inv->resepsi_time_end ?? '' }}"
-                            class="form-control">
+                            class="form-control time-end">
+                        <div class="form-check mt-2">
+                            <input class="form-check-input sampai-selesai" type="checkbox" id="sampai_selesai" name="sampai_selesai" value="1">
+                            <label class="form-check-label" for="sampai_selesai">Selesai</label>
+                        </div>
                     </div>
                 </div>
 
-                <input type="text" name="resepsi_maps" value="{{ $inv->resepsi_maps ?? '' }}"
-                    placeholder="Link Google Maps" class="form-control mt-3">
+                <input type="text" name="resepsi_maps" value="{{ $inv->resepsi_maps ?? '' }}" placeholder="Link Google Maps"
+                    class="form-control mt-3" oninput="updateMapEmbed('resepsi_maps', 'resepsi_map_embed')">
                 <small class="text-muted">Link peta lokasi resepsi.</small>
+                <div id="resepsi_map_embed" class="mt-2 rounded overflow-hidden border" style="height: 0; transition: height 0.3s;"></div>
             </div>
         </div>
     </div>
@@ -788,6 +801,18 @@ document.addEventListener('DOMContentLoaded', function () {
                             class="form-control mb-2" placeholder="Judul kisah">
                         <textarea name="love_story[]" rows="2"
                             class="form-control mb-2">{{ $story['story'] ?? '' }}</textarea>
+                        <div class="mb-2">
+                            <label class="form-label fw-semibold mb-1" style="font-size: 12px;">Foto Kisah</label>
+                            @if(!empty($story['photo']))
+                                <div class="position-relative d-inline-block">
+                                    <img src="{{ asset('storage/' . $story['photo']) }}" class="img-fluid rounded border" style="max-height: 120px; object-fit: cover;">
+                                    <button type="button" class="btn btn-danger btn-sm position-absolute top-0 end-0 m-1"
+                                        style="width:20px;height:20px;line-height:1;padding:0;"
+                                        onclick="this.closest('.position-relative').remove(); this.closest('.love-story-item').querySelector('input[name=\'story_photo[]\']').value = '';">&times;</button>
+                                </div>
+                            @endif
+                            <input type="file" name="story_photo[]" accept="image/*" class="form-control form-control-sm mt-1">
+                        </div>
                         <button type="button" class="btn btn-sm btn-link text-danger p-0"
                             onclick="this.closest('.love-story-item').remove()">Hapus</button>
                     </div>
@@ -814,7 +839,7 @@ document.addEventListener('DOMContentLoaded', function () {
             <div id="giftContainer">
                 @if(isset($inv) && $inv->gifts)
                     @foreach($inv->gifts as $g)
-                        <div class="gift-item border rounded p-3 mb-3 bg-light position-relative shadow-sm">
+                        <div class="gift-item border rounded p-3 mb-3  position-relative shadow-sm">
                             <button type="button" class="btn-close position-absolute top-0 end-0 m-2"
                                 onclick="this.closest('.gift-item').remove(); updateLivePreview();"></button>
                             <div class="row g-3">
@@ -873,4 +898,62 @@ document.addEventListener('DOMContentLoaded', function () {
         // Update live preview
         updateLivePreview();
     }
+</script>
+
+<script>
+function updateMapEmbed(inputId, embedId) {
+    const input = document.getElementById(inputId);
+    const embed = document.getElementById(embedId);
+    if (!input || !embed) return;
+
+    const url = input.value.trim();
+    if (!url) {
+        embed.style.height = '0';
+        embed.innerHTML = '';
+        return;
+    }
+
+    let embedUrl = url;
+
+    if (url.includes('google.com/maps') && !url.includes('/embed')) {
+        if (url.includes('/maps/place/')) {
+            const placeMatch = url.match(/\/place\/([^\/\?]+)/);
+            if (placeMatch) {
+                const placeName = decodeURIComponent(placeMatch[1]);
+                embedUrl = 'https://maps.google.com/maps?q=' + encodeURIComponent(placeName) + '&output=embed';
+            }
+        } else if (url.includes('/maps/')) {
+            embedUrl = url.replace('/maps/', '/maps/embed?');
+        }
+    }
+
+    embed.innerHTML = '<iframe src="' + embedUrl + '" width="100%" height="200" style="border:0;" allowfullscreen="" loading="lazy"></iframe>';
+    embed.style.height = '200px';
+}
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.sampai-selesai').forEach(function (checkbox) {
+        checkbox.addEventListener('change', function () {
+            const container = this.closest('.col-6');
+            const endTime = container.querySelector('.time-end');
+            if (!endTime) return;
+            if (this.checked) {
+                endTime.value = '';
+                endTime.disabled = true;
+            } else {
+                endTime.disabled = false;
+            }
+            if (typeof updateLivePreview === 'function') updateLivePreview();
+        });
+    });
+
+    if (document.getElementById('akad_maps') && document.getElementById('akad_maps').value) {
+        updateMapEmbed('akad_maps', 'akad_map_embed');
+    }
+    if (document.getElementById('resepsi_maps') && document.getElementById('resepsi_maps').value) {
+        updateMapEmbed('resepsi_maps', 'resepsi_map_embed');
+    }
+});
 </script>

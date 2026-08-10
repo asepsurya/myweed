@@ -40,6 +40,10 @@
             display: none;
         }
 
+        .border-dashed {
+            border-style: dashed !important;
+        }
+
     </style>
 
     <x-slot name="header">
@@ -135,87 +139,25 @@
         <div id="content-template">
             <div class="col-12">
                 <div class="row flex-nowrap flex-md-wrap overflow-auto mb-2 kategori-scroll">
-
-                    <!-- Jawa -->
+                    @foreach ($categories as $cat)
                     <div class="col-8 col-sm-6 col-md-3 mb-3">
-                        <a href="javascript:void(0)" onclick="filterCategory('jawa')" class="card adminuiux-card category-filter style-none text-center h-100" data-category="jawa">
+                        <a href="javascript:void(0)" onclick="filterCategory('{{ $cat->slug }}')" class="card adminuiux-card category-filter style-none text-center h-100" data-category="{{ $cat->slug }}">
                             <div class="card-body">
-                                <i class="avatar avatar-40 text-theme-1 bi bi-flower1 h3 mb-3"></i>
-                                <p class="text-secondary small mb-0">Adat Jawa</p>
+                                <i class="avatar avatar-40 text-theme-1 bi {{ $cat->icon ?? 'bi-folder' }} h3 mb-3"></i>
+                                <p class="text-secondary small mb-0">{{ $cat->name }}</p>
                             </div>
                         </a>
                     </div>
+                    @endforeach
 
-                    <!-- Sunda -->
                     <div class="col-8 col-sm-6 col-md-3 mb-3">
-                        <a href="javascript:void(0)" onclick="filterCategory('sunda')" class="card adminuiux-card category-filter style-none text-center h-100" data-category="sunda">
+                        <a href="javascript:void(0)" onclick="openCategoryModal()" class="card adminuiux-card category-filter style-none text-center h-100 border-dashed">
                             <div class="card-body">
-                                <i class="avatar avatar-40 text-theme-1 bi bi-music-note-beamed h3 mb-3"></i>
-                                <p class="text-secondary small mb-0">Adat Sunda</p>
+                                <i class="avatar avatar-40 text-theme-1 bi bi-plus-circle h3 mb-3"></i>
+                                <p class="text-secondary small mb-0">Manage Categories</p>
                             </div>
                         </a>
                     </div>
-
-                    <!-- Minang -->
-                    <div class="col-8 col-sm-6 col-md-3 mb-3">
-                        <a href="javascript:void(0)" onclick="filterCategory('minang')" class="card adminuiux-card category-filter style-none text-center h-100" data-category="minang">
-                            <div class="card-body">
-                                <i class="avatar avatar-40 text-theme-1 bi bi-house-door h3 mb-3"></i>
-                                <p class="text-secondary small mb-0">Adat Minangkabau</p>
-                            </div>
-                        </a>
-                    </div>
-
-                    <!-- Batak -->
-                    <div class="col-8 col-sm-6 col-md-3 mb-3">
-                        <a href="javascript:void(0)" onclick="filterCategory('batak')" class="card adminuiux-card category-filter style-none text-center h-100" data-category="batak">
-                            <div class="card-body">
-                                <i class="avatar avatar-40 text-theme-1 bi bi-dribbble h3 mb-3"></i>
-                                <p class="text-secondary small mb-0">Adat Batak</p>
-                            </div>
-                        </a>
-                    </div>
-
-                    <!-- Bugis -->
-                    <div class="col-8 col-sm-6 col-md-3 mb-3">
-                        <a href="javascript:void(0)" onclick="filterCategory('bugis')" class="card adminuiux-card category-filter style-none text-center h-100" data-category="bugis">
-                            <div class="card-body">
-                                <i class="avatar avatar-40 text-theme-1 bi bi-compass h3 mb-3"></i>
-                                <p class="text-secondary small mb-0">Adat Bugis</p>
-                            </div>
-                        </a>
-                    </div>
-
-                    <!-- Bali -->
-                    <div class="col-8 col-sm-6 col-md-3 mb-3">
-                        <a href="javascript:void(0)" onclick="filterCategory('bali')" class="card adminuiux-card category-filter style-none text-center h-100" data-category="bali">
-                            <div class="card-body">
-                                <i class="avatar avatar-40 text-theme-1 bi bi-sun h3 mb-3"></i>
-                                <p class="text-secondary small mb-0">Adat Bali</p>
-                            </div>
-                        </a>
-                    </div>
-
-                    <!-- Betawi -->
-                    <div class="col-8 col-sm-6 col-md-3 mb-3">
-                        <a href="javascript:void(0)" onclick="filterCategory('betawi')" class="card adminuiux-card category-filter style-none text-center h-100" data-category="betawi">
-                            <div class="card-body">
-                                <i class="avatar avatar-40 text-theme-1 bi bi-people h3 mb-3"></i>
-                                <p class="text-secondary small mb-0">Adat Betawi</p>
-                            </div>
-                        </a>
-                    </div>
-
-                    <!-- Modern -->
-                    <div class="col-8 col-sm-6 col-md-3 mb-3">
-                        <a href="javascript:void(0)" onclick="filterCategory('modern')" class="card adminuiux-card category-filter style-none text-center h-100" data-category="modern">
-                            <div class="card-body">
-                                <i class="avatar avatar-40 text-theme-1 bi bi-stars h3 mb-3"></i>
-                                <p class="text-secondary small mb-0">Modern / Universal</p>
-                            </div>
-                        </a>
-                    </div>
-
                 </div>
             </div>
 
@@ -238,7 +180,7 @@
             @endif
             <div class="row">
                 @foreach ($tempelate as $template)
-                <div class="col-6 col-md-6 col-lg-4 template-card" data-name="{{ strtolower($template->name) }}" data-category="{{ $template->category }}">
+                <div class="col-6 col-md-6 col-lg-4 template-card" data-name="{{ strtolower($template->name) }}" data-category="{{ $template->category->slug ?? '' }}">
 
                     <div class="card adminuiux-card mb-4 position-relative">
 
@@ -306,6 +248,61 @@
 
     </div>
 
+    <!-- MODAL MANAGE CATEGORIES -->
+    <div class="modal fade" id="modalCategory" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold">Manage Categories</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addCategoryForm" class="mb-3">
+                        <div class="input-group">
+                            <input type="text" id="categoryName" class="form-control" placeholder="New category name..." required>
+                            <select id="categoryIcon" class="form-select" style="max-width: 150px;">
+                                <option value="bi-folder">Folder</option>
+                                <option value="bi-heart">Heart</option>
+                                <option value="bi-baby">Baby</option>
+                                <option value="bi-cake">Cake</option>
+                                <option value="bi-mortarboard">Graduation</option>
+                                <option value="bi-tree">Tree</option>
+                                <option value="bi-music-note-beamed">Music</option>
+                                <option value="bi-stars">Stars</option>
+                                <option value="bi-house-door">House</option>
+                                <option value="bi-sun">Sun</option>
+                                <option value="bi-people">People</option>
+                                <option value="bi-shield-check">Shield</option>
+                                <option value="bi-flower1">Flower</option>
+                            </select>
+                            <button class="btn btn-primary" type="submit">
+                                <i class="bi bi-plus-lg"></i> Add
+                            </button>
+                        </div>
+                    </form>
+
+                    <div class="list-group" id="categoryList">
+                        @foreach ($categories as $cat)
+                        <div class="list-group-item d-flex justify-content-between align-items-center category-item" data-id="{{ $cat->id }}" data-slug="{{ $cat->slug }}">
+                            <div class="d-flex align-items-center gap-2">
+                                <i class="bi {{ $cat->icon ?? 'bi-folder' }} text-theme-1"></i>
+                                <span>{{ $cat->name }}</span>
+                            </div>
+                            <button type="button" class="btn btn-sm btn-outline-danger btn-delete-category" data-id="{{ $cat->id }}">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </div>
+                        @endforeach
+                    </div>
+
+                    <div id="noCategoryResult" class="text-center text-muted mt-3 d-none">
+                        <p class="mb-0">No categories yet.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- MODAL UPLOAD -->
     <div class="modal fade" id="modaltemplate" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered modal-lg">
@@ -330,6 +327,16 @@
                         <div class="tab-pane fade show active" id="zip-panel" role="tabpanel">
                             <form action="/templates/upload" method="POST" enctype="multipart/form-data">
                                 @csrf
+                                <div class="mb-3">
+                                    <label class="form-label fw-semibold">Category</label>
+                                    <select name="id_category" class="form-select" required>
+                                        <option value="">-- Select Category --</option>
+                                        @foreach ($categories as $cat)
+                                        <option value="{{ $cat->id }}">{{ $cat->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
                                 <div class="mb-3">
                                     <label class="form-label fw-semibold">Template Name</label>
                                     <input type="text" name="name" class="form-control" required>
@@ -361,6 +368,16 @@
                             <form action="/templates/import-code" method="POST">
                                 @csrf
                                 <div class="mb-3">
+                                    <label class="form-label fw-semibold">Category</label>
+                                    <select name="id_category" class="form-select" required>
+                                        <option value="">-- Select Category --</option>
+                                        @foreach ($categories as $cat)
+                                        <option value="{{ $cat->id }}">{{ $cat->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                <div class="mb-3">
                                     <label class="form-label fw-semibold">Template Name</label>
                                     <input type="text" name="name" class="form-control" required>
                                 </div>
@@ -389,9 +406,128 @@
     </div>
 
     <!-- SWEETALERT -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11">    </script>
 
     <script>
+        const categories = @json($categories);
+
+        window.openCategoryModal = function() {
+            const modal = new bootstrap.Modal(document.getElementById('modalCategory'));
+            modal.show();
+        }
+
+        document.getElementById('addCategoryForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const nameInput = document.getElementById('categoryName');
+            const iconInput = document.getElementById('categoryIcon');
+            const name = nameInput.value.trim();
+            const icon = iconInput.value;
+
+            if (!name) return;
+
+            fetch('{{ route('categories.store') }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({ name, icon })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    nameInput.value = '';
+                    const list = document.getElementById('categoryList');
+                    const item = document.createElement('div');
+                    item.className = 'list-group-item d-flex justify-content-between align-items-center category-item';
+                    item.dataset.id = data.category.id;
+                    item.dataset.slug = data.category.slug;
+                    item.innerHTML = `
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="bi ${icon} text-theme-1"></i>
+                            <span>${name}</span>
+                        </div>
+                        <button type="button" class="btn btn-sm btn-outline-danger btn-delete-category" data-id="${data.category.id}">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    `;
+                    list.appendChild(item);
+
+                    const filterContainer = document.querySelector('#content-template .kategori-scroll');
+                    const col = document.createElement('div');
+                    col.className = 'col-8 col-sm-6 col-md-3 mb-3';
+                    col.innerHTML = `
+                        <a href="javascript:void(0)" onclick="filterCategory('${data.category.slug}')" class="card adminuiux-card category-filter style-none text-center h-100" data-category="${data.category.slug}">
+                            <div class="card-body">
+                                <i class="avatar avatar-40 text-theme-1 bi ${icon} h3 mb-3"></i>
+                                <p class="text-secondary small mb-0">${name}</p>
+                            </div>
+                        </a>
+                    `;
+                    filterContainer.insertBefore(col, filterContainer.lastElementChild);
+
+                    const selectOptions = document.querySelectorAll('select[name="category"]');
+                    selectOptions.forEach(select => {
+                        const option = document.createElement('option');
+                        option.value = name;
+                        option.textContent = name;
+                        select.appendChild(option);
+                    });
+
+                    bindDeleteCategory();
+                }
+            })
+            .catch(err => {
+                Swal.fire({ icon: 'error', title: 'Gagal', text: err.responseJSON?.message || 'Terjadi kesalahan' });
+            });
+        });
+
+        function bindDeleteCategory() {
+            document.querySelectorAll('.btn-delete-category').forEach(btn => {
+                btn.onclick = function() {
+                    const id = this.dataset.id;
+                    const item = this.closest('.category-item');
+                    const card = document.querySelector(`.category-filter[data-category="${item.dataset.slug}"]`)?.closest('.col-8, .col-sm-6, .col-md-3');
+
+                    Swal.fire({
+                        title: 'Delete this category?',
+                        text: "Templates in this category will not be deleted.",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#d33',
+                        confirmButtonText: 'Yes, delete it!'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            fetch(`/categories/${id}`, {
+                                method: 'DELETE',
+                                headers: {
+                                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                                }
+                            })
+                            .then(res => res.json())
+                            .then(data => {
+                                if (data.success) {
+                                    item.remove();
+                                    if (card) card.remove();
+                                    const selectOptions = document.querySelectorAll('select[name="category"]');
+                                    selectOptions.forEach(select => {
+                                        const opts = select.querySelectorAll('option');
+                                        opts.forEach(opt => {
+                                            if (opt.value === item.querySelector('span').textContent) opt.remove();
+                                        });
+                                    });
+                                } else {
+                                    Swal.fire({ icon: 'error', title: 'Gagal', text: data.message });
+                                }
+                            });
+                        }
+                    });
+                };
+            });
+        }
+
+        bindDeleteCategory();
+
         const tabTemplate = document.getElementById('tab-template');
         const tabMusic = document.getElementById('tab-music');
         const contentTemplate = document.getElementById('content-template');

@@ -3,23 +3,23 @@
 namespace Database\Seeders;
 
 use App\Models\Template;
+use App\Models\Category;
 use Illuminate\Database\Seeder;
 
 class TemplateSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
         $sections = ['hero', 'couple', 'event', 'gallery', 'rsvp', 'music'];
+
+        $categoryMap = Category::pluck('id', 'name')->all();
 
         $templates = [
             // Wedding
             [
                 'name' => 'Pastel Pink Delight',
                 'slug' => 'pastel-pink-theme',
-                'category' => 'Wedding',
+                'id_category' => $categoryMap['Wedding'] ?? null,
                 'thumbnail' => 'templates/x4GFEPCWMYgXu91Fik3OLBwlWW9LYA47ruBJsLvQ.png',
                 'sections' => $sections,
                 'is_active' => true,
@@ -27,7 +27,7 @@ class TemplateSeeder extends Seeder
             [
                 'name' => 'Royal Blue Luxury',
                 'slug' => 'royal-blue-theme',
-                'category' => 'Wedding',
+                'id_category' => $categoryMap['Wedding'] ?? null,
                 'thumbnail' => 'templates/x4GFEPCWMYgXu91Fik3OLBwlWW9LYA47ruBJsLvQ.png',
                 'sections' => $sections,
                 'is_active' => true,
@@ -35,7 +35,7 @@ class TemplateSeeder extends Seeder
             [
                 'name' => 'Forest Green Nature',
                 'slug' => 'forest-green-theme',
-                'category' => 'Wedding',
+                'id_category' => $categoryMap['Wedding'] ?? null,
                 'thumbnail' => 'templates/x4GFEPCWMYgXu91Fik3OLBwlWW9LYA47ruBJsLvQ.png',
                 'sections' => $sections,
                 'is_active' => true,
@@ -43,7 +43,7 @@ class TemplateSeeder extends Seeder
             [
                 'name' => 'Lavender Dream',
                 'slug' => 'lavender-theme',
-                'category' => 'Wedding',
+                'id_category' => $categoryMap['Wedding'] ?? null,
                 'thumbnail' => 'templates/x4GFEPCWMYgXu91Fik3OLBwlWW9LYA47ruBJsLvQ.png',
                 'sections' => $sections,
                 'is_active' => true,
@@ -51,7 +51,7 @@ class TemplateSeeder extends Seeder
             [
                 'name' => 'Minimalist Noir',
                 'slug' => 'minimal-black-theme',
-                'category' => 'Wedding',
+                'id_category' => $categoryMap['Wedding'] ?? null,
                 'thumbnail' => 'templates/x4GFEPCWMYgXu91Fik3OLBwlWW9LYA47ruBJsLvQ.png',
                 'sections' => $sections,
                 'is_active' => true,
@@ -59,7 +59,7 @@ class TemplateSeeder extends Seeder
             [
                 'name' => 'Terracotta Earth',
                 'slug' => 'terracotta-theme',
-                'category' => 'Wedding',
+                'id_category' => $categoryMap['Wedding'] ?? null,
                 'thumbnail' => 'templates/x4GFEPCWMYgXu91Fik3OLBwlWW9LYA47ruBJsLvQ.png',
                 'sections' => $sections,
                 'is_active' => true,
@@ -67,7 +67,7 @@ class TemplateSeeder extends Seeder
             [
                 'name' => 'Ocean Teal Refresh',
                 'slug' => 'ocean-teal-theme',
-                'category' => 'Wedding',
+                'id_category' => $categoryMap['Wedding'] ?? null,
                 'thumbnail' => 'templates/x4GFEPCWMYgXu91Fik3OLBwlWW9LYA47ruBJsLvQ.png',
                 'sections' => $sections,
                 'is_active' => true,
@@ -75,7 +75,7 @@ class TemplateSeeder extends Seeder
             [
                 'name' => 'Vintage Sepia Classic',
                 'slug' => 'vintage-sepia-theme',
-                'category' => 'Wedding',
+                'id_category' => $categoryMap['Wedding'] ?? null,
                 'thumbnail' => 'templates/x4GFEPCWMYgXu91Fik3OLBwlWW9LYA47ruBJsLvQ.png',
                 'sections' => $sections,
                 'is_active' => true,
@@ -83,7 +83,7 @@ class TemplateSeeder extends Seeder
             [
                 'name' => 'Berry Red Passion',
                 'slug' => 'berry-red-theme',
-                'category' => 'Wedding',
+                'id_category' => $categoryMap['Wedding'] ?? null,
                 'thumbnail' => 'templates/x4GFEPCWMYgXu91Fik3OLBwlWW9LYA47ruBJsLvQ.png',
                 'sections' => $sections,
                 'is_active' => true,
@@ -91,7 +91,7 @@ class TemplateSeeder extends Seeder
             [
                 'name' => 'Classic Navy Elegant',
                 'slug' => 'classic-navy-theme',
-                'category' => 'Wedding',
+                'id_category' => $categoryMap['Wedding'] ?? null,
                 'thumbnail' => 'templates/x4GFEPCWMYgXu91Fik3OLBwlWW9LYA47ruBJsLvQ.png',
                 'sections' => $sections,
                 'is_active' => true,
@@ -100,7 +100,7 @@ class TemplateSeeder extends Seeder
             [
                 'name' => 'Tosca Baby Aqiqah',
                 'slug' => 'aqiqah-theme',
-                'category' => 'Aqiqah',
+                'id_category' => $categoryMap['Aqiqah'] ?? null,
                 'thumbnail' => 'templates/x4GFEPCWMYgXu91Fik3OLBwlWW9LYA47ruBJsLvQ.png',
                 'sections' => $sections,
                 'is_active' => true,
@@ -108,7 +108,7 @@ class TemplateSeeder extends Seeder
             [
                 'name' => 'Islamic Blue Khitan',
                 'slug' => 'khitan-theme',
-                'category' => 'Khitan',
+                'id_category' => $categoryMap['Khitan'] ?? null,
                 'thumbnail' => 'templates/x4GFEPCWMYgXu91Fik3OLBwlWW9LYA47ruBJsLvQ.png',
                 'sections' => $sections,
                 'is_active' => true,
@@ -116,7 +116,7 @@ class TemplateSeeder extends Seeder
             [
                 'name' => 'Dino World Birthday',
                 'slug' => 'birthday-theme',
-                'category' => 'Birthday',
+                'id_category' => $categoryMap['Birthday'] ?? null,
                 'thumbnail' => 'templates/x4GFEPCWMYgXu91Fik3OLBwlWW9LYA47ruBJsLvQ.png',
                 'sections' => $sections,
                 'is_active' => true,
@@ -124,7 +124,7 @@ class TemplateSeeder extends Seeder
             [
                 'name' => 'Graduation Excellence',
                 'slug' => 'graduation-theme',
-                'category' => 'Graduation',
+                'id_category' => $categoryMap['Graduation'] ?? null,
                 'thumbnail' => 'templates/x4GFEPCWMYgXu91Fik3OLBwlWW9LYA47ruBJsLvQ.png',
                 'sections' => $sections,
                 'is_active' => true,
@@ -132,7 +132,7 @@ class TemplateSeeder extends Seeder
             [
                 'name' => 'Tasyakuran Haji Mabrur',
                 'slug' => 'tasyakuran-haji-theme',
-                'category' => 'Syukuran',
+                'id_category' => $categoryMap['Syukuran'] ?? null,
                 'thumbnail' => 'templates/x4GFEPCWMYgXu91Fik3OLBwlWW9LYA47ruBJsLvQ.png',
                 'sections' => $sections,
                 'is_active' => true,
@@ -140,7 +140,7 @@ class TemplateSeeder extends Seeder
             [
                 'name' => 'Professional Webinar',
                 'slug' => 'seminar-theme',
-                'category' => 'Seminar',
+                'id_category' => $categoryMap['Seminar'] ?? null,
                 'thumbnail' => 'templates/x4GFEPCWMYgXu91Fik3OLBwlWW9LYA47ruBJsLvQ.png',
                 'sections' => $sections,
                 'is_active' => true,
@@ -148,7 +148,7 @@ class TemplateSeeder extends Seeder
             [
                 'name' => 'Red Gold Christmas',
                 'slug' => 'christmas-theme',
-                'category' => 'Christmas',
+                'id_category' => $categoryMap['Christmas'] ?? null,
                 'thumbnail' => 'templates/x4GFEPCWMYgXu91Fik3OLBwlWW9LYA47ruBJsLvQ.png',
                 'sections' => $sections,
                 'is_active' => true,
@@ -156,7 +156,7 @@ class TemplateSeeder extends Seeder
             [
                 'name' => 'Night Gala Party',
                 'slug' => 'party-theme',
-                'category' => 'Party',
+                'id_category' => $categoryMap['Party'] ?? null,
                 'thumbnail' => 'templates/x4GFEPCWMYgXu91Fik3OLBwlWW9LYA47ruBJsLvQ.png',
                 'sections' => $sections,
                 'is_active' => true,

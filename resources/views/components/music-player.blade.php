@@ -10,7 +10,7 @@
     }
     $isCustomUpload = $musicId && !is_numeric($musicId);
     $apiMusicId = $isCustomUpload ? '' : $musicId;
-    $customAudioUrl = $isCustomUpload ? ($musicId ? Storage::disk(config('music.disk', 'r2'))->url($musicId) : '') : '';
+    $customAudioUrl = $isCustomUpload ? ($musicId ? Storage::disk(config('music.disk', 'public'))->url($musicId) : '') : '';
 @endphp
 
 <style>
@@ -41,14 +41,43 @@
 }
 </style>
 
-@if(($musicId && !$isCustomUpload) || $youtubeId)
-<div id="wedding-music-player" class="wedding-music-player" data-music-id="{{ $apiMusicId }}" data-youtube-id="{{ $youtubeId }}" data-custom-audio="{{ $customAudioUrl }}">
+<style>
+.music-toggle-btn {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1050;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: none;
+    background: linear-gradient(135deg, #FF6B81, #e84a6a);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(255, 107, 129, 0.4);
+    transition: transform 0.2s ease;
+}
+.music-toggle-btn:hover {
+    transform: scale(1.05);
+}
+.music-toggle-btn svg {
+    width: 20px;
+    height: 20px;
+}
+</style>
+
+@if($musicId || $youtubeId)
+<button type="button" id="musicToggle" class="music-toggle-btn" aria-label="Play/Pause Music">
+    <svg id="musicIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+        <path d="M8 5v14l11-7z"/>
+    </svg>
+</button>
+
+<div id="wedding-music-player" class="wedding-music-player" style="display:none;" data-music-id="{{ $apiMusicId }}" data-youtube-id="{{ $youtubeId }}" data-custom-audio="{{ $customAudioUrl }}">
     <div class="music-player-inner">
-        <button type="button" id="musicToggle" class="music-toggle-btn" aria-label="Play/Pause Music">
-            <svg id="musicIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
-                <path d="M8 5v14l11-7z"/>
-            </svg>
-        </button>
         <div class="music-player-info">
             <img id="musicCover" src="" alt="Cover" class="music-cover rounded-circle border">
             <div class="music-details">
@@ -236,13 +265,18 @@
     }
 
     function playAudio() {
-        if (!bgMusic || !bgMusic.src) return;
+        if (!bgMusic || !bgMusic.src) {
+            console.log('playAudio: bgMusic or src missing');
+            return;
+        }
+        console.log('playAudio: src=', bgMusic.src, 'volume=', bgMusic.volume);
         bgMusic.volume = (musicVolume ? musicVolume.value / 100 : 0.4);
         bgMusic.play().then(() => {
+            console.log('playAudio: success');
             isPlaying = true;
             setPauseIcon();
             startWaveformAnimation();
-        }).catch(e => console.log('Autoplay blocked:', e));
+        }).catch(e => console.log('playAudio failed:', e));
     }
 
     function pauseAudio() {
@@ -253,9 +287,9 @@
         stopWaveformAnimation();
     }
 
-    function sendYtCommand(command) {
+    function sendYtCommand(command, args) {
         if (!ytIframe) return;
-        const msg = JSON.stringify({ event: 'command', func: command, args: [] });
+        const msg = JSON.stringify({ event: 'command', func: command, args: args ? args : [] });
         if (window.ytIframeReady) {
             setTimeout(() => ytIframe.contentWindow.postMessage(msg, '*'), 200);
         } else {
@@ -269,10 +303,13 @@
     function pauseYoutube() { sendYtCommand('pauseVideo'); sendYtCommand('pause'); setPlayIcon(); stopWaveformAnimation(); }
     function playYoutube() {
         if (ytMuted) { sendYtCommand('unMute'); ytMuted = false; }
-        sendYtCommand('playVideo'); setPauseIcon();
+        sendYtCommand('playVideo');
+        setTimeout(() => sendYtCommand('setVolume', [100]), 500);
+        setPauseIcon();
     }
 
     function toggleMusic() {
+        console.log('toggleMusic: isYoutube=', isYoutube, 'paused=', bgMusic ? bgMusic.paused : 'no-bgMusic');
         if (isYoutube) {
             if (ytMuted || !hasInteracted) { playYoutube(); hasInteracted = true; }
             else { pauseYoutube(); }
@@ -296,6 +333,11 @@
             if (musicData.audio) {
                 bgMusic.src = musicData.audio;
                 bgMusic.load();
+                if (!hasInteracted) {
+                    setTimeout(() => {
+                        if (!hasInteracted && bgMusic.src) playAudio();
+                    }, 300);
+                }
             }
         } catch (e) {
             console.error('Failed to load music data:', e);
@@ -305,7 +347,9 @@
 
     function loadCustomAudio() {
         if (!isCustom || !customAudioUrl) return;
+        console.log('loadCustomAudio:', customAudioUrl);
         bgMusic.src = customAudioUrl;
+        bgMusic.load();
         musicTitle.textContent = 'Custom Upload';
         musicArtist.textContent = '';
         musicCover.src = "{{ asset('tempelate/no_sound.webp') }}";
@@ -381,12 +425,25 @@
         }
     }, { once: true });
 
+    function tryAutoplay() {
+        if (hasInteracted) return;
+        hasInteracted = true;
+        if (isYoutube) {
+            playYoutube();
+        } else if (bgMusic && bgMusic.src) {
+            playAudio();
+        }
+    }
+
     if (isYoutube) {
         ytIframe = document.getElementById('youtubeIframe');
+        setTimeout(tryAutoplay, 500);
     } else if (isCustom) {
         loadCustomAudio();
+        setTimeout(tryAutoplay, 800);
     } else {
         loadMusicData();
+        setTimeout(tryAutoplay, 800);
     }
 })();
 </script>

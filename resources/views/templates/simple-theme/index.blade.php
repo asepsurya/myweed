@@ -104,7 +104,7 @@
                 <!-- Groom -->
                 <div class="fade-in">
                     <div class="relative inline-block">
-                        <img id="preview-foto-pria" src="{{ asset('storage/' . $invitation->foto_pria) }}" alt="Groom" class="w-56 h-72 object-cover rounded-full border-8 border-white shadow-2xl">
+                        <img loading="lazy" id="preview-foto-pria" src="{{ asset('storage/' . $invitation->foto_pria) }}" alt="Groom" class="w-56 h-72 object-cover rounded-full border-8 border-white shadow-2xl">
                         <div class="absolute -bottom-4 -right-4 bg-primary text-white p-3 rounded-full shadow-lg"><i class="ti ti-men text-xl"></i></div>
                     </div>
                     <h3 class="text-3xl font-serif mt-8 text-gray-800 italic">{{ $invitation->groom_name }}</h3>
@@ -117,7 +117,7 @@
                 <!-- Bride -->
                 <div class="fade-in">
                     <div class="relative inline-block">
-                        <img id="preview-foto-wanita" src="{{ asset('storage/' . $invitation->foto_wanita) }}" alt="Bride" class="w-56 h-72 object-cover rounded-full border-8 border-white shadow-2xl">
+                        <img loading="lazy" id="preview-foto-wanita" src="{{ asset('storage/' . $invitation->foto_wanita) }}" alt="Bride" class="w-56 h-72 object-cover rounded-full border-8 border-white shadow-2xl">
                         <div class="absolute -bottom-4 -left-4 bg-primary text-white p-3 rounded-full shadow-lg"><i class="ti ti-woman text-xl"></i></div>
                     </div>
                     <h3 class="text-3xl font-serif mt-8 text-gray-800 italic">{{ $invitation->bride_name }}</h3>
@@ -190,7 +190,7 @@
             <div class="masonry-gallery fade-in" id="gallery-container">
                 @foreach($invitation->galleries as $photo)
                 <a href="{{ asset('storage/' . $photo->image) }}" data-fancybox="gallery" class="masonry-item rounded-2xl overflow-hidden shadow-lg border-4 border-white">
-                    <img src="{{ asset('storage/' . $photo->image) }}" alt="Gallery" class="w-full object-cover">
+                    <img loading="lazy" src="{{ asset('storage/' . $photo->image) }}" alt="Gallery" class="w-full object-cover">
                 </a>
                 @endforeach
             </div>
@@ -329,7 +329,7 @@
                     if (galleryContainer) {
                         galleryContainer.innerHTML = imgs.gallery.map(src => `
                             <a href="${src}" data-fancybox="gallery" class="masonry-item rounded-2xl overflow-hidden shadow-lg border-4 border-white">
-                                <img src="${src}" alt="Gallery" class="w-full object-cover">
+                                <img loading="lazy" src="${src}" alt="Gallery" class="w-full object-cover">
                             </a>
                         `).join('');
                     }

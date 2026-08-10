@@ -3,49 +3,119 @@
 namespace App\Http\Controllers;
 
 use App\Models\Template;
+use App\Models\Category;
 use Illuminate\Http\Request;
 
 class LandingController extends Controller
 {
     public function index(Request $request)
     {
-        // Ambil semua kategori unik dari templates
-        $realCategories = Template::select('category')->distinct()->pluck('category');
+        $realCategories = Category::orderBy('name')->get();
 
-        // Query templates yang aktif
-        $query = Template::where('is_active', true);
+        $query = Template::where('is_active', true)
+            ->with('category');
         
-        // Filter berdasarkan pencarian
         if ($request->has('search')) {
             $search = $request->search;
             $query->where(function($q) use ($search) {
                 $q->where('name', 'like', "%$search%")
-                  ->orWhere('category', 'like', "%$search%");
+                  ->orWhereHas('category', function($q2) use ($search) {
+                      $q2->where('name', 'like', "%$search%");
+                  });
             });
         }
 
-        // Filter berdasarkan kategori jika ada
         if ($request->has('category') && $request->category != 'All') {
-            $query->where('category', $request->category);
+            $query->whereHas('category', function($q) use ($request) {
+                $q->where('name', $request->category);
+            });
         }
 
         $templates = $query->get();
         
-        // Ambil data pengantin yang sudah memilih template (Real Wedding examples)
         $invitations = \App\Models\Invitation::with(['template', 'galleries'])
             ->latest()
             ->take(12)
             ->get();
         
-        // Format categories for the UI
         $categories = $realCategories->map(function($cat) {
             return [
-                'name' => $cat,
-                'count' => Template::where('category', $cat)->count() . '+',
-                'img' => 'https://picsum.photos/seed/' . strtolower($cat) . '/400/300'
+                'name' => $cat->name,
+                'count' => Template::where('id_category', $cat->id)->count() . '+',
+                'img' => 'https://picsum.photos/seed/' . strtolower($cat->name) . '/400/300'
             ];
         });
 
         return view('index', compact('templates', 'categories', 'invitations'));
+    }
+
+    public function caraPemesanan()
+    {
+        return view('pages.cara-pemesanan');
+    }
+
+    public function faq()
+    {
+        return view('pages.faq');
+    }
+
+    public function syaratKetentuan()
+    {
+        return view('pages.syarat-ketentuan');
+    }
+
+    public function kebijakanPrivasi()
+    {
+        return view('pages.kebijakan-privasi');
+    }
+
+    public function cariTema(Request $request)
+    {
+        $realCategories = Category::orderBy('name')->get();
+
+        $query = Template::where('is_active', true)
+            ->with('category');
+
+        if ($request->has('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('name', 'like', "%$search%")
+                  ->orWhereHas('category', function($q2) use ($search) {
+                      $q2->where('name', 'like', "%$search%");
+                  });
+            });
+        }
+
+        if ($request->has('category') && $request->category != 'All') {
+            $query->whereHas('category', function($q) use ($request) {
+                $q->where('name', $request->category);
+            });
+        }
+
+        $templates = $query->get();
+
+        $categories = $realCategories->map(function($cat) {
+            return [
+                'name' => $cat->name,
+                'count' => Template::where('id_category', $cat->id)->count() . '+',
+            ];
+        });
+
+        return view('pages.cari-tema', compact('templates', 'categories'));
+    }
+
+    public function fitur()
+    {
+        return view('pages.fitur');
+    }
+
+    public function harga()
+    {
+        return view('pages.harga');
+    }
+
+    public function bantuan()
+    {
+        return view('pages.bantuan');
     }
 }

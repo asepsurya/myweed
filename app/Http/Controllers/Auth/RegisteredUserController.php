@@ -48,6 +48,8 @@ class RegisteredUserController extends Controller
 
         $user->assignRole('user');
 
+        $user->sendEmailVerificationNotification();
+
         // 🔽 Otomatis buat undangan "Basic Wedding"
         \App\Models\Invitation::createDefault($user->id);
 

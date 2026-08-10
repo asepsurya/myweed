@@ -22,11 +22,11 @@ Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
     ->name('logout');
 
 Route::get('/dashboard', [DashboardController::class, 'index'])
-    ->middleware(['auth', 'verified', 'role:admin'])
+    ->middleware(['auth', 'role:admin'])
     ->name('dashboard');
 
 Route::get('/home', [DashboardController::class, 'indexUser'])
-    ->middleware(['auth', 'verified'])
+    ->middleware(['auth'])
     ->name('dashboard.user');
 
 Route::middleware('auth')->group(function () {
@@ -59,10 +59,29 @@ Route::middleware(['auth'])->group(function () {
     Route::post('premium/upgrade', [UserInvitationController::class, 'upgradeToPremium'])->name('premium.upgrade');
 
     Route::post('/templates/import-code', [TempelateController::class, 'importCode'])->name('templates.import-code');
+    Route::get('/tema', [DashboardController::class, 'temaIndex'])->name('tema.index');
     Route::get('theme', [TempelateController::class, 'index'])->middleware('role:admin')->name('tempelate.index');
     Route::get('/templates/upload', [TempelateController::class, 'create']);
     Route::post('/templates/upload', [TempelateController::class, 'store']);
     Route::delete('/templates/{template}', [TempelateController::class, 'destroy'])->name('templates.destroy');
+
+    Route::get('/template-creator', [App\Http\Controllers\TemplateCreatorController::class, 'index'])->name('template-creator.index');
+    Route::get('/template-creator/create', [App\Http\Controllers\TemplateCreatorController::class, 'create'])->name('template-creator.create');
+    Route::post('/template-creator/generate', [App\Http\Controllers\TemplateCreatorController::class, 'generateWithAI'])->name('template-creator.generate');
+    Route::get('/template-creator/generate', function () {
+        return redirect()->route('template-creator.index');
+    });
+    Route::post('/template-creator/improve-prompt', [App\Http\Controllers\TemplateCreatorController::class, 'improvePrompt'])->name('template-creator.improve-prompt');
+    Route::post('/template-creator', [App\Http\Controllers\TemplateCreatorController::class, 'store'])->name('template-creator.store');
+    Route::get('/template-creator/{template}/edit', [App\Http\Controllers\TemplateCreatorController::class, 'edit'])->name('template-creator.edit');
+    Route::put('/template-creator/{template}', [App\Http\Controllers\TemplateCreatorController::class, 'update'])->name('template-creator.update');
+    Route::delete('/template-creator/{template}', [App\Http\Controllers\TemplateCreatorController::class, 'destroy'])->name('template-creator.destroy');
+    Route::get('/template-creator/{template}/preview', [App\Http\Controllers\TemplateCreatorController::class, 'preview'])->name('template-creator.preview');
+    Route::post('/template-creator/preview-code', [App\Http\Controllers\TemplateCreatorController::class, 'previewCode'])->name('template-creator.preview-code');
+
+    Route::get('/categories', [CategoryController::class, 'index'])->middleware('role:admin')->name('categories.index');
+    Route::post('/categories', [CategoryController::class, 'store'])->middleware('role:admin')->name('categories.store');
+    Route::delete('/categories/{category}', [CategoryController::class, 'destroy'])->middleware('role:admin')->name('categories.destroy');
 
     Route::get('/templates/{slug}/{id}', [TempelateController::class, 'preview'])->name('template.preview');
     Route::put('/templates/{slug}/{id}', [TempelateController::class, 'previewUpdate'])->name('template.preview.update');
@@ -84,7 +103,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/music/{music}/edit', [MusicController::class, 'edit'])->middleware('role:admin')->name('music.edit');
     Route::put('/music/{music}', [MusicController::class, 'update'])->middleware('role:admin')->name('music.update');
     Route::delete('music/destroy/{id}', [MusicController::class, 'destroy'])->middleware('role:admin')->name('music.destroy');
-    Route::post('/music/sync-r2', [MusicController::class, 'syncR2'])->middleware('role:admin')->name('music.sync-r2');
+    Route::post('/music/sync-local', [MusicController::class, 'syncLocal'])->middleware('role:admin')->name('music.sync-local');
 
     Route::get('/gifts', [GiftController::class, 'index'])->name('gift.index')->middleware('subscription');
     Route::post('/gifts', [GiftController::class, 'store'])->name('gift.store')->middleware('subscription');
@@ -108,6 +127,16 @@ Route::get('/invitation/{invitation}/rsvps', [RsvpController::class, 'getRsvps']
 
 Route::get('/auth/google', [GoogleController::class, 'redirect']);
 Route::get('/auth/google/callback', [GoogleController::class, 'callback']);
+
+Route::get('/cara-pemesanan', [LandingController::class, 'caraPemesanan'])->name('pages.cara-pemesanan');
+Route::get('/faq', [LandingController::class, 'faq'])->name('pages.faq');
+Route::get('/syarat-ketentuan', [LandingController::class, 'syaratKetentuan'])->name('pages.syarat-ketentuan');
+Route::get('/cari-tema', [LandingController::class, 'cariTema'])->name('pages.cari-tema');
+Route::get('/fitur', [LandingController::class, 'fitur'])->name('pages.fitur');
+Route::get('/harga', [LandingController::class, 'harga'])->name('pages.harga');
+Route::get('/bantuan', [LandingController::class, 'bantuan'])->name('pages.bantuan');
+
+Route::get('/kebijakan-privasi', [LandingController::class, 'kebijakanPrivasi'])->name('pages.kebijakan-privasi');
 
 Route::get('/{slug}', [WeddingController::class, 'show'])->where('slug', '[A-Za-z0-9\-]+')->name('invitation.show');
 

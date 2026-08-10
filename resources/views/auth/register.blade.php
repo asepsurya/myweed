@@ -158,7 +158,7 @@
         .field-input {
             width: 100%;
             height: 48px;
-            padding: 0 2.75rem 0 1rem;
+            padding: 0 3rem 0 1rem; /* Padding kanan diperbesar agar teks tidak menabrak ikon */
             border: 1.5px solid var(--border);
             border-radius: var(--radius);
             font-family: var(--font);
@@ -187,8 +187,12 @@
             pointer-events: none;
             transition: all var(--speed) ease;
             background: var(--bg);
-            padding: 0 0.3rem;
+            padding: 0 0.35rem;
             border-radius: 4px;
+            transform-origin: left center;
+        }
+        .posisi{
+            margin-top:-15px;
         }
 
         .field-input:focus + .field-label,
@@ -199,7 +203,7 @@
             background: var(--white);
             font-weight: 500;
         }
-
+        
         /* Valid */
         .field-input.is-valid { border-color: var(--success); background: var(--success-bg); }
         .field-input.is-valid:focus { box-shadow: 0 0 0 3px rgba(22,163,74,0.1); background: var(--white); }
@@ -224,6 +228,11 @@
             right: 1rem;
             top: 50%;
             transform: translateY(-50%);
+            height: 48px; /* Tinggi eksplisit agar selalu di tengah kotak input */
+            width: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             color: var(--text-muted);
             font-size: 0.95rem;
             pointer-events: none;
@@ -236,23 +245,27 @@
         /* Password toggle */
         .pwd-toggle {
             position: absolute;
-            right: 1rem;
+            right: 0.5rem;
             top: 50%;
             transform: translateY(-50%);
+            height: 48px; /* Tinggi eksplisit agar selalu di tengah kotak input */
+            width: 40px;
             background: none;
             border: none;
             color: var(--text-muted);
             cursor: pointer;
-            padding: 4px;
-            font-size: 0.95rem;
+            font-size: 1rem;
             z-index: 2;
             transition: color var(--speed);
-            line-height: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         .pwd-toggle:hover { color: var(--text); }
 
-        .field.has-toggle .field-input { padding-right: 3rem; }
-        .field.has-toggle .field-icon { right: 2.75rem; }
+        /* Atur ulang padding dan posisi agar tombol toggle & ikon gembok rapi berjajar */
+        .field.has-toggle .field-input { padding-right: 5.5rem; }
+        .field.has-toggle .field-icon { right: 3.5rem; }
 
         /* Error message */
         .field-error {
@@ -447,6 +460,8 @@
             .card-footer  { padding: 1.1rem 1.5rem 1.5rem; }
             .card-header h1 { font-size: 1.2rem; }
             .field-input { height: 46px; font-size: 0.85rem; }
+            .field-icon { height: 46px; }
+            .pwd-toggle { height: 46px; }
             .btn-submit, .btn-google { height: 46px; }
         }
 
@@ -525,9 +540,9 @@
                         placeholder=" "
                         required
                         autocomplete="new-password">
-                    <label class="field-label" for="password">Password</label>
-                    <i class="bi bi-lock field-icon"></i>
-                    <button type="button" class="pwd-toggle" data-target="password" aria-label="Tampilkan password">
+                    <label class="field-label posisi" for="password">Password</label>
+                    <i class="bi bi-lock field-icon posisi"></i>
+                    <button type="button" class="pwd-toggle posisi" data-target="password" aria-label="Tampilkan password">
                         <i class="bi bi-eye"></i>
                     </button>
                     <div class="field-error {{ $errors->has('password') ? 'show' : '' }}" id="passwordError">

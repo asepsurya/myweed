@@ -97,6 +97,14 @@
                     </a>
                 </li>
 
+                <!-- Template Creator -->
+                <li class="nav-item">
+                    <a href="{{ route('template-creator.index') }}" class="nav-link" :active="request()->routeIs('template-creator.*')">
+                        <i class="menu-icon bi bi-stars"></i>
+                        <span class="menu-name">Template Creator</span>
+                    </a>
+                </li>
+
                 <!-- Pengaturan -->
                 <li class="nav-item">
                     <a href="pengaturan.html" class="nav-link">

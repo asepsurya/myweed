@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SubscriptionPlanController;
 use App\Http\Controllers\MusicController;
+use App\Http\Controllers\AiChatController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -16,3 +17,5 @@ Route::get('/payment/pending', [SubscriptionPlanController::class, 'pending'])->
 
 Route::get('/music', [MusicController::class, 'apiIndex']);
 Route::get('/music/{music}', [MusicController::class, 'apiShow']);
+
+Route::post('/ai/chat', [AiChatController::class, 'chat'])->middleware('throttle:10,1');

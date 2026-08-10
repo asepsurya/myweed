@@ -16,10 +16,8 @@ class StoreMusicRequest extends FormRequest
         return [
             'title' => ['required', 'string', 'max:255'],
             'artist' => ['required', 'string', 'max:255'],
-            'album' => ['nullable', 'string', 'max:255'],
             'music_file' => ['required', 'file', 'mimes:mp3,wav,ogg', 'max:20480'],
             'cover' => ['nullable', 'file', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
-            'duration' => ['nullable', 'integer', 'min:0'],
             'is_active' => ['boolean'],
         ];
     }
@@ -31,13 +29,11 @@ class StoreMusicRequest extends FormRequest
             'title.max' => 'Judul lagu tidak boleh melebihi 255 karakter.',
             'artist.required' => 'Nama penyanyi wajib diisi.',
             'artist.max' => 'Nama penyanyi tidak boleh melebihi 255 karakter.',
-            'album.max' => 'Nama album tidak boleh melebihi 255 karakter.',
             'music_file.required' => 'File musik wajib diunggah.',
             'music_file.mimes' => 'File musik harus berformat MP3, WAV, atau OGG.',
             'music_file.max' => 'File musik tidak boleh melebihi 20 MB.',
             'cover.mimes' => 'Cover lagu harus berformat JPG, JPEG, PNG, atau WebP.',
             'cover.max' => 'Cover lagu tidak boleh melebihi 5 MB.',
-            'duration.integer' => 'Durasi harus berupa angka.',
         ];
     }
 }

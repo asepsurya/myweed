@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use ZipArchive;
 use App\Models\Music;
 use App\Models\Template;
+use App\Models\Category;
 use App\Models\Invitation;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
@@ -15,9 +16,10 @@ class TempelateController extends Controller
 {
     public function index(Request $request)
     {
-      $tempelate = Template::all();
-       $musics = Music::where('is_active', true)->get();
-      return view('dashboard.tempelate.index', compact('tempelate','musics'));
+      $tempelate = Template::with('category')->get();
+      $musics = Music::where('is_active', true)->get();
+      $categories = Category::orderBy('name')->get();
+      return view('dashboard.tempelate.index', compact('tempelate','musics','categories'));
     }
      public function store(Request $request)
     {
@@ -25,7 +27,8 @@ class TempelateController extends Controller
             'name' => 'required',
             'thumbnail' => 'required|image',
             'preview' => 'required|image',
-            'zip' => 'required|mimes:zip'
+            'zip' => 'required|mimes:zip',
+            'id_category' => 'required|exists:categories,id',
         ]);
 
         $folderName = Str::slug($request->name);
@@ -69,6 +72,7 @@ class TempelateController extends Controller
             'slug' => $folderName,
             'thumbnail' => $thumb,
             'preview' => $preview,
+            'id_category' => $request->id_category,
             'sections' => ["hero","couple","event","gallery","rsvp","music"],
             'is_active' => true
         ]);
@@ -82,6 +86,7 @@ class TempelateController extends Controller
             'name' => 'required|string|max:255',
             'slug' => 'required|string|max:255|unique:templates,slug',
             'code' => 'required|string',
+            'id_category' => 'required|exists:categories,id',
         ]);
 
         $slug = Str::slug($request->slug);
@@ -101,6 +106,7 @@ class TempelateController extends Controller
             'slug' => $slug,
             'thumbnail' => $thumb,
             'preview' => $preview,
+            'id_category' => $request->id_category,
             'sections' => ["hero","couple","event","gallery","rsvp","music"],
             'is_active' => true,
         ]);

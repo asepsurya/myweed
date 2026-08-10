@@ -1646,7 +1646,7 @@ body.locked {
         <!-- COVER LOCKED WRAPPER -->
         <div id="cover-wrapper" class="cover-wrapper">
             <div id="cover" class="cover-1">
-               <img
+               <img loading="lazy"
     class="rectangle-1"
     src="{{ $invitation->gallery_cover ? asset('storage/' . $invitation->gallery_cover) : asset('images/default-cover.jpg') }}"
     alt="Cover">
@@ -1659,22 +1659,22 @@ body.locked {
                 </div>
                 <div class="rectangle-5"></div>
                 <div class="buka-undangan" id="open-invitation">BUKA UNDANGAN</div>
-                <img class="javanese-paperize-7-1" src="{{ url('template-assets/' . $invitation->template->slug . '/images/javanese-paperize-7-10.png') }}" />
-                <img class="javanese-paperize-7-2" src="{{ url('template-assets/' . $invitation->template->slug . '/images/javanese-paperize-7-20.png') }}" />
+                <img loading="lazy" class="javanese-paperize-7-1" src="{{ url('template-assets/' . $invitation->template->slug . '/images/javanese-paperize-7-10.png') }}" />
+                <img loading="lazy" class="javanese-paperize-7-2" src="{{ url('template-assets/' . $invitation->template->slug . '/images/javanese-paperize-7-20.png') }}" />
             </div>
         </div>
 
         <div id="ayat" class="section-2">
-            <img class="rectangle-6" src="{{ url('template-assets/' . $invitation->template->slug . '/images/rectangle-60.png') }}" />
-            <img class="house-java-m-1" src="{{ url('template-assets/' . $invitation->template->slug . '/images/house-java-m-10.png') }}" />
-            <img class="afb-133-e-7-a-7-ec-4-a-6-d-b-886-ec-09-db-826-bcd-1-1"
+            <img loading="lazy" class="rectangle-6" src="{{ url('template-assets/' . $invitation->template->slug . '/images/rectangle-60.png') }}" />
+            <img loading="lazy" class="house-java-m-1" src="{{ url('template-assets/' . $invitation->template->slug . '/images/house-java-m-10.png') }}" />
+            <img loading="lazy" class="afb-133-e-7-a-7-ec-4-a-6-d-b-886-ec-09-db-826-bcd-1-1"
                 src="{{ url('template-assets/' . $invitation->template->slug . '/images/afb-133-e-7-a-7-ec-4-a-6-d-b-886-ec-09-db-826-bcd-1-10.png') }}" />
-            <img class="rectangle-14" src="{{ url('template-assets/' . $invitation->template->slug . '/images/rectangle-14.png') }}" />
-            <img class="red-rose-1-1-1" src="{{ url('template-assets/' . $invitation->template->slug . '/images/red-rose-1-1-10.png') }}" />
+            <img loading="lazy" class="rectangle-14" src="{{ url('template-assets/' . $invitation->template->slug . '/images/rectangle-14.png') }}" />
+            <img loading="lazy" class="red-rose-1-1-1" src="{{ url('template-assets/' . $invitation->template->slug . '/images/red-rose-1-1-10.png') }}" />
             <div class="assets-dreamy-javanese-1-1"></div>
-            <img class="janur-maroon-1" src="{{ url('template-assets/' . $invitation->template->slug . '/images/janur-maroon-10.png') }}" />
-            <img class="javanese-paperize-7-3" src="{{ url('template-assets/' . $invitation->template->slug . '/images/javanese-paperize-7-30.png') }}" />
-<img class="group-4" src="{{ url('template-assets/' . $invitation->template->slug . '/images/group-40.svg') }}" />
+            <img loading="lazy" class="janur-maroon-1" src="{{ url('template-assets/' . $invitation->template->slug . '/images/janur-maroon-10.png') }}" />
+            <img loading="lazy" class="javanese-paperize-7-3" src="{{ url('template-assets/' . $invitation->template->slug . '/images/javanese-paperize-7-30.png') }}" />
+<img loading="lazy" class="group-4" src="{{ url('template-assets/' . $invitation->template->slug . '/images/group-40.svg') }}" />
             <div
                 class="dan-di-antara-tanda-tanda-kebesaran-nya-ialah-dia-menciptakan-pasangan-untukmu-agar-kamu-merasa-tentram-qs-ar-rum-21">
                  {!! nl2br(e(str_replace('(', "\n(", $invitation->wedding_quote))) !!}
@@ -1683,30 +1683,30 @@ body.locked {
         </div>
         
         <div id="pengantin" class="section-3">
-            <img class="javanese-paperize-2-1-1" src="{{ url('template-assets/' . $invitation->template->slug . '/images/javanese-paperize-2-1-10.png') }}" />
+            <img loading="lazy" class="javanese-paperize-2-1-1" src="{{ url('template-assets/' . $invitation->template->slug . '/images/javanese-paperize-2-1-10.png') }}" />
             
-            <img class="javanese-paperize-7-4" src="{{ url('template-assets/' . $invitation->template->slug . '/images/javanese-paperize-7-40.png') }}" />
-            <img class="janur-maroon-2" src="{{ url('template-assets/' . $invitation->template->slug . '/images/janur-maroon-20.png') }}" />
-            <img class="red-rose-1-1-2" src="{{ url('template-assets/' . $invitation->template->slug . '/images/red-rose-1-1-20.png') }}" />
-            <img class="rectangle-7" src="{{ $invitation->foto_wanita ? asset('storage/' . $invitation->foto_wanita) : url('template-assets/' . $invitation->template->slug . '/images/rectangle-70.png') }}" />
-            <img class="rectangle-8" src="{{ url('template-assets/' . $invitation->template->slug . '/images/rectangle-80.svg') }}" />
+            <img loading="lazy" class="javanese-paperize-7-4" src="{{ url('template-assets/' . $invitation->template->slug . '/images/javanese-paperize-7-40.png') }}" />
+            <img loading="lazy" class="janur-maroon-2" src="{{ url('template-assets/' . $invitation->template->slug . '/images/janur-maroon-20.png') }}" />
+            <img loading="lazy" class="red-rose-1-1-2" src="{{ url('template-assets/' . $invitation->template->slug . '/images/red-rose-1-1-20.png') }}" />
+            <img loading="lazy" class="rectangle-7" src="{{ $invitation->foto_wanita ? asset('storage/' . $invitation->foto_wanita) : url('template-assets/' . $invitation->template->slug . '/images/rectangle-70.png') }}" />
+            <img loading="lazy" class="rectangle-8" src="{{ url('template-assets/' . $invitation->template->slug . '/images/rectangle-80.svg') }}" />
             <div class="adinda-mawaria">{{ $invitation->groom_name }}</div>
             <div class="bapak-sanusi-s-m-ibu-jubaedah-dari-london-utara">
                 Bapak {{ $invitation->groom_father_name ?? 'Fulan' }} &amp; Ibu {{ $invitation->groom_mother_name ?? 'Fulana' }}
                 <br />
                 {{ $invitation->groom_username_instagram ? 'dari ' . $invitation->groom_username_instagram : '' }}
             </div>
-            <img class="rectangle-72" src="{{ $invitation->foto_pria ? asset('storage/' . $invitation->foto_pria) : url('template-assets/' . $invitation->template->slug . '/images/rectangle-71.png') }}" />
-            <img class="rectangle-82" src="{{ url('template-assets/' . $invitation->template->slug . '/images/rectangle-81.svg') }}" />
+            <img loading="lazy" class="rectangle-72" src="{{ $invitation->foto_pria ? asset('storage/' . $invitation->foto_pria) : url('template-assets/' . $invitation->template->slug . '/images/rectangle-71.png') }}" />
+            <img loading="lazy" class="rectangle-82" src="{{ url('template-assets/' . $invitation->template->slug . '/images/rectangle-81.svg') }}" />
             <div class="adinda-mawaria2">{{ $invitation->bride_name }}</div>
             <div class="bapak-sanusi-s-m-ibu-jubaedah-dari-london-utara2">
                 Bapak {{ $invitation->bride_father_name ?? 'Surya' }} &amp; Ibu {{ $invitation->bride_mother_name ?? 'Dewi' }}
                 <br />
                 {{ $invitation->bride_username_instagram ? 'dari ' . $invitation->bride_username_instagram : '' }}
             </div>
-            <img class="afb-133-e-7-a-7-ec-4-a-6-d-b-886-ec-09-db-826-bcd-1-2"
+            <img loading="lazy" class="afb-133-e-7-a-7-ec-4-a-6-d-b-886-ec-09-db-826-bcd-1-2"
                 src="{{ url('template-assets/' . $invitation->template->slug . '/images/afb-133-e-7-a-7-ec-4-a-6-d-b-886-ec-09-db-826-bcd-1-20.png') }}" />
-            <img class="afb-133-e-7-a-7-ec-4-a-6-d-b-886-ec-09-db-826-bcd-1-3"
+            <img loading="lazy" class="afb-133-e-7-a-7-ec-4-a-6-d-b-886-ec-09-db-826-bcd-1-3"
                 src="{{ url('template-assets/' . $invitation->template->slug . '/images/afb-133-e-7-a-7-ec-4-a-6-d-b-886-ec-09-db-826-bcd-1-30.png') }}" />
         </div>
         
@@ -1731,7 +1731,7 @@ body.locked {
                 <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; padding: 0 8px; margin-bottom:30px;">
                     @forelse ($paginatedGalleries as $photo)
                         <a href="{{ asset("storage/" . $photo->image) }}" data-fancybox="gallery" style="display: block; border-radius: 12px; overflow: hidden;">
-                            <img src="{{ asset("storage/" . $photo->image) }}" 
+                            <img loading="lazy" src="{{ asset("storage/" . $photo->image) }}" 
                                  style="width: 100%; height: 180px; object-fit: cover; display: block; border-radius: 12px;" 
                                  alt="Gallery">
                         </a>
@@ -2004,7 +2004,7 @@ body.locked {
 
             list.innerHTML = rsvps.map(rsvp => `
                 <div class="rsvp-list-item">
-                    <img src="{{ asset('tempelate/user_default.jpg') }}" alt="User" class="rsvp-avatar">
+                    <img loading="lazy" src="{{ asset('tempelate/user_default.jpg') }}" alt="User" class="rsvp-avatar">
                     <div class="rsvp-item-content">
                         <p class="rsvp-item-name">${rsvp.name}</p>
                         <p class="rsvp-item-message">${rsvp.message || ''}</p>

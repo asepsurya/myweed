@@ -31,22 +31,6 @@
                         @enderror
                     </div>
                     <div class="col-md-6">
-                        <label class="form-label fw-semibold">Album</label>
-                        <input type="text" name="album" class="form-control @error('album') is-invalid @enderror"
-                            value="{{ old('album') }}" placeholder="Contoh: Divide">
-                        @error('album')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label fw-semibold">Durasi (detik)</label>
-                        <input type="number" name="duration" class="form-control @error('duration') is-invalid @enderror"
-                            value="{{ old('duration') }}" placeholder="Contoh: 263" min="0">
-                        @error('duration')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-                    <div class="col-md-6">
                         <label class="form-label fw-semibold">File Musik <span class="text-danger">*</span></label>
                         <input type="file" name="music_file" id="musicFileInput" class="form-control @error('music_file') is-invalid @enderror"
                             accept="audio/mp3,audio/wav,audio/ogg" required>

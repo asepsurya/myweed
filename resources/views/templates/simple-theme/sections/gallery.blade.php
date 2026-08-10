@@ -27,7 +27,7 @@
             <div class="gallery-item {{ $index >= 6 ? 'hidden' : '' }}" data-gallery-index="{{ $index }}">
                 <div class="{{ $index === 2 ? 'aspect-[4/3] rounded-lg overflow-hidden md:col-span-2' : ($index % 2 === 0 ? 'aspect-[3/4] rounded-lg overflow-hidden' : 'aspect-square rounded-lg overflow-hidden') }}">
                     <a href="{{ asset('storage/' . $photo->image) }}" data-fancybox="gallery" data-caption="Wedding Moment">
-                        <img alt="Wedding Moment" class="w-full h-full object-cover hover:scale-105 transition-transform duration-500" src="{{ asset('storage/' . $photo->image) }}" loading="lazy" />
+                        <img loading="lazy"alt="Wedding Moment" class="w-full h-full object-cover hover:scale-105 transition-transform duration-500" src="{{ asset('storage/' . $photo->image) }}" loading="lazy"/>
                     </a>
                 </div>
             </div>
@@ -52,3 +52,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js"></script>
+
+
+

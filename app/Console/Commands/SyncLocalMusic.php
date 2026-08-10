@@ -7,18 +7,18 @@ use App\Models\Music;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
-class SyncR2Music extends Command
+class SyncLocalMusic extends Command
 {
-    protected $signature = 'music:sync-r2
+    protected $signature = 'music:sync-local
                             {--disk= : Disk to sync from (default: config music.disk)}
                             {--all : Include all files, not only mp3}
                             {--force : Overwrite existing records}';
 
-    protected $description = 'Sync music files from R2/local disk to music table';
+    protected $description = 'Sync music files from local/public disk to music table';
 
     public function handle(): int
     {
-        $disk = $this->option('disk') ?? config('music.disk', 'r2');
+        $disk = $this->option('disk') ?? config('music.disk', 'public');
         $onlyMp3 = !$this->option('all');
         $force = $this->option('force');
 

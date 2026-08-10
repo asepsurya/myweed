@@ -6,7 +6,7 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
-class R2UploadService
+class MusicUploadService
 {
     protected string $disk;
 
@@ -14,7 +14,7 @@ class R2UploadService
 
     public function __construct(?string $disk = null)
     {
-        $this->disk = $disk ?? config('music.disk', config('filesystems.default', 'r2'));
+        $this->disk = $disk ?? config('music.disk', config('filesystems.default', 'public'));
     }
 
     public function uploadMusic(UploadedFile $file, ?string $existingPath = null): string

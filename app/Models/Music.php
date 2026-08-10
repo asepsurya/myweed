@@ -11,11 +11,9 @@ class Music extends Model
     protected $fillable = [
         'title',
         'artist',
-        'album',
         'cover_url',
         'audio_url',
         'music_url',
-        'duration',
         'file_size',
         'mime_type',
         'is_active',
@@ -38,7 +36,7 @@ class Music extends Model
         if (filter_var($url, FILTER_VALIDATE_URL)) {
             return $url;
         }
-        return Storage::disk('r2')->url($url);
+        return Storage::disk('public')->url($url);
     }
 
     public function getFullCoverUrlAttribute()
@@ -48,13 +46,7 @@ class Music extends Model
             return $this->cover_url;
         }
 
-        $disk = config('music.disk', 'r2');
-
-        if ($disk === 'local' || $disk === 'public') {
-            return asset('storage/' . $this->cover_url);
-        }
-
-        return Storage::disk($disk)->url($this->cover_url);
+        return Storage::disk('public')->url($this->cover_url);
     }
 
     public function invitations(): HasMany

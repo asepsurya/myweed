@@ -72,6 +72,54 @@
             font-family: var(--font-display);
         }
 
+        /* ===== Keyframes ===== */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0) translateX(0);
+            }
+            50% {
+                transform: translateY(-15px) translateX(5px);
+            }
+        }
+
+        @keyframes pulseSoft {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.05); opacity: 0.8; }
+        }
+
+        /* ===== Scroll Reveal ===== */
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 0.8s cubic-bezier(0.25, 1, 0.5, 1), transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
         /* ===== Navbar ===== */
         .navbar {
             padding: 1.5rem 0;
@@ -141,8 +189,8 @@
         }
 
         .btn-gold:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(198, 169, 98, 0.4);
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 8px 25px rgba(198, 169, 98, 0.5);
         }
 
         /* ===== Hero Section ===== */
@@ -152,18 +200,38 @@
             align-items: center;
             justify-content: center;
             text-align: center;
-            background: linear-gradient(rgba(27, 42, 74, 0.8), rgba(27, 42, 74, 0.95)), url('https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=2070&auto=format&fit=crop') center/cover no-repeat;
             color: var(--white);
             position: relative;
             overflow: hidden;
             padding: 120px 0 80px;
         }
 
+        .hero-video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 0;
+        }
+
+        .hero-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(rgba(27, 42, 74, 0.8), rgba(27, 42, 74, 0.95));
+            z-index: 1;
+        }
+
         .hero-shape {
             position: absolute;
             border-radius: 50%;
             border: 1px solid rgba(198, 169, 98, 0.2);
-            z-index: 1;
+            z-index: 2;
+            animation: float 10s infinite ease-in-out;
         }
 
         .shape-1 {
@@ -171,7 +239,6 @@
             height: 400px;
             top: -100px;
             left: -100px;
-            animation: float 8s infinite ease-in-out;
         }
 
         .shape-2 {
@@ -180,7 +247,8 @@
             bottom: -50px;
             right: -50px;
             border-color: rgba(255, 255, 255, 0.1);
-            animation: float 10s infinite ease-in-out reverse;
+            animation-direction: reverse;
+            animation-duration: 12s;
         }
 
         .shape-3 {
@@ -188,26 +256,14 @@
             height: 150px;
             top: 20%;
             right: 15%;
-            background: radial-gradient(circle, rgba(198, 169, 98, 0.1) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(198, 169, 98, 0.2) 0%, transparent 70%);
             border: none;
-            animation: float 6s infinite ease-in-out;
-        }
-
-        @keyframes float {
-
-            0%,
-            100% {
-                transform: translate(0, 0);
-            }
-
-            50% {
-                transform: translate(20px, -20px);
-            }
+            animation: pulseSoft 6s infinite ease-in-out;
         }
 
         .hero-content {
             position: relative;
-            z-index: 2;
+            z-index: 3;
             max-width: 800px;
         }
 
@@ -223,6 +279,8 @@
             letter-spacing: 1px;
             text-transform: uppercase;
             margin-bottom: 1.5rem;
+            animation: fadeInDown 1s ease-out forwards;
+            opacity: 0;
         }
 
         .hero-section h1 {
@@ -231,6 +289,8 @@
             margin-bottom: 1.5rem;
             letter-spacing: -1px;
             line-height: 1.2;
+            animation: fadeInUp 1s ease-out 0.3s forwards;
+            opacity: 0;
         }
 
         .hero-section h1 em {
@@ -244,13 +304,16 @@
             margin-bottom: 2.5rem;
             font-weight: 300;
             line-height: 1.7;
+            animation: fadeInUp 1s ease-out 0.6s forwards;
+            opacity: 0;
         }
 
-        /* Search Bar */
         .search-container {
             max-width: 600px;
             margin: 0 auto 2.5rem;
             position: relative;
+            animation: fadeInUp 1s ease-out 0.9s forwards;
+            opacity: 0;
         }
 
         .search-container input {
@@ -327,27 +390,14 @@
             transform: translateX(-50%);
             color: rgba(255, 255, 255, 0.6);
             font-size: 1.5rem;
-            z-index: 2;
+            z-index: 3;
             animation: bounce 2s infinite;
         }
 
         @keyframes bounce {
-
-            0%,
-            20%,
-            50%,
-            80%,
-            100% {
-                transform: translateY(0) translateX(-50%);
-            }
-
-            40% {
-                transform: translateY(-10px) translateX(-50%);
-            }
-
-            60% {
-                transform: translateY(-5px) translateX(-50%);
-            }
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0) translateX(-50%); }
+            40% { transform: translateY(-10px) translateX(-50%); }
+            60% { transform: translateY(-5px) translateX(-50%); }
         }
 
         /* ===== Real Wedding Slider ===== */
@@ -394,9 +444,7 @@
             justify-content: center;
         }
 
-        .wedding-slider::-webkit-scrollbar {
-            display: none;
-        }
+        .wedding-slider::-webkit-scrollbar { display: none; }
 
         .wedding-item {
             text-align: center;
@@ -413,6 +461,11 @@
             width: 110px;
             height: 110px;
             margin: 0 auto 15px;
+            animation: float 6s infinite ease-in-out;
+        }
+        
+        .wedding-item:nth-child(even) .couple-avatar-group {
+            animation-delay: 2s;
         }
 
         .couple-avatar-group::before {
@@ -422,7 +475,10 @@
             border: 1px dashed var(--gold);
             border-radius: 50%;
             opacity: 0.5;
+            animation: spin 20s linear infinite; /* Slow spin for ring */
         }
+        
+        @keyframes spin { 100% { transform: rotate(360deg); } }
 
         .couple-avatar {
             width: 85px;
@@ -434,17 +490,8 @@
             position: absolute;
         }
 
-        .avatar-1 {
-            top: 0;
-            left: 0;
-            z-index: 2;
-        }
-
-        .avatar-2 {
-            bottom: 0;
-            right: 0;
-            z-index: 1;
-        }
+        .avatar-1 { top: 0; left: 0; z-index: 2; }
+        .avatar-2 { bottom: 0; right: 0; z-index: 1; }
 
         .couple-names {
             font-family: var(--font-display);
@@ -474,7 +521,7 @@
             border-radius: var(--radius-lg);
             padding: 2.5rem 2rem;
             height: 100%;
-            transition: all var(--speed) ease;
+            transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1);
             position: relative;
             overflow: hidden;
         }
@@ -489,13 +536,13 @@
             background: linear-gradient(90deg, var(--gold), var(--gold-dark));
             transform: scaleX(0);
             transform-origin: left;
-            transition: transform var(--speed) ease;
+            transition: transform 0.5s ease;
         }
 
         .feature-card:hover {
-            transform: translateY(-5px);
+            transform: translateY(-10px);
             border-color: var(--gold-light);
-            box-shadow: 0 15px 40px rgba(27, 42, 74, 0.08);
+            box-shadow: 0 20px 50px rgba(27, 42, 74, 0.1);
         }
 
         .feature-card:hover::before {
@@ -513,6 +560,13 @@
             margin-bottom: 1.5rem;
             font-size: 1.5rem;
             color: var(--gold-dark);
+            transition: all 0.5s ease;
+        }
+
+        .feature-card:hover .feature-icon {
+            transform: scale(1.1) rotate(-5deg);
+            background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+            color: var(--white);
         }
 
         .feature-card h4 {
@@ -529,7 +583,7 @@
             margin: 0;
         }
 
-        /* ===== Templates Grid (Original Style) ===== */
+        /* ===== Templates Grid ===== */
         .template-section {
             padding: 80px 0 100px;
             background: var(--bg-alt);
@@ -545,7 +599,7 @@
         .template-card {
             border-radius: var(--radius);
             overflow: hidden;
-            transition: all var(--speed) ease;
+            transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1);
             background: transparent;
         }
 
@@ -562,23 +616,23 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-            transition: transform 0.5s ease;
+            transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
         .template-card:hover .template-img-container img {
-            transform: scale(1.05);
+            transform: scale(1.08);
         }
 
         .template-overlay {
             position: absolute;
             inset: 0;
-            background: rgba(27, 42, 74, 0.6);
-            backdrop-filter: blur(2px);
+            background: rgba(27, 42, 74, 0.7);
+            backdrop-filter: blur(3px);
             display: flex;
             align-items: center;
             justify-content: center;
             opacity: 0;
-            transition: opacity var(--speed) ease;
+            transition: opacity 0.4s ease;
             gap: 10px;
         }
 
@@ -593,24 +647,9 @@
             align-items: center;
         }
 
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .user-avatar {
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            background: var(--border);
-        }
-
-        .user-name {
-            font-size: 0.85rem;
-            font-weight: 700;
-            color: var(--navy);
-        }
+        .user-info { display: flex; align-items: center; gap: 8px; }
+        .user-avatar { width: 24px; height: 24px; border-radius: 50%; background: var(--border); }
+        .user-name { font-size: 0.85rem; font-weight: 700; color: var(--navy); }
 
         .card-stats {
             display: flex;
@@ -620,9 +659,7 @@
             color: var(--text-secondary);
         }
 
-        .card-stats i {
-            font-size: 0.85rem;
-        }
+        .card-stats i { font-size: 0.85rem; }
 
         .badge-pro {
             background: var(--gold);
@@ -648,8 +685,9 @@
             right: -10%;
             width: 500px;
             height: 500px;
-            background: radial-gradient(circle, rgba(198, 169, 98, 0.1) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(198, 169, 98, 0.15) 0%, transparent 70%);
             pointer-events: none;
+            animation: pulseSoft 8s infinite ease-in-out;
         }
 
         .cta-box {
@@ -688,14 +726,9 @@
             color: var(--navy);
         }
 
-        .footer-logo span {
-            color: var(--gold);
-        }
+        .footer-logo span { color: var(--gold); }
 
-        .footer-links {
-            list-style: none;
-            padding: 0;
-        }
+        .footer-links { list-style: none; padding: 0; }
 
         .footer-links li {
             margin-bottom: 0.8rem;
@@ -704,11 +737,13 @@
 
         .footer-links li a {
             color: var(--text-secondary);
+            display: inline-block;
+            transition: transform 0.2s ease;
         }
 
         .footer-links li a:hover {
             color: var(--gold-dark);
-            padding-left: 5px;
+            transform: translateX(5px);
         }
 
         .footer-heading {
@@ -743,7 +778,8 @@
         .social-btn:hover {
             background: var(--navy);
             color: var(--white);
-            transform: translateY(-3px);
+            transform: translateY(-5px) rotate(5deg);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
 
         .footer-bottom {
@@ -755,31 +791,46 @@
             font-size: 0.85rem;
         }
 
-        /* ===== Responsive ===== */
-        @media (max-width: 992px) {
-            .navbar {
-                background: rgba(27, 42, 74, 0.95);
-                backdrop-filter: blur(10px);
-            }
+        /* Tag Wrapper Animation */
+        .tag-wrapper {
+            width: 100%;
+            overflow: hidden;
+            animation: fadeInUp 1s ease-out 1.2s forwards;
+            opacity: 0;
+        }
 
-            .navbar.scrolled .navbar-brand,
-            .navbar.scrolled .nav-link {
-                color: var(--white) !important;
-            }
+        .tag-list {
+            display: flex;
+            align-items: center;
+            flex-wrap: nowrap;
+            gap: 10px;
+            width: max-content;
+            animation: tagScroll 25s linear infinite;
+        }
+
+        .tag-item {
+            flex: 0 0 auto;
+            white-space: nowrap;
+            border-radius: 50px;
+            padding: 8px 18px;
+            text-decoration: none;
+            transition: all .3s ease;
+        }
+
+        .tag-item:hover { transform: translateY(-2px); }
+        .tag-wrapper:hover .tag-list { animation-play-state: paused; }
+
+        @keyframes tagScroll {
+            from { transform: translateX(0); }
+            to { transform: translateX(-50%); }
         }
 
         @media (max-width: 768px) {
-            .hero-section h1 {
-                font-size: 2.5rem;
-            }
-
-            .section-title {
-                font-size: 1.8rem;
-            }
-
-            .cta-box h2 {
-                font-size: 2rem;
-            }
+            .tag-list { gap: 8px; animation-duration: 20s; }
+            .tag-item { padding: 7px 15px; }
+            .hero-section h1 { font-size: 2.5rem; }
+            .section-title { font-size: 1.8rem; }
+            .cta-box h2 { font-size: 2rem; }
         }
     </style>
 </head>
@@ -796,10 +847,10 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav mx-auto">
-                    <li class="nav-item"><a class="nav-link" href="#templates">Cari Tema</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#features">Fitur</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#pricing">Harga</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Bantuan</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('pages.cari-tema') }}">Cari Tema</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('pages.fitur') }}">Fitur</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('pages.harga') }}">Harga</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('pages.bantuan') }}">Bantuan</a></li>
                 </ul>
                 <div class="d-flex align-items-center gap-3">
                     @auth
@@ -815,6 +866,10 @@
 
     <!-- Hero Section -->
     <section class="hero-section">
+        <video class="hero-video" autoplay muted loop playsinline>
+            <source src="{{ asset('assets/Newlyweds_standing_for_wedding_v…_202608082347.mp4') }}" type="video/mp4">
+        </video>
+        <div class="hero-overlay"></div>
         <div class="hero-shape shape-1"></div>
         <div class="hero-shape shape-2"></div>
         <div class="hero-shape shape-3"></div>
@@ -834,14 +889,19 @@
                 </div>
             </form>
 
-            <div class="tag-list">
-                <a href="{{ route('landing') }}#templates"
-                    class="tag-item {{ !request('category') || request('category') == 'All' ? 'active' : '' }}">Semua
-                    Tema</a>
-                @foreach($categories as $cat)
-                    <a href="{{ route('landing', ['category' => $cat['name']]) }}#templates"
-                        class="tag-item {{ request('category') == $cat['name'] ? 'active' : '' }}">{{ $cat['name'] }}</a>
-                @endforeach
+            <div class="tag-wrapper">
+                <div class="tag-list">
+                    <a href="{{ route('landing') }}#templates"
+                        class="tag-item {{ !request('category') || request('category') == 'All' ? 'active' : '' }}">
+                        Semua Tema
+                    </a>
+                    @foreach($categories as $cat)
+                        <a href="{{ route('landing', ['category' => $cat['name']]) }}#templates"
+                            class="tag-item {{ request('category') == $cat['name'] ? 'active' : '' }}">
+                            {{ $cat['name'] }}
+                        </a>
+                    @endforeach
+                </div>
             </div>
         </div>
 
@@ -853,13 +913,13 @@
     <!-- Real Wedding Social Proof -->
     <section class="real-wedding-section" id="real-weddings">
         <div class="container">
-            <div class="section-header-center">
+            <div class="section-header-center reveal">
                 <span class="section-subtitle">Portofolio Nyata</span>
                 <h2 class="section-title">Telah Dipercaya 10.000+ Pasangan</h2>
                 <p class="section-desc">Ribuan pasangan bahagia telah mempercayakan momen sakral mereka kepada kami.</p>
             </div>
 
-            <div class="wedding-slider">
+            <div class="wedding-slider reveal">
                 @foreach($invitations as $invitation)
                     <a href="{{ route('invitation.detail', ['slug' => $invitation->slug]) }}" class="wedding-item">
                         <div class="couple-avatar-group">
@@ -894,14 +954,14 @@
     <!-- Features Section -->
     <section class="features-section" id="features">
         <div class="container">
-            <div class="section-header-center">
+            <div class="section-header-center reveal">
                 <span class="section-subtitle">Keunggulan Kami</span>
                 <h2 class="section-title">Mengapa Memilih WeddingInv?</h2>
                 <p class="section-desc">Memberikan pengalaman terbaik untuk momen sekali seumur hidup Anda.</p>
             </div>
 
             <div class="row g-4">
-                <div class="col-lg-4 col-md-6">
+                <div class="col-lg-4 col-md-6 reveal" style="transition-delay: 0.1s;">
                     <div class="feature-card">
                         <div class="feature-icon"><i class="bi bi-phone"></i></div>
                         <h4>Desain Mobile First</h4>
@@ -909,7 +969,7 @@
                             akan kagum saat membukanya.</p>
                     </div>
                 </div>
-                <div class="col-lg-4 col-md-6">
+                <div class="col-lg-4 col-md-6 reveal" style="transition-delay: 0.2s;">
                     <div class="feature-card">
                         <div class="feature-icon"><i class="bi bi-music-note-beamed"></i></div>
                         <h4>Background Musik</h4>
@@ -917,7 +977,7 @@
                             undangan dibuka.</p>
                     </div>
                 </div>
-                <div class="col-lg-4 col-md-6">
+                <div class="col-lg-4 col-md-6 reveal" style="transition-delay: 0.3s;">
                     <div class="feature-card">
                         <div class="feature-icon"><i class="bi bi-map"></i></div>
                         <h4>Google Maps Integrasi</h4>
@@ -925,7 +985,7 @@
                             klik.</p>
                     </div>
                 </div>
-                <div class="col-lg-4 col-md-6">
+                <div class="col-lg-4 col-md-6 reveal" style="transition-delay: 0.1s;">
                     <div class="feature-card">
                         <div class="feature-icon"><i class="bi bi-gift"></i></div>
                         <h4>Kirim Amplop Digital</h4>
@@ -933,7 +993,7 @@
                             e-wallet dengan aman.</p>
                     </div>
                 </div>
-                <div class="col-lg-4 col-md-6">
+                <div class="col-lg-4 col-md-6 reveal" style="transition-delay: 0.2s;">
                     <div class="feature-card">
                         <div class="feature-icon"><i class="bi bi-people"></i></div>
                         <h4>RSVP & Hitung Tamu</h4>
@@ -941,7 +1001,7 @@
                             acara.</p>
                     </div>
                 </div>
-                <div class="col-lg-4 col-md-6">
+                <div class="col-lg-4 col-md-6 reveal" style="transition-delay: 0.3s;">
                     <div class="feature-card">
                         <div class="feature-icon"><i class="bi bi-camera-reels"></i></div>
                         <h4>Galeri Foto & Video</h4>
@@ -953,10 +1013,10 @@
         </div>
     </section>
 
-    <!-- Templates Grid (Original Layout Restored) -->
+    <!-- Templates Grid -->
     <section id="templates" class="template-section">
         <div class="container">
-            <div class="section-header-center">
+            <div class="section-header-center reveal">
                 <span class="section-subtitle">Galeri Inspirasi</span>
                 <h2 class="section-title">Koleksi Tema Eksklusif</h2>
                 <p class="section-desc">Pilih dari puluhan desain premium yang dirancang oleh desainer profesional kami.
@@ -965,14 +1025,14 @@
 
             <div class="template-grid">
                 @foreach($templates as $template)
-                    <div class="template-card">
+                    <div class="template-card reveal">
                         <div class="template-img-container">
                             <img src="{{ $template->thumbnail ? asset('storage/' . $template->thumbnail) : 'https://placehold.co/600x450?text=No+Thumbnail' }}"
                                 alt="{{ $template->name }}" loading="lazy">
                             <div class="template-overlay">
                                 <a href="{{ route('template.preview', ['slug' => 'romeo-juliet', 'id' => $template->id]) }}" target="_blank"
                                     class="btn btn-light rounded-pill px-4 fw-bold shadow-sm">Pratinjau</a>
-                                <a href="{{ route('invitation.create', ['template_id' => $template->id]) }}"
+                                <a href="{{ route('dashboard.user') }}?template_id={{ $template->id }}"
                                     class="btn btn-gold rounded-pill px-4 fw-bold shadow-sm">Gunakan</a>
                             </div>
                         </div>
@@ -1013,7 +1073,7 @@
     <!-- CTA Section -->
     <section class="cta-section">
         <div class="container">
-            <div class="cta-box">
+            <div class="cta-box reveal">
                 <h2>Siap Memulai Perjalanan Anda?</h2>
                 <p>Buat undangan digital impian Anda hari ini. Gratis untuk memulai, tanpa kartu kredit.</p>
                 <a href="{{ route('register') }}" class="btn-gold" style="font-size: 1rem; padding: 1rem 2.5rem;">
@@ -1027,7 +1087,7 @@
     <footer>
         <div class="container">
             <div class="row gy-5">
-                <div class="col-lg-4">
+                <div class="col-lg-4 reveal">
                     <a href="#" class="footer-logo">Wedding<span>Inv</span>.</a>
                     <p class="text-secondary small" style="max-width: 350px;">Solusi undangan digital premium untuk
                         pernikahan, khitanan, aqiqah, dan berbagai momen spesial lainnya. Praktis, elegan, dan hemat
@@ -1039,7 +1099,7 @@
                         <a href="#" class="social-btn"><i class="bi bi-youtube"></i></a>
                     </div>
                 </div>
-                <div class="col-6 col-lg-2 offset-lg-1">
+                <div class="col-6 col-lg-2 offset-lg-1 reveal" style="transition-delay: 0.1s;">
                     <h5 class="footer-heading">Layanan</h5>
                     <ul class="footer-links">
                         <li><a href="#">Undangan Pernikahan</a></li>
@@ -1048,7 +1108,7 @@
                         <li><a href="#">Video Undangan</a></li>
                     </ul>
                 </div>
-                <div class="col-6 col-lg-2">
+                <div class="col-6 col-lg-2 reveal" style="transition-delay: 0.2s;">
                     <h5 class="footer-heading">Tema Populer</h5>
                     <ul class="footer-links">
                         <li><a href="#">Tema Modern</a></li>
@@ -1057,13 +1117,13 @@
                         <li><a href="#">Tema Islami</a></li>
                     </ul>
                 </div>
-                <div class="col-6 col-lg-2">
+                <div class="col-6 col-lg-2 reveal" style="transition-delay: 0.3s;">
                     <h5 class="footer-heading">Informasi</h5>
                     <ul class="footer-links">
-                        <li><a href="#">Cara Pemesanan</a></li>
-                        <li><a href="#">Pertanyaan (FAQ)</a></li>
-                        <li><a href="#">Syarat & Ketentuan</a></li>
-                        <li><a href="#">Kebijakan Privasi</a></li>
+                        <li><a href="{{ route('pages.cara-pemesanan') }}">Cara Pemesanan</a></li>
+                        <li><a href="{{ route('pages.faq') }}">Pertanyaan (FAQ)</a></li>
+                        <li><a href="{{ route('pages.syarat-ketentuan') }}">Syarat & Ketentuan</a></li>
+                        <li><a href="{{ route('pages.kebijakan-privasi') }}">Kebijakan Privasi</a></li>
                     </ul>
                 </div>
             </div>
@@ -1084,6 +1144,21 @@
             } else {
                 navbar.classList.remove('scrolled');
             }
+        });
+
+        // Scroll Reveal Animation (Intersection Observer)
+        const reveals = document.querySelectorAll('.reveal');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                    observer.unobserve(entry.target); // Stop observing once it's visible
+                }
+            });
+        }, { threshold: 0.15 });
+
+        reveals.forEach(reveal => {
+            observer.observe(reveal);
         });
 
         // Like Button Logic
@@ -1124,6 +1199,623 @@
             });
         });
     </script>
+
+  <!-- ============================================================= -->
+<!-- AI Chat Widget                                                 -->
+<!-- ============================================================= -->
+<div id="ai-chat-widget" class="ai-chat-widget">
+
+    <!-- Toggle Button -->
+    <button id="ai-chat-toggle" class="ai-chat-toggle" type="button" aria-label="Buat Undangan dengan AI">
+        <i class="bi bi-chat-dots-fill"></i>
+    </button>
+
+    <!-- Chat Panel -->
+    <div id="ai-chat-panel" class="ai-chat-panel">
+
+        <!-- Header -->
+        <div class="ai-chat-header">
+            <div class="d-flex align-items-center gap-2">
+                <div class="ai-chat-avatar">
+                    <i class="bi bi-stars"></i>
+                </div>
+                <div>
+                    <div class="ai-chat-title">Asisten Undangan AI</div>
+                    <div class="ai-chat-subtitle">Buat undangan dalam 1 menit</div>
+                </div>
+            </div>
+            <button id="ai-chat-close" class="ai-chat-close" type="button" aria-label="Tutup chat">
+                <i class="bi bi-x-lg"></i>
+            </button>
+        </div>
+
+        <!-- Messages -->
+        <div id="ai-chat-messages" class="ai-chat-messages">
+            <div class="ai-message ai">
+                <div class="ai-message-bubble">
+    <p>Hai! Saya <strong>Asisten Undangan AI</strong> dari WeddingInv. ✨</p>
+    <p>Saya akan membantu Anda membuat undangan pernikahan digital secara otomatis.</p>
+    <p>Cukup ceritakan:</p>
+    <ul>
+        <li>Nama mempelai pria & wanita</li>
+        <li>Tanggal pernikahan</li>
+        <li>Lokasi akad / resepsi</li>
+    </ul>
+    <p class="mb-0">Atau pilih topik di bawah untuk mulai.</p>
+</div>
+            </div>
+        </div>
+<style>
+    .ai-message-bubble p {
+    margin: 0 0 4px 0; /* Jarak paragraf hanya 4px */
+}
+
+.ai-message-bubble p:last-child {
+    margin-bottom: 0;
+}
+
+.ai-message-bubble ul {
+    margin: 0 0 4px 0; /* Jarak bawah list hanya 4px */
+    padding-left: 18px;
+}
+
+.ai-message-bubble ul li {
+    margin-bottom: 2px; /* Jarak antar item hanya 2px */
+}
+</style>
+        <!-- Quick Suggestions -->
+        <div id="ai-chat-suggestions" class="ai-chat-suggestions">
+            <button type="button" class="ai-chip" data-message="Saya mau buat undangan pernikahan">
+                <i class="bi bi-suit-heart me-1"></i> Undangan pernikahan
+            </button>
+            <button type="button" class="ai-chip" data-message="Saya butuh tema yang elegan dan minimalis">
+                <i class="bi bi-palette me-1"></i> Tema elegan
+            </button>
+            <button type="button" class="ai-chip" data-message="Bagaimana cara share undangan ke WhatsApp?">
+                <i class="bi bi-whatsapp me-1"></i> Bagikan ke WhatsApp
+            </button>
+        </div>
+
+        <!-- Create Invitation CTA -->
+        <div id="ai-chat-create" class="ai-chat-create d-none">
+            <a href="{{ route('dashboard.user') }}?template_id=2" class="ai-chat-create-btn">
+                <i class="bi bi-suit-heart-fill me-1"></i> Buat Undangan
+            </a>
+            @guest
+                <a href="{{ route('register') }}" class="ai-chat-login-link">
+                    Belum punya akun? Daftar
+                </a>
+            @endguest
+        </div>
+
+        <!-- Input Form -->
+        <form id="ai-chat-form" class="ai-chat-form" autocomplete="off">
+            @csrf
+            <input type="hidden" id="ai-chat-history" value="[]">
+            <div class="input-group">
+                <input
+                    type="text"
+                    id="ai-chat-input"
+                    class="form-control"
+                    placeholder="Tulis nama mempelai atau tanggal pernikahan..."
+                    maxlength="500"
+                >
+                <button class="ai-chat-send" type="submit" aria-label="Kirim pesan">
+                    <i class="bi bi-arrow-right-short"></i>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+    /* =========================================================== */
+    /* Widget Container                                            */
+    /* =========================================================== */
+    .ai-chat-widget {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        z-index: 9999;
+        font-family: var(--font);
+    }
+
+    /* =========================================================== */
+    /* Toggle Button                                               */
+    /* =========================================================== */
+    .ai-chat-toggle {
+        width: 56px;
+        height: 56px;
+        border: none;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+        color: var(--white);
+        font-size: 1.5rem;
+        cursor: pointer;
+        box-shadow: 0 8px 24px rgba(198, 169, 98, 0.45);
+        transition: transform 0.25s ease, box-shadow 0.25s ease;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .ai-chat-toggle:hover {
+        transform: translateY(-2px) scale(1.05);
+        box-shadow: 0 12px 30px rgba(198, 169, 98, 0.55);
+    }
+
+    /* =========================================================== */
+    /* Chat Panel                                                  */
+    /* =========================================================== */
+    .ai-chat-panel {
+        position: absolute;
+        bottom: 70px;
+        right: 0;
+        width: 360px;
+        max-width: calc(100vw - 40px);
+        height: 500px; /* Tinggi tetap agar tidak tertekan */
+        max-height: calc(100vh - 120px);
+        background: var(--white);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        box-shadow: 0 20px 60px rgba(27, 42, 74, 0.18);
+        display: none;
+        flex-direction: column;
+        overflow: hidden;
+        animation: aiChatIn 0.3s ease;
+    }
+
+    .ai-chat-panel.open { display: flex; }
+
+    @keyframes aiChatIn {
+        from { opacity: 0; transform: translateY(12px) scale(0.97); }
+        to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    /* ---------- Header ---------- */
+    .ai-chat-header {
+        padding: 14px 16px;
+        border-bottom: 1px solid var(--border);
+        background: linear-gradient(135deg, var(--navy), #243b6b);
+        color: var(--white);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-shrink: 0; /* Mencegah header tertekan */
+    }
+
+    .ai-chat-avatar {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.15);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1rem;
+    }
+
+    .ai-chat-title {
+        font-weight: 700;
+        font-size: 0.95rem;
+        line-height: 1.2;
+    }
+
+    .ai-chat-subtitle {
+        font-size: 0.75rem;
+        opacity: 0.8;
+    }
+
+    .ai-chat-close {
+        width: 32px;
+        height: 32px;
+        border: none;
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.12);
+        color: var(--white);
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        transition: background 0.2s ease;
+        flex-shrink: 0;
+    }
+
+    .ai-chat-close:hover { background: rgba(255, 255, 255, 0.25); }
+
+    /* ---------- Messages ---------- */
+    .ai-chat-messages {
+        flex: 1;
+        overflow-y: auto;
+        padding: 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        background: var(--bg);
+        -webkit-overflow-scrolling: touch; /* Scroll mulus di iOS */
+    }
+
+    .ai-message {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .ai-message.user { align-items: flex-end; }
+    .ai-message.ai   { align-items: flex-start; }
+
+    .ai-message-bubble {
+        max-width: 85%;
+        padding: 10px 14px;
+        border-radius: 14px;
+        font-size: 0.9rem;
+        line-height: 1.5;
+        word-wrap: break-word;
+     
+    }
+
+    .ai-message.user .ai-message-bubble {
+        background: var(--navy);
+        color: var(--white);
+        border-bottom-right-radius: 4px;
+    }
+
+    .ai-message.ai .ai-message-bubble {
+        background: var(--white);
+        color: var(--text);
+        border: 1px solid var(--border);
+        border-bottom-left-radius: 4px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+    }
+
+    /* ---------- Quick Suggestions ---------- */
+    .ai-chat-suggestions {
+        padding: 10px 12px;
+        background: var(--white);
+        border-top: 1px solid var(--border);
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        flex-shrink: 0; /* Mencegah saran tertekan */
+    }
+
+    .ai-chip {
+        padding: 6px 12px;
+        border: 1px solid var(--border);
+        border-radius: 50px;
+        background: var(--bg);
+        color: var(--text-secondary);
+        font-size: 0.8rem;
+        font-weight: 500;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        transition: all 0.2s ease;
+    }
+
+    .ai-chip:hover {
+        background: var(--navy);
+        color: var(--white);
+        border-color: var(--navy);
+    }
+
+    /* ---------- Create CTA ---------- */
+    .ai-chat-create {
+        padding: 12px 16px;
+        background: var(--white);
+        border-top: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        flex-shrink: 0; /* Mencegah CTA tertekan */
+    }
+
+    .ai-chat-create-btn {
+        padding: 10px;
+        border-radius: 10px;
+        background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+        color: var(--white);
+        font-weight: 700;
+        font-size: 0.9rem;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .ai-chat-create-btn:hover {
+        color: var(--white);
+        transform: translateY(-1px);
+        box-shadow: 0 8px 20px rgba(198, 169, 98, 0.35);
+    }
+
+    .ai-chat-login-link {
+        font-size: 0.8rem;
+        text-align: center;
+        color: var(--text-secondary);
+        text-decoration: none;
+    }
+
+    .ai-chat-login-link:hover { color: var(--gold-dark); }
+
+    /* ---------- Input Form ---------- */
+    .ai-chat-form {
+        padding: 12px 16px 16px;
+        background: var(--white);
+        border-top: 1px solid var(--border);
+        flex-shrink: 0; /* Mencegah form tertekan */
+    }
+
+    .ai-chat-form .input-group {
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        overflow: hidden;
+        background: var(--bg);
+    }
+
+    .ai-chat-form input {
+        padding: 12px 14px;
+        border: none;
+        background: transparent;
+        box-shadow: none;
+        font-size: 0.95rem;
+    }
+
+    .ai-chat-form input:focus {
+        border: none;
+        box-shadow: none;
+    }
+
+    .ai-chat-send {
+        padding: 0 14px;
+        border: none;
+        background: transparent;
+        color: var(--gold-dark);
+        font-size: 1.5rem;
+        cursor: pointer;
+        transition: color 0.2s ease, transform 0.2s ease;
+    }
+
+    .ai-chat-send:hover {
+        color: var(--gold);
+        transform: translateX(1px);
+    }
+
+    .ai-chat-error {
+        margin-top: 6px;
+        font-size: 0.8rem;
+        color: #dc2626;
+    }
+
+    /* ---------- Typing Indicator ---------- */
+    .ai-typing {
+        display: inline-flex;
+        gap: 4px;
+        padding: 8px 12px;
+    }
+
+    .ai-typing span {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: var(--text-muted);
+        animation: aiBounce 1.2s infinite ease-in-out;
+    }
+
+    .ai-typing span:nth-child(2) { animation-delay: 0.15s; }
+    .ai-typing span:nth-child(3) { animation-delay: 0.3s;  }
+
+    @keyframes aiBounce {
+        0%, 60%, 100% { transform: translateY(0);   opacity: 0.4; }
+        30%           { transform: translateY(-6px); opacity: 1;   }
+    }
+
+    /* ---------- Responsive Mobile ---------- */
+    @media (max-width: 480px) {
+        .ai-chat-widget {
+            bottom: 16px;
+            right: 16px;
+        }
+        
+        .ai-chat-panel {
+            width: calc(100vw - 32px); /* Rapi di sisi kanan kiri */
+            right: 0;
+            bottom: 65px;
+            height: 80vh; /* Tinggi adaptif di mobile */
+            border-radius: 14px;
+        }
+
+        .ai-chat-messages {
+            padding: 12px;
+        }
+
+        .ai-chat-form {
+            padding: 10px 12px 14px;
+        }
+    }
+</style>
+
+<script>
+(function () {
+    "use strict";
+
+    /* =========================================================
+     * Element References
+     * ========================================================= */
+    const widget           = document.getElementById('ai-chat-widget');
+    const toggleBtn        = document.getElementById('ai-chat-toggle');
+    const closeBtn         = document.getElementById('ai-chat-close');
+    const panel            = document.getElementById('ai-chat-panel');
+    const form             = document.getElementById('ai-chat-form');
+    const input            = document.getElementById('ai-chat-input');
+    const historyInput     = document.getElementById('ai-chat-history');
+    const messagesContainer = document.getElementById('ai-chat-messages');
+    const createBox        = document.getElementById('ai-chat-create');
+
+    if (!widget || !toggleBtn || !panel || !form || !input) return;
+
+    /* =========================================================
+     * Panel Toggle
+     * ========================================================= */
+    function togglePanel(forceState) {
+        const isOpen   = panel.classList.contains('open');
+        const nextState = forceState !== undefined ? forceState : !isOpen;
+        panel.classList.toggle('open', nextState);
+        if (nextState) setTimeout(() => input.focus(), 150);
+    }
+
+    toggleBtn.addEventListener('click', () => togglePanel());
+    closeBtn.addEventListener('click',  () => togglePanel(false));
+
+    /* =========================================================
+     * History Management
+     * ========================================================= */
+    function getHistory() {
+        try {
+            return JSON.parse(historyInput.value || '[]');
+        } catch (_e) {
+            return [];
+        }
+    }
+
+    function setHistory(history) {
+        historyInput.value = JSON.stringify(history.slice(-20));
+    }
+
+    /* =========================================================
+     * Message Rendering
+     * ========================================================= */
+    function appendMessage(role, text) {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'ai-message ' + (role === 'user' ? 'user' : 'ai');
+
+        const bubble = document.createElement('div');
+        bubble.className = 'ai-message-bubble';
+        bubble.textContent = text;
+
+        wrapper.appendChild(bubble);
+        messagesContainer.appendChild(wrapper);
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
+
+    function showTyping() {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'ai-message ai';
+        wrapper.id        = 'ai-typing-indicator';
+
+        const bubble = document.createElement('div');
+        bubble.className   = 'ai-message-bubble ai-typing';
+        bubble.innerHTML   = '<span></span><span></span><span></span>';
+
+        wrapper.appendChild(bubble);
+        messagesContainer.appendChild(wrapper);
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
+
+    function hideTyping() {
+        const typing = document.getElementById('ai-typing-indicator');
+        if (typing) typing.remove();
+    }
+
+    function showError(message) {
+        const existing = widget.querySelector('.ai-chat-error');
+        if (existing) existing.remove();
+
+        const error = document.createElement('div');
+        error.className   = 'ai-chat-error';
+        error.textContent = message;
+        form.appendChild(error);
+        setTimeout(() => error.remove(), 4000);
+    }
+
+    /* =========================================================
+     * Send Message
+     * ========================================================= */
+    async function sendMessage(e) {
+        if (e) e.preventDefault();
+
+        const message = input.value.trim();
+        if (!message) return;
+
+        const history = getHistory();
+
+        appendMessage('user', message);
+        input.value = '';
+        showTyping();
+
+        try {
+            const response = await fetch('/api/ai/chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content'),
+                    'Accept': 'application/json',
+                },
+                body: JSON.stringify({
+                    message: message,
+                    history: history,
+                    model: '{{ env("AI_MODEL_PRIMARY") }}',
+                }),
+            });
+
+            hideTyping();
+
+            const data = await response.json().catch(() => ({}));
+
+            if (!response.ok || !data.success) {
+                showError(data.message || 'Gagal menghubungi asisten AI.');
+                appendMessage('ai', 'Maaf, ada kendala saat ini. Coba kirim pesan sekali lagi.');
+                return;
+            }
+
+            const reply = data.reply || 'Baik, saya catat ya.';
+            appendMessage('ai', reply);
+
+            history.push({ role: 'user',      content: message });
+            history.push({ role: 'assistant', content: reply   });
+            setHistory(history);
+
+            // Tampilkan tombol "Buat Undangan" jika AI sudah siap
+            const lower = reply.toLowerCase();
+            const hasInvitationKeyword =
+                lower.includes('undangan') &&
+                (lower.includes('buat') || lower.includes('cukup') ||
+                 lower.includes('informasi') || lower.includes('klik'));
+
+            if (hasInvitationKeyword) {
+                createBox.classList.remove('d-none');
+            }
+        } catch (_err) {
+            hideTyping();
+            showError('Tidak dapat terhubung ke layanan AI.');
+            appendMessage('ai', 'Koneksi ke AI gangguan. Coba lagi sebentar lagi ya.');
+        }
+    }
+
+    /* =========================================================
+     * Event Bindings
+     * ========================================================= */
+    form.addEventListener('submit', sendMessage);
+
+    document.querySelectorAll('.ai-chip').forEach(function (chip) {
+        chip.addEventListener('click', function () {
+            const msg = this.getAttribute('data-message');
+            if (!msg) return;
+            input.value = msg;
+            input.focus();
+            sendMessage();
+        });
+    });
+
+    document.addEventListener('click', function (event) {
+        if (!widget.contains(event.target)) {
+            togglePanel(false);
+        }
+    });
+})();
+</script>
 </body>
 
 </html>
