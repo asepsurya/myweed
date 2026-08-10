@@ -425,6 +425,15 @@
             }
 
         });
+
+        function contentClick() {
+            // Close sidebar collapse elements when clicking main content
+            const sidebarProfile = document.getElementById('usersidebarprofile');
+            if (sidebarProfile && sidebarProfile.classList.contains('show')) {
+                const collapse = bootstrap.Collapse.getOrCreateInstance(sidebarProfile);
+                collapse.hide();
+            }
+        }
     </script>
     
    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
