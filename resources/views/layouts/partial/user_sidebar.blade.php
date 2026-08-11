@@ -85,6 +85,14 @@
             </li>
 
             <li class="nav-item">
+                <a class="nav-link" href="{{ route('coupons.index') }}" data-bs-toggle="tooltip" data-bs-placement="right"
+                    title="Kupon Promo">
+                    <i class="menu-icon bi bi-ticket-perforated me-2"></i>
+                    <span class="menu-name">Kupon Promo</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
                 <a class="nav-link" href="{{ route('user.index') }}" data-bs-toggle="tooltip" data-bs-placement="right"
                     title="Daftar Pengguna">
                     <i class="menu-icon bi bi-people me-2"></i>

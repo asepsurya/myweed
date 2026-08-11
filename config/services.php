@@ -40,4 +40,9 @@ return [
         'redirect' => env('GOOGLE_REDIRECT_URI'),
     ],
 
+    'mayar' => [
+        'base_url' => env('MAYAR_BASE_URL', 'https://api.mayar.id/hl/v2'),
+        'api_key' => env('MAYAR_API_KEY'),
+    ],
+
 ];

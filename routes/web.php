@@ -3,9 +3,11 @@
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\CouponController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\GiftController;
 use App\Http\Controllers\LandingController;
+use App\Http\Controllers\MayarController;
 use App\Http\Controllers\MusicController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RsvpController;
@@ -127,6 +129,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/subscription-plans', [SubscriptionPlanController::class, 'index'])->name('subscribe.page');
     Route::get('/subscription-plans/{planId}', [SubscriptionPlanController::class, 'subscribe'])->name('subscribe');
     Route::get('/payments', [SubscriptionPlanController::class, 'paymentIndex'])->name('payments.index');
+    Route::post('/coupons/validate', [SubscriptionPlanController::class, 'validateCoupon'])->name('coupons.validate');
+    Route::post('/mayar/create-payment-link', [MayarController::class, 'createPaymentLink'])->middleware('auth')->name('mayar.create-payment-link');
 
     Route::middleware('role:admin')->prefix('admin/subscription-plans')->name('subscription-plans.')->group(function () {
         Route::get('/', [SubscriptionPlanController::class, 'adminIndex'])->name('index');
@@ -135,6 +139,15 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/{subscriptionPlan}/edit', [SubscriptionPlanController::class, 'edit'])->name('edit');
         Route::put('/{subscriptionPlan}', [SubscriptionPlanController::class, 'update'])->name('update');
         Route::delete('/{subscriptionPlan}', [SubscriptionPlanController::class, 'destroy'])->name('destroy');
+    });
+
+    Route::middleware('role:admin')->prefix('admin/coupons')->name('coupons.')->group(function () {
+        Route::get('/', [CouponController::class, 'index'])->name('index');
+        Route::get('/create', [CouponController::class, 'create'])->name('create');
+        Route::post('/', [CouponController::class, 'store'])->name('store');
+        Route::get('/{coupon}/edit', [CouponController::class, 'edit'])->name('edit');
+        Route::put('/{coupon}', [CouponController::class, 'update'])->name('update');
+        Route::delete('/{coupon}', [CouponController::class, 'destroy'])->name('destroy');
     });
 
     Route::get('/weeding-plan', [WeedingPlanController::class, 'index'])->name('weeding-plan.index');
@@ -171,3 +184,5 @@ Route::get('/{slug}', [WeddingController::class, 'show'])->where('slug', '[A-Za-
 Route::get('/payment/success', [SubscriptionPlanController::class, 'success'])->name('payment.success');
 Route::get('/payment/failed', [SubscriptionPlanController::class, 'failed'])->name('payment.failed');
 Route::get('/payment/pending', [SubscriptionPlanController::class, 'pending'])->name('payment.pending');
+
+Route::post('/mayar/webhook', [MayarController::class, 'webhook'])->name('mayar.webhook');

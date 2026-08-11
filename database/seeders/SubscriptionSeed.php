@@ -12,49 +12,94 @@ class SubscriptionSeed extends Seeder
      */
     public function run(): void
     {
-        SubscriptionPlan::create([
-            'name' => 'Gratis',
-            'slug' => 'gratis',
-            'price' => 0,
-            'duration' => 30,
-            'description' => json_encode([
-                '1 Tema Gratis',
-                '50 Tamu undangan',
-                'RSVP dasar',
-                'Galeri foto 10 slot',
-            ]),
-            'is_free' => true,
-        ]);
+        SubscriptionPlan::updateOrCreate(
+            ['slug' => 'free'],
+            [
+                'name' => 'Free',
+                'price' => 0,
+                'duration' => 3,
+                'description' => json_encode([
+                    'Uji Coba Gratis',
+                    'Akses Seluruh Tema: No',
+                    'Ubah Nama Tamu: Yes',
+                    'Masa Aktif 3 Hari',
+                    'RSVP & Ucapan: Yes',
+                    'Lokasi Maps: Yes',
+                    'Unlimited Penerima: Yes',
+                    'Countdown & Save to Calendar: No',
+                    'Gallery: 0 Images',
+                    'Virtual Gift: No',
+                    'Bisa Disebar: No',
+                    'Background Music: No',
+                    'Rekening Titip Hadiah: No',
+                    'Link Streaming/Video: No',
+                    'Auto Scroll: No',
+                    'Custom Music: No',
+                    'Love Story: No',
+                    'Custom Warna Tema: No',
+                ]),
+                'is_free' => true,
+            ]
+        );
 
-        SubscriptionPlan::create([
-            'name' => 'Premium',
-            'slug' => 'premium',
-            'price' => 149000,
-            'duration' => 30,
-            'description' => json_encode([
-                'Semua Tema Premium',
-                'Unlimited tamu',
-                'RSVP lengkap + analytics',
-                'Galeri unlimited',
-                'Hapus watermark',
-            ]),
-            'is_free' => false,
-        ]);
+        SubscriptionPlan::updateOrCreate(
+            ['slug' => 'basic'],
+            [
+                'name' => 'Basic',
+                'price' => 50000,
+                'duration' => 30,
+                'description' => json_encode([
+                    'Akses Seluruh Tema: Yes',
+                    'Ubah Nama Tamu: Yes',
+                    'Masa Aktif 30 Hari',
+                    'RSVP & Ucapan: Yes',
+                    'Lokasi Maps: Yes',
+                    'Unlimited Penerima: Yes',
+                    'Countdown & Save to Calendar: Yes',
+                    'Gallery: 10 Images',
+                    'Virtual Gift: Yes',
+                    'Bisa Disebar: Yes',
+                    'Background Music: Yes',
+                    'Rekening Titip Hadiah: Yes',
+                    'Link Streaming/Video: Yes',
+                    'Auto Scroll: Yes',
+                    'Custom Music: Yes',
+                    'Love Story: Yes',
+                    'Custom Warna Tema: Yes',
+                ]),
+                'is_free' => false,
+            ]
+        );
 
-        SubscriptionPlan::create([
-            'name' => 'Exclusive',
-            'slug' => 'exclusive',
-            'price' => 499000,
-            'duration' => 30,
-            'description' => json_encode([
-                'Semua fitur Premium',
-                'Unlimited tamu',
-                'RSVP + analytics lengkap',
-                'Galeri unlimited',
-                'Hapus watermark',
-                'Custom domain + support 24/7',
-            ]),
-            'is_free' => false,
-        ]);
+        SubscriptionPlan::updateOrCreate(
+            ['slug' => 'pro'],
+            [
+                'name' => 'Pro',
+                'price' => 100000,
+                'duration' => 30,
+                'description' => json_encode([
+                    'Akses Seluruh Tema: Yes',
+                    'Ubah Nama Tamu: Yes',
+                    'Masa Aktif 30 Hari',
+                    'RSVP & Ucapan: Yes',
+                    'Lokasi Maps: Yes',
+                    'Unlimited Penerima: Yes',
+                    'Countdown & Save to Calendar: Yes',
+                    'Gallery: Unlimited',
+                    'Virtual Gift: Yes',
+                    'Bisa Disebar: Yes',
+                    'Background Music: Yes',
+                    'Rekening Titip Hadiah: Yes',
+                    'Link Streaming/Video: Yes',
+                    'Auto Scroll: Yes',
+                    'Custom Music: Yes',
+                    'Love Story: Yes',
+                    'Custom Warna Tema: Yes',
+                    'Dibuatin Admin Terima Beres: Yes',
+                    'Website Builder: Yes',
+                ]),
+                'is_free' => false,
+            ]
+        );
     }
 }

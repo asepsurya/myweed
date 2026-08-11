@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Models\Invitation;
+use App\Models\SubscriptionPlan;
 use App\Models\Template;
 use Illuminate\Http\Request;
 
@@ -112,7 +113,7 @@ class LandingController extends Controller
 
     public function harga()
     {
-        $plans = \App\Models\SubscriptionPlan::all();
+        $plans = SubscriptionPlan::all();
 
         return view('pages.harga', compact('plans'));
     }

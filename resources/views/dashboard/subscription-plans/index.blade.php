@@ -117,11 +117,29 @@
                                 <p class="text-muted small fw-semibold mb-3 text-uppercase" style="letter-spacing: 0.5px;">
                                     Keunggulan Paket:</p>
                                 <ul class="list-unstyled mb-0">
-                                    @php $features = json_decode($plan->description ?? '[]'); @endphp
+                                    @php
+                                        $features = json_decode($plan->description ?? '[]') ?: [];
+                                        usort($features, function($a, $b) {
+                                            $aYes = preg_match('/:\s*Yes$/', $a) ? 0 : (preg_match('/:\s*No$/', $a) ? 1 : 2);
+                                            $bYes = preg_match('/:\s*Yes$/', $b) ? 0 : (preg_match('/:\s*No$/', $b) ? 1 : 2);
+                                            return $aYes <=> $bYes;
+                                        });
+                                    @endphp
                                     @foreach($features as $feature)
-                                        <li class="feature-list-item small">
-                                            <i class="bi bi-check-circle-fill"></i>
-                                            <span>{{ $feature }}</span>
+                                        @php
+                                            $featureName = preg_replace('/:\s*(Yes|No)$/', '', $feature);
+                                            $isYes = preg_match('/:\s*Yes$/', $feature);
+                                            $isNo = preg_match('/:\s*No$/', $feature);
+                                        @endphp
+                                        <li class="feature-list-item small {{ $isNo ? 'text-muted' : '' }}">
+                                            @if($isYes)
+                                                <i class="bi bi-check-circle-fill text-success"></i>
+                                            @elseif($isNo)
+                                                <i class="bi bi-x-circle text-muted-custom"></i>
+                                            @else
+                                                <i class="bi bi-check-circle-fill"></i>
+                                            @endif
+                                            <span>{{ $featureName }}</span>
                                         </li>
                                     @endforeach
                                     @if(empty($features))

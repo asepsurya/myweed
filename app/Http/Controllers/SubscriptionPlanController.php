@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Coupon;
 use App\Models\Payment;
 use App\Models\Subscription;
 use App\Models\SubscriptionPlan;
@@ -97,9 +98,42 @@ class SubscriptionPlanController extends Controller
         return redirect()->route('subscribe.page')->with('success', 'Paket berhasil dihapus.');
     }
 
-    public function subscribe($planId)
+    public function subscribe($planId, Request $request)
     {
         $plan = SubscriptionPlan::findOrFail($planId);
+        $gateway = $request->query('gateway', 'mayar');
+        $couponCode = $request->query('coupon');
+        $coupon = null;
+        $discount = 0;
+        $finalAmount = $plan->price;
+
+        if ($couponCode && ! $plan->is_free) {
+            $coupon = Coupon::where('code', strtoupper($couponCode))
+                ->where('is_active', true)
+                ->where(function ($q) {
+                    $q->whereNull('starts_at')->orWhere('starts_at', '<=', now());
+                })
+                ->where(function ($q) {
+                    $q->whereNull('expires_at')->orWhere('expires_at', '>=', now());
+                })
+                ->where(function ($q) {
+                    $q->whereNull('max_uses')->orWhere('used_count', '<', 'max_uses');
+                })
+                ->first();
+
+            if ($coupon) {
+                if ($coupon->min_amount && $plan->price < $coupon->min_amount) {
+                    $coupon = null;
+                } else {
+                    if ($coupon->type === 'percentage') {
+                        $discount = (int) floor($plan->price * $coupon->value / 100);
+                    } else {
+                        $discount = min($coupon->value, $plan->price);
+                    }
+                    $finalAmount = max(0, $plan->price - $discount);
+                }
+            }
+        }
 
         if ($plan->is_free) {
             Subscription::updateOrCreate(
@@ -113,21 +147,33 @@ class SubscriptionPlanController extends Controller
             );
 
             return redirect()->back()->with('success', 'Berhasil berlangganan paket gratis!');
-        } else {
-            $orderId = 'SUB-'.time().'-'.auth()->id();
+        }
 
-            $payment = Payment::create([
-                'user_id' => auth()->id(),
-                'subscription_plan_id' => $plan->id,
-                'order_id' => $orderId,
-                'amount' => $plan->price,
-                'status' => 'pending',
-            ]);
+        if ($gateway === 'mayar' || ! config('midtrans.client_key')) {
+            return view('dashboard.payment.checkout', compact('plan', 'finalAmount'));
+        }
 
+        $orderId = 'SUB-'.time().'-'.auth()->id();
+
+        $payment = Payment::create([
+            'user_id' => auth()->id(),
+            'subscription_plan_id' => $plan->id,
+            'coupon_id' => $coupon ? $coupon->id : null,
+            'order_id' => $orderId,
+            'amount' => $finalAmount,
+            'status' => 'pending',
+            'payment_gateway' => 'midtrans',
+        ]);
+
+        if ($coupon) {
+            $coupon->increment('used_count');
+        }
+
+        try {
             $params = [
                 'transaction_details' => [
                     'order_id' => $orderId,
-                    'gross_amount' => $plan->price,
+                    'gross_amount' => $finalAmount,
                 ],
                 'customer_details' => [
                     'first_name' => auth()->user()->name,
@@ -138,8 +184,61 @@ class SubscriptionPlanController extends Controller
 
             $snapToken = Snap::getSnapToken($params);
 
-            return view('dashboard.payment.checkout', compact('snapToken', 'plan'));
+            return view('dashboard.payment.checkout', compact('snapToken', 'plan', 'finalAmount'));
+        } catch (\Throwable $e) {
+            Log::error('Midtrans Snap token failed', [
+                'message' => $e->getMessage(),
+                'order_id' => $orderId,
+            ]);
+
+            $payment->update(['payment_gateway' => 'midtrans']);
+
+            return view('dashboard.payment.checkout', compact('plan', 'finalAmount'))
+                ->with('error', 'Konfigurasi Midtrans gagal. Silakan pilih metode pembayaran Mayar.');
         }
+    }
+
+    public function validateCoupon(Request $request)
+    {
+        $request->validate([
+            'code' => 'required|string',
+            'amount' => 'required|integer|min:0',
+        ]);
+
+        $coupon = Coupon::where('code', strtoupper($request->code))
+            ->where('is_active', true)
+            ->where(function ($q) {
+                $q->whereNull('starts_at')->orWhere('starts_at', '<=', now());
+            })
+            ->where(function ($q) {
+                $q->whereNull('expires_at')->orWhere('expires_at', '>=', now());
+            })
+            ->where(function ($q) {
+                $q->whereNull('max_uses')->orWhere('used_count', '<', 'max_uses');
+            })
+            ->first();
+
+        if (! $coupon) {
+            return response()->json(['valid' => false, 'message' => 'Kupon tidak valid atau sudah kadaluarsa.']);
+        }
+
+        if ($coupon->min_amount && $request->amount < $coupon->min_amount) {
+            return response()->json(['valid' => false, 'message' => 'Minimal pembelian untuk kupon ini adalah Rp '.number_format($coupon->min_amount, 0, ',', '.').'.']);
+        }
+
+        if ($coupon->type === 'percentage') {
+            $discount = (int) floor($request->amount * $coupon->value / 100);
+        } else {
+            $discount = min($coupon->value, $request->amount);
+        }
+
+        return response()->json([
+            'valid' => true,
+            'coupon' => $coupon->code,
+            'discount' => $discount,
+            'type' => $coupon->type,
+            'value' => $coupon->value,
+        ]);
     }
 
     public function callback(Request $request)

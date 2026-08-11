@@ -13,9 +13,9 @@
         href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap"
         rel="stylesheet">
     <link rel="icon" type="image/png" href="{{ asset('assets/fav.png') }}">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <style>
         :root {
             --gold: #C6A962;
@@ -683,7 +683,7 @@
                             <div class="pricing-header">
                                 <div class="pricing-icon">
                                     <i
-                                        class="bi bi-{{ $plan->is_free ? 'gift' : ($plan->slug === 'premium' ? 'crown' : 'gem') }}"></i>
+                                        class="bi bi-{{ $plan->is_free ? 'gift' : ($plan->slug === 'pro' ? 'award' : 'gem') }}"></i>
                                 </div>
                                 <h4>{{ $plan->name }}</h4>
                                 <div class="pricing-price">
@@ -693,13 +693,35 @@
                                 <p class="pricing-desc">{{ $plan->duration }} Hari aktif</p>
                             </div>
                             <ul class="pricing-features">
-                                @forelse($features as $feature)
-                                    <li><i class="bi bi-check-circle-fill text-gold"></i> {{ $feature }}</li>
+                                @php
+                                    $sortedFeatures = $features;
+                                    usort($sortedFeatures, function ($a, $b) {
+                                        $aYes = preg_match('/:\s*Yes$/', $a) ? 0 : (preg_match('/:\s*No$/', $a) ? 1 : 2);
+                                        $bYes = preg_match('/:\s*Yes$/', $b) ? 0 : (preg_match('/:\s*No$/', $b) ? 1 : 2);
+                                        return $aYes <=> $bYes;
+                                    });
+                                @endphp
+                                @forelse($sortedFeatures as $feature)
+                                    @php
+                                        $featureName = preg_replace('/:\s*(Yes|No)$/', '', $feature);
+                                        $isYes = preg_match('/:\s*Yes$/', $feature);
+                                        $isNo = preg_match('/:\s*No$/', $feature);
+                                    @endphp
+                                    <li class="{{ $isNo ? 'text-muted' : '' }}">
+                                        @if($isYes)
+                                            <i class="bi bi-check-circle-fill text-gold"></i>
+                                        @elseif($isNo)
+                                            <i class="bi bi-x-circle text-muted-custom"></i>
+                                        @else
+                                            <i class="bi bi-check-circle-fill text-gold"></i>
+                                        @endif
+                                        {{ $featureName }}
+                                    </li>
                                 @empty
                                     <li class="text-muted fst-italic">Belum ada fitur ditambahkan.</li>
                                 @endforelse
                             </ul>
-                            <a href="{{ route('register') }}"
+                            <a href="{{ route('subscribe', $plan->id) }}"
                                 class="btn {{ $isFeatured ? 'btn-gold' : 'btn-outline-dark' }} w-100 rounded-pill py-2 fw-semibold">
                                 {{ $plan->is_free ? 'Mulai Gratis' : 'Pilih ' . $plan->name }}
                             </a>
@@ -741,25 +763,69 @@
                                     foreach ($plans as $plan) {
                                         $features = json_decode($plan->description ?? '[]', true) ?: [];
                                         foreach ($features as $feature) {
-                                            $allFeatures[$feature] = true;
+                                            $baseFeature = preg_replace('/:\s*(Yes|No)$/', '', $feature);
+                                            $allFeatures[$baseFeature] = $feature;
                                         }
                                     }
                                     $uniqueFeatures = array_keys($allFeatures);
+                                    usort($uniqueFeatures, function ($featureA, $featureB) use ($plans) {
+                                        $scoreA = 2;
+                                        $scoreB = 2;
+                                        foreach ($plans as $plan) {
+                                            $planFeatures = json_decode($plan->description ?? '[]', true) ?: [];
+                                            foreach ($planFeatures as $pf) {
+                                                $baseFeature = preg_replace('/:\s*(Yes|No)$/', '', $pf);
+                                                if ($baseFeature === $featureA && preg_match('/:\s*Yes$/', $pf)) {
+                                                    $scoreA = min($scoreA, 0);
+                                                }
+                                                if ($baseFeature === $featureA && preg_match('/:\s*No$/', $pf)) {
+                                                    $scoreA = min($scoreA, 1);
+                                                }
+                                                if ($baseFeature === $featureB && preg_match('/:\s*Yes$/', $pf)) {
+                                                    $scoreB = min($scoreB, 0);
+                                                }
+                                                if ($baseFeature === $featureB && preg_match('/:\s*No$/', $pf)) {
+                                                    $scoreB = min($scoreB, 1);
+                                                }
+                                            }
+                                        }
+                                        return $scoreA <=> $scoreB;
+                                    });
                                 @endphp
 
                                 @forelse($uniqueFeatures as $feature)
+                                    @php
+                                        $planFeatureMap = [];
+                                        foreach ($plans as $plan) {
+                                            $planFeatures = json_decode($plan->description ?? '[]', true) ?: [];
+                                            $hasFeature = false;
+                                            $isNo = false;
+                                            foreach ($planFeatures as $pf) {
+                                                $baseFeature = preg_replace('/:\s*(Yes|No)$/', '', $pf);
+                                                if ($baseFeature === $feature) {
+                                                    $hasFeature = true;
+                                                    if (preg_match('/:\s*No$/', $pf)) {
+                                                        $isNo = true;
+                                                    }
+                                                    break;
+                                                }
+                                            }
+                                            $planFeatureMap[$plan->id] = [
+                                                'has' => $hasFeature,
+                                                'isNo' => $isNo,
+                                            ];
+                                        }
+                                    @endphp
                                     <tr>
                                         <td>{{ $feature }}</td>
                                         @foreach($plans as $plan)
-                                            @php
-                                                $planFeatures = json_decode($plan->description ?? '[]', true) ?: [];
-                                                $hasFeature = in_array($feature, $planFeatures);
-                                            @endphp
                                             <td class="{{ $loop->iteration === 2 ? 'text-gold' : '' }}">
-                                                @if($hasFeature)
+                                                @if($planFeatureMap[$plan->id]['has'] && !$planFeatureMap[$plan->id]['isNo'])
                                                     <i class="bi bi-check-circle-fill"></i>
-                                                @else
+                                                @elseif($planFeatureMap[$plan->id]['isNo'])
                                                     <i class="bi bi-x-circle text-muted-custom"></i>
+                                                @else
+                                                    <span class="text-muted">-</span>
                                                 @endif
                                             </td>
                                         @endforeach
