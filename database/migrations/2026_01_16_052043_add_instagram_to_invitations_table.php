@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('invitations', function (Blueprint $table) {
-             $table->string('bride_instagram')->nullable();
-             $table->string('groom_instagram')->nullable();
+            $table->string('bride_instagram')->nullable();
+            $table->string('groom_instagram')->nullable();
         });
     }
 
@@ -23,8 +23,8 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('invitations', function (Blueprint $table) {
-             $table->dropColumn('bride_instagram');
-              $table->dropColumn('groom_instagram');
+            $table->dropColumn('bride_instagram');
+            $table->dropColumn('groom_instagram');
         });
     }
 };

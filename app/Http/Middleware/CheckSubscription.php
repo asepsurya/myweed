@@ -8,11 +8,10 @@ use Symfony\Component\HttpFoundation\Response;
 
 class CheckSubscription
 {
-
     /**
      * Handle an incoming request.
      *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+     * @param  Closure(Request): (Response)  $next
      */
     public function handle(Request $request, Closure $next): Response
     {
@@ -20,7 +19,7 @@ class CheckSubscription
         if ($user->isAdmin()) {
             return $next($request);
         }
-       if (!auth()->check() || !auth()->user()->isSubscribed()) {
+        if (! auth()->check() || ! auth()->user()->isSubscribed()) {
             return redirect()->route('subscribe.page')
                 ->with('warning', 'Silakan berlangganan terlebih dahulu.');
         }

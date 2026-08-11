@@ -4,64 +4,62 @@ namespace Database\Seeders;
 
 use App\Models\Gallery;
 use App\Models\Invitation;
-use Illuminate\Support\Str;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Illuminate\Support\Str;
 
 class InvitationSeed extends Seeder
 {
     /**
      * Run the database seeds.
      */
-      public function run(): void
+    public function run(): void
     {
         $invitation = Invitation::create([
-            'user_id'       => 1,
-            'template_id'   => 2,
-            'slug'          => 'romeo-juliet',
-            'is_default'    => true,
+            'user_id' => 1,
+            'template_id' => 2,
+            'slug' => 'romeo-juliet',
+            'is_default' => true,
 
             // Groom
-            'groom_name'        => 'Romeo',
-            'groom_nickname'    => 'Romeo',
+            'groom_name' => 'Romeo',
+            'groom_nickname' => 'Romeo',
             'groom_father_name' => 'Tuan Montague',
             'groom_mother_name' => 'Nyonya Montague',
 
             // Bride
-            'bride_name'        => 'Juliet',
-            'bride_nickname'    => 'Juliet',
+            'bride_name' => 'Juliet',
+            'bride_nickname' => 'Juliet',
             'bride_father_name' => 'Tuan Capulet',
             'bride_mother_name' => 'Nyonya Capulet',
 
             // Wedding
-            'wedding_date'      => '2026-01-23',
+            'wedding_date' => '2026-01-23',
 
             // Akad
-            'akad_location'     => 'Gedung Harmoni',
-            'akad_time'         => '09:00',
-            'akad_address'      => 'Jalan Mangkoko No.41',
-            'akad_time_end'     => '11:00',
-            'akad_maps'         => 'https://maps.google.com',
+            'akad_location' => 'Gedung Harmoni',
+            'akad_time' => '09:00',
+            'akad_address' => 'Jalan Mangkoko No.41',
+            'akad_time_end' => '11:00',
+            'akad_maps' => 'https://maps.google.com',
 
             // Resepsi
-            'resepsi_location'  => 'Ballroom Grand Verona',
-            'resepsi_address'  => 'Jalan Mangkoko No.41',
-            'resepsi_time'      => '11:00',
-            'resepsi_time_end'  => 'Selesai',
-            'resepsi_maps'      => 'https://maps.google.com',
+            'resepsi_location' => 'Ballroom Grand Verona',
+            'resepsi_address' => 'Jalan Mangkoko No.41',
+            'resepsi_time' => '11:00',
+            'resepsi_time_end' => 'Selesai',
+            'resepsi_maps' => 'https://maps.google.com',
 
             // Theme
-            'theme_color'       => '#C9A24D',
-            'enable_gift'       => '1',
+            'theme_color' => '#C9A24D',
+            'enable_gift' => '1',
 
             // Content
-            'wedding_quote'     =>
-                'Dan di antara tanda-tanda kebesaran-Nya ialah Dia menciptakan pasangan untukmu agar kamu merasa tentram. (QS. Ar-Rum : 21)',
+            'wedding_quote' => 'Dan di antara tanda-tanda kebesaran-Nya ialah Dia menciptakan pasangan untukmu agar kamu merasa tentram. (QS. Ar-Rum : 21)',
 
-            'video_link'        => 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+            'video_link' => 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
 
-            'love_story'        => [
+            'love_story' => [
                 [
                     'title' => 'Awal Bertemu',
                     'story' => 'Kami bertemu tanpa sengaja dan menemukan cinta.',
@@ -71,12 +69,12 @@ class InvitationSeed extends Seeder
                     'title' => 'Lamaran',
                     'story' => 'Perjalanan cinta kami berlanjut ke tahap yang lebih serius.',
                     'photo' => null,
-                ]
+                ],
             ],
 
             // Feature
-            'enable_rsvp'       => 1,
-            'music'             => 2,
+            'enable_rsvp' => 1,
+            'music' => 2,
         ]);
 
         $id = $invitation->id;
@@ -104,18 +102,18 @@ class InvitationSeed extends Seeder
             "$base/cover/cover.jpg"
         );
 
-      $files = glob(
+        $files = glob(
             public_path('tempelate/love/assets/images/blog/*.{jpg,png,webp}'),
             GLOB_BRACE
         );
 
         $base = "invitations/{$invitation->id}";
 
-        if (!empty($files)) {
+        if (! empty($files)) {
             foreach ($files as $file) {
 
                 $extension = pathinfo($file, PATHINFO_EXTENSION);
-                $fileName  = Str::uuid() . '.' . $extension;
+                $fileName = Str::uuid().'.'.$extension;
 
                 // simpan file ke storage
                 Storage::disk('public')->put(
@@ -133,8 +131,8 @@ class InvitationSeed extends Seeder
 
         // Update path image
         $invitation->update([
-            'foto_pria'     => "$base/pria/pria.jpg",
-            'foto_wanita'   => "$base/wanita/wanita.jpg",
+            'foto_pria' => "$base/pria/pria.jpg",
+            'foto_wanita' => "$base/wanita/wanita.jpg",
             'gallery_cover' => "$base/cover/cover.jpg",
         ]);
     }

@@ -1,13 +1,13 @@
 <?php
 
-if (!function_exists('mb_split')) {
+if (! function_exists('mb_split')) {
     function mb_split(string $pattern, string $string, int $limit = -1): array|false
     {
-        return preg_split('/' . str_replace('/', '\\/', $pattern) . '/u', $string, $limit);
+        return preg_split('/'.str_replace('/', '\\/', $pattern).'/u', $string, $limit);
     }
 }
 
-if (!function_exists('mb_strimwidth')) {
+if (! function_exists('mb_strimwidth')) {
     function mb_strimwidth(string $string, int $start, int $width, string $trim_marker = '', ?string $encoding = null): string
     {
         $len = mb_strlen($string);
@@ -29,7 +29,7 @@ if (!function_exists('mb_strimwidth')) {
                 $resultLength = 0;
             }
 
-            return mb_substr($string, $start, $resultLength) . $trim_marker;
+            return mb_substr($string, $start, $resultLength).$trim_marker;
         }
 
         return mb_substr($string, $start, $width);

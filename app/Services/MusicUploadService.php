@@ -23,7 +23,7 @@ class MusicUploadService
             Storage::disk($this->disk)->delete($existingPath);
         }
 
-        $filename = time() . '_' . Str::random(8) . '.' . $file->getClientOriginalExtension();
+        $filename = time().'_'.Str::random(8).'.'.$file->getClientOriginalExtension();
 
         return Storage::disk($this->disk)->putFileAs('', $file, $filename, 'public');
     }
@@ -34,14 +34,14 @@ class MusicUploadService
             Storage::disk($this->disk)->delete($existingPath);
         }
 
-        $filename = time() . '_' . Str::random(8) . '.' . $file->getClientOriginalExtension();
+        $filename = time().'_'.Str::random(8).'.'.$file->getClientOriginalExtension();
 
         return Storage::disk($this->disk)->putFileAs('', $file, $filename, 'public');
     }
 
     public function delete(?string $path): bool
     {
-        if (!$path) {
+        if (! $path) {
             return false;
         }
 
@@ -50,7 +50,7 @@ class MusicUploadService
 
     public function getUrl(?string $path): ?string
     {
-        if (!$path) {
+        if (! $path) {
             return null;
         }
 
@@ -63,7 +63,9 @@ class MusicUploadService
 
     public static function formatFileSize(?int $bytes): string
     {
-        if (!$bytes) return '0 MB';
+        if (! $bytes) {
+            return '0 MB';
+        }
 
         $units = ['B', 'KB', 'MB', 'GB'];
         $i = 0;
@@ -72,6 +74,6 @@ class MusicUploadService
             $i++;
         }
 
-        return round($bytes, 2) . ' ' . $units[$i];
+        return round($bytes, 2).' '.$units[$i];
     }
 }

@@ -1,20 +1,29 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
     <title>Verifikasi Email — WeddingInv</title>
-    <link rel="icon" type="image/png" href="{{ asset('assets/img/favicon.png') }}">
+    <link rel="icon" type="image/png" href="{{ asset('assets/fav.png') }}">
 
     <link rel="preconnect" href="https://fonts.googleapis.com/">
     <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap"
+        rel="stylesheet">
 
     <style>
-        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
 
         :root {
             --gold: #C6A962;
@@ -45,14 +54,16 @@
             --font-display: 'Playfair Display', Georgia, serif;
         }
 
-        html { height: 100%; }
+        html {
+            height: 100%;
+        }
 
         body {
             font-family: var(--font);
             background: var(--bg);
             background-image:
-                radial-gradient(ellipse at 20% 10%, rgba(198,169,98,0.08) 0%, transparent 60%),
-                radial-gradient(ellipse at 80% 90%, rgba(27,42,74,0.05) 0%, transparent 60%);
+                radial-gradient(ellipse at 20% 10%, rgba(198, 169, 98, 0.08) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 90%, rgba(27, 42, 74, 0.05) 0%, transparent 60%);
             color: var(--text);
             min-height: 100vh;
             display: flex;
@@ -75,23 +86,32 @@
             z-index: 1;
             animation: cardIn 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
             box-shadow:
-                0 1px 2px rgba(0,0,0,0.04),
-                0 4px 12px rgba(0,0,0,0.04),
-                0 16px 40px rgba(0,0,0,0.06);
+                0 1px 2px rgba(0, 0, 0, 0.04),
+                0 4px 12px rgba(0, 0, 0, 0.04),
+                0 16px 40px rgba(0, 0, 0, 0.06);
         }
 
         .login-card::before {
             content: '';
             position: absolute;
-            top: 0; left: 0; right: 0;
+            top: 0;
+            left: 0;
+            right: 0;
             height: 4px;
             background: linear-gradient(90deg, var(--gold-dark), var(--gold), var(--gold-light), var(--gold), var(--gold-dark));
             z-index: 2;
         }
 
         @keyframes cardIn {
-            from { opacity: 0; transform: translateY(24px) scale(0.97); }
-            to   { opacity: 1; transform: translateY(0) scale(1); }
+            from {
+                opacity: 0;
+                transform: translateY(24px) scale(0.97);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
         }
 
         /* ===== Header ===== */
@@ -100,19 +120,21 @@
             text-align: center;
         }
 
-        .card-brand {
-            font-family: var(--font-display);
-            font-size: 1.4rem;
-            font-weight: 700;
-            color: var(--navy);
+        .card-logo {
+            display: flex;
+            justify-content: center;
             margin-bottom: 1.25rem;
-            display: inline-block;
-            letter-spacing: -0.01em;
         }
-        .card-brand span { color: var(--gold); }
+
+        .card-logo img {
+            width: 160px;
+            /* Ukuran logo diatur disini */
+            height: auto;
+        }
 
         .header-icon {
-            width: 72px; height: 72px;
+            width: 72px;
+            height: 72px;
             border-radius: 50%;
             background: linear-gradient(135deg, #FFFBEB 0%, #FEF3C7 100%);
             border: 2px solid #FDE68A;
@@ -123,7 +145,7 @@
             font-size: 1.75rem;
             color: #D97706;
             position: relative;
-            box-shadow: 0 4px 16px rgba(217,119,6,0.12);
+            box-shadow: 0 4px 16px rgba(217, 119, 6, 0.12);
         }
 
         .header-icon::after {
@@ -131,14 +153,23 @@
             position: absolute;
             inset: -6px;
             border-radius: 50%;
-            background: radial-gradient(circle, rgba(245,158,11,0.08) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(245, 158, 11, 0.08) 0%, transparent 70%);
             z-index: -1;
             animation: pulse-ring 2.5s ease-in-out infinite;
         }
 
         @keyframes pulse-ring {
-            0%, 100% { transform: scale(1); opacity: 0.6; }
-            50% { transform: scale(1.08); opacity: 0.3; }
+
+            0%,
+            100% {
+                transform: scale(1);
+                opacity: 0.6;
+            }
+
+            50% {
+                transform: scale(1.08);
+                opacity: 0.3;
+            }
         }
 
         .card-header h1 {
@@ -179,12 +210,28 @@
             animation: fadeUp 0.4s ease;
             border: 1px solid transparent;
         }
-        .session-alert.success { background: var(--success-bg); color: #166534; border-color: var(--success-border); }
-        .session-alert i { font-size: 1rem; flex-shrink: 0; }
+
+        .session-alert.success {
+            background: var(--success-bg);
+            color: #166534;
+            border-color: var(--success-border);
+        }
+
+        .session-alert i {
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
 
         @keyframes fadeUp {
-            from { opacity: 0; transform: translateY(10px); }
-            to   { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         /* ===== Email Preview ===== */
@@ -200,10 +247,14 @@
             animation: fadeUp 0.5s ease;
             transition: border-color var(--speed);
         }
-        .email-preview:hover { border-color: var(--gold-light); }
+
+        .email-preview:hover {
+            border-color: var(--gold-light);
+        }
 
         .email-preview-icon {
-            width: 44px; height: 44px;
+            width: 44px;
+            height: 44px;
             border-radius: 12px;
             background: var(--white);
             border: 1.5px solid var(--border);
@@ -215,12 +266,17 @@
             flex-shrink: 0;
             transition: all var(--speed);
         }
+
         .email-preview:hover .email-preview-icon {
             background: var(--gold-pale);
             border-color: var(--gold-light);
         }
 
-        .email-preview-body { flex: 1; min-width: 0; }
+        .email-preview-body {
+            flex: 1;
+            min-width: 0;
+        }
+
         .email-preview-label {
             font-size: 0.72rem;
             font-weight: 600;
@@ -229,6 +285,7 @@
             color: var(--text-muted);
             margin-bottom: 0.2rem;
         }
+
         .email-preview-value {
             font-size: 0.9rem;
             font-weight: 600;
@@ -259,7 +316,8 @@
         }
 
         .step-dot {
-            width: 32px; height: 32px;
+            width: 32px;
+            height: 32px;
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -269,17 +327,20 @@
             transition: all var(--speed);
             flex-shrink: 0;
         }
+
         .step-dot.done {
             background: var(--success);
             color: var(--white);
-            box-shadow: 0 2px 8px rgba(22,163,74,0.25);
+            box-shadow: 0 2px 8px rgba(22, 163, 74, 0.25);
         }
+
         .step-dot.active {
             background: linear-gradient(135deg, var(--gold), var(--gold-dark));
             color: var(--white);
-            box-shadow: 0 3px 12px rgba(198,169,98,0.35);
+            box-shadow: 0 3px 12px rgba(198, 169, 98, 0.35);
             animation: step-pulse 2s ease-in-out infinite;
         }
+
         .step-dot.pending {
             background: var(--bg);
             border: 1.5px solid var(--border);
@@ -287,24 +348,39 @@
         }
 
         @keyframes step-pulse {
-            0%, 100% { box-shadow: 0 3px 12px rgba(198,169,98,0.35); }
-            50% { box-shadow: 0 3px 20px rgba(198,169,98,0.5); }
+
+            0%,
+            100% {
+                box-shadow: 0 3px 12px rgba(198, 169, 98, 0.35);
+            }
+
+            50% {
+                box-shadow: 0 3px 20px rgba(198, 169, 98, 0.5);
+            }
         }
 
         .step-line {
-            width: 48px; height: 2.5px;
+            width: 48px;
+            height: 2.5px;
             border-radius: 3px;
             transition: background var(--speed);
             margin: 0 4px;
         }
-        .step-line.done { background: var(--success); }
-        .step-line.pending { background: var(--border); }
+
+        .step-line.done {
+            background: var(--success);
+        }
+
+        .step-line.pending {
+            background: var(--border);
+        }
 
         .step-labels {
             display: flex;
             justify-content: space-between;
             padding: 0 4px;
         }
+
         .step-label {
             font-size: 0.7rem;
             font-weight: 500;
@@ -312,8 +388,15 @@
             text-align: center;
             flex: 1;
         }
-        .step-label.active { color: var(--gold-dark); font-weight: 600; }
-        .step-label.done { color: var(--success); }
+
+        .step-label.active {
+            color: var(--gold-dark);
+            font-weight: 600;
+        }
+
+        .step-label.done {
+            color: var(--success);
+        }
 
         /* ===== Buttons ===== */
         .btn-submit {
@@ -339,31 +422,53 @@
         .btn-submit::before {
             content: '';
             position: absolute;
-            top: 0; left: -100%;
-            width: 100%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.08), transparent);
             transition: left 0.5s ease;
         }
 
         .btn-submit:hover {
-            box-shadow: 0 8px 24px rgba(27,42,74,0.25);
+            box-shadow: 0 8px 24px rgba(27, 42, 74, 0.25);
             transform: translateY(-1px);
         }
-        .btn-submit:hover::before { left: 100%; }
 
-        .btn-submit:active { transform: translateY(0); }
-        .btn-submit:disabled { opacity: 0.65; cursor: not-allowed; transform: none; box-shadow: none; }
+        .btn-submit:hover::before {
+            left: 100%;
+        }
+
+        .btn-submit:active {
+            transform: translateY(0);
+        }
+
+        .btn-submit:disabled {
+            opacity: 0.65;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
         .btn-submit .spinner {
-            width: 1.1rem; height: 1.1rem;
-            border: 2px solid rgba(255,255,255,0.2);
+            width: 1.1rem;
+            height: 1.1rem;
+            border: 2px solid rgba(255, 255, 255, 0.2);
             border-top-color: var(--white);
             border-radius: 50%;
             animation: spin 0.7s linear infinite;
             display: none;
         }
-        .btn-submit.loading .spinner { display: block; }
 
-        @keyframes spin { to { transform: rotate(360deg); } }
+        .btn-submit.loading .spinner {
+            display: block;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
 
         .btn-logout {
             width: 100%;
@@ -383,13 +488,17 @@
             gap: 0.45rem;
             margin-top: 0.75rem;
         }
+
         .btn-logout:hover {
             border-color: #CBD5E1;
             background: var(--bg);
             color: var(--text);
             transform: translateY(-1px);
         }
-        .btn-logout i { font-size: 0.9rem; }
+
+        .btn-logout i {
+            font-size: 0.9rem;
+        }
 
         /* ===== Tip ===== */
         .tip-text {
@@ -409,12 +518,14 @@
         /* ===== Toast ===== */
         .toast-wrap {
             position: fixed;
-            top: 1.5rem; right: 1.5rem;
+            top: 1.5rem;
+            right: 1.5rem;
             z-index: 9999;
             display: flex;
             flex-direction: column;
             gap: 0.6rem;
         }
+
         .toast-item {
             display: flex;
             align-items: center;
@@ -424,34 +535,97 @@
             font-size: 0.85rem;
             font-weight: 500;
             color: var(--white);
-            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
             animation: toastIn 0.4s cubic-bezier(0.22, 1, 0.36, 1);
             min-width: 280px;
-            border: 1px solid rgba(255,255,255,0.1);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
-        .toast-item.success { background: var(--success); }
-        .toast-item.out { animation: toastOut 0.3s ease forwards; }
 
-        @keyframes toastIn  { from { opacity:0; transform:translateX(120%) scale(0.95); } to { opacity:1; transform:translateX(0) scale(1); } }
-        @keyframes toastOut { from { opacity:1; transform:translateX(0) scale(1); } to { opacity:0; transform:translateX(120%) scale(0.95); } }
+        .toast-item.success {
+            background: var(--success);
+        }
+
+        .toast-item.out {
+            animation: toastOut 0.3s ease forwards;
+        }
+
+        @keyframes toastIn {
+            from {
+                opacity: 0;
+                transform: translateX(120%) scale(0.95);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0) scale(1);
+            }
+        }
+
+        @keyframes toastOut {
+            from {
+                opacity: 1;
+                transform: translateX(0) scale(1);
+            }
+
+            to {
+                opacity: 0;
+                transform: translateX(120%) scale(0.95);
+            }
+        }
 
         /* ===== Responsive ===== */
         @media (max-width: 480px) {
-            body { padding: 1rem; }
-            .card-header { padding: 2rem 1.5rem 0; }
-            .card-body    { padding: 1.75rem 1.5rem 0.5rem; }
-            .card-footer  { padding: 1.25rem 1.5rem 1.75rem; }
-            .card-header h1 { font-size: 1.3rem; }
-            .card-header p { font-size: 0.84rem; }
-            .btn-submit { height: 50px; }
-            .btn-logout { height: 44px; }
-            .header-icon { width: 64px; height: 64px; font-size: 1.5rem; }
-            .step-line { width: 32px; }
-            .step-labels { font-size: 0.65rem; }
+            body {
+                padding: 1rem;
+            }
+
+            .card-header {
+                padding: 2rem 1.5rem 0;
+            }
+
+            .card-body {
+                padding: 1.75rem 1.5rem 0.5rem;
+            }
+
+            .card-footer {
+                padding: 1.25rem 1.5rem 1.75rem;
+            }
+
+            .card-header h1 {
+                font-size: 1.3rem;
+            }
+
+            .card-header p {
+                font-size: 0.84rem;
+            }
+
+            .btn-submit {
+                height: 50px;
+            }
+
+            .btn-logout {
+                height: 44px;
+            }
+
+            .header-icon {
+                width: 64px;
+                height: 64px;
+                font-size: 1.5rem;
+            }
+
+            .step-line {
+                width: 32px;
+            }
+
+            .step-labels {
+                font-size: 0.65rem;
+            }
         }
 
         @media (min-width: 1600px) {
-            .login-card { max-width: 480px; }
+            .login-card {
+                max-width: 480px;
+            }
         }
     </style>
 </head>
@@ -461,7 +635,9 @@
     <div class="login-card">
         <!-- Header -->
         <div class="card-header">
-            <div class="card-brand">Wedding<span>Inv</span>.</div>
+            <div class="card-logo">
+                <img src="{{ asset('assets/logo.png') }}" alt="Logo WeddingInv">
+            </div>
 
             <div class="header-icon">
                 <i class="bi bi-envelope-check"></i>
@@ -550,8 +726,8 @@
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             var resendForm = document.getElementById('resendForm');
-            var resendBtn  = document.getElementById('resendBtn');
-            var btnText    = resendBtn.querySelector('.btn-text');
+            var resendBtn = document.getElementById('resendBtn');
+            var btnText = resendBtn.querySelector('.btn-text');
 
             /* ── Resend with loading state ── */
             resendForm.addEventListener('submit', function (e) {
@@ -580,4 +756,5 @@
         }
     </script>
 </body>
+
 </html>

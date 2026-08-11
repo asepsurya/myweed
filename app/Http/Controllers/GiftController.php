@@ -4,12 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Models\Gift;
 use Illuminate\Http\Request;
+use Intervention\Image\Drivers\Gd\Driver;
+use Intervention\Image\ImageManager;
 
 class GiftController extends Controller
 {
     public function index()
     {
         $gifts = Gift::all();
+
         return view('dashboard.gift.index', compact('gifts'));
     }
 
@@ -20,28 +23,28 @@ class GiftController extends Controller
             'bank' => 'nullable',
             'number' => 'required',
             'name' => 'required',
-            'qr' => 'nullable|image'
+            'qr' => 'nullable|image',
         ]);
 
         if ($request->hasFile('qr')) {
-            $tempSource = str_replace('\\', '/', sys_get_temp_dir() . '/' . uniqid() . '_' . $request->file('qr')->getClientOriginalName());
+            $tempSource = str_replace('\\', '/', sys_get_temp_dir().'/'.uniqid().'_'.$request->file('qr')->getClientOriginalName());
             $request->file('qr')->move(sys_get_temp_dir(), basename($tempSource));
 
             $destinationPath = storage_path('app/public/gifts');
-            if (!file_exists($destinationPath)) {
+            if (! file_exists($destinationPath)) {
                 mkdir($destinationPath, 0755, true);
             }
 
-            $destFile = $destinationPath . '/' . uniqid() . '.webp';
+            $destFile = $destinationPath.'/'.uniqid().'.webp';
 
-            $driver = new \Intervention\Image\Drivers\Gd\Driver();
-            $manager = new \Intervention\Image\ImageManager($driver);
+            $driver = new Driver;
+            $manager = new ImageManager($driver);
             $image = $manager->read($tempSource);
             $image->save($destFile, 75, 'webp');
 
             @unlink($tempSource);
 
-            $data['qr'] = 'gifts/' . basename($destFile);
+            $data['qr'] = 'gifts/'.basename($destFile);
         }
 
         Gift::create($data);

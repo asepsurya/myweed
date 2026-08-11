@@ -13,12 +13,12 @@ return new class extends Migration
     {
         Schema::table('invitations', function (Blueprint $table) {
 
-             $table->string('akad_time_end')->nullable();
-             $table->string('resepsi_time_end')->nullable();
-             $table->string('bride_username_instagram')->nullable();
-             $table->string('groom_username_instagram')->nullable();
-             $table->string('akad_address')->nullable();
-             $table->string('resepsi_address')->nullable();
+            $table->string('akad_time_end')->nullable();
+            $table->string('resepsi_time_end')->nullable();
+            $table->string('bride_username_instagram')->nullable();
+            $table->string('groom_username_instagram')->nullable();
+            $table->string('akad_address')->nullable();
+            $table->string('resepsi_address')->nullable();
         });
     }
 

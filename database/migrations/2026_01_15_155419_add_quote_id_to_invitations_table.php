@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::table('invitations', function (Blueprint $table) {
             $table->string('quote_id')
-              ->nullable()
-              ->before('wedding_quote');
+                ->nullable()
+                ->before('wedding_quote');
         });
     }
 

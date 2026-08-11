@@ -2,17 +2,16 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Models\User;
-use Illuminate\View\View;
-use Illuminate\Http\Request;
-use Illuminate\Validation\Rules;
-use Spatie\Permission\Models\Role;
 use App\Http\Controllers\Controller;
+use App\Models\Invitation;
+use App\Models\User;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Auth\Events\Registered;
-use Illuminate\Foundation\Support\Providers\RouteServiceProvider;
+use Illuminate\Validation\ValidationException;
+use Illuminate\View\View;
+use Spatie\Permission\Models\Role;
 
 class RegisteredUserController extends Controller
 {
@@ -27,7 +26,7 @@ class RegisteredUserController extends Controller
     /**
      * Handle an incoming registration request.
      *
-     * @throws \Illuminate\Validation\ValidationException
+     * @throws ValidationException
      */
     public function store(Request $request): RedirectResponse
     {
@@ -51,7 +50,7 @@ class RegisteredUserController extends Controller
         $user->sendEmailVerificationNotification();
 
         // 🔽 Otomatis buat undangan "Basic Wedding"
-        \App\Models\Invitation::createDefault($user->id);
+        Invitation::createDefault($user->id);
 
         Auth::login($user);
 

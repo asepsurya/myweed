@@ -2,10 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\WeedingPlan;
 use App\Models\Invitation;
+use App\Models\WeedingPlan;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class WeedingPlanController extends Controller
 {
@@ -31,7 +30,7 @@ class WeedingPlanController extends Controller
             $search = $request->search;
             $query->where(function ($q) use ($search) {
                 $q->where('task_name', 'like', "%{$search}%")
-                  ->orWhere('description', 'like', "%{$search}%");
+                    ->orWhere('description', 'like', "%{$search}%");
             });
         }
 
@@ -55,6 +54,7 @@ class WeedingPlanController extends Controller
     public function create()
     {
         $invitations = Invitation::where('user_id', auth()->id())->get();
+
         return view('weeding-plan.create', compact('invitations'));
     }
 
@@ -88,6 +88,7 @@ class WeedingPlanController extends Controller
     {
         $this->authorizePlan($weedingPlan);
         $invitations = Invitation::where('user_id', auth()->id())->get();
+
         return view('weeding-plan.edit', compact('weedingPlan', 'invitations'));
     }
 
@@ -106,7 +107,7 @@ class WeedingPlanController extends Controller
             'notes' => 'nullable|string|max:1000',
         ]);
 
-        if ($request->status === 'completed' && !$weedingPlan->completed_at) {
+        if ($request->status === 'completed' && ! $weedingPlan->completed_at) {
             $validated['completed_at'] = now();
         } elseif ($request->status !== 'completed') {
             $validated['completed_at'] = null;
@@ -144,7 +145,7 @@ class WeedingPlanController extends Controller
 
         $weedingPlan->update($updateData);
 
-        return back()->with('success', 'Status berhasil diubah menjadi ' . $this->getStatusLabel($newStatus));
+        return back()->with('success', 'Status berhasil diubah menjadi '.$this->getStatusLabel($newStatus));
     }
 
     private function authorizePlan(WeedingPlan $weedingPlan): void

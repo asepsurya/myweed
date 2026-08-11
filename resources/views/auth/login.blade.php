@@ -7,14 +7,12 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
     <title>Masuk — WeddingInv</title>
-    <link rel="icon" type="image/png" href="{{ asset('assets/img/favicon.png') }}">
+    <link rel="icon" type="image/png" href="{{ asset('assets/fav.png') }}">
 
     <link rel="preconnect" href="https://fonts.googleapis.com/">
     <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
 
     <style>
         *,
@@ -109,7 +107,6 @@
                 opacity: 0;
                 transform: translateY(20px) scale(0.98);
             }
-
             to {
                 opacity: 1;
                 transform: translateY(0) scale(1);
@@ -122,17 +119,15 @@
             text-align: center;
         }
 
-        .card-brand {
-            font-family: var(--font-display);
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--navy);
-            margin-bottom: 1.25rem;
-            display: inline-block;
+        .card-logo {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 1.5rem;
         }
 
-        .card-brand span {
-            color: var(--gold);
+        .card-logo img {
+            width: 160px; /* Ukuran logo diatur disini */
+            height: auto;
         }
 
         .card-header h1 {
@@ -190,7 +185,6 @@
                 opacity: 0;
                 transform: translateY(8px);
             }
-
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -282,27 +276,11 @@
         }
 
         @keyframes shake {
-
-            0%,
-            100% {
-                transform: translateX(0);
-            }
-
-            20% {
-                transform: translateX(-5px);
-            }
-
-            40% {
-                transform: translateX(5px);
-            }
-
-            60% {
-                transform: translateX(-3px);
-            }
-
-            80% {
-                transform: translateX(3px);
-            }
+            0%, 100% { transform: translateX(0); }
+            20% { transform: translateX(-5px); }
+            40% { transform: translateX(5px); }
+            60% { transform: translateX(-3px); }
+            80% { transform: translateX(3px); }
         }
 
         /* Field icon */
@@ -486,9 +464,7 @@
         }
 
         @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
+            to { transform: rotate(360deg); }
         }
 
         /* ===== Divider ===== */
@@ -589,279 +565,231 @@
             min-width: 260px;
         }
 
-        .toast-item.error {
-            background: var(--error);
-        }
-
-        .toast-item.success {
-            background: var(--success);
-        }
-
-        .toast-item.out {
-            animation: toastOut 0.3s ease forwards;
-        }
+        .toast-item.error { background: var(--error); }
+        .toast-item.success { background: var(--success); }
+        .toast-item.out { animation: toastOut 0.3s ease forwards; }
 
         @keyframes toastIn {
-            from {
-                opacity: 0;
-                transform: translateX(100%);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
+            from { opacity: 0; transform: translateX(100%); }
+            to { opacity: 1; transform: translateX(0); }
         }
 
         @keyframes toastOut {
-            from {
-                opacity: 1;
-                transform: translateX(0);
-            }
-
-            to {
-                opacity: 0;
-                transform: translateX(100%);
-            }
+            from { opacity: 1; transform: translateX(0); }
+            to { opacity: 0; transform: translateX(100%); }
         }
 
         /* ===== Responsive ===== */
         @media (max-width: 480px) {
-            body {
-                padding: 1rem;
-            }
-
-            .card-header {
-                padding: 2rem 1.5rem 0;
-            }
-
-            .card-body {
-                padding: 1.5rem 1.5rem 0.5rem;
-            }
-
-            .card-footer {
-                padding: 1.25rem 1.5rem 1.75rem;
-            }
-
-            .card-header h1 {
-                font-size: 1.25rem;
-            }
-
-            .field-input {
-                height: 48px;
-                font-size: 0.875rem;
-            }
-
-            .btn-submit,
-            .btn-google {
-                height: 48px;
-            }
+            body { padding: 1rem; }
+            .card-header { padding: 2rem 1.5rem 0; }
+            .card-body { padding: 1.5rem 1.5rem 0.5rem; }
+            .card-footer { padding: 1.25rem 1.5rem 1.75rem; }
+            .card-header h1 { font-size: 1.25rem; }
+            .field-input { height: 48px; font-size: 0.875rem; }
+            .btn-submit, .btn-google { height: 48px; }
         }
 
         @media (min-width: 1600px) {
-            .login-card {
-                max-width: 460px;
-            }
+            .login-card { max-width: 460px; }
         }
     </style>
 </head>
 
 <body>
 
-        <div class="login-card">
-            <!-- Header -->
-            <div class="card-header">
-                <div class="card-brand">Wedding<span>Inv</span>.</div>
-                <h1>Masuk ke Akun Anda</h1>
-                <p>Silakan masuk untuk mengelola undangan</p>
+    <div class="login-card">
+        <!-- Header -->
+        <div class="card-header">
+            <div class="card-logo">
+                <img src="{{ asset('assets/logo.png') }}" alt="Logo WeddingInv">
             </div>
-
-            <!-- Body -->
-            <div class="card-body">
-
-                <!-- Session Status -->
-                @if(session('status'))
-                    <div class="session-alert success">
-                        <i class="bi bi-check-circle-fill"></i>
-                        <span>{{ session('status') }}</span>
-                    </div>
-                @endif
-
-                <form method="POST" action="{{ route('login') }}" id="loginForm" novalidate>
-                    @csrf
-
-                    <!-- Email -->
-                    <div class="field">
-                        <input type="email" class="field-input @error('email') is-invalid @enderror" id="email"
-                            name="email" placeholder=" " value="{{ old('email') }}" required autofocus
-                            autocomplete="email">
-                        <label class="field-label" for="email">Alamat Email</label>
-                        <i class="bi bi-at field-icon"></i>
-                        <div class="field-error {{ $errors->has('email') ? 'show' : '' }}" id="emailError">
-                            <i class="bi bi-exclamation-circle-fill"></i>
-                            <span>@error('email'){{ $message }}@enderror</span>
-                        </div>
-                    </div>
-
-                    <!-- Password -->
-                    <div class="field has-toggle">
-                        <input type="password" class="field-input @error('password') is-invalid @enderror" id="password"
-                            name="password" placeholder=" " required autocomplete="current-password">
-                        <label class="field-label" for="password">Password</label>
-                        <i class="bi bi-lock field-icon"></i>
-                        <button type="button" class="pwd-toggle" id="togglePwd" aria-label="Tampilkan password">
-                            <i class="bi bi-eye" id="pwdIcon"></i>
-                        </button>
-                        <div class="field-error {{ $errors->has('password') ? 'show' : '' }}" id="passwordError">
-                            <i class="bi bi-exclamation-circle-fill"></i>
-                            <span>@error('password'){{ $message }}@enderror</span>
-                        </div>
-                    </div>
-
-                    <!-- Remember & Forgot -->
-                    <div class="form-meta">
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="remember" id="remember">
-                            <label class="form-check-label" for="remember">Ingat saya</label>
-                        </div>
-                        <a href="{{ route('password.request') }}" class="forgot-link">Lupa password?</a>
-                    </div>
-
-                    <!-- Submit -->
-                    <button type="submit" class="btn-submit" id="loginBtn">
-                        <span class="btn-text">Masuk</span>
-                        <span class="spinner"></span>
-                    </button>
-                </form>
-
-                <!-- Divider -->
-                <div class="divider"><span>atau lanjutkan dengan</span></div>
-
-                <!-- Google -->
-                <a href="{{ url('/auth/google') }}" class="btn-google">
-                    <img src="{{ asset('assets/img/g-logo.png') }}" alt="Google">
-                    Masuk dengan Google
-                </a>
-            </div>
-
-            <!-- Footer -->
-            <div class="card-footer">
-                Belum punya akun? <a href="/register">Daftar sekarang</a>
-            </div>
+            <h1>Masuk ke Akun Anda</h1>
+            <p>Silakan masuk untuk mengelola undangan</p>
         </div>
 
-        <!-- Toast Container -->
-        <div class="toast-wrap" id="toastWrap"></div>
+        <!-- Body -->
+        <div class="card-body">
+            <!-- Session Status -->
+            @if(session('status'))
+                <div class="session-alert success">
+                    <i class="bi bi-check-circle-fill"></i>
+                    <span>{{ session('status') }}</span>
+                </div>
+            @endif
 
-        <script>
-            document.addEventListener('DOMContentLoaded', function () {
-                const form = document.getElementById('loginForm');
-                const btn = document.getElementById('loginBtn');
-                const btnText = btn.querySelector('.btn-text');
-                const email = document.getElementById('email');
-                const password = document.getElementById('password');
-                const emailErr = document.getElementById('emailError');
-                const pwdErr = document.getElementById('passwordError');
-                const togglePwd = document.getElementById('togglePwd');
-                const pwdIcon = document.getElementById('pwdIcon');
+            <form method="POST" action="{{ route('login') }}" id="loginForm" novalidate>
+                @csrf
 
-                /* ── Helpers ── */
-                function setError(input, errEl, msg) {
-                    input.classList.remove('is-valid');
-                    input.classList.add('is-invalid');
-                    errEl.querySelector('span').textContent = msg;
-                    errEl.classList.add('show');
+                <!-- Email -->
+                <div class="field">
+                    <input type="email" class="field-input @error('email') is-invalid @enderror" id="email" name="email" placeholder=" " value="{{ old('email') }}" required autofocus autocomplete="email">
+                    <label class="field-label" for="email">Alamat Email</label>
+                    <i class="bi bi-at field-icon"></i>
+                    <div class="field-error {{ $errors->has('email') ? 'show' : '' }}" id="emailError">
+                        <i class="bi bi-exclamation-circle-fill"></i>
+                        <span>@error('email'){{ $message }}@enderror</span>
+                    </div>
+                </div>
+
+                <!-- Password -->
+                <div class="field has-toggle">
+                    <input type="password" class="field-input @error('password') is-invalid @enderror" id="password" name="password" placeholder=" " required autocomplete="current-password">
+                    <label class="field-label" for="password">Password</label>
+                    <i class="bi bi-lock field-icon"></i>
+                    <button type="button" class="pwd-toggle" id="togglePwd" aria-label="Tampilkan password">
+                        <i class="bi bi-eye" id="pwdIcon"></i>
+                    </button>
+                    <div class="field-error {{ $errors->has('password') ? 'show' : '' }}" id="passwordError">
+                        <i class="bi bi-exclamation-circle-fill"></i>
+                        <span>@error('password'){{ $message }}@enderror</span>
+                    </div>
+                </div>
+
+                <!-- Remember & Forgot -->
+                <div class="form-meta">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="remember" id="remember">
+                        <label class="form-check-label" for="remember">Ingat saya</label>
+                    </div>
+                    <a href="{{ route('password.request') }}" class="forgot-link">Lupa password?</a>
+                </div>
+
+                <!-- Submit -->
+                <button type="submit" class="btn-submit" id="loginBtn">
+                    <span class="btn-text">Masuk</span>
+                    <span class="spinner"></span>
+                </button>
+            </form>
+
+            <!-- Divider -->
+            <div class="divider"><span>atau lanjutkan dengan</span></div>
+
+            <!-- Google -->
+            <a href="{{ url('/auth/google') }}" class="btn-google">
+                <img src="{{ asset('assets/img/g-logo.png') }}" alt="Google">
+                Masuk dengan Google
+            </a>
+        </div>
+
+        <!-- Footer -->
+        <div class="card-footer">
+            Belum punya akun? <a href="/register">Daftar sekarang</a>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-wrap" id="toastWrap"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const form = document.getElementById('loginForm');
+            const btn = document.getElementById('loginBtn');
+            const btnText = btn.querySelector('.btn-text');
+            const email = document.getElementById('email');
+            const password = document.getElementById('password');
+            const emailErr = document.getElementById('emailError');
+            const pwdErr = document.getElementById('passwordError');
+            const togglePwd = document.getElementById('togglePwd');
+            const pwdIcon = document.getElementById('pwdIcon');
+
+            /* ── Helpers ── */
+            function setError(input, errEl, msg) {
+                input.classList.remove('is-valid');
+                input.classList.add('is-invalid');
+                errEl.querySelector('span').textContent = msg;
+                errEl.classList.add('show');
+            }
+
+            function clearState(input, errEl) {
+                input.classList.remove('is-valid', 'is-invalid');
+                errEl.classList.remove('show');
+            }
+
+            function setValid(input, errEl) {
+                input.classList.remove('is-invalid');
+                input.classList.add('is-valid');
+                errEl.classList.remove('show');
+            }
+
+            /* ── Validate ── */
+            function checkEmail() {
+                const v = email.value.trim();
+                clearState(email, emailErr);
+                if (!v) { setError(email, emailErr, 'Email tidak boleh kosong'); return false; }
+                if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)) { setError(email, emailErr, 'Format email tidak valid'); return false; }
+                setValid(email, emailErr);
+                return true;
+            }
+
+            function checkPassword() {
+                const v = password.value;
+                clearState(password, pwdErr);
+                if (!v) { setError(password, pwdErr, 'Password tidak boleh kosong'); return false; }
+                if (v.length < 6) { setError(password, pwdErr, 'Password minimal 6 karakter'); return false; }
+                setValid(password, pwdErr);
+                return true;
+            }
+
+            /* ── Events ── */
+            email.addEventListener('blur', function () {
+                if (this.value.trim()) checkEmail(); else clearState(email, emailErr);
+            });
+            email.addEventListener('input', function () {
+                if (this.classList.contains('is-invalid')) checkEmail(); else clearState(email, emailErr);
+            });
+
+            password.addEventListener('blur', function () {
+                if (this.value) checkPassword(); else clearState(password, pwdErr);
+            });
+            password.addEventListener('input', function () {
+                if (this.classList.contains('is-invalid')) checkPassword(); else clearState(password, pwdErr);
+            });
+
+            /* ── Toggle Password ── */
+            togglePwd.addEventListener('click', function () {
+                const show = password.type === 'password';
+                password.type = show ? 'text' : 'password';
+                pwdIcon.className = show ? 'bi bi-eye-slash' : 'bi bi-eye';
+            });
+
+            /* ── Submit ── */
+            form.addEventListener('submit', function (e) {
+                e.preventDefault();
+                const eOk = checkEmail();
+                const pOk = checkPassword();
+                if (!eOk || !pOk) {
+                    (eOk ? password : email).focus();
+                    return;
                 }
+                btnText.textContent = 'Memproses...';
+                btn.classList.add('loading');
+                btn.disabled = true;
+                form.submit();
+            });
 
-                function clearState(input, errEl) {
-                    input.classList.remove('is-valid', 'is-invalid');
-                    errEl.classList.remove('show');
-                }
-
-                function setValid(input, errEl) {
-                    input.classList.remove('is-invalid');
-                    input.classList.add('is-valid');
-                    errEl.classList.remove('show');
-                }
-
-                /* ── Validate ── */
-                function checkEmail() {
-                    const v = email.value.trim();
-                    clearState(email, emailErr);
-                    if (!v) { setError(email, emailErr, 'Email tidak boleh kosong'); return false; }
-                    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)) { setError(email, emailErr, 'Format email tidak valid'); return false; }
-                    setValid(email, emailErr);
-                    return true;
-                }
-
-                function checkPassword() {
-                    const v = password.value;
-                    clearState(password, pwdErr);
-                    if (!v) { setError(password, pwdErr, 'Password tidak boleh kosong'); return false; }
-                    if (v.length < 6) { setError(password, pwdErr, 'Password minimal 6 karakter'); return false; }
-                    setValid(password, pwdErr);
-                    return true;
-                }
-
-                /* ── Events ── */
-                email.addEventListener('blur', function () {
-                    if (this.value.trim()) checkEmail(); else clearState(email, emailErr);
-                });
-                email.addEventListener('input', function () {
-                    if (this.classList.contains('is-invalid')) checkEmail(); else clearState(email, emailErr);
-                });
-
-                password.addEventListener('blur', function () {
-                    if (this.value) checkPassword(); else clearState(password, pwdErr);
-                });
-                password.addEventListener('input', function () {
-                    if (this.classList.contains('is-invalid')) checkPassword(); else clearState(password, pwdErr);
-                });
-
-                /* ── Toggle Password ── */
-                togglePwd.addEventListener('click', function () {
-                    const show = password.type === 'password';
-                    password.type = show ? 'text' : 'password';
-                    pwdIcon.className = show ? 'bi bi-eye-slash' : 'bi bi-eye';
-                });
-
-                /* ── Submit ── */
-                form.addEventListener('submit', function (e) {
-                    e.preventDefault();
-                    const eOk = checkEmail();
-                    const pOk = checkPassword();
-                    if (!eOk || !pOk) {
-                        (eOk ? password : email).focus();
-                        return;
-                    }
-                    btnText.textContent = 'Memproses...';
-                    btn.classList.add('loading');
-                    btn.disabled = true;
-                    form.submit();
-                });
-
-                /* ── Session Toasts ── */
-                @if(session('error'))
-                    showToast('{{ session('error') }}', 'error');
-                @endif
-                @if(session('success'))
-                    showToast('{{ session('success') }}', 'success');
-                @endif
+            /* ── Session Toasts ── */
+            @if(session('error'))
+                showToast('{{ session('error') }}', 'error');
+            @endif
+            @if(session('success'))
+                showToast('{{ session('success') }}', 'success');
+            @endif
         });
 
-            function showToast(message, type) {
-                var wrap = document.getElementById('toastWrap');
-                var el = document.createElement('div');
-                el.className = 'toast-item ' + type;
-                var icon = type === 'error' ? 'bi-exclamation-triangle-fill' : 'bi-check-circle-fill';
-                el.innerHTML = '<i class="bi ' + icon + '"></i> ' + message;
-                wrap.appendChild(el);
-                setTimeout(function () {
-                    el.classList.add('out');
-                    setTimeout(function () { el.remove(); }, 300);
-                }, 4000);
-            }
-        </script>
-    </body>
+        function showToast(message, type) {
+            var wrap = document.getElementById('toastWrap');
+            var el = document.createElement('div');
+            el.className = 'toast-item ' + type;
+            var icon = type === 'error' ? 'bi-exclamation-triangle-fill' : 'bi-check-circle-fill';
+            el.innerHTML = '<i class="bi ' + icon + '"></i> ' + message;
+            wrap.appendChild(el);
+            setTimeout(function () {
+                el.classList.add('out');
+                setTimeout(function () { el.remove(); }, 300);
+            }, 4000);
+        }
+    </script>
+</body>
 
 </html>

@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
-use App\Models\Template;
 use App\Models\Category;
+use App\Models\Template;
 use Illuminate\Database\Seeder;
 
 class TemplateSeeder extends Seeder

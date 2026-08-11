@@ -2,12 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Rsvp;
-use App\Models\Music;
-use App\Models\Template;
 use App\Models\Invitation;
-use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
+use App\Models\Music;
+use App\Models\Rsvp;
+use App\Models\Template;
 use Illuminate\Support\Facades\Http;
 
 class DashboardController extends Controller
@@ -16,25 +14,30 @@ class DashboardController extends Controller
     {
         return view('dashboard', [
             'totalInvitations' => Invitation::count(),
-            'totalGuests'      => Rsvp::count(),
-            'rsvpYes'          => Rsvp::where('attending', '1')->count(),
-            'rsvpNo'           => Rsvp::where('attending', '2')->count(),
-            'invitations'     => Invitation::latest()->take(5)->get(),
-            'recentRsvps'     => Rsvp::latest()->take(5)->get(),
-            'totalMusic'      => Music::count(),
-            'activeMusic'     => Music::where('is_active', true)->count(),
-            'inactiveMusic'   => Music::where('is_active', false)->count(),
-            'totalMusicSize'  => Music::sum('file_size') ?? 0,
+            'totalGuests' => Rsvp::count(),
+            'rsvpYes' => Rsvp::where('attending', '1')->count(),
+            'rsvpNo' => Rsvp::where('attending', '2')->count(),
+            'invitations' => Invitation::latest()->take(5)->get(),
+            'recentRsvps' => Rsvp::latest()->take(5)->get(),
+            'totalMusic' => Music::count(),
+            'activeMusic' => Music::where('is_active', true)->count(),
+            'inactiveMusic' => Music::where('is_active', false)->count(),
+            'totalMusicSize' => Music::sum('file_size') ?? 0,
         ]);
     }
-    public function indexUser(){
+
+    public function indexUser()
+    {
         $invitations = Invitation::where('user_id', auth()->id())->latest()->get();
         $templates = Template::where('is_active', true)->get();
+
         return view('guest.index', compact('invitations', 'templates'));
     }
 
-    public function temaIndex(){
+    public function temaIndex()
+    {
         $templates = Template::where('is_active', true)->paginate(12);
+
         return view('dashboard.tema.index', compact('templates'));
     }
 

@@ -2,8 +2,8 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
 use App\Models\Music;
+use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
@@ -19,7 +19,7 @@ class SyncLocalMusic extends Command
     public function handle(): int
     {
         $disk = $this->option('disk') ?? config('music.disk', 'public');
-        $onlyMp3 = !$this->option('all');
+        $onlyMp3 = ! $this->option('all');
         $force = $this->option('force');
 
         $this->info("Syncing music from disk: {$disk}");
@@ -36,12 +36,14 @@ class SyncLocalMusic extends Command
                 })
                 ->values();
         } catch (\Throwable $e) {
-            $this->error("Unable to list files from disk [{$disk}]: " . $e->getMessage());
+            $this->error("Unable to list files from disk [{$disk}]: ".$e->getMessage());
+
             return self::FAILURE;
         }
 
         if ($files->isEmpty()) {
             $this->warn("No files found on disk [{$disk}].");
+
             return self::SUCCESS;
         }
 
@@ -72,12 +74,13 @@ class SyncLocalMusic extends Command
                 } else {
                     $skipped++;
                     $bar->advance();
+
                     continue;
                 }
             } else {
                 Music::create([
-                    'title'     => pathinfo($filename, PATHINFO_FILENAME),
-                    'artist'    => 'Unknown Artist',
+                    'title' => pathinfo($filename, PATHINFO_FILENAME),
+                    'artist' => 'Unknown Artist',
                     'audio_url' => $path,
                     'music_url' => $path,
                     'file_size' => Storage::disk($disk)->size($path) ?? null,
@@ -93,7 +96,7 @@ class SyncLocalMusic extends Command
         $bar->finish();
         $this->newLine(2);
 
-        $this->info("Sync completed:");
+        $this->info('Sync completed:');
         $this->line("  Created : {$created}");
         $this->line("  Updated : {$updated}");
         $this->line("  Skipped : {$skipped}");

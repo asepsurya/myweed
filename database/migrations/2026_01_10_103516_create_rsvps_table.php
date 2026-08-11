@@ -12,12 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('rsvps', function (Blueprint $table) {
-              $table->id();
-                $table->foreignId('invitation_id')->constrained()->cascadeOnDelete();
-                $table->string('name');
-                $table->text('message')->nullable();
-                $table->boolean('attending')->default(true);
-                $table->timestamps();
+            $table->id();
+            $table->foreignId('invitation_id')->constrained()->cascadeOnDelete();
+            $table->string('name');
+            $table->text('message')->nullable();
+            $table->boolean('attending')->default(true);
+            $table->timestamps();
         });
     }
 

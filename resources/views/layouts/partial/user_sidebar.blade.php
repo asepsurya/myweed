@@ -15,10 +15,10 @@
             </div>
             <div class="text-center collapse " id="usersidebarprofile">
                 <figure class="avatar avatar-100 rounded-circle coverimg my-3">
-                    <img src="{{ asset('tempelate/logo_apps.png') }}" alt="">
+                    <img src="{{ asset('assets/fav.png') }}" alt="">
                 </figure>
-                <h5 class="mb-1 fw-medium">Weeding Creative</h5>
-                <p class="small">The Investment UI Kit</p>
+                <h5 class="mb-1 fw-medium">Loventa.id</h5>
+                <p class="small">Make your moment unforgettable</p>
             </div>
         </div>
 
@@ -42,8 +42,8 @@
             </li>
 
             <li class="nav-item">
-                <a class="nav-link" href="{{ route('music.index') }}" data-bs-toggle="tooltip"
-                    data-bs-placement="right" title="Music Library">
+                <a class="nav-link" href="{{ route('music.index') }}" data-bs-toggle="tooltip" data-bs-placement="right"
+                    title="Music Library">
                     <i class="menu-icon bi bi-music-note-list me-2"></i>
                     <span class="menu-name">Music Library</span>
                 </a>
@@ -59,8 +59,8 @@
             </li>
 
             <li class="nav-item">
-                <a class="nav-link" href="{{ route('weeding-plan.index') }}" data-bs-toggle="tooltip" data-bs-placement="right"
-                    title="Rencana Pernikahan">
+                <a class="nav-link" href="{{ route('weeding-plan.index') }}" data-bs-toggle="tooltip"
+                    data-bs-placement="right" title="Rencana Pernikahan">
                     <i class="menu-icon bi bi-calendar-check me-2"></i>
                     <span class="menu-name">Rencana Pernikahan</span>
                 </a>
@@ -76,6 +76,14 @@
 
 
             @role('admin')
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('subscription-plans.index') }}" data-bs-toggle="tooltip"
+                    data-bs-placement="right" title="Paket & Harga">
+                    <i class="menu-icon bi bi-tags me-2"></i>
+                    <span class="menu-name">Paket & Harga</span>
+                </a>
+            </li>
+
             <li class="nav-item">
                 <a class="nav-link" href="{{ route('user.index') }}" data-bs-toggle="tooltip" data-bs-placement="right"
                     title="Daftar Pengguna">

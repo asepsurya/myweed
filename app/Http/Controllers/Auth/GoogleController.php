@@ -2,17 +2,14 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Models\User;
-use App\Models\Invitation;
-use Illuminate\Support\Str;
-use App\Models\Subscription;
-use Illuminate\Http\Request;
-use App\Models\SubscriptionPlan;
 use App\Http\Controllers\Controller;
+use App\Models\Invitation;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Laravel\Socialite\Facades\Socialite;
 
 class GoogleController extends Controller
@@ -22,16 +19,15 @@ class GoogleController extends Controller
         return Socialite::driver('google')->redirect();
     }
 
- public function callback()
+    public function callback()
     {
         $googleUser = Socialite::driver('google')->stateless()->user();
-
 
         $avatarPath = null;
 
         if ($googleUser->avatar) {
             $avatarContents = Http::get($googleUser->avatar)->body();
-            $avatarPath = 'avatars/google_' . md5($googleUser->email) . '.jpg';
+            $avatarPath = 'avatars/google_'.md5($googleUser->email).'.jpg';
 
             Storage::disk('public')->put($avatarPath, $avatarContents);
         }
@@ -39,18 +35,17 @@ class GoogleController extends Controller
         $user = User::updateOrCreate(
             ['email' => $googleUser->email],
             [
-                'name'      => $googleUser->name,
-                'password'  => Hash::make(Str::random(32)),
+                'name' => $googleUser->name,
+                'password' => Hash::make(Str::random(32)),
                 'google_id' => $googleUser->id,
-                'avatar'    => $avatarPath,
+                'avatar' => $avatarPath,
             ]
         );
-
 
         Auth::login($user);
 
         // 🔽 Otomatis buat undangan jika belum punya
-        if (!Invitation::where('user_id', $user->id)->exists()) {
+        if (! Invitation::where('user_id', $user->id)->exists()) {
             Invitation::createDefault($user->id);
         }
 

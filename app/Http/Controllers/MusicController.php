@@ -9,7 +9,6 @@ use App\Services\MusicUploadService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
 
 class MusicController extends Controller
 {
@@ -17,7 +16,7 @@ class MusicController extends Controller
 
     public function __construct()
     {
-        $this->uploader = new MusicUploadService();
+        $this->uploader = new MusicUploadService;
     }
 
     public function index(Request $request)
@@ -25,8 +24,8 @@ class MusicController extends Controller
         $query = Music::query();
 
         if ($request->filled('search')) {
-            $query->where('title', 'like', '%' . $request->search . '%')
-                ->orWhere('artist', 'like', '%' . $request->search . '%');
+            $query->where('title', 'like', '%'.$request->search.'%')
+                ->orWhere('artist', 'like', '%'.$request->search.'%');
         }
 
         if ($request->filled('status')) {
@@ -53,7 +52,7 @@ class MusicController extends Controller
     public function store(StoreMusicRequest $request)
     {
         DB::transaction(function () use ($request) {
-            $music = new Music();
+            $music = new Music;
             $music->title = $request->title;
             $music->artist = $request->artist;
             $music->is_active = $request->boolean('is_active', true);
@@ -140,10 +139,10 @@ class MusicController extends Controller
             return back()->with('success', 'Lagu berhasil dihapus.');
         } catch (\Throwable $e) {
             if (request()->wantsJson() || request()->ajax()) {
-                return response()->json(['success' => false, 'message' => 'Gagal menghapus: ' . $e->getMessage()], 500);
+                return response()->json(['success' => false, 'message' => 'Gagal menghapus: '.$e->getMessage()], 500);
             }
 
-            return back()->with('error', 'Gagal menghapus lagu: ' . $e->getMessage());
+            return back()->with('error', 'Gagal menghapus lagu: '.$e->getMessage());
         }
     }
 
@@ -184,12 +183,12 @@ class MusicController extends Controller
 
         try {
             $files = collect(Storage::disk($disk)->files(''))
-                ->filter(function ($path) use ($onlyMp3) {
+                ->filter(function ($path) {
                     return preg_match('/\.(mp3|wav|ogg|m4a)$/i', $path);
                 })
                 ->values();
         } catch (\Throwable $e) {
-            return response()->json(['success' => false, 'message' => 'Gagal membaca disk: ' . $e->getMessage()], 500);
+            return response()->json(['success' => false, 'message' => 'Gagal membaca disk: '.$e->getMessage()], 500);
         }
 
         if ($files->isEmpty()) {
@@ -207,12 +206,13 @@ class MusicController extends Controller
 
             if ($existing) {
                 $skipped++;
+
                 continue;
             }
 
             Music::create([
-                'title'     => pathinfo($filename, PATHINFO_FILENAME),
-                'artist'    => 'Unknown Artist',
+                'title' => pathinfo($filename, PATHINFO_FILENAME),
+                'artist' => 'Unknown Artist',
                 'audio_url' => $path,
                 'music_url' => $path,
                 'file_size' => Storage::disk($disk)->size($path) ?? null,
@@ -232,7 +232,9 @@ class MusicController extends Controller
 
     private function formatTotalStorage(?int $bytes): string
     {
-        if (!$bytes) return '0 MB';
+        if (! $bytes) {
+            return '0 MB';
+        }
 
         $units = ['B', 'KB', 'MB', 'GB'];
         $i = 0;
@@ -241,6 +243,6 @@ class MusicController extends Controller
             $i++;
         }
 
-        return round($bytes, 2) . ' ' . $units[$i];
+        return round($bytes, 2).' '.$units[$i];
     }
 }

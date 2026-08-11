@@ -2,9 +2,8 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use App\Models\SubscriptionPlan;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Illuminate\Database\Seeder;
 
 class SubscriptionSeed extends Seeder
 {
@@ -13,43 +12,49 @@ class SubscriptionSeed extends Seeder
      */
     public function run(): void
     {
-   SubscriptionPlan::create([
-            'name' => 'Basic Wedding',
-            'slug' => 'basic',
+        SubscriptionPlan::create([
+            'name' => 'Gratis',
+            'slug' => 'gratis',
             'price' => 0,
-            'duration' => 2,
-            'description' => json_encode([
-                'Undangan Digital',
-                '1 Tema Desain',
-                'Dukungan Email',
-            ]),
-        ]);
-
-        SubscriptionPlan::create([
-            'name' => 'Pro Wedding',
-            'slug' => 'pro',
-            'price' => 99000,
             'duration' => 30,
             'description' => json_encode([
-                'Semua Fitur Basic',
-                '3 Tema Desain',
-                'Laporan Kehadiran',
-                'Gift Registry',
+                '1 Tema Gratis',
+                '50 Tamu undangan',
+                'RSVP dasar',
+                'Galeri foto 10 slot',
             ]),
+            'is_free' => true,
         ]);
 
         SubscriptionPlan::create([
-            'name' => 'Premium Wedding',
+            'name' => 'Premium',
             'slug' => 'premium',
-            'price' => 249000,
+            'price' => 149000,
             'duration' => 30,
             'description' => json_encode([
-                'Semua Fitur Pro',
-                'Tema Desain Unlimited',
-                'Laporan Kehadiran Lengkap',
-                'Gift Registry Premium',
-                'Custom Domain + SSL',
+                'Semua Tema Premium',
+                'Unlimited tamu',
+                'RSVP lengkap + analytics',
+                'Galeri unlimited',
+                'Hapus watermark',
             ]),
+            'is_free' => false,
+        ]);
+
+        SubscriptionPlan::create([
+            'name' => 'Exclusive',
+            'slug' => 'exclusive',
+            'price' => 499000,
+            'duration' => 30,
+            'description' => json_encode([
+                'Semua fitur Premium',
+                'Unlimited tamu',
+                'RSVP + analytics lengkap',
+                'Galeri unlimited',
+                'Hapus watermark',
+                'Custom domain + support 24/7',
+            ]),
+            'is_free' => false,
         ]);
     }
 }

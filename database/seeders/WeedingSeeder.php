@@ -3,9 +3,8 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Spatie\Permission\Models\Role;
 
 class WeedingSeeder extends Seeder
 {
@@ -15,28 +14,26 @@ class WeedingSeeder extends Seeder
     public function run(): void
     {
 
+        //     $planner = Role::create(['name' => 'wedding-planner']);
+        //     $guest = Role::create(['name' => 'guest']);
 
-    //     $planner = Role::create(['name' => 'wedding-planner']);
-    //     $guest = Role::create(['name' => 'guest']);
+        //     // Permissions
+        //     $permissions = [
+        //         'manage-users',
+        //         'edit-theme',
+        //         'manage-gallery',
+        //         'manage-music',
+        //         'manage-rsvp',
+        //         'view-invitation'
+        //     ];
 
+        //     foreach ($permissions as $perm) {
+        //         Permission::create(['name' => $perm]);
+        //     }
 
-    //     // Permissions
-    //     $permissions = [
-    //         'manage-users',
-    //         'edit-theme',
-    //         'manage-gallery',
-    //         'manage-music',
-    //         'manage-rsvp',
-    //         'view-invitation'
-    //     ];
-
-    //     foreach ($permissions as $perm) {
-    //         Permission::create(['name' => $perm]);
-    //     }
-
-    //     // Assign permission ke role
-    //    / admin dapat semua
-    //     $planner->givePermissionTo(['manage-gallery','manage-music','manage-rsvp','edit-theme']);
-    //     $guest->givePermissionTo(['view-invitation']);
+        //     // Assign permission ke role
+        //    / admin dapat semua
+        //     $planner->givePermissionTo(['manage-gallery','manage-music','manage-rsvp','edit-theme']);
+        //     $guest->givePermissionTo(['view-invitation']);
     }
 }

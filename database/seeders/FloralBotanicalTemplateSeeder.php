@@ -3,8 +3,8 @@
 namespace Database\Seeders;
 
 use App\Models\Template;
-use Illuminate\Database\Seeder;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Illuminate\Database\Seeder;
 
 class FloralBotanicalTemplateSeeder extends Seeder
 {
@@ -19,15 +19,16 @@ class FloralBotanicalTemplateSeeder extends Seeder
 
         if ($exists) {
             $this->command->info('Template "Floral Botanical" sudah ada, skip.');
+
             return;
         }
 
         Template::create([
-            'name'      => 'Floral Botanical',
-            'slug'      => 'floral-botanical',
+            'name' => 'Floral Botanical',
+            'slug' => 'floral-botanical',
             'thumbnail' => 'templates/floral-botanical-thumb.png',
-            'preview'   => null,
-            'sections'  => ['hero', 'couple', 'event', 'gallery', 'rsvp', 'music'],
+            'preview' => null,
+            'sections' => ['hero', 'couple', 'event', 'gallery', 'rsvp', 'music'],
             'is_active' => true,
         ]);
 

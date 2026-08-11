@@ -9,7 +9,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title id="dynamicTitle">{{ config('app.name', 'WeddingInv') }} — Dashboard</title>
-    <link rel="icon" type="image/png" href="{{ asset('tempelate/logo_apps.png') }}">
+    <link rel="icon" type="image/png" href="{{ asset('assets/fav.png') }}">
 
     <!-- Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
@@ -17,7 +17,9 @@
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com/">
     <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap"
+        rel="stylesheet">
 
     <!-- Libraries -->
     <link href="https://cdn.jsdelivr.net/npm/tom-select/dist/css/tom-select.bootstrap5.min.css" rel="stylesheet">
@@ -26,87 +28,193 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link href="https://unpkg.com/cropperjs@1.6.1/dist/cropper.min.css" rel="stylesheet">
     <script src="https://unpkg.com/cropperjs@1.6.1/dist/cropper.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
 
     <!-- AdminUIUX Framework -->
     <link href="{{ asset('assets/css/app435e.css?1096aad991449c8654b2') }}" rel="stylesheet">
     <script defer src="{{ asset('assets/js/app435e.js?1096aad991449c8654b2') }}"></script>
-    <link rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <!-- WeddingInv Theme Overrides -->
- 
+
     <style>
-        :root {
+        :root,
+        [data-bs-theme=light] {
+            /* Font Profesional */
             --adminuiux-content-font: "Inter", sans-serif;
             --adminuiux-content-font-weight: 400;
-            --adminuiux-title-font: "Playfair Display", "Inter", sans-serif;
-            --adminuiux-title-font-weight: 600;
+            --adminuiux-title-font: "Plus Jakarta Sans", "Inter", sans-serif;
+            --adminuiux-title-font-weight: 700;
 
-            
+            /* Warna Utama Tema Gold */
+            --adminuiux-theme-1: #C6A962;
+            --adminuiux-theme-1-hover: #A68B4B;
+            --adminuiux-theme-1-active: #8f743e;
+            --adminuiux-theme-1-rgb: 198, 169, 98;
+            --adminuiux-theme-1-text: #FFFFFF;
 
-            /* Mobile bottom nav */
-            --mobile-nav-active-color: var(--wedding-pink, #FF6B81);
+            /* Warna Sekunder Tema Navy */
+            --adminuiux-theme-2: #1B2A4A;
+            --adminuiux-theme-2-rgb: 27, 42, 74;
+            --adminuiux-theme-2-text: #FFFFFF;
+
+            /* Aksen Warna */
+            --adminuiux-theme-accent-1: #C6A962;
+            --adminuiux-theme-accent-1-hover: #A68B4B;
+            --adminuiux-theme-accent-1-active: #8f743e;
+            --adminuiux-theme-accent-1-rgb: 198, 169, 98;
+            --adminuiux-theme-accent-1-text: #FFFFFF;
+            --adminuiux-theme-accent-2: #E8D5A3;
+            --adminuiux-theme-accent-2-rgb: 232, 213, 163;
+            --adminuiux-theme-accent-2-text: #1B2A4A;
+
+            /* Background Dasar (Light) */
+            --adminuiux-bg-1: #F7F5F2;
+            --adminuiux-bg-2: #FDFBF7;
+            --adminuiux-text: #1B2A4A;
+
+            /* Layout */
+            --adminuiux-sidebar-width: 280px;
+            --adminuiux-sidebar-iconic-width: 60px;
+            --adminuiux-header-active-bg-rgb: 255, 255, 255;
+            --adminuiux-header-active-opacity: 0.95;
+            --adminuiux-footer-bg: #FFFFFF;
+            --adminuiux-footer-bg-rgb: 255, 255, 255;
+
+            /* Bootstrap Overrides (Light) */
+            --bs-primary: #C6A962;
+            --bs-primary-rgb: 198, 169, 98;
+            --bs-secondary: #1B2A4A;
+            --bs-secondary-rgb: 27, 42, 74;
+            --bs-body-bg: #F7F5F2;
+            --bs-body-color: #1B2A4A;
+            --bs-border-color: rgba(27, 42, 74, 0.125);
+            --bs-link-color-rgb: 166, 139, 75;
+
+            /* Text Emphasis (Light) */
+            --bs-primary-text-emphasis: #A68B4B;
+            --bs-secondary-text-emphasis: #1B2A4A;
+        }
+
+        /* =============================================
+       DARK MODE PROFESSIONAL
+    ============================================= */
+        [data-bs-theme="dark"] {
+            /* Warna Utama Gold (Diterangkan sedikit untuk kontras dark mode) */
+            --adminuiux-theme-1: #E8D5A3;
+            --adminuiux-theme-1-hover: #C6A962;
+            --adminuiux-theme-1-active: #C6A962;
+            --adminuiux-theme-1-rgb: 232, 213, 163;
+            --adminuiux-theme-1-text: #0B0F19;
+            /* Teks gelap di atas gold terang */
+
+            /* Warna Sekunder Navy (Diterangkan untuk kontras) */
+            --adminuiux-theme-2: #2A3F6A;
+            --adminuiux-theme-2-rgb: 42, 63, 106;
+            --adminuiux-theme-2-text: #FFFFFF;
+
+            /* Aksen Warna */
+            --adminuiux-theme-accent-1: #E8D5A3;
+            --adminuiux-theme-accent-1-hover: #C6A962;
+            --adminuiux-theme-accent-1-active: #C6A962;
+            --adminuiux-theme-accent-1-rgb: 232, 213, 163;
+            --adminuiux-theme-accent-1-text: #0B0F19;
+
+            --adminuiux-theme-accent-2: #2A3F6A;
+            --adminuiux-theme-accent-2-rgb: 42, 63, 106;
+            --adminuiux-theme-accent-2-text: #FFFFFF;
+
+            /* Background Dasar (Dark Navy Pekat) */
+            --adminuiux-bg-1: #0B0F19;
+            /* Hitam Navy */
+            --adminuiux-bg-2: #111827;
+            /* Navy Sedikit Terang untuk kartu */
+            --adminuiux-text: #F1F5F9;
+            /* Teks putih bersih */
+
+            /* Layout Dark */
+            --adminuiux-header-active-bg-rgb: 11, 15, 25;
+            --adminuiux-header-active-opacity: 0.95;
+            --adminuiux-footer-bg: #0B0F19;
+            --adminuiux-footer-bg-rgb: 11, 15, 25;
+
+            /* Bootstrap Overrides (Dark) */
+            --bs-primary: #E8D5A3;
+            --bs-primary-rgb: 232, 213, 163;
+            --bs-secondary: #2A3F6A;
+            --bs-secondary-rgb: 42, 63, 106;
+            --bs-body-bg: #0B0F19;
+            --bs-body-color: #F1F5F9;
+            --bs-border-color: rgba(255, 255, 255, 0.1);
+            --bs-link-color-rgb: 232, 213, 163;
+
+            /* Text Emphasis (Dark) */
+            --bs-primary-text-emphasis: #E8D5A3;
+            --bs-secondary-text-emphasis: #94A3B8;
+            --bs-light-text-emphasis: #F1F5F9;
+            --bs-dark-text-emphasis: #94A3B8;
         }
 
         /* Override framework accent to match wedding brand */
         .theme-gold .btn-primary,
         .theme-gold .btn.btn-primary,
         .theme-gold .badge.bg-primary {
-            background: linear-gradient(135deg, var(--wedding-pink), var(--wedding-pink-dark)) !important;
-            border-color: var(--wedding-pink-dark) !important;
+            background: linear-gradient(135deg, var(--adminuiux-theme-1), var(--adminuiux-theme-1-hover)) !important;
+            border-color: var(--adminuiux-theme-1-hover) !important;
+            color: var(--adminuiux-theme-1-text) !important;
         }
 
         .theme-gold .btn-primary:hover,
         .theme-gold .btn.btn-primary:hover {
-            box-shadow: 0 4px 14px rgba(255, 107, 129, 0.35);
+            box-shadow: 0 4px 14px rgba(198, 169, 98, 0.35);
         }
 
         .theme-gold .text-primary,
         .theme-gold .link-primary {
-            color: var(--wedding-pink-dark) !important;
+            color: var(--adminuiux-theme-1) !important;
         }
 
         .theme-gold .nav-pills .nav-link.active {
-            background: linear-gradient(135deg, var(--wedding-pink), var(--wedding-pink-dark)) !important;
-            color: #fff !important;
+            background: linear-gradient(135deg, var(--adminuiux-theme-1), var(--adminuiux-theme-1-hover)) !important;
+            color: var(--adminuiux-theme-1-text) !important;
         }
 
         .theme-gold .form-check-input:checked {
-            background-color: var(--wedding-pink-dark);
-            border-color: var(--wedding-pink-dark);
+            background-color: var(--adminuiux-theme-1);
+            border-color: var(--adminuiux-theme-1);
         }
 
         .theme-gold .form-control:focus,
         .theme-gold .form-select:focus {
-            border-color: var(--wedding-pink);
-            box-shadow: 0 0 0 0.2rem rgba(255, 107, 129, 0.25);
+            border-color: var(--adminuiux-theme-1);
+            box-shadow: 0 0 0 0.2rem rgba(198, 169, 98, 0.25);
         }
 
         .theme-gold .page-link {
-            color: var(--wedding-navy);
+            color: var(--adminuiux-text);
         }
 
         .theme-gold .page-item.active .page-link {
-            background-color: var(--wedding-pink-dark);
-            border-color: var(--wedding-pink-dark);
+            background-color: var(--adminuiux-theme-1);
+            border-color: var(--adminuiux-theme-1);
+            color: var(--adminuiux-theme-1-text);
         }
 
         .theme-gold .progress-bar {
-            background: linear-gradient(135deg, var(--wedding-pink), var(--wedding-pink-dark));
+            background: linear-gradient(135deg, var(--adminuiux-theme-1), var(--adminuiux-theme-1-hover));
         }
 
         /* Card accents */
         .theme-gold .card.border-start {
-            border-left-color: var(--wedding-pink) !important;
+            border-left-color: var(--adminuiux-theme-1) !important;
         }
 
         .theme-gold .card.border-top {
-            border-top-color: var(--wedding-pink) !important;
+            border-top-color: var(--adminuiux-theme-1) !important;
         }
 
         /* =============================================
-           MUSIC PLAYER
-        ============================================= */
+       MUSIC PLAYER
+    ============================================= */
         .wedding-music-player {
             position: fixed;
             bottom: 20px;
@@ -129,7 +237,7 @@
         }
 
         [data-bs-theme="dark"] .music-player-inner {
-            background: rgba(33, 37, 41, 0.95);
+            background: rgba(17, 24, 39, 0.95);
             border-color: rgba(255, 255, 255, 0.1);
         }
 
@@ -138,14 +246,14 @@
             height: 44px;
             border-radius: 50%;
             border: none;
-            background: linear-gradient(135deg, var(--wedding-pink, #FF6B81), var(--wedding-pink-dark, #e84a6a));
-            color: #fff;
+            background: linear-gradient(135deg, var(--adminuiux-theme-1), var(--adminuiux-theme-1-hover));
+            color: var(--adminuiux-theme-1-text);
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
             flex-shrink: 0;
-            box-shadow: 0 4px 12px rgba(255, 107, 129, 0.4);
+            box-shadow: 0 4px 12px rgba(198, 169, 98, 0.4);
             transition: transform 0.2s ease;
         }
 
@@ -182,13 +290,15 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            color: #1e293b;
+            color: var(--adminuiux-text);
         }
 
         .music-artist {
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            color: var(--adminuiux-text);
+            opacity: 0.7;
         }
 
         .music-player-controls {
@@ -197,13 +307,14 @@
 
         .music-progress {
             height: 4px;
-            accent-color: var(--wedding-pink, #FF6B81);
+            accent-color: var(--adminuiux-theme-1);
             cursor: pointer;
         }
 
         .music-time {
             font-size: 10px;
             white-space: nowrap;
+            color: var(--adminuiux-text);
         }
 
         .music-volume-control {
@@ -237,12 +348,16 @@
             .music-volume {
                 width: 60px;
                 height: 4px;
-                accent-color: var(--wedding-pink, #FF6B81);
+                accent-color: var(--adminuiux-theme-1);
                 cursor: pointer;
             }
         }
 
         @media (max-width: 575.98px) {
+            .adminuiux-wrap {
+                margin-bottom: 100px;
+            }
+
             .wedding-music-player {
                 bottom: 80px;
                 left: 10px;
@@ -308,21 +423,79 @@
         }
 
         @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        /* =============================================
+       ADMINUIUX CARD PREMIUM OVERRIDE
+    ============================================= */
+        .adminuiux-card {
+            border: 1px solid var(--bs-border-color) !important;
+            border-radius: 16px !important;
+            /* Sudut lebih membulat */
+            background-color: var(--adminuiux-bg-2) !important;
+            color: var(--adminuiux-text) !important;
+            transition: all 0.3s ease-in-out !important;
+            box-shadow: 0 4px 20px rgba(27, 42, 74, 0.04) !important;
+            overflow: hidden;
+        }
+
+        /* Efek Hover untuk Kartu Statistik */
+        .adminuiux-card.h-100:hover {
+            transform: translateY(-5px) !important;
+            box-shadow: 0 12px 30px rgba(27, 42, 74, 0.08) !important;
+            border-color: rgba(198, 169, 98, 0.3) !important;
+            /* Border sedapat emas saat di-hover */
+        }
+
+        /* Header Kartu */
+        .adminuiux-card .card-header {
+            background-color: transparent !important;
+            border-bottom: 1px solid var(--bs-border-color) !important;
+            padding: 1rem 1.25rem !important;
+            font-family: var(--adminuiux-title-font) !important;
+            font-weight: 600 !important;
+        }
+
+        /* Body Kartu */
+        .adminuiux-card .card-body {
+            padding: 1.25rem !important;
+        }
+
+        /* Avatar di dalam kartu (Ikon) */
+        .adminuiux-card .avatar {
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            border-radius: 12px !important;
+        }
+
+        /* Penyesuaian untuk Dark Mode */
+        [data-bs-theme="dark"] .adminuiux-card {
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2) !important;
+        }
+
+        [data-bs-theme="dark"] .adminuiux-card.h-100:hover {
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4) !important;
+            border-color: rgba(232, 213, 163, 0.3) !important;
         }
     </style>
 </head>
 <!-- roundedui -->
-<body class="main-bg main-bg-opac main-bg-blur adminuiux-sidebar-fill-white adminuiux-sidebar-boxed  theme-teal adminuiux-header-standard adminuiux-sidebar-iconic adminuiux-header-transparent scrolldown"
-      data-theme="theme-teal"
-      data-sidebarfill="adminuiux-sidebar-fill-white"
-      data-headerlayout="adminuiux-header-standard"
-      data-sidebarlayout="adminuiux-sidebar-iconic"
-      data-bs-spy="scroll"
-      data-bs-target="#list-example"
-      data-bs-smooth-scroll="true"
-      tabindex="0">
+
+<body
+    class="main-bg main-bg-opac main-bg-blur adminuiux-sidebar-fill-white adminuiux-sidebar-boxed theme-gold adminuiux-header-standard adminuiux-sidebar-iconic adminuiux-header-transparent scrolldown"
+    data-theme="theme-gold" data-sidebarfill="adminuiux-sidebar-fill-white"
+    data-headerlayout="adminuiux-header-standard" data-sidebarlayout="adminuiux-sidebar-iconic" data-bs-spy="scroll"
+    data-bs-target="#list-example" data-bs-smooth-scroll="true" tabindex="0">
 
     {{-- Header --}}
     @include('layouts.partial.header')
@@ -393,10 +566,10 @@
                 .replace(/\b\w/g, c => c.toUpperCase());
 
             const breadcrumb = document.getElementById('currentPage');
-            const pageTitle  = document.getElementById('pageTitle');
+            const pageTitle = document.getElementById('pageTitle');
 
             if (breadcrumb) breadcrumb.textContent = pageName;
-            if (pageTitle)  pageTitle.textContent  = pageName;
+            if (pageTitle) pageTitle.textContent = pageName;
 
             document.getElementById('dynamicTitle').textContent =
                 '{{ config("app.name", "WeddingInv") }} — ' + pageName;
@@ -435,9 +608,9 @@
             }
         }
     </script>
-    
-   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-<script src="{{ asset('assets/js/component/component-toasts.js') }}"></script>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="{{ asset('assets/js/component/component-toasts.js') }}"></script>
 
 </body>
 

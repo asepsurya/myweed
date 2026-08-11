@@ -1,11 +1,7 @@
 <?php
 
-use App\Http\Controllers\AiChatController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\GoogleController;
-use App\Http\Controllers\Auth\NewPasswordController;
-use App\Http\Controllers\Auth\PasswordResetLinkController;
-use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\GiftController;
@@ -18,8 +14,9 @@ use App\Http\Controllers\TempelateController;
 use App\Http\Controllers\TemplateCreatorController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserInvitationController;
-use App\Http\Controllers\WeedingPlanController;
 use App\Http\Controllers\WeddingController;
+use App\Http\Controllers\WeedingPlanController;
+use Illuminate\Support\Facades\File;
 
 Route::get('/', [LandingController::class, 'index'])->name('landing');
 
@@ -45,10 +42,13 @@ Route::middleware('auth')->group(function () {
 
 });
 
-require __DIR__ . '/auth.php';
+require __DIR__.'/auth.php';
 
 Route::get('/templates/{slug}/{id}', [TempelateController::class, 'preview'])->name('template.preview');
 Route::get('/demo/{slug}', [TempelateController::class, 'demo'])->name('template.demo');
+Route::get('/preview/{slug}/{id}', function ($slug, $id) {
+    return view('pages.template-preview', compact('slug', 'id'));
+})->name('template.frame');
 Route::any('/invitation/live-preview', [TempelateController::class, 'liveUpdate'])->name('invitation.live-preview');
 Route::post('/templates/{template}/like', [TempelateController::class, 'like'])->name('template.like');
 
@@ -75,19 +75,19 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/templates/{template}', [TempelateController::class, 'destroy'])->name('templates.destroy');
 
     Route::middleware(['role:admin'])->prefix('template-creator')->group(function () {
-        Route::get('/', [App\Http\Controllers\TemplateCreatorController::class, 'index'])->name('template-creator.index');
-        Route::get('/create', [App\Http\Controllers\TemplateCreatorController::class, 'create'])->name('template-creator.create');
-        Route::post('/generate', [App\Http\Controllers\TemplateCreatorController::class, 'generateWithAI'])->name('template-creator.generate');
+        Route::get('/', [TemplateCreatorController::class, 'index'])->name('template-creator.index');
+        Route::get('/create', [TemplateCreatorController::class, 'create'])->name('template-creator.create');
+        Route::post('/generate', [TemplateCreatorController::class, 'generateWithAI'])->name('template-creator.generate');
         Route::get('/generate', function () {
             return redirect()->route('template-creator.index');
         });
-        Route::post('/improve-prompt', [App\Http\Controllers\TemplateCreatorController::class, 'improvePrompt'])->name('template-creator.improve-prompt');
-        Route::post('/', [App\Http\Controllers\TemplateCreatorController::class, 'store'])->name('template-creator.store');
-        Route::get('/{template}/edit', [App\Http\Controllers\TemplateCreatorController::class, 'edit'])->name('template-creator.edit');
-        Route::put('/{template}', [App\Http\Controllers\TemplateCreatorController::class, 'update'])->name('template-creator.update');
-        Route::delete('/{template}', [App\Http\Controllers\TemplateCreatorController::class, 'destroy'])->name('template-creator.destroy');
-        Route::get('/{template}/preview', [App\Http\Controllers\TemplateCreatorController::class, 'preview'])->name('template-creator.preview');
-        Route::post('/preview-code', [App\Http\Controllers\TemplateCreatorController::class, 'previewCode'])->name('template-creator.preview-code');
+        Route::post('/improve-prompt', [TemplateCreatorController::class, 'improvePrompt'])->name('template-creator.improve-prompt');
+        Route::post('/', [TemplateCreatorController::class, 'store'])->name('template-creator.store');
+        Route::get('/{template}/edit', [TemplateCreatorController::class, 'edit'])->name('template-creator.edit');
+        Route::put('/{template}', [TemplateCreatorController::class, 'update'])->name('template-creator.update');
+        Route::delete('/{template}', [TemplateCreatorController::class, 'destroy'])->name('template-creator.destroy');
+        Route::get('/{template}/preview', [TemplateCreatorController::class, 'preview'])->name('template-creator.preview');
+        Route::post('/preview-code', [TemplateCreatorController::class, 'previewCode'])->name('template-creator.preview-code');
     });
 
     Route::get('/categories', [CategoryController::class, 'index'])->middleware('role:admin')->name('categories.index');
@@ -99,9 +99,9 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/template-assets/{slug}/{path}', function ($slug, $path) {
         $basePath = resource_path("views/templates/$slug");
-        $filePath = realpath($basePath . '/' . ltrim($path, '/'));
+        $filePath = realpath($basePath.'/'.ltrim($path, '/'));
 
-        if (!$filePath || strpos($filePath, realpath($basePath)) !== 0 || !\Illuminate\Support\Facades\File::exists($filePath)) {
+        if (! $filePath || strpos($filePath, realpath($basePath)) !== 0 || ! File::exists($filePath)) {
             abort(404);
         }
 
@@ -127,6 +127,15 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/subscription-plans', [SubscriptionPlanController::class, 'index'])->name('subscribe.page');
     Route::get('/subscription-plans/{planId}', [SubscriptionPlanController::class, 'subscribe'])->name('subscribe');
     Route::get('/payments', [SubscriptionPlanController::class, 'paymentIndex'])->name('payments.index');
+
+    Route::middleware('role:admin')->prefix('admin/subscription-plans')->name('subscription-plans.')->group(function () {
+        Route::get('/', [SubscriptionPlanController::class, 'adminIndex'])->name('index');
+        Route::get('/create', [SubscriptionPlanController::class, 'create'])->name('create');
+        Route::post('/', [SubscriptionPlanController::class, 'store'])->name('store');
+        Route::get('/{subscriptionPlan}/edit', [SubscriptionPlanController::class, 'edit'])->name('edit');
+        Route::put('/{subscriptionPlan}', [SubscriptionPlanController::class, 'update'])->name('update');
+        Route::delete('/{subscriptionPlan}', [SubscriptionPlanController::class, 'destroy'])->name('destroy');
+    });
 
     Route::get('/weeding-plan', [WeedingPlanController::class, 'index'])->name('weeding-plan.index');
     Route::get('/weeding-plan/create', [WeedingPlanController::class, 'create'])->name('weeding-plan.create');
@@ -158,8 +167,6 @@ Route::get('/bantuan', [LandingController::class, 'bantuan'])->name('pages.bantu
 Route::get('/kebijakan-privasi', [LandingController::class, 'kebijakanPrivasi'])->name('pages.kebijakan-privasi');
 
 Route::get('/{slug}', [WeddingController::class, 'show'])->where('slug', '[A-Za-z0-9\-]+')->name('invitation.show');
-
-
 
 Route::get('/payment/success', [SubscriptionPlanController::class, 'success'])->name('payment.success');
 Route::get('/payment/failed', [SubscriptionPlanController::class, 'failed'])->name('payment.failed');

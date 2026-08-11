@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Rsvp;
 use App\Models\Invitation;
+use App\Models\Rsvp;
 use Illuminate\Http\Request;
 
 class RsvpController extends Controller
@@ -13,7 +13,7 @@ class RsvpController extends Controller
         $user = auth()->user();
         $activeInvitationId = request('list');
 
-        if (!$activeInvitationId) {
+        if (! $activeInvitationId) {
             if ($user->isAdmin()) {
                 $activeInvitationId = Invitation::first()?->id;
             } else {
@@ -68,7 +68,7 @@ class RsvpController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'RSVP berhasil dikirim!'
+            'message' => 'RSVP berhasil dikirim!',
         ]);
     }
 
@@ -76,6 +76,7 @@ class RsvpController extends Controller
     {
         $invitation = Invitation::findOrFail($invitationId);
         $rsvps = Rsvp::where('invitation_id', $invitation->id)->latest()->get();
+
         return response()->json($rsvps);
     }
 

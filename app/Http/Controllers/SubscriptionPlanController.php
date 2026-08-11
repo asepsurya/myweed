@@ -2,58 +2,126 @@
 
 namespace App\Http\Controllers;
 
-use Midtrans\Snap;
 use App\Models\Payment;
-use Midtrans\Notification;
 use App\Models\Subscription;
-use Illuminate\Http\Request;
 use App\Models\SubscriptionPlan;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use App\Http\Controllers\Controller;
+use Midtrans\Notification;
+use Midtrans\Snap;
 
-class subscriptionPlanController extends Controller
+class SubscriptionPlanController extends Controller
 {
     public function index()
     {
         $plans = SubscriptionPlan::all();
+
         return view('dashboard.subscriptions.index', compact('plans'));
     }
+
+    public function adminIndex()
+    {
+        $plans = SubscriptionPlan::all();
+
+        return view('dashboard.subscription-plans.index', compact('plans'));
+    }
+
+    public function create()
+    {
+        return view('dashboard.subscription-plans.create');
+    }
+
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'slug' => 'required|string|max:255|unique:subscription_plans,slug',
+            'price' => 'required|integer|min:0',
+            'duration' => 'required|integer|min:1',
+            'description' => 'nullable|string',
+            'is_free' => 'nullable|boolean',
+        ]);
+
+        $validated['is_free'] = $request->has('is_free');
+        $validated['price'] = $validated['is_free'] ? 0 : $validated['price'];
+
+        if ($request->filled('description')) {
+            $validated['description'] = json_encode(
+                array_filter(array_map('trim', explode("\n", $request->description)))
+            );
+        } else {
+            $validated['description'] = json_encode([]);
+        }
+
+        SubscriptionPlan::create($validated);
+
+        return redirect()->route('subscribe.page')->with('success', 'Paket berhasil ditambahkan.');
+    }
+
+    public function edit(SubscriptionPlan $subscriptionPlan)
+    {
+        return view('dashboard.subscription-plans.edit', compact('subscriptionPlan'));
+    }
+
+    public function update(Request $request, SubscriptionPlan $subscriptionPlan)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'slug' => 'required|string|max:255|unique:subscription_plans,slug,'.$subscriptionPlan->id,
+            'price' => 'required|integer|min:0',
+            'duration' => 'required|integer|min:1',
+            'description' => 'nullable|string',
+            'is_free' => 'nullable|boolean',
+        ]);
+
+        $validated['is_free'] = $request->has('is_free');
+        $validated['price'] = $validated['is_free'] ? 0 : $validated['price'];
+
+        if ($request->filled('description')) {
+            $validated['description'] = json_encode(
+                array_filter(array_map('trim', explode("\n", $request->description)))
+            );
+        } else {
+            $validated['description'] = json_encode([]);
+        }
+
+        $subscriptionPlan->update($validated);
+
+        return redirect()->route('subscribe.page')->with('success', 'Paket berhasil diperbarui.');
+    }
+
+    public function destroy(SubscriptionPlan $subscriptionPlan)
+    {
+        $subscriptionPlan->delete();
+
+        return redirect()->route('subscribe.page')->with('success', 'Paket berhasil dihapus.');
+    }
+
     public function subscribe($planId)
     {
-        // $plan = SubscriptionPlan::findOrFail($planId);
-
-        // Subscription::updateOrCreate(
-        //     ['user_id' => auth()->id()],
-        //     [
-        //         'subscription_plan_id' => $plan->id,
-        //         'start_date' => now(),
-        //         'end_date' => now()->addDays($plan->duration),
-        //         'is_active' => true
-        //     ]
-        // );
-
-        // return redirect()->back()->with('success', 'Berhasil berlangganan!');
         $plan = SubscriptionPlan::findOrFail($planId);
-        if ($plan->slug == 'basic') {
+
+        if ($plan->is_free) {
             Subscription::updateOrCreate(
                 ['user_id' => auth()->id()],
                 [
-                    'subscription_plan_id' => 1,
+                    'subscription_plan_id' => $plan->id,
                     'start_date' => now(),
                     'end_date' => now()->addDays($plan->duration),
-                    'is_active' => true
+                    'is_active' => true,
                 ]
             );
-            return redirect()->back()->with('success', 'Berhasil berlangganan!');
+
+            return redirect()->back()->with('success', 'Berhasil berlangganan paket gratis!');
         } else {
-            $orderId = 'SUB-' . time() . '-' . auth()->id();
+            $orderId = 'SUB-'.time().'-'.auth()->id();
 
             $payment = Payment::create([
                 'user_id' => auth()->id(),
                 'subscription_plan_id' => $plan->id,
                 'order_id' => $orderId,
                 'amount' => $plan->price,
-                'status' => 'pending'
+                'status' => 'pending',
             ]);
 
             $params = [
@@ -72,23 +140,20 @@ class subscriptionPlanController extends Controller
 
             return view('dashboard.payment.checkout', compact('snapToken', 'plan'));
         }
-
     }
 
     public function callback(Request $request)
     {
         Log::info('MIDTRANS CALLBACK HIT', $request->all());
 
-        // Ambil notifikasi Midtrans
-        $notification = new Notification();
+        $notification = new Notification;
 
         $orderId = $notification->order_id;
         $status = $notification->transaction_status;
 
-        // Cari payment (JANGAN firstOrFail)
         $payment = Payment::where('order_id', $orderId)->first();
 
-        if (!$payment) {
+        if (! $payment) {
             return response()->json(['message' => 'Payment not found'], 404);
         }
 
@@ -96,10 +161,9 @@ class subscriptionPlanController extends Controller
 
             $plan = SubscriptionPlan::find($payment->subscription_plan_id);
 
-            if (!$plan) {
+            if (! $plan) {
                 return response()->json(['message' => 'Plan not found'], 404);
             }
-
 
             $subscription = Subscription::where('user_id', $payment->user_id)->first();
 
@@ -117,16 +181,16 @@ class subscriptionPlanController extends Controller
                     'subscription_plan_id' => $plan->id,
                     'start_date' => $startDate,
                     'end_date' => $endDate,
-                    'is_active' => true
+                    'is_active' => true,
                 ]
             );
 
             $payment->update(['status' => 'paid']);
         }
 
-        // WAJIB return cepat
         return response()->json(['success' => true], 200);
     }
+
     public function success(Request $request)
     {
         $orderId = $request->get('order_id');
@@ -152,8 +216,7 @@ class subscriptionPlanController extends Controller
     {
         $query = Payment::with('subscriptionPlan');
 
-        // user biasa
-        if (!auth()->user()->hasRole('admin')) {
+        if (! auth()->user()->hasRole('admin')) {
             $query->where('user_id', auth()->id());
         }
 
@@ -169,5 +232,4 @@ class subscriptionPlanController extends Controller
 
         return view('payment.index', compact('payments'));
     }
-
 }

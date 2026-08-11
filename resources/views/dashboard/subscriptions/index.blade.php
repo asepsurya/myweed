@@ -154,23 +154,23 @@
 
                         <div class="mt-auto text-center">
                           @php
-                                $usedFree = $plan->id == 1 && !empty($subscription?->subscription_plan_id);
-                            @endphp
+                                $usedFree = $plan->is_free && !empty($subscription?->subscription_plan_id);
+                        @endphp
 
-                            @if($usedFree)
-                                <button class="btn btn-secondary btn-custom w-100" disabled>
-                                    Paket Free Sudah Digunakan
-                                </button>
-                            @else
-                                <a href="{{ route('subscribe', $plan->id) }}"
-                                class="btn {{ $plan->slug === 'pro' ? 'btn-primary' : 'btn-outline-primary' }} btn-custom w-100">
+                        @if($usedFree)
+                            <button class="btn btn-secondary btn-custom w-100" disabled>
+                                Paket Free Sudah Digunakan
+                            </button>
+                        @else
+                            <a href="{{ route('subscribe', $plan->id) }}"
+                            class="btn {{ $plan->slug === 'pro' ? 'btn-primary' : 'btn-outline-primary' }} btn-custom w-100">
 
-                                    {{ auth()->user()->subscription?->end_date?->isFuture()
-                                        ? 'Perpanjang Paket'
-                                        : 'Aktifkan Paket'
-                                    }}
-                                </a>
-                            @endif
+                                {{ auth()->user()->subscription?->end_date?->isFuture()
+                                    ? 'Perpanjang Paket'
+                                    : 'Aktifkan Paket'
+                                }}
+                            </a>
+                        @endif
                         </div>
                     </div>
                 </div>

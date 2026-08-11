@@ -12,7 +12,7 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap"
         rel="stylesheet">
-
+    <link rel="icon" type="image/png" href="{{ asset('assets/fav.png') }}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
@@ -37,9 +37,13 @@
             --font-display: 'Playfair Display', Georgia, serif;
         }
 
-        * { box-sizing: border-box; }
+        * {
+            box-sizing: border-box;
+        }
 
-        html { scroll-behavior: smooth; }
+        html {
+            scroll-behavior: smooth;
+        }
 
         body {
             font-family: var(--font);
@@ -51,30 +55,86 @@
             overflow-x: hidden;
         }
 
-        a { text-decoration: none; color: inherit; transition: all var(--speed) ease; }
+        a {
+            text-decoration: none;
+            color: inherit;
+            transition: all var(--speed) ease;
+        }
 
-        h1, h2, h3, h4 { font-family: var(--font-display); }
+        h1,
+        h2,
+        h3,
+        h4 {
+            font-family: var(--font-display);
+        }
 
         @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
+
         @keyframes fadeInDown {
-            from { opacity: 0; transform: translateY(-20px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
+
         @keyframes float {
-            0%, 100% { transform: translateY(0) translateX(0); }
-            50% { transform: translateY(-15px) translateX(5px); }
+
+            0%,
+            100% {
+                transform: translateY(0) translateX(0);
+            }
+
+            50% {
+                transform: translateY(-15px) translateX(5px);
+            }
         }
+
         @keyframes pulseSoft {
-            0%, 100% { transform: scale(1); opacity: 0.5; }
-            50% { transform: scale(1.05); opacity: 0.8; }
+
+            0%,
+            100% {
+                transform: scale(1);
+                opacity: 0.5;
+            }
+
+            50% {
+                transform: scale(1.05);
+                opacity: 0.8;
+            }
         }
+
         @keyframes bounce {
-            0%, 20%, 50%, 80%, 100% { transform: translateY(0) translateX(-50%); }
-            40% { transform: translateY(-10px) translateX(-50%); }
-            60% { transform: translateY(-5px) translateX(-50%); }
+
+            0%,
+            20%,
+            50%,
+            80%,
+            100% {
+                transform: translateY(0) translateX(-50%);
+            }
+
+            40% {
+                transform: translateY(-10px) translateX(-50%);
+            }
+
+            60% {
+                transform: translateY(-5px) translateX(-50%);
+            }
         }
 
         .reveal {
@@ -82,8 +142,13 @@
             transform: translateY(40px);
             transition: opacity 0.8s cubic-bezier(0.25, 1, 0.5, 1), transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
         }
-        .reveal.active { opacity: 1; transform: translateY(0); }
 
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Navbar */
         .navbar {
             padding: 1.5rem 0;
             background: transparent;
@@ -94,6 +159,7 @@
             z-index: 1000;
             transition: all var(--speed) ease;
         }
+
         .navbar.scrolled {
             padding: 1rem 0;
             background: rgba(255, 255, 255, 0.95);
@@ -101,15 +167,38 @@
             border-bottom: 1px solid var(--border);
             box-shadow: 0 4px 20px rgba(27, 42, 74, 0.05);
         }
+
         .navbar-brand {
-            font-family: var(--font-display);
-            font-weight: 700;
-            font-size: 1.8rem;
-            color: var(--white) !important;
-            transition: color var(--speed);
+            display: inline-flex;
+            align-items: center;
+            padding: 0;
+            margin: 0;
         }
-        .navbar.scrolled .navbar-brand { color: var(--navy) !important; }
-        .navbar-brand span { color: var(--gold); }
+
+        /* Sistem pertukaran logo */
+        .navbar-brand img {
+            height: 40px;
+            width: auto;
+            transition: opacity var(--speed) ease;
+        }
+
+        .navbar-brand .logo-white {
+            display: none;
+        }
+
+        .navbar-brand .logo-dark {
+            display: block;
+        }
+
+        /* Saat navbar di atas (background gelap), tampilkan logo putih */
+        .navbar:not(.scrolled) .navbar-brand .logo-white {
+            display: block;
+        }
+
+        .navbar:not(.scrolled) .navbar-brand .logo-dark {
+            display: none;
+        }
+
         .nav-link {
             font-weight: 500;
             color: rgba(255, 255, 255, 0.8) !important;
@@ -117,9 +206,19 @@
             font-size: 0.9rem;
             position: relative;
         }
-        .navbar.scrolled .nav-link { color: var(--text-secondary) !important; }
-        .nav-link:hover { color: var(--gold-light) !important; }
-        .navbar.scrolled .nav-link:hover { color: var(--gold-dark) !important; }
+
+        .navbar.scrolled .nav-link {
+            color: var(--text-secondary) !important;
+        }
+
+        .nav-link:hover {
+            color: var(--gold-light) !important;
+        }
+
+        .navbar.scrolled .nav-link:hover {
+            color: var(--gold-dark) !important;
+        }
+
         .btn-gold {
             background: linear-gradient(135deg, var(--gold), var(--gold-dark));
             color: var(--white) !important;
@@ -131,12 +230,14 @@
             transition: all var(--speed);
             box-shadow: 0 4px 15px rgba(198, 169, 98, 0.3);
         }
+
         .btn-gold:hover {
             transform: translateY(-3px) scale(1.02);
             box-shadow: 0 8px 25px rgba(198, 169, 98, 0.5);
             color: var(--white) !important;
         }
 
+        /* Page Header */
         .page-header {
             min-height: 50vh;
             display: flex;
@@ -149,6 +250,7 @@
             overflow: hidden;
             padding: 120px 0 80px;
         }
+
         .page-header-shape {
             position: absolute;
             border-radius: 50%;
@@ -156,20 +258,93 @@
             z-index: 1;
             animation: float 10s infinite ease-in-out;
         }
-        .page-header-shape.shape-1 { width: 300px; height: 300px; top: -80px; left: -80px; }
-        .page-header-shape.shape-2 { width: 200px; height: 200px; bottom: -40px; right: -40px; border-color: rgba(255, 255, 255, 0.1); animation-direction: reverse; animation-duration: 12s; }
-        .page-header-content { position: relative; z-index: 2; max-width: 700px; }
-        .page-header h1 { font-size: 3rem; font-weight: 600; margin-bottom: 1rem; letter-spacing: -1px; animation: fadeInUp 1s ease-out forwards; }
-        .page-header p { font-size: 1.1rem; color: rgba(255, 255, 255, 0.8); font-weight: 300; animation: fadeInUp 1s ease-out 0.3s forwards; opacity: 0; }
-        .breadcrumb { justify-content: center; animation: fadeInUp 1s ease-out 0.5s forwards; opacity: 0; }
-        .breadcrumb-item a { color: var(--gold-light); }
-        .breadcrumb-item.active { color: rgba(255, 255, 255, 0.7); }
 
-        .content-section { padding: 80px 0; background: var(--white); }
-        .content-section.alt { background: var(--bg); }
-        .section-title { font-size: 2.2rem; font-weight: 600; color: var(--navy); margin-bottom: 1rem; }
-        .section-subtitle { color: var(--gold-dark); font-weight: 600; font-size: 0.85rem; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 0.5rem; display: block; }
-        .section-desc { color: var(--text-secondary); max-width: 600px; margin: 0 auto; line-height: 1.7; }
+        .page-header-shape.shape-1 {
+            width: 300px;
+            height: 300px;
+            top: -80px;
+            left: -80px;
+        }
+
+        .page-header-shape.shape-2 {
+            width: 200px;
+            height: 200px;
+            bottom: -40px;
+            right: -40px;
+            border-color: rgba(255, 255, 255, 0.1);
+            animation-direction: reverse;
+            animation-duration: 12s;
+        }
+
+        .page-header-content {
+            position: relative;
+            z-index: 2;
+            max-width: 700px;
+        }
+
+        .page-header h1 {
+            font-size: 3rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            letter-spacing: -1px;
+            animation: fadeInUp 1s ease-out forwards;
+        }
+
+        .page-header p {
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 300;
+            animation: fadeInUp 1s ease-out 0.3s forwards;
+            opacity: 0;
+        }
+
+        .breadcrumb {
+            justify-content: center;
+            animation: fadeInUp 1s ease-out 0.5s forwards;
+            opacity: 0;
+        }
+
+        .breadcrumb-item a {
+            color: var(--gold-light);
+        }
+
+        .breadcrumb-item.active {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* Content Sections */
+        .content-section {
+            padding: 80px 0;
+            background: var(--white);
+        }
+
+        .content-section.alt {
+            background: var(--bg);
+        }
+
+        .section-title {
+            font-size: 2.2rem;
+            font-weight: 600;
+            color: var(--navy);
+            margin-bottom: 1rem;
+        }
+
+        .section-subtitle {
+            color: var(--gold-dark);
+            font-weight: 600;
+            font-size: 0.85rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .section-desc {
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.7;
+        }
 
         .theme-card {
             background: var(--white);
@@ -179,7 +354,13 @@
             transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1);
             height: 100%;
         }
-        .theme-card:hover { transform: translateY(-10px); border-color: var(--gold-light); box-shadow: 0 20px 50px rgba(27, 42, 74, 0.1); }
+
+        .theme-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--gold-light);
+            box-shadow: 0 20px 50px rgba(27, 42, 74, 0.1);
+        }
+
         .theme-card-img {
             aspect-ratio: 4/3;
             background: var(--bg);
@@ -191,20 +372,34 @@
             position: relative;
             overflow: hidden;
         }
+
         .theme-card-img::after {
             content: '';
             position: absolute;
             inset: 0;
-            background: linear-gradient(to bottom, transparent 60%, rgba(27,42,74,0.3));
+            background: linear-gradient(to bottom, transparent 60%, rgba(27, 42, 74, 0.3));
         }
-        .theme-card-body { padding: 1.5rem; }
-        .theme-card-body h5 { color: var(--navy); margin-bottom: 0.5rem; }
-        .theme-card-body p { color: var(--text-secondary); font-size: 0.9rem; margin: 0; }
+
+        .theme-card-body {
+            padding: 1.5rem;
+        }
+
+        .theme-card-body h5 {
+            color: var(--navy);
+            margin-bottom: 0.5rem;
+        }
+
+        .theme-card-body p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin: 0;
+        }
+
         .theme-badge {
             display: inline-block;
             padding: 0.25rem 0.75rem;
             border-radius: 50px;
-            background: rgba(198,169,98,0.1);
+            background: rgba(198, 169, 98, 0.1);
             color: var(--gold-dark);
             font-size: 0.75rem;
             font-weight: 600;
@@ -218,7 +413,11 @@
             padding: 1rem 0;
             scrollbar-width: none;
         }
-        .category-scroll::-webkit-scrollbar { display: none; }
+
+        .category-scroll::-webkit-scrollbar {
+            display: none;
+        }
+
         .category-chip {
             flex: 0 0 auto;
             padding: 0.75rem 1.5rem;
@@ -232,7 +431,9 @@
             cursor: pointer;
             text-decoration: none;
         }
-        .category-chip:hover, .category-chip.active {
+
+        .category-chip:hover,
+        .category-chip.active {
             background: var(--navy);
             color: var(--white);
             border-color: var(--navy);
@@ -244,21 +445,37 @@
             margin: 0 auto;
             position: relative;
         }
-        .search-box form { position: relative; }
+
+        .search-box form {
+            position: relative;
+        }
+
         .search-box input {
             width: 100%;
             padding: 1rem 1.5rem 1rem 3rem;
             border-radius: 50px;
             border: 1.5px solid var(--border);
             background: var(--white);
-            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
             font-family: var(--font);
             font-size: 0.95rem;
             outline: none;
             transition: all var(--speed);
         }
-        .search-box input:focus { border-color: var(--gold); box-shadow: 0 0 0 4px rgba(198,169,98,0.2); }
-        .search-box i { position: absolute; left: 1.25rem; top: 50%; transform: translateY(-50%); color: var(--text-muted); }
+
+        .search-box input:focus {
+            border-color: var(--gold);
+            box-shadow: 0 0 0 4px rgba(198, 169, 98, 0.2);
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 1.25rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+        }
+
         .search-box .btn-search {
             position: absolute;
             right: 8px;
@@ -279,12 +496,14 @@
             gap: 30px;
             padding: 20px 0;
         }
+
         .template-card {
             border-radius: var(--radius);
             overflow: hidden;
             transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1);
             background: transparent;
         }
+
         .template-img-container {
             aspect-ratio: 4/3;
             border-radius: var(--radius);
@@ -293,13 +512,18 @@
             background: var(--bg);
             border: 1px solid var(--border);
         }
+
         .template-img-container img {
             width: 100%;
             height: 100%;
             object-fit: cover;
             transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
         }
-        .template-card:hover .template-img-container img { transform: scale(1.08); }
+
+        .template-card:hover .template-img-container img {
+            transform: scale(1.08);
+        }
+
         .template-overlay {
             position: absolute;
             inset: 0;
@@ -312,18 +536,49 @@
             transition: opacity 0.4s ease;
             gap: 10px;
         }
-        .template-card:hover .template-overlay { opacity: 1; }
+
+        .template-card:hover .template-overlay {
+            opacity: 1;
+        }
+
         .template-footer {
             padding: 12px 4px;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
-        .user-info { display: flex; align-items: center; gap: 8px; }
-        .user-avatar { width: 24px; height: 24px; border-radius: 50%; background: var(--border); }
-        .user-name { font-size: 0.85rem; font-weight: 700; color: var(--navy); }
-        .card-stats { display: flex; gap: 10px; font-size: 0.75rem; font-weight: 600; color: var(--text-secondary); }
-        .card-stats i { font-size: 0.85rem; }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .user-avatar {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--border);
+        }
+
+        .user-name {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--navy);
+        }
+
+        .card-stats {
+            display: flex;
+            gap: 10px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .card-stats i {
+            font-size: 0.85rem;
+        }
+
         .badge-pro {
             background: var(--gold);
             color: white;
@@ -339,43 +594,145 @@
             border-radius: var(--radius-lg);
             padding: 2rem;
         }
-        .info-box h4 { color: var(--navy); margin-bottom: 0.75rem; }
-        .info-box p { color: var(--text-secondary); margin: 0; line-height: 1.7; }
 
-        .feature-list { list-style: none; padding: 0; }
-        .feature-list li { padding: 0.75rem 0; padding-left: 2.5rem; position: relative; color: var(--text-secondary); }
-        .feature-list li i { position: absolute; left: 0; top: 0.85rem; color: var(--gold); font-size: 1.1rem; }
+        .info-box h4 {
+            color: var(--navy);
+            margin-bottom: 0.75rem;
+        }
 
+        .info-box p {
+            color: var(--text-secondary);
+            margin: 0;
+            line-height: 1.7;
+        }
+
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .feature-list li {
+            padding: 0.75rem 0;
+            padding-left: 2.5rem;
+            position: relative;
+            color: var(--text-secondary);
+        }
+
+        .feature-list li i {
+            position: absolute;
+            left: 0;
+            top: 0.85rem;
+            color: var(--gold);
+            font-size: 1.1rem;
+        }
+
+        /* Footer */
         footer {
             background: var(--bg-alt);
             border-top: 1px solid var(--border);
             padding: 80px 0 30px;
         }
-        .footer-logo { font-family: var(--font-display); font-weight: 700; font-size: 1.8rem; margin-bottom: 1.5rem; display: block; color: var(--navy); }
-        .footer-logo span { color: var(--gold); }
-        .footer-links { list-style: none; padding: 0; }
-        .footer-links li { margin-bottom: 0.8rem; font-size: 0.9rem; }
-        .footer-links li a { color: var(--text-secondary); display: inline-block; transition: transform 0.2s ease; }
-        .footer-links li a:hover { color: var(--gold-dark); transform: translateX(5px); }
-        .footer-heading { font-family: var(--font); font-weight: 700; color: var(--navy); margin-bottom: 1.5rem; font-size: 0.95rem; text-transform: uppercase; letter-spacing: 1px; }
-        .footer-social { display: flex; gap: 12px; margin-top: 1.5rem; }
-        .social-btn { width: 40px; height: 40px; border-radius: 50%; background: var(--bg); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; color: var(--navy); font-size: 1rem; transition: all var(--speed); }
-        .social-btn:hover { background: var(--navy); color: var(--white); transform: translateY(-5px) rotate(5deg); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
-        .footer-bottom { border-top: 1px solid var(--border); margin-top: 60px; padding-top: 30px; text-align: center; color: var(--text-muted); font-size: 0.85rem; }
+
+        .footer-logo {
+            display: inline-block;
+            margin-bottom: 1.5rem;
+        }
+
+        .footer-logo img {
+            height: 40px;
+            width: auto;
+        }
+
+        .footer-links {
+            list-style: none;
+            padding: 0;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.8rem;
+            font-size: 0.9rem;
+        }
+
+        .footer-links li a {
+            color: var(--text-secondary);
+            display: inline-block;
+            transition: transform 0.2s ease;
+        }
+
+        .footer-links li a:hover {
+            color: var(--gold-dark);
+            transform: translateX(5px);
+        }
+
+        .footer-heading {
+            font-family: var(--font);
+            font-weight: 700;
+            color: var(--navy);
+            margin-bottom: 1.5rem;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .footer-social {
+            display: flex;
+            gap: 12px;
+            margin-top: 1.5rem;
+        }
+
+        .social-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--navy);
+            font-size: 1rem;
+            transition: all var(--speed);
+        }
+
+        .social-btn:hover {
+            background: var(--navy);
+            color: var(--white);
+            transform: translateY(-5px) rotate(5deg);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .footer-bottom {
+            border-top: 1px solid var(--border);
+            margin-top: 60px;
+            padding-top: 30px;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
 
         @media (max-width: 768px) {
-            .page-header h1 { font-size: 2rem; }
-            .section-title { font-size: 1.8rem; }
+            .page-header h1 {
+                font-size: 2rem;
+            }
+
+            .section-title {
+                font-size: 1.8rem;
+            }
         }
     </style>
 </head>
 
 <body>
 
+    <!-- Navbar -->
     <nav class="navbar navbar-expand-lg" id="mainNav">
         <div class="container">
-            <a class="navbar-brand" href="{{ route('landing') }}">Wedding<span>Inv</span>.</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" style="border-color: rgba(255,255,255,0.3);">
+            <a class="navbar-brand" href="{{ route('landing') }}">
+                <img src="{{ asset('assets/logo-white.png') }}" alt="Logo WeddingInv" class="logo-white">
+                <img src="{{ asset('assets/logo.png') }}" alt="Logo WeddingInv" class="logo-dark">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                style="border-color: rgba(255,255,255,0.3);">
                 <span class="navbar-toggler-icon" style="filter: invert(1);"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
@@ -397,6 +754,7 @@
         </div>
     </nav>
 
+    <!-- Page Header -->
     <section class="page-header">
         <div class="page-header-shape shape-1"></div>
         <div class="page-header-shape shape-2"></div>
@@ -412,6 +770,7 @@
         </div>
     </section>
 
+    <!-- Templates Section -->
     <section class="content-section">
         <div class="container">
             <div class="text-center mb-5 reveal">
@@ -421,10 +780,11 @@
             </div>
 
             <div class="category-scroll mb-5 reveal">
-                <a href="{{ route('pages.cari-tema') }}" class="category-chip {{ !request('category') || request('category') == 'All' ? 'active' : '' }}">Semua</a>
+                <a href="{{ route('pages.cari-tema') }}"
+                    class="category-chip {{ !request('category') || request('category') == 'All' ? 'active' : '' }}">Semua</a>
                 @foreach($categories as $cat)
                     <a href="{{ route('pages.cari-tema', ['category' => $cat['name']]) }}#templates"
-                       class="category-chip {{ request('category') == $cat['name'] ? 'active' : '' }}">
+                        class="category-chip {{ request('category') == $cat['name'] ? 'active' : '' }}">
                         {{ $cat['name'] }}
                     </a>
                 @endforeach
@@ -435,7 +795,8 @@
                     <input type="hidden" name="category" value="{{ request('category') }}">
                 @endif
                 <i class="bi bi-search"></i>
-                <input type="text" name="search" placeholder="Cari tema... (contoh: Rustic, Modern, Floral)" value="{{ request('search') }}">
+                <input type="text" name="search" placeholder="Cari tema... (contoh: Rustic, Modern, Floral)"
+                    value="{{ request('search') }}">
                 <button type="submit" class="btn-search">Cari</button>
             </form>
 
@@ -446,15 +807,15 @@
                             <img src="{{ $template->thumbnail ? asset('storage/' . $template->thumbnail) : 'https://placehold.co/600x450?text=No+Thumbnail' }}"
                                 alt="{{ $template->name }}" loading="lazy">
                             <div class="template-overlay">
-                                <a href="{{ route('template.preview', ['slug' => 'romeo-juliet', 'id' => $template->id]) }}" target="_blank"
-                                    class="btn btn-light rounded-pill px-4 fw-bold shadow-sm">Pratinjau</a>
+                                <a href="{{ route('template.preview', ['slug' => 'romeo-juliet', 'id' => $template->id]) }}"
+                                    target="_blank" class="btn btn-light rounded-pill px-4 fw-bold shadow-sm">Pratinjau</a>
                                 <a href="{{ route('dashboard.user') }}?template_id={{ $template->id }}"
                                     class="btn btn-gold rounded-pill px-4 fw-bold shadow-sm">Gunakan</a>
                             </div>
                         </div>
                         <div class="template-footer">
                             <div class="user-info">
-                                <img src="https://ui-avatars.com/api/?name={{ urlencode($template->name) }}&background=random"
+                                <img src="https://ui-avatars.com/api/?name={{urlencode($template->name)}}&background=random"
                                     class="user-avatar" alt="">
                                 <span class="user-name">{{ $template->name }}</span>
                                 @if($loop->index % 4 == 0)
@@ -479,22 +840,26 @@
                     <i class="bi bi-search text-muted display-1 opacity-25"></i>
                     <h3 class="text-muted mt-3">Tema tidak ditemukan</h3>
                     <p>Coba gunakan kata kunci lain atau lihat semua tema.</p>
-                    <a href="{{ route('pages.cari-tema') }}" class="btn btn-outline-dark mt-2 rounded-pill px-4">Lihat Semua Tema</a>
+                    <a href="{{ route('pages.cari-tema') }}" class="btn btn-outline-dark mt-2 rounded-pill px-4">Lihat Semua
+                        Tema</a>
                 </div>
             @endif
         </div>
     </section>
 
+    <!-- Tips Section -->
     <section class="content-section alt">
         <div class="container">
             <div class="row align-items-center g-5">
                 <div class="col-lg-6 reveal">
                     <span class="section-subtitle">Tips Memilih Tema</span>
                     <h2 class="section-title">Pilih Tema yang Tepat</h2>
-                    <p class="text-secondary mb-4">Tema yang tepat akan membuat undangan Anda terlihat lebih personal dan berkesan.</p>
+                    <p class="text-secondary mb-4">Tema yang tepat akan membuat undangan Anda terlihat lebih personal
+                        dan berkesan.</p>
                     <ul class="feature-list">
                         <li><i class="bi bi-check-circle-fill"></i> Sesuaikan dengan tema pernikahan Anda</li>
-                        <li><i class="bi bi-check-circle-fill"></i> Pertimbangkan warna yang cocok dengan dress code</li>
+                        <li><i class="bi bi-check-circle-fill"></i> Pertimbangkan warna yang cocok dengan dress code
+                        </li>
                         <li><i class="bi bi-check-circle-fill"></i> Pilih tema yang mudah dibaca di semua perangkat</li>
                         <li><i class="bi bi-check-circle-fill"></i> Gunakan pratinjau live sebelum memutuskan</li>
                     </ul>
@@ -502,31 +867,40 @@
                 <div class="col-lg-6 reveal" style="transition-delay: 0.2s;">
                     <div class="info-box">
                         <h4><i class="bi bi-lightbulb-fill text-warning me-2"></i>Siap Berkreasi?</h4>
-                        <p>Jangan ragu untuk meminta bantuan tim kami dalam memilih tema yang paling cocok. Kami akan membantu Anda menemukan desain yang sempurna untuk momen spesial Anda.</p>
+                        <p>Jangan ragu untuk meminta bantuan tim kami dalam memilih tema yang paling cocok. Kami akan
+                            membantu Anda menemukan desain yang sempurna untuk momen spesial Anda.</p>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
+    <!-- CTA Section -->
     <section class="content-section text-center">
         <div class="container">
             <div class="reveal">
                 <h2 class="section-title">Temukan Tema Favorit Anda</h2>
-                <p class="section-desc mx-auto mb-4">Jelajahi galeri lengkap dengan puluhan tema eksklusif di halaman utama.</p>
-                <a href="{{ route('landing') }}#templates" class="btn-gold" style="font-size: 1rem; padding: 1rem 2.5rem;">
+                <p class="section-desc mx-auto mb-4">Jelajahi galeri lengkap dengan puluhan tema eksklusif di halaman
+                    utama.</p>
+                <a href="{{ route('landing') }}#templates" class="btn-gold"
+                    style="font-size: 1rem; padding: 1rem 2.5rem;">
                     Lihat Semua Tema <i class="bi bi-arrow-right ms-2"></i>
                 </a>
             </div>
         </div>
     </section>
 
+    <!-- Footer -->
     <footer>
         <div class="container">
             <div class="row gy-5">
                 <div class="col-lg-4 reveal">
-                    <a href="#" class="footer-logo">Wedding<span>Inv</span>.</a>
-                    <p class="text-secondary small" style="max-width: 350px;">Solusi undangan digital premium untuk pernikahan, khitanan, aqiqah, dan berbagai momen spesial lainnya. Praktis, elegan, dan hemat biaya.</p>
+                    <a href="#" class="footer-logo">
+                        <img src="{{ asset('assets/logo.png') }}" alt="Logo WeddingInv">
+                    </a>
+                    <p class="text-secondary small" style="max-width: 350px;">Solusi undangan digital premium untuk
+                        pernikahan, khitanan, aqiqah, dan berbagai momen spesial lainnya. Praktis, elegan, dan hemat
+                        biaya.</p>
                     <div class="footer-social">
                         <a href="#" class="social-btn"><i class="bi bi-instagram"></i></a>
                         <a href="#" class="social-btn"><i class="bi bi-facebook"></i></a>
@@ -563,7 +937,8 @@
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>&copy; 2024 WeddingInv Digital Invitation. Dibuat dengan <i class="bi bi-heart-fill text-danger"></i> di Indonesia.</p>
+                <p>&copy; 2024 WeddingInv Digital Invitation. Dibuat dengan <i class="bi bi-heart-fill text-danger"></i>
+                    di Indonesia.</p>
             </div>
         </div>
     </footer>
@@ -577,7 +952,7 @@
         });
 
         document.querySelectorAll('.category-chip').forEach(chip => {
-            chip.addEventListener('click', function(e) {
+            chip.addEventListener('click', function (e) {
                 document.querySelectorAll('.category-chip').forEach(c => c.classList.remove('active'));
                 this.classList.add('active');
             });

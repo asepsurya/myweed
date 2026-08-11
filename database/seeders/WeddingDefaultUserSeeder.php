@@ -4,10 +4,9 @@ namespace Database\Seeders;
 
 use App\Models\User;
 use Illuminate\Database\Seeder;
-use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Permission;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Spatie\Permission\Models\Role;
 
 class WeddingDefaultUserSeeder extends Seeder
 {
@@ -21,7 +20,7 @@ class WeddingDefaultUserSeeder extends Seeder
         $guestRole = Role::firstOrCreate(['name' => 'user']);
 
         // Admin (1x)
-        if (!User::where('email', 'admin@wedding.com')->exists()) {
+        if (! User::where('email', 'admin@wedding.com')->exists()) {
             $admin = User::create([
                 'name' => 'Admin Wedding',
                 'email' => 'admin@wedding.com',
@@ -33,7 +32,7 @@ class WeddingDefaultUserSeeder extends Seeder
         }
 
         // Guest/User (1x)
-        if (!User::where('email', 'user@wedding.com')->exists()) {
+        if (! User::where('email', 'user@wedding.com')->exists()) {
             $guest = User::create([
                 'name' => 'Tamu Undangan',
                 'email' => 'user@wedding.com',
@@ -43,6 +42,6 @@ class WeddingDefaultUserSeeder extends Seeder
             $guest->assignRole($guestRole);
         }
 
-         $admin->givePermissionTo(Permission::all());
+        $admin->givePermissionTo(Permission::all());
     }
 }

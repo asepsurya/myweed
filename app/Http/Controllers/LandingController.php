@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Template;
 use App\Models\Category;
+use App\Models\Invitation;
+use App\Models\Template;
 use Illuminate\Http\Request;
 
 class LandingController extends Controller
@@ -14,35 +15,35 @@ class LandingController extends Controller
 
         $query = Template::where('is_active', true)
             ->with('category');
-        
+
         if ($request->has('search')) {
             $search = $request->search;
-            $query->where(function($q) use ($search) {
+            $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%$search%")
-                  ->orWhereHas('category', function($q2) use ($search) {
-                      $q2->where('name', 'like', "%$search%");
-                  });
+                    ->orWhereHas('category', function ($q2) use ($search) {
+                        $q2->where('name', 'like', "%$search%");
+                    });
             });
         }
 
         if ($request->has('category') && $request->category != 'All') {
-            $query->whereHas('category', function($q) use ($request) {
+            $query->whereHas('category', function ($q) use ($request) {
                 $q->where('name', $request->category);
             });
         }
 
         $templates = $query->get();
-        
-        $invitations = \App\Models\Invitation::with(['template', 'galleries'])
+
+        $invitations = Invitation::with(['template', 'galleries'])
             ->latest()
             ->take(12)
             ->get();
-        
-        $categories = $realCategories->map(function($cat) {
+
+        $categories = $realCategories->map(function ($cat) {
             return [
                 'name' => $cat->name,
-                'count' => Template::where('id_category', $cat->id)->count() . '+',
-                'img' => 'https://picsum.photos/seed/' . strtolower($cat->name) . '/400/300'
+                'count' => Template::where('id_category', $cat->id)->count().'+',
+                'img' => 'https://picsum.photos/seed/'.strtolower($cat->name).'/400/300',
             ];
         });
 
@@ -78,26 +79,26 @@ class LandingController extends Controller
 
         if ($request->has('search')) {
             $search = $request->search;
-            $query->where(function($q) use ($search) {
+            $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%$search%")
-                  ->orWhereHas('category', function($q2) use ($search) {
-                      $q2->where('name', 'like', "%$search%");
-                  });
+                    ->orWhereHas('category', function ($q2) use ($search) {
+                        $q2->where('name', 'like', "%$search%");
+                    });
             });
         }
 
         if ($request->has('category') && $request->category != 'All') {
-            $query->whereHas('category', function($q) use ($request) {
+            $query->whereHas('category', function ($q) use ($request) {
                 $q->where('name', $request->category);
             });
         }
 
         $templates = $query->get();
 
-        $categories = $realCategories->map(function($cat) {
+        $categories = $realCategories->map(function ($cat) {
             return [
                 'name' => $cat->name,
-                'count' => Template::where('id_category', $cat->id)->count() . '+',
+                'count' => Template::where('id_category', $cat->id)->count().'+',
             ];
         });
 
@@ -111,7 +112,9 @@ class LandingController extends Controller
 
     public function harga()
     {
-        return view('pages.harga');
+        $plans = \App\Models\SubscriptionPlan::all();
+
+        return view('pages.harga', compact('plans'));
     }
 
     public function bantuan()

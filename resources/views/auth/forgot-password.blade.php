@@ -7,7 +7,7 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
     <title>Lupa Password — WeddingInv</title>
-    <link rel="icon" type="image/png" href="{{ asset('assets/img/favicon.png') }}">
+    <link rel="icon" type="image/png" href="{{ asset('assets/fav.png') }}">
 
     <link rel="preconnect" href="https://fonts.googleapis.com/">
     <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
@@ -120,18 +120,16 @@
             text-align: center;
         }
 
-        .card-brand {
-            font-family: var(--font-display);
-            font-size: 1.4rem;
-            font-weight: 700;
-            color: var(--navy);
+        .card-logo {
+            display: flex;
+            justify-content: center;
             margin-bottom: 1.25rem;
-            display: inline-block;
-            letter-spacing: -0.01em;
         }
 
-        .card-brand span {
-            color: var(--gold);
+        .card-logo img {
+            width: 160px;
+            /* Ukuran logo diatur disini */
+            height: auto;
         }
 
         .header-icon {
@@ -286,7 +284,8 @@
         .field-input {
             width: 100%;
             height: 52px;
-            padding: 0 1rem 0 1rem;
+            padding: 0 1rem 0 2.75rem;
+            /* Padding kiri diatur untuk memberi ruang ikon */
             border: 1.5px solid var(--border);
             border-radius: var(--radius);
             font-family: var(--font);
@@ -310,7 +309,8 @@
 
         .field-label {
             position: absolute;
-            left: 1rem;
+            left: 2.75rem;
+            /* Menyesuaikan dengan padding ikon kiri */
             top: 50%;
             transform: translateY(-50%);
             font-size: 0.88rem;
@@ -347,14 +347,6 @@
 
         .field-input:focus~.field-icon-left {
             color: var(--gold-dark);
-        }
-
-        .field.has-icon .field-input {
-            padding-left: 2.75rem;
-        }
-
-        .field.has-icon .field-label {
-            left: 2.75rem;
         }
 
         /* Valid */
@@ -670,7 +662,9 @@
     <div class="login-card">
         <!-- Header -->
         <div class="card-header">
-            <div class="card-brand">Wedding<span>Inv</span>.</div>
+            <div class="card-logo">
+                <img src="{{ asset('assets/logo.png') }}" alt="Logo WeddingInv">
+            </div>
             <div class="header-icon">
                 <i class="bi bi-envelope-paper"></i>
             </div>
@@ -709,7 +703,7 @@
                 @csrf
 
                 <!-- Email -->
-                <div class="field has-icon">
+                <div class="field">
                     <div class="field-input-wrap">
                         <input type="email" class="field-input @error('email') is-invalid @enderror" id="email"
                             name="email" placeholder=" " value="{{ old('email') }}" required autofocus

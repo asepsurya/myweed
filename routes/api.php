@@ -1,10 +1,10 @@
 <?php
 
+use App\Http\Controllers\AiChatController;
+use App\Http\Controllers\MusicController;
+use App\Http\Controllers\SubscriptionPlanController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\SubscriptionPlanController;
-use App\Http\Controllers\MusicController;
-use App\Http\Controllers\AiChatController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();

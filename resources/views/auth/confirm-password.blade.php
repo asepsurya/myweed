@@ -1,20 +1,29 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
     <title>Konfirmasi Password — WeddingInv</title>
-    <link rel="icon" type="image/png" href="{{ asset('assets/img/favicon.png') }}">
+    <link rel="icon" type="image/png" href="{{ asset('assets/fav.png') }}">
 
     <link rel="preconnect" href="https://fonts.googleapis.com/">
     <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap"
+        rel="stylesheet">
 
     <style>
-        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
 
         :root {
             --gold: #C6A962;
@@ -40,7 +49,9 @@
             --font-display: 'Playfair Display', Georgia, serif;
         }
 
-        html { height: 100%; }
+        html {
+            height: 100%;
+        }
 
         body {
             font-family: var(--font);
@@ -59,18 +70,22 @@
         body::before {
             content: '';
             position: absolute;
-            top: -30%; right: -20%;
-            width: 600px; height: 600px;
-            background: radial-gradient(circle, rgba(198,169,98,0.07) 0%, transparent 70%);
+            top: -30%;
+            right: -20%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(198, 169, 98, 0.07) 0%, transparent 70%);
             pointer-events: none;
         }
 
         body::after {
             content: '';
             position: absolute;
-            bottom: -25%; left: -15%;
-            width: 500px; height: 500px;
-            background: radial-gradient(circle, rgba(27,42,74,0.04) 0%, transparent 70%);
+            bottom: -25%;
+            left: -15%;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(27, 42, 74, 0.04) 0%, transparent 70%);
             pointer-events: none;
         }
 
@@ -88,8 +103,15 @@
         }
 
         @keyframes cardIn {
-            from { opacity: 0; transform: translateY(20px) scale(0.98); }
-            to   { opacity: 1; transform: translateY(0) scale(1); }
+            from {
+                opacity: 0;
+                transform: translateY(20px) scale(0.98);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
         }
 
         /* ===== Header ===== */
@@ -98,18 +120,21 @@
             text-align: center;
         }
 
-        .card-brand {
-            font-family: var(--font-display);
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--navy);
+        .card-logo {
+            display: flex;
+            justify-content: center;
             margin-bottom: 1.5rem;
-            display: inline-block;
         }
-        .card-brand span { color: var(--gold); }
+
+        .card-logo img {
+            width: 160px;
+            /* Ukuran logo diatur disini */
+            height: auto;
+        }
 
         .verify-icon {
-            width: 72px; height: 72px;
+            width: 72px;
+            height: 72px;
             border-radius: 50%;
             background: linear-gradient(135deg, #EFF6FF, #DBEAFE);
             border: 2px solid #BFDBFE;
@@ -154,12 +179,14 @@
             margin-bottom: 1.5rem;
             animation: fadeUp 0.4s ease;
         }
+
         .info-box i {
             font-size: 1rem;
             color: #2563EB;
             flex-shrink: 0;
             margin-top: 1px;
         }
+
         .info-box p {
             font-size: 0.8rem;
             color: #1E40AF;
@@ -168,8 +195,15 @@
         }
 
         @keyframes fadeUp {
-            from { opacity: 0; transform: translateY(8px); }
-            to   { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         /* ===== Form Field ===== */
@@ -192,18 +226,21 @@
             transition: border-color var(--speed), box-shadow var(--speed), background var(--speed);
         }
 
-        .field-input::placeholder { color: transparent; }
+        .field-input::placeholder {
+            color: transparent;
+        }
 
         .field-input:focus {
             border-color: var(--gold);
-            box-shadow: 0 0 0 3px rgba(198,169,98,0.12);
+            box-shadow: 0 0 0 3px rgba(198, 169, 98, 0.12);
             background: var(--white);
         }
 
         .field-label {
             position: absolute;
             left: 1rem;
-            top: 50%;
+            top: 25px;
+            /* Ubah dari 50% menjadi 25px (setengah dari tinggi input 50px) */
             transform: translateY(-50%);
             font-size: 0.9rem;
             color: var(--text-muted);
@@ -214,8 +251,8 @@
             border-radius: 4px;
         }
 
-        .field-input:focus + .field-label,
-        .field-input:not(:placeholder-shown) + .field-label {
+        .field-input:focus+.field-label,
+        .field-input:not(:placeholder-shown)+.field-label {
             top: 0;
             transform: translateY(-50%) scale(0.82);
             color: var(--gold-dark);
@@ -224,43 +261,91 @@
         }
 
         /* Valid */
-        .field-input.is-valid { border-color: var(--success); background: var(--success-bg); }
-        .field-input.is-valid:focus { box-shadow: 0 0 0 3px rgba(22,163,74,0.1); background: var(--white); }
-        .field-input.is-valid + .field-label { color: var(--success); }
+        .field-input.is-valid {
+            border-color: var(--success);
+            background: var(--success-bg);
+        }
+
+        .field-input.is-valid:focus {
+            box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.1);
+            background: var(--white);
+        }
+
+        .field-input.is-valid+.field-label {
+            color: var(--success);
+        }
 
         /* Invalid */
-        .field-input.is-invalid { border-color: var(--error); background: var(--error-bg); animation: shake 0.4s ease; }
-        .field-input.is-invalid:focus { box-shadow: 0 0 0 3px rgba(220,38,38,0.1); background: var(--white); }
-        .field-input.is-invalid + .field-label { color: var(--error); }
+        .field-input.is-invalid {
+            border-color: var(--error);
+            background: var(--error-bg);
+            animation: shake 0.4s ease;
+        }
+
+        .field-input.is-invalid:focus {
+            box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+            background: var(--white);
+        }
+
+        .field-input.is-invalid+.field-label {
+            color: var(--error);
+        }
 
         @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            20%  { transform: translateX(-5px); }
-            40%  { transform: translateX(5px); }
-            60%  { transform: translateX(-3px); }
-            80%  { transform: translateX(3px); }
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            20% {
+                transform: translateX(-5px);
+            }
+
+            40% {
+                transform: translateX(5px);
+            }
+
+            60% {
+                transform: translateX(-3px);
+            }
+
+            80% {
+                transform: translateX(3px);
+            }
         }
 
         /* Icon */
         .field-icon {
             position: absolute;
             right: 1rem;
-            top: 50%;
+            top: 25px;
+            /* Samakan dengan posisi label */
             transform: translateY(-50%);
             color: var(--text-muted);
             font-size: 1rem;
             pointer-events: none;
             transition: color var(--speed);
         }
-        .field-input:focus ~ .field-icon { color: var(--gold-dark); }
-        .field-input.is-valid ~ .field-icon { color: var(--success); }
-        .field-input.is-invalid ~ .field-icon { color: var(--error); }
+
+        .field-input:focus~.field-icon {
+            color: var(--gold-dark);
+        }
+
+        .field-input.is-valid~.field-icon {
+            color: var(--success);
+        }
+
+        .field-input.is-invalid~.field-icon {
+            color: var(--error);
+        }
 
         /* Password toggle */
         .pwd-toggle {
             position: absolute;
             right: 1rem;
-            top: 50%;
+            top: 25px;
+            /* Samakan dengan posisi label */
             transform: translateY(-50%);
             background: none;
             border: none;
@@ -272,10 +357,18 @@
             transition: color var(--speed);
             line-height: 1;
         }
-        .pwd-toggle:hover { color: var(--text); }
 
-        .field.has-toggle .field-input { padding-right: 3rem; }
-        .field.has-toggle .field-icon { right: 2.75rem; }
+        .pwd-toggle:hover {
+            color: var(--text);
+        }
+
+        .field.has-toggle .field-input {
+            padding-right: 3rem;
+        }
+
+        .field.has-toggle .field-icon {
+            right: 2.75rem;
+        }
 
         /* Error message */
         .field-error {
@@ -291,8 +384,17 @@
             overflow: hidden;
             transition: all var(--speed) ease;
         }
-        .field-error.show { opacity: 1; max-height: 2rem; margin-top: 0.4rem; }
-        .field-error i { font-size: 0.82rem; flex-shrink: 0; }
+
+        .field-error.show {
+            opacity: 1;
+            max-height: 2rem;
+            margin-top: 0.4rem;
+        }
+
+        .field-error i {
+            font-size: 0.82rem;
+            flex-shrink: 0;
+        }
 
         /* ===== Button ===== */
         .btn-submit {
@@ -313,23 +415,42 @@
             gap: 0.5rem;
             margin-top: 0.75rem;
         }
+
         .btn-submit:hover {
-            box-shadow: 0 6px 20px rgba(198,169,98,0.35);
+            box-shadow: 0 6px 20px rgba(198, 169, 98, 0.35);
             transform: translateY(-1px);
         }
-        .btn-submit:active { transform: translateY(0); }
-        .btn-submit:disabled { opacity: 0.65; cursor: not-allowed; transform: none; box-shadow: none; }
+
+        .btn-submit:active {
+            transform: translateY(0);
+        }
+
+        .btn-submit:disabled {
+            opacity: 0.65;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
         .btn-submit .spinner {
-            width: 1rem; height: 1rem;
-            border: 2px solid rgba(255,255,255,0.3);
+            width: 1rem;
+            height: 1rem;
+            border: 2px solid rgba(255, 255, 255, 0.3);
             border-top-color: var(--white);
             border-radius: 50%;
             animation: spin 0.6s linear infinite;
             display: none;
         }
-        .btn-submit.loading .spinner { display: block; }
 
-        @keyframes spin { to { transform: rotate(360deg); } }
+        .btn-submit.loading .spinner {
+            display: block;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
 
         /* ===== Footer ===== */
         .card-footer {
@@ -338,23 +459,30 @@
             font-size: 0.84rem;
             color: var(--text-secondary);
         }
+
         .card-footer a {
             color: var(--gold-dark);
             font-weight: 600;
             text-decoration: none;
             transition: color var(--speed);
         }
-        .card-footer a:hover { color: var(--navy); text-decoration: underline; }
+
+        .card-footer a:hover {
+            color: var(--navy);
+            text-decoration: underline;
+        }
 
         /* ===== Toast ===== */
         .toast-wrap {
             position: fixed;
-            top: 1.25rem; right: 1.25rem;
+            top: 1.25rem;
+            right: 1.25rem;
             z-index: 9999;
             display: flex;
             flex-direction: column;
             gap: 0.5rem;
         }
+
         .toast-item {
             display: flex;
             align-items: center;
@@ -364,31 +492,96 @@
             font-size: 0.84rem;
             font-weight: 500;
             color: var(--white);
-            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
             animation: toastIn 0.35s ease;
             min-width: 260px;
         }
-        .toast-item.error   { background: var(--error); }
-        .toast-item.success { background: var(--success); }
-        .toast-item.out { animation: toastOut 0.3s ease forwards; }
 
-        @keyframes toastIn  { from { opacity:0; transform:translateX(100%); } to { opacity:1; transform:translateX(0); } }
-        @keyframes toastOut { from { opacity:1; transform:translateX(0); } to { opacity:0; transform:translateX(100%); } }
+        .toast-item.error {
+            background: var(--error);
+        }
+
+        .toast-item.success {
+            background: var(--success);
+        }
+
+        .toast-item.out {
+            animation: toastOut 0.3s ease forwards;
+        }
+
+        @keyframes toastIn {
+            from {
+                opacity: 0;
+                transform: translateX(100%);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes toastOut {
+            from {
+                opacity: 1;
+                transform: translateX(0);
+            }
+
+            to {
+                opacity: 0;
+                transform: translateX(100%);
+            }
+        }
 
         /* ===== Responsive ===== */
         @media (max-width: 480px) {
-            body { padding: 1rem; }
-            .card-header { padding: 2rem 1.5rem 0; }
-            .card-body    { padding: 1.5rem 1.5rem 0.5rem; }
-            .card-footer  { padding: 1.1rem 1.5rem 1.5rem; }
-            .card-header h1 { font-size: 1.2rem; }
-            .verify-icon { width: 64px; height: 64px; font-size: 1.4rem; }
-            .field-input { height: 48px; font-size: 0.875rem; }
-            .btn-submit { height: 48px; }
+            body {
+                padding: 1rem;
+            }
+
+            .card-header {
+                padding: 2rem 1.5rem 0;
+            }
+
+            .card-body {
+                padding: 1.5rem 1.5rem 0.5rem;
+            }
+
+            .card-footer {
+                padding: 1.1rem 1.5rem 1.5rem;
+            }
+
+            .card-header h1 {
+                font-size: 1.2rem;
+            }
+
+            .verify-icon {
+                width: 64px;
+                height: 64px;
+                font-size: 1.4rem;
+            }
+
+            .field-input {
+                height: 48px;
+                font-size: 0.875rem;
+            }
+
+            .field-label,
+            .field-icon,
+            .pwd-toggle {
+                top: 24px;
+            }
+
+            /* Setengah dari 48px */
+            .btn-submit {
+                height: 48px;
+            }
         }
 
         @media (min-width: 1600px) {
-            .login-card { max-width: 460px; }
+            .login-card {
+                max-width: 460px;
+            }
         }
     </style>
 </head>
@@ -398,7 +591,9 @@
     <div class="login-card">
         <!-- Header -->
         <div class="card-header">
-            <div class="card-brand">Wedding<span>Inv</span>.</div>
+            <div class="card-logo">
+                <img src="{{ asset('assets/logo.png') }}" alt="Logo WeddingInv">
+            </div>
 
             <div class="verify-icon">
                 <i class="bi bi-shield-lock"></i>
@@ -414,7 +609,8 @@
             <!-- Info box -->
             <div class="info-box">
                 <i class="bi bi-info-circle-fill"></i>
-                <p>Ini adalah langkah keamanan tambahan. Masukkan password Anda untuk melanjutkan ke halaman yang diminta.</p>
+                <p>Ini adalah langkah keamanan tambahan. Masukkan password Anda untuk melanjutkan ke halaman yang
+                    diminta.</p>
             </div>
 
             <form method="POST" action="{{ route('password.confirm') }}" id="confirmForm" novalidate>
@@ -422,13 +618,8 @@
 
                 <!-- Password -->
                 <div class="field has-toggle">
-                    <input type="password"
-                        class="field-input @error('password') is-invalid @enderror"
-                        id="password"
-                        name="password"
-                        placeholder=" "
-                        required
-                        autocomplete="current-password">
+                    <input type="password" class="field-input @error('password') is-invalid @enderror" id="password"
+                        name="password" placeholder=" " required autocomplete="current-password">
                     <label class="field-label" for="password">Password</label>
                     <i class="bi bi-lock field-icon"></i>
                     <button type="button" class="pwd-toggle" id="togglePwd" aria-label="Tampilkan password">
@@ -459,13 +650,13 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            var form     = document.getElementById('confirmForm');
-            var btn      = document.getElementById('confirmBtn');
-            var btnText  = btn.querySelector('.btn-text');
-            var pwdEl    = document.getElementById('password');
-            var pwdErr   = document.getElementById('passwordError');
+            var form = document.getElementById('confirmForm');
+            var btn = document.getElementById('confirmBtn');
+            var btnText = btn.querySelector('.btn-text');
+            var pwdEl = document.getElementById('password');
+            var pwdErr = document.getElementById('passwordError');
             var togglePwd = document.getElementById('togglePwd');
-            var pwdIcon  = document.getElementById('pwdIcon');
+            var pwdIcon = document.getElementById('pwdIcon');
 
             /* ── Helpers ── */
             function setError(input, errEl, msg) {
@@ -542,4 +733,5 @@
         }
     </script>
 </body>
+
 </html>

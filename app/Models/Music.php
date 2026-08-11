@@ -32,16 +32,21 @@ class Music extends Model
     public function getFullAudioUrlAttribute()
     {
         $url = $this->attributes['music_url'] ?? $this->attributes['audio_url'] ?? null;
-        if (!$url) return null;
+        if (! $url) {
+            return null;
+        }
         if (filter_var($url, FILTER_VALIDATE_URL)) {
             return $url;
         }
+
         return Storage::disk('public')->url($url);
     }
 
     public function getFullCoverUrlAttribute()
     {
-        if (!$this->cover_url) return null;
+        if (! $this->cover_url) {
+            return null;
+        }
         if (filter_var($this->cover_url, FILTER_VALIDATE_URL)) {
             return $this->cover_url;
         }

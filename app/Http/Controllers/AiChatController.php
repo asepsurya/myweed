@@ -29,7 +29,7 @@ class AiChatController extends Controller
         $systemPrompt = $this->buildSystemPrompt($user);
 
         $messages = [];
-        if (!empty($systemPrompt)) {
+        if (! empty($systemPrompt)) {
             $messages[] = ['role' => 'system', 'content' => $systemPrompt];
         }
 
@@ -61,9 +61,9 @@ class AiChatController extends Controller
             $response = Http::timeout(120)
                 ->withHeaders(array_filter([
                     'Content-Type' => 'application/json',
-                    'Authorization' => $apiKey ? 'Bearer ' . $apiKey : null,
+                    'Authorization' => $apiKey ? 'Bearer '.$apiKey : null,
                 ]))
-                ->post($aiServerUrl . '/api/chat', $payload);
+                ->post($aiServerUrl.'/api/chat', $payload);
 
             if ($response->successful()) {
                 $data = $response->json();
@@ -101,7 +101,7 @@ class AiChatController extends Controller
 
     private function buildSystemPrompt($user): string
     {
-        $basePrompt = <<<PROMPT
+        $basePrompt = <<<'PROMPT'
 Kamu adalah asisten undangan pernikahan digital WeddingInv. Tugasmu adalah membantu pengguna membuat undangan pernikahan digital dengan mengumpulkan informasi berikut:
 1. Nama mempelai pria dan panggilan (opsional)
 2. Nama mempelai wanita dan panggilan (opsional)

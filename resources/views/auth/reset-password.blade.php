@@ -7,7 +7,7 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
     <title>Reset Password — WeddingInv</title>
-    <link rel="icon" type="image/png" href="{{ asset('assets/img/favicon.png') }}">
+    <link rel="icon" type="image/png" href="{{ asset('assets/fav.png') }}">
 
     <link rel="preconnect" href="https://fonts.googleapis.com/">
     <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
@@ -120,18 +120,16 @@
             text-align: center;
         }
 
-        .card-brand {
-            font-family: var(--font-display);
-            font-size: 1.4rem;
-            font-weight: 700;
-            color: var(--navy);
+        .card-logo {
+            display: flex;
+            justify-content: center;
             margin-bottom: 1.25rem;
-            display: inline-block;
-            letter-spacing: -0.01em;
         }
 
-        .card-brand span {
-            color: var(--gold);
+        .card-logo img {
+            width: 160px;
+            /* Ukuran logo diatur disini */
+            height: auto;
         }
 
         .header-icon {
@@ -286,7 +284,7 @@
         .field-input {
             width: 100%;
             height: 52px;
-            padding: 0 2.75rem 0 1rem;
+            padding: 0 2.75rem 0 2.75rem;
             border: 1.5px solid var(--border);
             border-radius: var(--radius);
             font-family: var(--font);
@@ -310,8 +308,9 @@
 
         .field-label {
             position: absolute;
-            left: 1rem;
-            top: 50%;
+            left: 2.75rem;
+            top: 26px;
+            /* Ubah dari 50% menjadi 26px (setengah dari tinggi input 52px) */
             transform: translateY(-50%);
             font-size: 0.88rem;
             color: var(--text-muted);
@@ -336,7 +335,8 @@
         .field-icon-left {
             position: absolute;
             left: 1rem;
-            top: 50%;
+            top: 26px;
+            /* Samakan dengan posisi label */
             transform: translateY(-50%);
             color: var(--text-muted);
             font-size: 0.95rem;
@@ -347,14 +347,6 @@
 
         .field-input:focus~.field-icon-left {
             color: var(--gold-dark);
-        }
-
-        .field.has-icon .field-input {
-            padding-left: 2.75rem;
-        }
-
-        .field.has-icon .field-label {
-            left: 2.75rem;
         }
 
         /* Valid */
@@ -424,7 +416,8 @@
         .pwd-toggle {
             position: absolute;
             right: 0.85rem;
-            top: 50%;
+            top: 26px;
+            /* Samakan dengan posisi label */
             transform: translateY(-50%);
             background: none;
             border: none;
@@ -441,14 +434,6 @@
         .pwd-toggle:hover {
             color: var(--text);
             background: var(--bg);
-        }
-
-        .field.has-toggle .field-input {
-            padding-right: 2.75rem;
-        }
-
-        .field.has-toggle .field-icon-left {
-            right: 2.75rem;
         }
 
         /* Error message */
@@ -737,6 +722,13 @@
                 font-size: 0.875rem;
             }
 
+            /* Setengah dari 50px adalah 25px */
+            .field-label,
+            .field-icon-left,
+            .pwd-toggle {
+                top: 25px;
+            }
+
             .btn-submit {
                 height: 50px;
             }
@@ -760,7 +752,9 @@
     <div class="login-card">
         <!-- Header -->
         <div class="card-header">
-            <div class="card-brand">Wedding<span>Inv</span>.</div>
+            <div class="card-logo">
+                <img src="{{ asset('assets/logo.png') }}" alt="Logo WeddingInv">
+            </div>
             <div class="header-icon">
                 <i class="bi bi-shield-lock-fill"></i>
             </div>

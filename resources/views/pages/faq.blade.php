@@ -12,7 +12,7 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap"
         rel="stylesheet">
-
+    <link rel="icon" type="image/png" href="{{ asset('assets/fav.png') }}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
@@ -73,6 +73,7 @@
                 opacity: 0;
                 transform: translateY(30px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -84,6 +85,7 @@
                 opacity: 0;
                 transform: translateY(-20px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -91,17 +93,29 @@
         }
 
         @keyframes float {
-            0%, 100% {
+
+            0%,
+            100% {
                 transform: translateY(0) translateX(0);
             }
+
             50% {
                 transform: translateY(-15px) translateX(5px);
             }
         }
 
         @keyframes pulseSoft {
-            0%, 100% { transform: scale(1); opacity: 0.5; }
-            50% { transform: scale(1.05); opacity: 0.8; }
+
+            0%,
+            100% {
+                transform: scale(1);
+                opacity: 0.5;
+            }
+
+            50% {
+                transform: scale(1.05);
+                opacity: 0.8;
+            }
         }
 
         .reveal {
@@ -109,11 +123,13 @@
             transform: translateY(40px);
             transition: opacity 0.8s cubic-bezier(0.25, 1, 0.5, 1), transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
         }
+
         .reveal.active {
             opacity: 1;
             transform: translateY(0);
         }
 
+        /* Navbar */
         .navbar {
             padding: 1.5rem 0;
             background: transparent;
@@ -134,19 +150,34 @@
         }
 
         .navbar-brand {
-            font-family: var(--font-display);
-            font-weight: 700;
-            font-size: 1.8rem;
-            color: var(--white) !important;
-            transition: color var(--speed);
+            display: inline-flex;
+            align-items: center;
+            padding: 0;
+            margin: 0;
         }
 
-        .navbar.scrolled .navbar-brand {
-            color: var(--navy) !important;
+        /* Sistem pertukaran logo */
+        .navbar-brand img {
+            height: 40px;
+            width: auto;
+            transition: opacity var(--speed) ease;
         }
 
-        .navbar-brand span {
-            color: var(--gold);
+        .navbar-brand .logo-white {
+            display: none;
+        }
+
+        .navbar-brand .logo-dark {
+            display: block;
+        }
+
+        /* Saat navbar di atas (background gelap), tampilkan logo putih */
+        .navbar:not(.scrolled) .navbar-brand .logo-white {
+            display: block;
+        }
+
+        .navbar:not(.scrolled) .navbar-brand .logo-dark {
+            display: none;
         }
 
         .nav-link {
@@ -187,6 +218,7 @@
             color: var(--white) !important;
         }
 
+        /* Page Header */
         .page-header {
             min-height: 50vh;
             display: flex;
@@ -261,6 +293,7 @@
             color: rgba(255, 255, 255, 0.7);
         }
 
+        /* Content Sections */
         .content-section {
             padding: 80px 0;
             background: var(--white);
@@ -294,6 +327,7 @@
             line-height: 1.7;
         }
 
+        /* Accordion */
         .accordion-item {
             border: 1px solid var(--border);
             border-radius: var(--radius) !important;
@@ -378,6 +412,7 @@
             color: var(--gold-dark);
         }
 
+        /* Footer */
         footer {
             background: var(--bg-alt);
             border-top: 1px solid var(--border);
@@ -385,16 +420,13 @@
         }
 
         .footer-logo {
-            font-family: var(--font-display);
-            font-weight: 700;
-            font-size: 1.8rem;
+            display: inline-block;
             margin-bottom: 1.5rem;
-            display: block;
-            color: var(--navy);
         }
 
-        .footer-logo span {
-            color: var(--gold);
+        .footer-logo img {
+            height: 40px;
+            width: auto;
         }
 
         .footer-links {
@@ -452,7 +484,7 @@
             background: var(--navy);
             color: var(--white);
             transform: translateY(-5px) rotate(5deg);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         }
 
         .footer-bottom {
@@ -468,6 +500,7 @@
             .page-header h1 {
                 font-size: 2rem;
             }
+
             .section-title {
                 font-size: 1.8rem;
             }
@@ -477,9 +510,13 @@
 
 <body>
 
+    <!-- Navbar -->
     <nav class="navbar navbar-expand-lg" id="mainNav">
         <div class="container">
-            <a class="navbar-brand" href="{{ route('landing') }}">Wedding<span>Inv</span>.</a>
+            <a class="navbar-brand" href="{{ route('landing') }}">
+                <img src="{{ asset('assets/logo-white.png') }}" alt="Logo WeddingInv" class="logo-white">
+                <img src="{{ asset('assets/logo.png') }}" alt="Logo WeddingInv" class="logo-dark">
+            </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                 style="border-color: rgba(255,255,255,0.3);">
                 <span class="navbar-toggler-icon" style="filter: invert(1);"></span>
@@ -503,6 +540,7 @@
         </div>
     </nav>
 
+    <!-- Page Header -->
     <section class="page-header">
         <div class="page-header-shape shape-1"></div>
         <div class="page-header-shape shape-2"></div>
@@ -518,6 +556,7 @@
         </div>
     </section>
 
+    <!-- FAQ Accordion Section -->
     <section class="content-section">
         <div class="container">
             <div class="row justify-content-center">
@@ -525,73 +564,98 @@
                     <div class="accordion reveal" id="faqAccordion">
                         <div class="accordion-item">
                             <h2 class="accordion-header" id="faq1">
-                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
                                     Apakah undangan digital ini bisa diakses di semua perangkat?
                                 </button>
                             </h2>
-                            <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="faq1" data-bs-parent="#faqAccordion">
+                            <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="faq1"
+                                data-bs-parent="#faqAccordion">
                                 <div class="accordion-body">
-                                    Ya, undangan digital WeddingInv didesain dengan teknologi mobile-first sehingga dapat dibuka dengan sempurna di smartphone, tablet, maupun desktop. Tamu Anda dapat membukanya kapan saja tanpa perlu mengunduh aplikasi.
+                                    Ya, undangan digital WeddingInv didesain dengan teknologi mobile-first sehingga
+                                    dapat dibuka dengan sempurna di smartphone, tablet, maupun desktop. Tamu Anda dapat
+                                    membukanya kapan saja tanpa perlu mengunduh aplikasi.
                                 </div>
                             </div>
                         </div>
                         <div class="accordion-item">
                             <h2 class="accordion-header" id="faq2">
-                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
                                     Berapa lama proses pembuatan undangan digital?
                                 </button>
                             </h2>
-                            <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="faq2" data-bs-parent="#faqAccordion">
+                            <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="faq2"
+                                data-bs-parent="#faqAccordion">
                                 <div class="accordion-body">
-                                    Proses pembuatan undangan sangat cepat. Hanya membutuhkan waktu 5-10 menit untuk memilih tema, mengisi data, dan mendapatkan tautan undangan yang siap dibagikan. Untuk paket premium dengan fitur tambahan, prosesnya bisa sedikit lebih lama tergantung kompleksitas permintaan.
+                                    Proses pembuatan undangan sangat cepat. Hanya membutuhkan waktu 5-10 menit untuk
+                                    memilih tema, mengisi data, dan mendapatkan tautan undangan yang siap dibagikan.
+                                    Untuk paket premium dengan fitur tambahan, prosesnya bisa sedikit lebih lama
+                                    tergantung kompleksitas permintaan.
                                 </div>
                             </div>
                         </div>
                         <div class="accordion-item">
                             <h2 class="accordion-header" id="faq3">
-                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
                                     Apakah saya bisa mengedit undangan setelah dibagikan?
                                 </button>
                             </h2>
-                            <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="faq3" data-bs-parent="#faqAccordion">
+                            <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="faq3"
+                                data-bs-parent="#faqAccordion">
                                 <div class="accordion-body">
-                                    Tentu! Anda dapat mengedit teks, mengganti foto, memperbarui lokasi, dan bahkan mengubah tema sewaktu-waktu. Perubahan akan langsung terlihat oleh tamu tanpa perlu membuat undangan baru.
+                                    Tentu! Anda dapat mengedit teks, mengganti foto, memperbarui lokasi, dan bahkan
+                                    mengubah tema sewaktu-waktu. Perubahan akan langsung terlihat oleh tamu tanpa perlu
+                                    membuat undangan baru.
                                 </div>
                             </div>
                         </div>
                         <div class="accordion-item">
                             <h2 class="accordion-header" id="faq4">
-                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
                                     Bagaimana cara membagikan undangan kepada tamu?
                                 </button>
                             </h2>
-                            <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="faq4" data-bs-parent="#faqAccordion">
+                            <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="faq4"
+                                data-bs-parent="#faqAccordion">
                                 <div class="accordion-body">
-                                    Setelah undangan siap, Anda akan mendapatkan tautan unik yang dapat dibagikan melalui WhatsApp, Instagram, Facebook, Telegram, atau media sosial lainnya. Anda juga dapat mencetk kode QR untuk ditempel di kartu undangan fisik.
+                                    Setelah undangan siap, Anda akan mendapatkan tautan unik yang dapat dibagikan
+                                    melalui WhatsApp, Instagram, Facebook, Telegram, atau media sosial lainnya. Anda
+                                    juga dapat mencetk kode QR untuk ditempel di kartu undangan fisik.
                                 </div>
                             </div>
                         </div>
                         <div class="accordion-item">
                             <h2 class="accordion-header" id="faq5">
-                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
                                     Apakah ada biaya bulanan atau tahunan?
                                 </button>
                             </h2>
-                            <div id="collapseFive" class="accordion-collapse collapse" aria-labelledby="faq5" data-bs-parent="#faqAccordion">
+                            <div id="collapseFive" class="accordion-collapse collapse" aria-labelledby="faq5"
+                                data-bs-parent="#faqAccordion">
                                 <div class="accordion-body">
-                                    Untuk paket gratis, tidak ada biaya bulanan maupun tahunan. Untuk paket premium, biaya dibebankan per undangan atau per paket tertentu. Anda bebas memilih paket yang sesuai dengan kebutuhan dan anggaran.
+                                    Untuk paket gratis, tidak ada biaya bulanan maupun tahunan. Untuk paket premium,
+                                    biaya dibebankan per undangan atau per paket tertentu. Anda bebas memilih paket yang
+                                    sesuai dengan kebutuhan dan anggaran.
                                 </div>
                             </div>
                         </div>
                         <div class="accordion-item">
                             <h2 class="accordion-header" id="faq6">
-                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSix" aria-expanded="false" aria-controls="collapseSix">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#collapseSix" aria-expanded="false" aria-controls="collapseSix">
                                     Bagaimana jika saya membutuhkan bantuan?
                                 </button>
                             </h2>
-                            <div id="collapseSix" class="accordion-collapse collapse" aria-labelledby="faq6" data-bs-parent="#faqAccordion">
+                            <div id="collapseSix" class="accordion-collapse collapse" aria-labelledby="faq6"
+                                data-bs-parent="#faqAccordion">
                                 <div class="accordion-body">
-                                    Tim support kami siap membantu Anda 24/7 melalui live chat, WhatsApp, dan email. Untuk paket premium, Anda juga mendapatkan dedicated support yang akan memandu proses pembuatan undangan dari awal hingga akhir.
+                                    Tim support kami siap membantu Anda 24/7 melalui live chat, WhatsApp, dan email.
+                                    Untuk paket premium, Anda juga mendapatkan dedicated support yang akan memandu
+                                    proses pembuatan undangan dari awal hingga akhir.
                                 </div>
                             </div>
                         </div>
@@ -601,6 +665,7 @@
         </div>
     </section>
 
+    <!-- Contact Section -->
     <section class="content-section alt">
         <div class="container">
             <div class="text-center mb-5 reveal">
@@ -634,12 +699,17 @@
         </div>
     </section>
 
+    <!-- Footer -->
     <footer>
         <div class="container">
             <div class="row gy-5">
                 <div class="col-lg-4 reveal">
-                    <a href="#" class="footer-logo">Wedding<span>Inv</span>.</a>
-                    <p class="text-secondary small" style="max-width: 350px;">Solusi undangan digital premium untuk pernikahan, khitanan, aqiqah, dan berbagai momen spesial lainnya. Praktis, elegan, dan hemat biaya.</p>
+                    <a href="#" class="footer-logo">
+                        <img src="{{ asset('assets/logo.png') }}" alt="Logo WeddingInv">
+                    </a>
+                    <p class="text-secondary small" style="max-width: 350px;">Solusi undangan digital premium untuk
+                        pernikahan, khitanan, aqiqah, dan berbagai momen spesial lainnya. Praktis, elegan, dan hemat
+                        biaya.</p>
                     <div class="footer-social">
                         <a href="#" class="social-btn"><i class="bi bi-instagram"></i></a>
                         <a href="#" class="social-btn"><i class="bi bi-facebook"></i></a>
@@ -676,7 +746,8 @@
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>&copy; 2024 WeddingInv Digital Invitation. Dibuat dengan <i class="bi bi-heart-fill text-danger"></i> di Indonesia.</p>
+                <p>&copy; 2024 WeddingInv Digital Invitation. Dibuat dengan <i class="bi bi-heart-fill text-danger"></i>
+                    di Indonesia.</p>
             </div>
         </div>
     </footer>

@@ -2,13 +2,10 @@
 
 namespace Database\Seeders;
 
-use App\Models\Music;
 use App\Models\Template;
 use Illuminate\Database\Seeder;
 use Illuminate\Http\File as HttpFile;
-use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
 class TempelateSeed extends Seeder
 {
@@ -65,11 +62,10 @@ class TempelateSeed extends Seeder
             ],
         ];
 
-
         foreach ($templates as $tpl) {
 
-            $thumbSource = public_path('tempelate/thumb/' . $tpl['thumb']);
-            $previewSource = public_path('tempelate/preview/' . $tpl['preview']);
+            $thumbSource = public_path('tempelate/thumb/'.$tpl['thumb']);
+            $previewSource = public_path('tempelate/preview/'.$tpl['preview']);
 
             // Simpan thumbnail
             $thumb = Storage::disk('public')->putFile(
@@ -89,13 +85,11 @@ class TempelateSeed extends Seeder
                     'name' => $tpl['name'],
                     'thumbnail' => $thumb,
                     'preview' => $preview,
-                    'sections' => ["hero", "couple", "event", "gallery", "rsvp", "music"],
-                    'is_active' => true
+                    'sections' => ['hero', 'couple', 'event', 'gallery', 'rsvp', 'music'],
+                    'is_active' => true,
                 ]
             );
         }
-
-
 
     }
 }

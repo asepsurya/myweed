@@ -2,8 +2,8 @@
 
 namespace App\Http\Middleware;
 
-use Closure;
 use App\Models\Invitation;
+use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -12,11 +12,11 @@ class InvitationSlugMiddleware
     /**
      * Handle an incoming request.
      *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+     * @param  Closure(Request): (Response)  $next
      */
     public function handle(Request $request, Closure $next): Response
     {
-          $slug = $request->route('slug');
+        $slug = $request->route('slug');
 
         // 🔒 Reserved routes (TIDAK BOLEH jadi slug)
         $reserved = [
@@ -31,7 +31,7 @@ class InvitationSlugMiddleware
         }
 
         // 🔍 Cek slug ada di database
-        if (!Invitation::where('slug', $slug)->exists()) {
+        if (! Invitation::where('slug', $slug)->exists()) {
             abort(404);
         }
 

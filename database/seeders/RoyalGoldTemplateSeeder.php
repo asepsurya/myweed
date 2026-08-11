@@ -3,8 +3,8 @@
 namespace Database\Seeders;
 
 use App\Models\Template;
-use Illuminate\Database\Seeder;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Illuminate\Database\Seeder;
 
 class RoyalGoldTemplateSeeder extends Seeder
 {
@@ -20,15 +20,16 @@ class RoyalGoldTemplateSeeder extends Seeder
 
         if ($exists) {
             $this->command->info('Template "Royal Gold" sudah ada, skip.');
+
             return;
         }
 
         Template::create([
-            'name'      => 'Royal Gold',
-            'slug'      => 'royal-gold',
+            'name' => 'Royal Gold',
+            'slug' => 'royal-gold',
             'thumbnail' => 'templates/royal-gold-thumb.png',  // Ganti dengan path thumbnail jika tersedia
-            'preview'   => null,                               // Ganti dengan path preview jika tersedia
-            'sections'  => ['hero', 'couple', 'event', 'gallery', 'rsvp', 'music'],
+            'preview' => null,                               // Ganti dengan path preview jika tersedia
+            'sections' => ['hero', 'couple', 'event', 'gallery', 'rsvp', 'music'],
             'is_active' => true,
         ]);
 

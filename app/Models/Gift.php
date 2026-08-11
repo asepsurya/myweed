@@ -6,12 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class Gift extends Model
 {
-     protected $fillable = [
+    protected $fillable = [
         'invitation_id',
         'bank',
         'number',
         'name',
-        'qr'
+        'qr',
     ];
 
     public function invitation()

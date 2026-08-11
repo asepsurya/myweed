@@ -1,13 +1,13 @@
 <?php
 
-use Illuminate\Foundation\Application;
+use App\Http\Middleware\CheckSubscription;
 use App\Http\Middleware\MidtransConfig;
 use App\Http\Middleware\RedirectByRole;
-use App\Http\Middleware\CheckSubscription;
-use Spatie\Permission\Middleware\RoleMiddleware;
+use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Spatie\Permission\Exceptions\UnauthorizedException;
+use Spatie\Permission\Middleware\RoleMiddleware;
 use Spatie\Permission\Middleware\RoleOrPermissionMiddleware;
 
 return Application::configure(basePath: dirname(__DIR__))
@@ -30,16 +30,16 @@ return Application::configure(basePath: dirname(__DIR__))
         });
 
     })->withMiddleware(function (Middleware $middleware): void {
-          $middleware->prependToGroup('guest', RedirectByRole::class);
-          $middleware->alias([
-                'role' => RoleMiddleware::class,
-                'permission' => PermissionMiddleware::class,
-                'role_or_permission' => RoleOrPermissionMiddleware::class,
-                'subscription' => CheckSubscription::class,
-                'midtrans' => MidtransConfig::class,
-            ]);
-            $middleware->append(MidtransConfig::class);
-            $middleware->validateCsrfTokens(except: [
-                'api/midtrans/callback',
-            ]);
+        $middleware->prependToGroup('guest', RedirectByRole::class);
+        $middleware->alias([
+            'role' => RoleMiddleware::class,
+            'permission' => PermissionMiddleware::class,
+            'role_or_permission' => RoleOrPermissionMiddleware::class,
+            'subscription' => CheckSubscription::class,
+            'midtrans' => MidtransConfig::class,
+        ]);
+        $middleware->append(MidtransConfig::class);
+        $middleware->validateCsrfTokens(except: [
+            'api/midtrans/callback',
+        ]);
     })->create();

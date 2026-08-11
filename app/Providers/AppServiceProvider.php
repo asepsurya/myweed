@@ -1,8 +1,10 @@
 <?php
 
 namespace App\Providers;
-use Midtrans\Config as MidtransConfig;
+
+use Illuminate\Pagination\Paginator;
 use Illuminate\Support\ServiceProvider;
+use Midtrans\Config as MidtransConfig;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -24,6 +26,6 @@ class AppServiceProvider extends ServiceProvider
         MidtransConfig::$isSanitized = true;
         MidtransConfig::$is3ds = true;
 
-        \Illuminate\Pagination\Paginator::useBootstrap();
+        Paginator::useBootstrap();
     }
 }

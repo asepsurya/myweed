@@ -5,7 +5,6 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Template extends Model
 {
@@ -40,7 +39,7 @@ class Template extends Model
 
     public function user()
     {
-        return $this->belongsTo(\App\Models\User::class, 'user_id');
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     public function invitations(): HasMany
@@ -52,10 +51,10 @@ class Template extends Model
     {
         return $query->where(function ($q) {
             $q->where('is_user_template', false)
-              ->orWhere(function ($q2) {
-                  $q2->where('is_user_template', true)
-                     ->where('user_id', auth()->id());
-              });
+                ->orWhere(function ($q2) {
+                    $q2->where('is_user_template', true)
+                        ->where('user_id', auth()->id());
+                });
         });
     }
 
@@ -63,7 +62,7 @@ class Template extends Model
     {
         return $query->where(function ($q) use ($userId) {
             $q->where('is_user_template', false)
-              ->orWhere('user_id', $userId);
+                ->orWhere('user_id', $userId);
         });
     }
 

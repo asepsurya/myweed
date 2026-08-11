@@ -6,18 +6,19 @@ use Illuminate\Database\Eloquent\Model;
 
 class Payment extends Model
 {
-     protected $table = 'payments';
+    protected $table = 'payments';
+
     protected $fillable = [
-            'user_id',
-            'subscription_plan_id',
-            'order_id',
-            'amount',
-            'transaction_status', // 🔥 WAJIB ADA
-            'payment_type',
-            'payload',
-            'paid_at',
-            'status',
-        ];
+        'user_id',
+        'subscription_plan_id',
+        'order_id',
+        'amount',
+        'transaction_status', // 🔥 WAJIB ADA
+        'payment_type',
+        'payload',
+        'paid_at',
+        'status',
+    ];
 
     protected $casts = [
         'payload' => 'array',
@@ -57,7 +58,7 @@ class Payment extends Model
         return in_array($this->transaction_status, ['deny', 'expire', 'cancel', 'failure']);
     }
 
-        public function subscriptionPlan()
+    public function subscriptionPlan()
     {
         return $this->belongsTo(SubscriptionPlan::class);
     }

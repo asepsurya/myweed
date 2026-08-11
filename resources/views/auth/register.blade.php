@@ -1,20 +1,29 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
     <title>Daftar — WeddingInv</title>
-    <link rel="icon" type="image/png" href="{{ asset('assets/img/favicon.png') }}">
+    <link rel="icon" type="image/png" href="{{ asset('assets/fav.png') }}">
 
     <link rel="preconnect" href="https://fonts.googleapis.com/">
     <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap"
+        rel="stylesheet">
 
     <style>
-        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
 
         :root {
             --gold: #C6A962;
@@ -40,7 +49,9 @@
             --font-display: 'Playfair Display', Georgia, serif;
         }
 
-        html { height: 100%; }
+        html {
+            height: 100%;
+        }
 
         body {
             font-family: var(--font);
@@ -59,18 +70,22 @@
         body::before {
             content: '';
             position: absolute;
-            top: -30%; right: -20%;
-            width: 600px; height: 600px;
-            background: radial-gradient(circle, rgba(198,169,98,0.07) 0%, transparent 70%);
+            top: -30%;
+            right: -20%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(198, 169, 98, 0.07) 0%, transparent 70%);
             pointer-events: none;
         }
 
         body::after {
             content: '';
             position: absolute;
-            bottom: -25%; left: -15%;
-            width: 500px; height: 500px;
-            background: radial-gradient(circle, rgba(27,42,74,0.04) 0%, transparent 70%);
+            bottom: -25%;
+            left: -15%;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(27, 42, 74, 0.04) 0%, transparent 70%);
             pointer-events: none;
         }
 
@@ -88,8 +103,15 @@
         }
 
         @keyframes cardIn {
-            from { opacity: 0; transform: translateY(20px) scale(0.98); }
-            to   { opacity: 1; transform: translateY(0) scale(1); }
+            from {
+                opacity: 0;
+                transform: translateY(20px) scale(0.98);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
         }
 
         /* ===== Header ===== */
@@ -98,15 +120,17 @@
             text-align: center;
         }
 
-        .card-brand {
-            font-family: var(--font-display);
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--navy);
-            margin-bottom: 1.1rem;
-            display: inline-block;
+        .card-logo {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 1.5rem;
         }
-        .card-brand span { color: var(--gold); }
+
+        .card-logo img {
+            width: 160px;
+            /* Ukuran logo diatur disini */
+            height: auto;
+        }
 
         .card-header h1 {
             font-family: var(--font-display);
@@ -140,13 +164,34 @@
             margin-bottom: 1.15rem;
             animation: fadeUp 0.35s ease;
         }
-        .session-alert.success { background: var(--success-bg); color: #166534; border: 1px solid var(--success-border); }
-        .session-alert.error   { background: var(--error-bg); color: #991B1B; border: 1px solid var(--error-border); }
-        .session-alert i { font-size: 0.95rem; flex-shrink: 0; }
+
+        .session-alert.success {
+            background: var(--success-bg);
+            color: #166534;
+            border: 1px solid var(--success-border);
+        }
+
+        .session-alert.error {
+            background: var(--error-bg);
+            color: #991B1B;
+            border: 1px solid var(--error-border);
+        }
+
+        .session-alert i {
+            font-size: 0.95rem;
+            flex-shrink: 0;
+        }
 
         @keyframes fadeUp {
-            from { opacity: 0; transform: translateY(8px); }
-            to   { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         /* ===== Form Field ===== */
@@ -158,7 +203,7 @@
         .field-input {
             width: 100%;
             height: 48px;
-            padding: 0 3rem 0 1rem; /* Padding kanan diperbesar agar teks tidak menabrak ikon */
+            padding: 0 3rem 0 1rem;
             border: 1.5px solid var(--border);
             border-radius: var(--radius);
             font-family: var(--font);
@@ -169,18 +214,21 @@
             transition: border-color var(--speed), box-shadow var(--speed), background var(--speed);
         }
 
-        .field-input::placeholder { color: transparent; }
+        .field-input::placeholder {
+            color: transparent;
+        }
 
         .field-input:focus {
             border-color: var(--gold);
-            box-shadow: 0 0 0 3px rgba(198,169,98,0.12);
+            box-shadow: 0 0 0 3px rgba(198, 169, 98, 0.12);
             background: var(--white);
         }
 
         .field-label {
             position: absolute;
             left: 1rem;
-            top: 50%;
+            top: 24px;
+            /* Ubah dari 50% menjadi 24px (setengah dari tinggi input 48px) */
             transform: translateY(-50%);
             font-size: 0.88rem;
             color: var(--text-muted);
@@ -191,44 +239,80 @@
             border-radius: 4px;
             transform-origin: left center;
         }
-        .posisi{
-            margin-top:-15px;
-        }
 
-        .field-input:focus + .field-label,
-        .field-input:not(:placeholder-shown) + .field-label {
+        .field-input:focus+.field-label,
+        .field-input:not(:placeholder-shown)+.field-label {
             top: 0;
+            /* Ubah dari 0 agar pas di batas atas kotak input */
             transform: translateY(-50%) scale(0.82);
             color: var(--gold-dark);
             background: var(--white);
             font-weight: 500;
         }
-        
+
         /* Valid */
-        .field-input.is-valid { border-color: var(--success); background: var(--success-bg); }
-        .field-input.is-valid:focus { box-shadow: 0 0 0 3px rgba(22,163,74,0.1); background: var(--white); }
-        .field-input.is-valid + .field-label { color: var(--success); }
+        .field-input.is-valid {
+            border-color: var(--success);
+            background: var(--success-bg);
+        }
+
+        .field-input.is-valid:focus {
+            box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.1);
+            background: var(--white);
+        }
+
+        .field-input.is-valid+.field-label {
+            color: var(--success);
+        }
 
         /* Invalid */
-        .field-input.is-invalid { border-color: var(--error); background: var(--error-bg); animation: shake 0.4s ease; }
-        .field-input.is-invalid:focus { box-shadow: 0 0 0 3px rgba(220,38,38,0.1); background: var(--white); }
-        .field-input.is-invalid + .field-label { color: var(--error); }
+        .field-input.is-invalid {
+            border-color: var(--error);
+            background: var(--error-bg);
+            animation: shake 0.4s ease;
+        }
+
+        .field-input.is-invalid:focus {
+            box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+            background: var(--white);
+        }
+
+        .field-input.is-invalid+.field-label {
+            color: var(--error);
+        }
 
         @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            20%  { transform: translateX(-5px); }
-            40%  { transform: translateX(5px); }
-            60%  { transform: translateX(-3px); }
-            80%  { transform: translateX(3px); }
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            20% {
+                transform: translateX(-5px);
+            }
+
+            40% {
+                transform: translateX(5px);
+            }
+
+            60% {
+                transform: translateX(-3px);
+            }
+
+            80% {
+                transform: translateX(3px);
+            }
         }
 
         /* Icon */
         .field-icon {
             position: absolute;
             right: 1rem;
-            top: 50%;
+            top: 24px;
+            /* Samakan dengan posisi label */
             transform: translateY(-50%);
-            height: 48px; /* Tinggi eksplisit agar selalu di tengah kotak input */
+            height: 48px;
             width: 24px;
             display: flex;
             align-items: center;
@@ -238,17 +322,27 @@
             pointer-events: none;
             transition: color var(--speed);
         }
-        .field-input:focus ~ .field-icon { color: var(--gold-dark); }
-        .field-input.is-valid ~ .field-icon { color: var(--success); }
-        .field-input.is-invalid ~ .field-icon { color: var(--error); }
+
+        .field-input:focus~.field-icon {
+            color: var(--gold-dark);
+        }
+
+        .field-input.is-valid~.field-icon {
+            color: var(--success);
+        }
+
+        .field-input.is-invalid~.field-icon {
+            color: var(--error);
+        }
 
         /* Password toggle */
         .pwd-toggle {
             position: absolute;
             right: 0.5rem;
-            top: 50%;
+            top: 24px;
+            /* Samakan dengan posisi label */
             transform: translateY(-50%);
-            height: 48px; /* Tinggi eksplisit agar selalu di tengah kotak input */
+            height: 48px;
             width: 40px;
             background: none;
             border: none;
@@ -261,11 +355,19 @@
             align-items: center;
             justify-content: center;
         }
-        .pwd-toggle:hover { color: var(--text); }
+
+        .pwd-toggle:hover {
+            color: var(--text);
+        }
 
         /* Atur ulang padding dan posisi agar tombol toggle & ikon gembok rapi berjajar */
-        .field.has-toggle .field-input { padding-right: 5.5rem; }
-        .field.has-toggle .field-icon { right: 3.5rem; }
+        .field.has-toggle .field-input {
+            padding-right: 5.5rem;
+        }
+
+        .field.has-toggle .field-icon {
+            right: 3.5rem;
+        }
 
         /* Error message */
         .field-error {
@@ -281,8 +383,17 @@
             overflow: hidden;
             transition: all var(--speed) ease;
         }
-        .field-error.show { opacity: 1; max-height: 2rem; margin-top: 0.35rem; }
-        .field-error i { font-size: 0.82rem; flex-shrink: 0; }
+
+        .field-error.show {
+            opacity: 1;
+            max-height: 2rem;
+            margin-top: 0.35rem;
+        }
+
+        .field-error i {
+            font-size: 0.82rem;
+            flex-shrink: 0;
+        }
 
         /* ===== Password Strength ===== */
         .pwd-strength {
@@ -291,6 +402,7 @@
             margin-top: 0.5rem;
             margin-bottom: 0.25rem;
         }
+
         .pwd-strength-bar {
             flex: 1;
             height: 3px;
@@ -298,9 +410,18 @@
             background: var(--border);
             transition: background var(--speed);
         }
-        .pwd-strength-bar.active-weak   { background: #EF4444; }
-        .pwd-strength-bar.active-medium { background: #F59E0B; }
-        .pwd-strength-bar.active-strong { background: #22C55E; }
+
+        .pwd-strength-bar.active-weak {
+            background: #EF4444;
+        }
+
+        .pwd-strength-bar.active-medium {
+            background: #F59E0B;
+        }
+
+        .pwd-strength-bar.active-strong {
+            background: #22C55E;
+        }
 
         .pwd-strength-text {
             font-size: 0.72rem;
@@ -310,9 +431,18 @@
             transition: color var(--speed);
             min-height: 1rem;
         }
-        .pwd-strength-text.weak   { color: #EF4444; }
-        .pwd-strength-text.medium { color: #F59E0B; }
-        .pwd-strength-text.strong { color: #22C55E; }
+
+        .pwd-strength-text.weak {
+            color: #EF4444;
+        }
+
+        .pwd-strength-text.medium {
+            color: #F59E0B;
+        }
+
+        .pwd-strength-text.strong {
+            color: #22C55E;
+        }
 
         /* ===== Buttons ===== */
         .btn-submit {
@@ -333,23 +463,42 @@
             gap: 0.5rem;
             margin-top: 0.5rem;
         }
+
         .btn-submit:hover {
-            box-shadow: 0 6px 20px rgba(198,169,98,0.35);
+            box-shadow: 0 6px 20px rgba(198, 169, 98, 0.35);
             transform: translateY(-1px);
         }
-        .btn-submit:active { transform: translateY(0); }
-        .btn-submit:disabled { opacity: 0.65; cursor: not-allowed; transform: none; box-shadow: none; }
+
+        .btn-submit:active {
+            transform: translateY(0);
+        }
+
+        .btn-submit:disabled {
+            opacity: 0.65;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
         .btn-submit .spinner {
-            width: 1rem; height: 1rem;
-            border: 2px solid rgba(255,255,255,0.3);
+            width: 1rem;
+            height: 1rem;
+            border: 2px solid rgba(255, 255, 255, 0.3);
             border-top-color: var(--white);
             border-radius: 50%;
             animation: spin 0.6s linear infinite;
             display: none;
         }
-        .btn-submit.loading .spinner { display: block; }
 
-        @keyframes spin { to { transform: rotate(360deg); } }
+        .btn-submit.loading .spinner {
+            display: block;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
 
         /* ===== Divider ===== */
         .divider {
@@ -358,13 +507,20 @@
             gap: 1rem;
             margin: 1.35rem 0;
         }
-        .divider::before, .divider::after {
+
+        .divider::before,
+        .divider::after {
             content: '';
             flex: 1;
             height: 1px;
             background: var(--border);
         }
-        .divider span { font-size: 0.78rem; color: var(--text-muted); white-space: nowrap; }
+
+        .divider span {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            white-space: nowrap;
+        }
 
         /* ===== Google Button ===== */
         .btn-google {
@@ -385,12 +541,17 @@
             text-decoration: none;
             transition: all var(--speed);
         }
+
         .btn-google:hover {
             border-color: #CBD5E1;
             background: var(--bg);
-            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
         }
-        .btn-google img { width: 1.1rem; height: 1.1rem; }
+
+        .btn-google img {
+            width: 1.1rem;
+            height: 1.1rem;
+        }
 
         /* ===== Terms ===== */
         .terms-text {
@@ -400,13 +561,18 @@
             margin-top: 1rem;
             line-height: 1.55;
         }
+
         .terms-text a {
             color: var(--gold-dark);
             font-weight: 500;
             text-decoration: none;
             transition: color var(--speed);
         }
-        .terms-text a:hover { color: var(--navy); text-decoration: underline; }
+
+        .terms-text a:hover {
+            color: var(--navy);
+            text-decoration: underline;
+        }
 
         /* ===== Footer ===== */
         .card-footer {
@@ -415,23 +581,30 @@
             font-size: 0.84rem;
             color: var(--text-secondary);
         }
+
         .card-footer a {
             color: var(--gold-dark);
             font-weight: 600;
             text-decoration: none;
             transition: color var(--speed);
         }
-        .card-footer a:hover { color: var(--navy); text-decoration: underline; }
+
+        .card-footer a:hover {
+            color: var(--navy);
+            text-decoration: underline;
+        }
 
         /* ===== Toast ===== */
         .toast-wrap {
             position: fixed;
-            top: 1.25rem; right: 1.25rem;
+            top: 1.25rem;
+            right: 1.25rem;
             z-index: 9999;
             display: flex;
             flex-direction: column;
             gap: 0.5rem;
         }
+
         .toast-item {
             display: flex;
             align-items: center;
@@ -441,32 +614,95 @@
             font-size: 0.84rem;
             font-weight: 500;
             color: var(--white);
-            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
             animation: toastIn 0.35s ease;
             min-width: 260px;
         }
-        .toast-item.error   { background: var(--error); }
-        .toast-item.success { background: var(--success); }
-        .toast-item.out { animation: toastOut 0.3s ease forwards; }
 
-        @keyframes toastIn  { from { opacity:0; transform:translateX(100%); } to { opacity:1; transform:translateX(0); } }
-        @keyframes toastOut { from { opacity:1; transform:translateX(0); } to { opacity:0; transform:translateX(100%); } }
+        .toast-item.error {
+            background: var(--error);
+        }
+
+        .toast-item.success {
+            background: var(--success);
+        }
+
+        .toast-item.out {
+            animation: toastOut 0.3s ease forwards;
+        }
+
+        @keyframes toastIn {
+            from {
+                opacity: 0;
+                transform: translateX(100%);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes toastOut {
+            from {
+                opacity: 1;
+                transform: translateX(0);
+            }
+
+            to {
+                opacity: 0;
+                transform: translateX(100%);
+            }
+        }
 
         /* ===== Responsive ===== */
         @media (max-width: 480px) {
-            body { padding: 1rem; }
-            .card-header { padding: 1.75rem 1.5rem 0; }
-            .card-body    { padding: 1.25rem 1.5rem 0.5rem; }
-            .card-footer  { padding: 1.1rem 1.5rem 1.5rem; }
-            .card-header h1 { font-size: 1.2rem; }
-            .field-input { height: 46px; font-size: 0.85rem; }
-            .field-icon { height: 46px; }
-            .pwd-toggle { height: 46px; }
-            .btn-submit, .btn-google { height: 46px; }
+            body {
+                padding: 1rem;
+            }
+
+            .card-header {
+                padding: 1.75rem 1.5rem 0;
+            }
+
+            .card-body {
+                padding: 1.25rem 1.5rem 0.5rem;
+            }
+
+            .card-footer {
+                padding: 1.1rem 1.5rem 1.5rem;
+            }
+
+            .card-header h1 {
+                font-size: 1.2rem;
+            }
+
+            .field-input {
+                height: 46px;
+                font-size: 0.85rem;
+            }
+
+            .field-label {
+                top: 23px;
+            }
+
+            /* Setengah dari 46px */
+            .field-icon,
+            .pwd-toggle {
+                top: 23px;
+                height: 46px;
+            }
+
+            .btn-submit,
+            .btn-google {
+                height: 46px;
+            }
         }
 
         @media (min-width: 1600px) {
-            .login-card { max-width: 480px; }
+            .login-card {
+                max-width: 480px;
+            }
         }
     </style>
 </head>
@@ -476,7 +712,9 @@
     <div class="login-card">
         <!-- Header -->
         <div class="card-header">
-            <div class="card-brand">Wedding<span>Inv</span>.</div>
+            <div class="card-logo">
+                <img src="{{ asset('assets/logo.png') }}" alt="Logo WeddingInv">
+            </div>
             <h1>Buat Akun Baru</h1>
             <p>Daftar untuk mulai membuat undangan impianmu</p>
         </div>
@@ -496,15 +734,8 @@
 
                 <!-- Name -->
                 <div class="field">
-                    <input type="text"
-                        class="field-input @error('name') is-invalid @enderror"
-                        id="name"
-                        name="name"
-                        placeholder=" "
-                        value="{{ old('name') }}"
-                        required
-                        autofocus
-                        autocomplete="name">
+                    <input type="text" class="field-input @error('name') is-invalid @enderror" id="name" name="name"
+                        placeholder=" " value="{{ old('name') }}" required autofocus autocomplete="name">
                     <label class="field-label" for="name">Nama Lengkap</label>
                     <i class="bi bi-person field-icon"></i>
                     <div class="field-error {{ $errors->has('name') ? 'show' : '' }}" id="nameError">
@@ -515,14 +746,8 @@
 
                 <!-- Email -->
                 <div class="field">
-                    <input type="email"
-                        class="field-input @error('email') is-invalid @enderror"
-                        id="email"
-                        name="email"
-                        placeholder=" "
-                        value="{{ old('email') }}"
-                        required
-                        autocomplete="username">
+                    <input type="email" class="field-input @error('email') is-invalid @enderror" id="email" name="email"
+                        placeholder=" " value="{{ old('email') }}" required autocomplete="username">
                     <label class="field-label" for="email">Alamat Email</label>
                     <i class="bi bi-at field-icon"></i>
                     <div class="field-error {{ $errors->has('email') ? 'show' : '' }}" id="emailError">
@@ -533,16 +758,11 @@
 
                 <!-- Password -->
                 <div class="field has-toggle">
-                    <input type="password"
-                        class="field-input @error('password') is-invalid @enderror"
-                        id="password"
-                        name="password"
-                        placeholder=" "
-                        required
-                        autocomplete="new-password">
-                    <label class="field-label posisi" for="password">Password</label>
-                    <i class="bi bi-lock field-icon posisi"></i>
-                    <button type="button" class="pwd-toggle posisi" data-target="password" aria-label="Tampilkan password">
+                    <input type="password" class="field-input @error('password') is-invalid @enderror" id="password"
+                        name="password" placeholder=" " required autocomplete="new-password">
+                    <label class="field-label" for="password">Password</label>
+                    <i class="bi bi-lock field-icon"></i>
+                    <button type="button" class="pwd-toggle" data-target="password" aria-label="Tampilkan password">
                         <i class="bi bi-eye"></i>
                     </button>
                     <div class="field-error {{ $errors->has('password') ? 'show' : '' }}" id="passwordError">
@@ -560,19 +780,17 @@
 
                 <!-- Confirm Password -->
                 <div class="field has-toggle">
-                    <input type="password"
-                        class="field-input @error('password_confirmation') is-invalid @enderror"
-                        id="password_confirmation"
-                        name="password_confirmation"
-                        placeholder=" "
-                        required
+                    <input type="password" class="field-input @error('password_confirmation') is-invalid @enderror"
+                        id="password_confirmation" name="password_confirmation" placeholder=" " required
                         autocomplete="new-password">
                     <label class="field-label" for="password_confirmation">Konfirmasi Password</label>
                     <i class="bi bi-lock-fill field-icon"></i>
-                    <button type="button" class="pwd-toggle" data-target="password_confirmation" aria-label="Tampilkan password">
+                    <button type="button" class="pwd-toggle" data-target="password_confirmation"
+                        aria-label="Tampilkan password">
                         <i class="bi bi-eye"></i>
                     </button>
-                    <div class="field-error {{ $errors->has('password_confirmation') ? 'show' : '' }}" id="confirmError">
+                    <div class="field-error {{ $errors->has('password_confirmation') ? 'show' : '' }}"
+                        id="confirmError">
                         <i class="bi bi-exclamation-circle-fill"></i>
                         <span>@error('password_confirmation'){{ $message }}@enderror</span>
                     </div>
@@ -596,7 +814,8 @@
 
             <!-- Terms -->
             <p class="terms-text">
-                Dengan mendaftar, Anda menyetujui <a href="{{ route('pages.syarat-ketentuan') }}">Syarat & Ketentuan</a> dan <a href="{{ route('pages.kebijakan-privasi') }}">Kebijakan Privasi</a> kami.
+                Dengan mendaftar, Anda menyetujui <a href="{{ route('pages.syarat-ketentuan') }}">Syarat & Ketentuan</a>
+                dan <a href="{{ route('pages.kebijakan-privasi') }}">Kebijakan Privasi</a> kami.
             </p>
         </div>
 
@@ -611,19 +830,19 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            const form     = document.getElementById('registerForm');
-            const btn      = document.getElementById('registerBtn');
-            const btnText  = btn.querySelector('.btn-text');
-            const nameEl   = document.getElementById('name');
-            const emailEl  = document.getElementById('email');
-            const pwdEl    = document.getElementById('password');
-            const confEl   = document.getElementById('password_confirmation');
-            const nameErr  = document.getElementById('nameError');
+            const form = document.getElementById('registerForm');
+            const btn = document.getElementById('registerBtn');
+            const btnText = btn.querySelector('.btn-text');
+            const nameEl = document.getElementById('name');
+            const emailEl = document.getElementById('email');
+            const pwdEl = document.getElementById('password');
+            const confEl = document.getElementById('password_confirmation');
+            const nameErr = document.getElementById('nameError');
             const emailErr = document.getElementById('emailError');
-            const pwdErr   = document.getElementById('passwordError');
-            const confErr  = document.getElementById('confirmError');
-            const bars     = [document.getElementById('bar1'), document.getElementById('bar2'), document.getElementById('bar3'), document.getElementById('bar4')];
-            const strText  = document.getElementById('pwdStrengthText');
+            const pwdErr = document.getElementById('passwordError');
+            const confErr = document.getElementById('confirmError');
+            const bars = [document.getElementById('bar1'), document.getElementById('bar2'), document.getElementById('bar3'), document.getElementById('bar4')];
+            const strText = document.getElementById('pwdStrengthText');
 
             /* ── Helpers ── */
             function setError(input, errEl, msg) {
@@ -660,17 +879,17 @@
                 bars.forEach(function (b, i) {
                     b.className = 'pwd-strength-bar';
                     if (i < s) {
-                        if (s <= 1)      b.classList.add('active-weak');
+                        if (s <= 1) b.classList.add('active-weak');
                         else if (s <= 2) b.classList.add('active-medium');
-                        else             b.classList.add('active-strong');
+                        else b.classList.add('active-strong');
                     }
                 });
                 strText.className = 'pwd-strength-text';
                 if (pwd.length === 0) { strText.textContent = ''; return; }
-                if (s <= 1)      { strText.textContent = 'Lemah — tambahkan huruf & angka'; strText.classList.add('weak'); }
+                if (s <= 1) { strText.textContent = 'Lemah — tambahkan huruf & angka'; strText.classList.add('weak'); }
                 else if (s <= 2) { strText.textContent = 'Cukup — tambahkan karakter spesial'; strText.classList.add('medium'); }
                 else if (s <= 3) { strText.textContent = 'Kuat'; strText.classList.add('strong'); }
-                else             { strText.textContent = 'Sangat kuat'; strText.classList.add('strong'); }
+                else { strText.textContent = 'Sangat kuat'; strText.classList.add('strong'); }
             }
 
             /* ── Validate ── */
@@ -791,4 +1010,5 @@
         }
     </script>
 </body>
+
 </html>

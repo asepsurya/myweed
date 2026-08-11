@@ -28,8 +28,8 @@
          data-bs-delay="2500">
 
         <div class="toast-header">
-            <img src="{{ asset('tempelate/logo_apps.png') }}" class="rounded me-2" width="20">
-            <strong class="me-auto">Weeding Creative</strong>
+            <img src="{{ asset('assets/fav.png') }}" class="rounded me-2" width="20">
+            <strong class="me-auto">Loventa</strong>
             <small>now</small>
             <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
         </div>

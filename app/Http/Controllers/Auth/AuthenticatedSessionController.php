@@ -24,7 +24,7 @@ class AuthenticatedSessionController extends Controller
      */
     public function store(LoginRequest $request): RedirectResponse
     {
-          $request->authenticate();
+        $request->authenticate();
         $request->session()->regenerate();
 
         // Redirect berdasarkan role
@@ -32,10 +32,10 @@ class AuthenticatedSessionController extends Controller
             return redirect()->intended(route('dashboard'));
         } else {
             return redirect()->intended(route('dashboard.user'));
-    }
+        }
 
-    // Default fallback
-    return redirect()->intended(route('dashboard'));
+        // Default fallback
+        return redirect()->intended(route('dashboard'));
     }
 
     /**

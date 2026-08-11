@@ -12,7 +12,7 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap"
         rel="stylesheet">
-
+    <link rel="icon" type="image/png" href="{{ asset('assets/fav.png') }}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
@@ -73,6 +73,7 @@
                 opacity: 0;
                 transform: translateY(30px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -84,6 +85,7 @@
                 opacity: 0;
                 transform: translateY(-20px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -91,17 +93,29 @@
         }
 
         @keyframes float {
-            0%, 100% {
+
+            0%,
+            100% {
                 transform: translateY(0) translateX(0);
             }
+
             50% {
                 transform: translateY(-15px) translateX(5px);
             }
         }
 
         @keyframes pulseSoft {
-            0%, 100% { transform: scale(1); opacity: 0.5; }
-            50% { transform: scale(1.05); opacity: 0.8; }
+
+            0%,
+            100% {
+                transform: scale(1);
+                opacity: 0.5;
+            }
+
+            50% {
+                transform: scale(1.05);
+                opacity: 0.8;
+            }
         }
 
         .reveal {
@@ -109,6 +123,7 @@
             transform: translateY(40px);
             transition: opacity 0.8s cubic-bezier(0.25, 1, 0.5, 1), transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
         }
+
         .reveal.active {
             opacity: 1;
             transform: translateY(0);
@@ -135,19 +150,34 @@
         }
 
         .navbar-brand {
-            font-family: var(--font-display);
-            font-weight: 700;
-            font-size: 1.8rem;
-            color: var(--white) !important;
-            transition: color var(--speed);
+            display: inline-flex;
+            align-items: center;
+            padding: 0;
+            margin: 0;
         }
 
-        .navbar.scrolled .navbar-brand {
-            color: var(--navy) !important;
+        /* Sistem pertukaran logo */
+        .navbar-brand img {
+            height: 40px;
+            width: auto;
+            transition: opacity var(--speed) ease;
         }
 
-        .navbar-brand span {
-            color: var(--gold);
+        .navbar-brand .logo-white {
+            display: none;
+        }
+
+        .navbar-brand .logo-dark {
+            display: block;
+        }
+
+        /* Saat navbar di atas (background gelap), tampilkan logo putih */
+        .navbar:not(.scrolled) .navbar-brand .logo-white {
+            display: block;
+        }
+
+        .navbar:not(.scrolled) .navbar-brand .logo-dark {
+            display: none;
         }
 
         .nav-link {
@@ -522,16 +552,13 @@
         }
 
         .footer-logo {
-            font-family: var(--font-display);
-            font-weight: 700;
-            font-size: 1.8rem;
+            display: inline-block;
             margin-bottom: 1.5rem;
-            display: block;
-            color: var(--navy);
         }
 
-        .footer-logo span {
-            color: var(--gold);
+        .footer-logo img {
+            height: 40px;
+            width: auto;
         }
 
         .footer-links {
@@ -589,7 +616,7 @@
             background: var(--navy);
             color: var(--white);
             transform: translateY(-5px) rotate(5deg);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         }
 
         .footer-bottom {
@@ -605,6 +632,7 @@
             .page-header h1 {
                 font-size: 2rem;
             }
+
             .section-title {
                 font-size: 1.8rem;
             }
@@ -614,9 +642,13 @@
 
 <body>
 
+    <!-- Navbar -->
     <nav class="navbar navbar-expand-lg" id="mainNav">
         <div class="container">
-            <a class="navbar-brand" href="{{ route('landing') }}">Wedding<span>Inv</span>.</a>
+            <a class="navbar-brand" href="{{ route('landing') }}">
+                <img src="{{ asset('assets/logo-white.png') }}" alt="Logo WeddingInv" class="logo-white">
+                <img src="{{ asset('assets/logo.png') }}" alt="Logo WeddingInv" class="logo-dark">
+            </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                 style="border-color: rgba(255,255,255,0.3);">
                 <span class="navbar-toggler-icon" style="filter: invert(1);"></span>
@@ -640,6 +672,7 @@
         </div>
     </nav>
 
+    <!-- Page Header -->
     <section class="page-header">
         <div class="page-header-shape shape-1"></div>
         <div class="page-header-shape shape-2"></div>
@@ -655,6 +688,7 @@
         </div>
     </section>
 
+    <!-- Steps Section -->
     <section class="content-section">
         <div class="container">
             <div class="text-center mb-5 reveal">
@@ -696,15 +730,18 @@
         </div>
     </section>
 
+    <!-- Detail Process Section -->
     <section class="content-section alt">
         <div class="container">
             <div class="row align-items-center g-5">
                 <div class="col-lg-6 reveal">
                     <span class="section-subtitle">Detail Proses</span>
                     <h2 class="section-title">Setiap Detail Diperhatikan</h2>
-                    <p class="text-secondary mb-4">Setiap tahapan dirancang agar Anda mendapatkan pengalaman terbaik dalam membuat undangan digital.</p>
+                    <p class="text-secondary mb-4">Setiap tahapan dirancang agar Anda mendapatkan pengalaman terbaik
+                        dalam membuat undangan digital.</p>
                     <ul class="feature-list">
-                        <li><i class="bi bi-check-circle-fill"></i> Pilih paket gratis atau premium sesuai kebutuhan</li>
+                        <li><i class="bi bi-check-circle-fill"></i> Pilih paket gratis atau premium sesuai kebutuhan
+                        </li>
                         <li><i class="bi bi-check-circle-fill"></i> Edit teks, foto, dan video kapan saja</li>
                         <li><i class="bi bi-check-circle-fill"></i> Dukungan pelanggan 24/7 via chat</li>
                         <li><i class="bi bi-check-circle-fill"></i> Pembayaran aman dengan berbagai metode</li>
@@ -713,17 +750,20 @@
                 <div class="col-lg-6 reveal" style="transition-delay: 0.2s;">
                     <div class="info-box">
                         <h4><i class="bi bi-lightbulb-fill text-warning me-2"></i>Tips Agar Pesanan Cepat Selesai</h4>
-                        <p>Siapkan foto bride & groom dalam bentuk landscape agar hasil undangan terlihat maksimal. Pastikan semua data acara sudah tepat sebelum membagikan undangan kepada tamu.</p>
+                        <p>Siapkan foto bride & groom dalam bentuk landscape agar hasil undangan terlihat maksimal.
+                            Pastikan semua data acara sudah tepat sebelum membagikan undangan kepada tamu.</p>
                     </div>
                     <div class="info-box">
                         <h4><i class="bi bi-shield-check-fill text-success me-2"></i>Garansi Kepuasan</h4>
-                        <p>Kami berkomitmen memberikan layanan terbaik. Jika ada kendala, tim support kami siap membantu dalam waktu kurang dari 1 jam.</p>
+                        <p>Kami berkomitmen memberikan layanan terbaik. Jika ada kendala, tim support kami siap membantu
+                            dalam waktu kurang dari 1 jam.</p>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
+    <!-- Payment Methods Section -->
     <section class="content-section">
         <div class="container">
             <div class="text-center mb-5 reveal">
@@ -760,11 +800,13 @@
         </div>
     </section>
 
+    <!-- CTA Section -->
     <section class="content-section alt text-center">
         <div class="container">
             <div class="reveal">
                 <h2 class="section-title">Siap Membuat Undangan?</h2>
-                <p class="section-desc mx-auto mb-4">Jangan tunda lagi. Buat undangan digital impian Anda sekarang dan buat momen spesial menjadi tak terlupakan.</p>
+                <p class="section-desc mx-auto mb-4">Jangan tunda lagi. Buat undangan digital impian Anda sekarang dan
+                    buat momen spesial menjadi tak terlupakan.</p>
                 <a href="{{ route('register') }}" class="btn-gold" style="font-size: 1rem; padding: 1rem 2.5rem;">
                     Buat Undangan Sekarang <i class="bi bi-arrow-right ms-2"></i>
                 </a>
@@ -772,12 +814,17 @@
         </div>
     </section>
 
+    <!-- Footer -->
     <footer>
         <div class="container">
             <div class="row gy-5">
                 <div class="col-lg-4 reveal">
-                    <a href="#" class="footer-logo">Wedding<span>Inv</span>.</a>
-                    <p class="text-secondary small" style="max-width: 350px;">Solusi undangan digital premium untuk pernikahan, khitanan, aqiqah, dan berbagai momen spesial lainnya. Praktis, elegan, dan hemat biaya.</p>
+                    <a href="#" class="footer-logo">
+                        <img src="{{ asset('assets/logo.png') }}" alt="Logo WeddingInv">
+                    </a>
+                    <p class="text-secondary small" style="max-width: 350px;">Solusi undangan digital premium untuk
+                        pernikahan, khitanan, aqiqah, dan berbagai momen spesial lainnya. Praktis, elegan, dan hemat
+                        biaya.</p>
                     <div class="footer-social">
                         <a href="#" class="social-btn"><i class="bi bi-instagram"></i></a>
                         <a href="#" class="social-btn"><i class="bi bi-facebook"></i></a>
@@ -814,7 +861,8 @@
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>&copy; 2024 WeddingInv Digital Invitation. Dibuat dengan <i class="bi bi-heart-fill text-danger"></i> di Indonesia.</p>
+                <p>&copy; 2024 WeddingInv Digital Invitation. Dibuat dengan <i class="bi bi-heart-fill text-danger"></i>
+                    di Indonesia.</p>
             </div>
         </div>
     </footer>

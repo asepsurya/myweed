@@ -2,19 +2,20 @@
 
 namespace App\Models;
 
+use Database\Factories\UserFactory;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
-use App\Models\Invitation;
-use App\Models\Subscription;
-use Spatie\Permission\Traits\HasRoles;
-use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
+use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
+    /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
+
     use HasRoles;
+
     /**
      * The attributes that are mass assignable.
      *
@@ -56,12 +57,10 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasOne(Subscription::class);
     }
 
-
     public function isAdmin()
     {
         return $this->role === 'admin';
     }
-
 
     public function isSubscribed()
     {
@@ -73,6 +72,7 @@ class User extends Authenticatable implements MustVerifyEmail
             $this->subscription->is_active &&
             $this->subscription->end_date->isFuture();
     }
+
     public function invitations()
     {
         return $this->hasMany(Invitation::class);
@@ -80,28 +80,27 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function subscriptionStatus()
     {
-      // ADMIN BYPASS
-    if ($this->isAdmin()) {
+        // ADMIN BYPASS
+        if ($this->isAdmin()) {
+            return 'active';
+        }
+
+        // TIDAK ADA SUBSCRIPTION → FREE
+        if (! $this->subscription) {
+            return 'free';
+        }
+
+        // END DATE NULL (FREE PERMANEN)
+        if (is_null($this->subscription->end_date)) {
+            return 'active';
+        }
+
+        // SUDAH EXPIRED
+        if ($this->subscription->end_date->isPast()) {
+            return 'expired';
+        }
+
+        // MASIH AKTIF
         return 'active';
     }
-
-    // TIDAK ADA SUBSCRIPTION → FREE
-    if (!$this->subscription) {
-        return 'free';
-    }
-
-    // END DATE NULL (FREE PERMANEN)
-    if (is_null($this->subscription->end_date)) {
-        return 'active';
-    }
-
-    // SUDAH EXPIRED
-    if ($this->subscription->end_date->isPast()) {
-        return 'expired';
-    }
-
-    // MASIH AKTIF
-    return 'active';
-    }
-
 }

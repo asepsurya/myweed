@@ -6,7 +6,6 @@ use App\Models\Music;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
 class MusicSeeder extends Seeder
 {
@@ -15,7 +14,7 @@ class MusicSeeder extends Seeder
      */
     public function run(): void
     {
-       $sourceDir = public_path('tempelate/music');
+        $sourceDir = public_path('tempelate/music');
         $destinationDir = 'music';
 
         // pastikan folder tujuan ada
@@ -24,9 +23,9 @@ class MusicSeeder extends Seeder
         // ambil semua file audio
         $files = File::files($sourceDir);
 
-       foreach ($files as $file) {
+        foreach ($files as $file) {
             $filename = $file->getFilename();
-            $path = 'music/' . $filename;
+            $path = 'music/'.$filename;
 
             if (Music::where('audio_url', $path)->exists()) {
                 continue;
@@ -35,8 +34,8 @@ class MusicSeeder extends Seeder
             Storage::disk('public')->put($path, File::get($file));
 
             Music::create([
-                'title'     => pathinfo($filename, PATHINFO_FILENAME),
-                'artist'    => 'Wedding Music',
+                'title' => pathinfo($filename, PATHINFO_FILENAME),
+                'artist' => 'Wedding Music',
                 'audio_url' => $path,
                 'music_url' => $path,
                 'file_size' => $file->getSize(),

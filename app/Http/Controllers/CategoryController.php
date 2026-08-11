@@ -5,13 +5,13 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
-use Illuminate\Support\Facades\DB;
 
 class CategoryController extends Controller
 {
     public function index(Request $request)
     {
         $categories = Category::orderBy('name')->get();
+
         return response()->json($categories);
     }
 
@@ -30,7 +30,7 @@ class CategoryController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Kategori berhasil ditambahkan.',
-            'category' => $category
+            'category' => $category,
         ]);
     }
 
@@ -41,7 +41,7 @@ class CategoryController extends Controller
         if ($templateCount > 0) {
             return response()->json([
                 'success' => false,
-                'message' => "Kategori tidak bisa dihapus karena masih ada {$templateCount} template yang menggunakan kategori ini."
+                'message' => "Kategori tidak bisa dihapus karena masih ada {$templateCount} template yang menggunakan kategori ini.",
             ], 422);
         }
 
@@ -49,7 +49,7 @@ class CategoryController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Kategori berhasil dihapus.'
+            'message' => 'Kategori berhasil dihapus.',
         ]);
     }
 }

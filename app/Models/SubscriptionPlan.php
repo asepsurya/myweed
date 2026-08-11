@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class SubscriptionPlan extends Model
 {
-     protected $fillable = [
-        'name', 'slug', 'price', 'duration', 'description'
+    protected $fillable = [
+        'name', 'slug', 'price', 'duration', 'description', 'is_free',
     ];
 }

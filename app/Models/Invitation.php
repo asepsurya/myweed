@@ -2,18 +2,15 @@
 
 namespace App\Models;
 
-use App\Models\Rsvp;
-use App\Models\Music;
-use App\Models\Gallery;
-use App\Models\Template;
 use Illuminate\Database\Eloquent\Model;
 
 class Invitation extends Model
 {
-      protected $casts = [
+    protected $casts = [
         'custom_data' => 'array',
         'love_story' => 'array',
     ];
+
     protected $guarded = ['id'];
 
     protected $fillable = [
@@ -78,14 +75,17 @@ class Invitation extends Model
     {
         return $this->hasMany(Rsvp::class);
     }
+
     public function gifts()
     {
         return $this->hasMany(Gift::class);
     }
-     public function musicPreset()
+
+    public function musicPreset()
     {
-        return $this->belongsTo(Music::class,'music','id');
+        return $this->belongsTo(Music::class, 'music', 'id');
     }
+
     public function user()
     {
         return $this->belongsTo(User::class);
@@ -103,7 +103,9 @@ class Invitation extends Model
 
     private function childOrderText($value)
     {
-        if (empty($value)) return '';
+        if (empty($value)) {
+            return '';
+        }
 
         if ($value === 'Anak pertama') {
             return 'Pertama';
@@ -117,7 +119,7 @@ class Invitation extends Model
                 9 => 'Kesembilan', 10 => 'Kesepuluh', 11 => 'Kesebelas',
             ];
 
-            return $map[$num] ?? 'Ke-' . $num;
+            return $map[$num] ?? 'Ke-'.$num;
         }
 
         return $value;
@@ -128,7 +130,7 @@ class Invitation extends Model
         return self::create([
             'user_id' => $userId,
             'template_id' => 1, // Simple Template
-            'slug' => 'basic-wedding-' . $userId . '-' . rand(100, 999),
+            'slug' => 'basic-wedding-'.$userId.'-'.rand(100, 999),
             'groom_name' => 'Mempelai Pria',
             'bride_name' => 'Mempelai Wanita',
             'wedding_date' => now()->addMonths(3)->format('Y-m-d'),

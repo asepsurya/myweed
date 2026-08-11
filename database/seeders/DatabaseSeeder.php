@@ -17,13 +17,13 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
-       $this->call([WeddingDefaultUserSeeder::class]);
-       $this->call([MusicSeeder::class]);
-       $this->call([CategorySeeder::class]);
-       $this->call([TempelateSeed::class]);
-       $this->call([InvitationSeed::class]);
-       $this->call([GiftSeeder::class]);
-       $this->call([SubscriptionSeed::class]);
+        $this->call([WeddingDefaultUserSeeder::class]);
+        $this->call([MusicSeeder::class]);
+        $this->call([CategorySeeder::class]);
+        $this->call([TempelateSeed::class]);
+        $this->call([InvitationSeed::class]);
+        $this->call([GiftSeeder::class]);
+        $this->call([SubscriptionSeed::class]);
 
     }
 }

@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class WeedingPlan extends Model
 {
@@ -59,10 +59,10 @@ class WeedingPlan extends Model
 
     public function isOverdue(): bool
     {
-        if ($this->status === 'completed' || !$this->due_date) {
+        if ($this->status === 'completed' || ! $this->due_date) {
             return false;
         }
 
-        return \Carbon\Carbon::parse($this->due_date)->isPast();
+        return Carbon::parse($this->due_date)->isPast();
     }
 }

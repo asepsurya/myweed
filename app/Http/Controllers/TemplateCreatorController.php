@@ -2,13 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Template;
 use App\Models\Category;
+use App\Models\Invitation;
+use App\Models\Template;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use App\Http\Controllers\Controller;
+use Intervention\Image\Drivers\Gd\Driver;
+use Intervention\Image\ImageManager;
 
 class TemplateCreatorController extends Controller
 {
@@ -27,9 +31,9 @@ class TemplateCreatorController extends Controller
         } else {
             $query->where(function ($q) use ($user) {
                 $q->where('is_user_template', false)
-                  ->orWhere(function ($q2) use ($user) {
-                      $q2->where('is_user_template', true)->where('user_id', $user->id);
-                  });
+                    ->orWhere(function ($q2) use ($user) {
+                        $q2->where('is_user_template', true)->where('user_id', $user->id);
+                    });
             });
         }
 
@@ -47,7 +51,7 @@ class TemplateCreatorController extends Controller
         return view('dashboard.template-creator.create', [
             'categories' => $categories,
             'baseTemplates' => $baseTemplates,
-            'template' => new Template(),
+            'template' => new Template,
         ]);
     }
 
@@ -60,7 +64,7 @@ class TemplateCreatorController extends Controller
         ]);
 
         $prompt = $request->input('prompt');
-        $systemPrompt = <<<PROMPT
+        $systemPrompt = <<<'PROMPT'
 Kamu adalah ahli prompt engineering untuk AI yang membuat template undangan pernikahan. Tugasmu adalah memperbaiki dan mengoptimalkan prompt pengguna agar lebih detail, jelas, dan mudah dipahami oleh AI.
 
 ATURAN:
@@ -93,18 +97,18 @@ PROMPT;
                 ],
             ];
 
-            $response = \Illuminate\Support\Facades\Http::timeout(120)
+            $response = Http::timeout(120)
                 ->withHeaders(array_filter([
                     'Content-Type' => 'application/json',
-                    'Authorization' => $apiKey ? 'Bearer ' . $apiKey : null,
+                    'Authorization' => $apiKey ? 'Bearer '.$apiKey : null,
                 ]))
-                ->post($aiServerUrl . '/api/chat', $payload);
+                ->post($aiServerUrl.'/api/chat', $payload);
 
             if ($response->successful()) {
                 $data = $response->json();
                 $improved = $data['message']['content'] ?? $data['response'] ?? null;
 
-                if (!$improved) {
+                if (! $improved) {
                     return response()->json([
                         'success' => false,
                         'message' => 'AI tidak dapat memperbaiki prompt.',
@@ -124,7 +128,7 @@ PROMPT;
         } catch (\Throwable $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Tidak dapat terhubung ke layanan AI: ' . $e->getMessage(),
+                'message' => 'Tidak dapat terhubung ke layanan AI: '.$e->getMessage(),
             ], 502);
         }
     }
@@ -171,18 +175,18 @@ PROMPT;
                 ],
             ];
 
-            $response = \Illuminate\Support\Facades\Http::timeout(180)
+            $response = Http::timeout(180)
                 ->withHeaders(array_filter([
                     'Content-Type' => 'application/json',
-                    'Authorization' => $apiKey ? 'Bearer ' . $apiKey : null,
+                    'Authorization' => $apiKey ? 'Bearer '.$apiKey : null,
                 ]))
-                ->post($aiServerUrl . '/api/chat', $payload);
+                ->post($aiServerUrl.'/api/chat', $payload);
 
             if ($response->successful()) {
                 $data = $response->json();
                 $generatedCode = $data['message']['content'] ?? $data['response'] ?? null;
 
-                if (!$generatedCode) {
+                if (! $generatedCode) {
                     return response()->json([
                         'success' => false,
                         'message' => 'AI tidak menghasilkan kode template.',
@@ -207,7 +211,7 @@ PROMPT;
         } catch (\Throwable $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Tidak dapat terhubung ke layanan AI: ' . $e->getMessage(),
+                'message' => 'Tidak dapat terhubung ke layanan AI: '.$e->getMessage(),
             ], 502);
         }
     }
@@ -223,14 +227,14 @@ PROMPT;
         ]);
 
         $user = Auth::user();
-        $slug = Str::slug($request->name) . '-' . $user->id . '-' . uniqid();
+        $slug = Str::slug($request->name).'-'.$user->id.'-'.uniqid();
         $folderPath = resource_path("views/templates/{$slug}");
 
-        if (!file_exists($folderPath)) {
+        if (! file_exists($folderPath)) {
             mkdir($folderPath, 0755, true);
         }
 
-        file_put_contents($folderPath . '/index.blade.php', $request->input('code'));
+        file_put_contents($folderPath.'/index.blade.php', $request->input('code'));
 
         $thumbnailPath = null;
         if ($request->hasFile('thumbnail')) {
@@ -263,8 +267,8 @@ PROMPT;
 
         $folderPath = resource_path("views/templates/{$template->slug}");
         $code = '';
-        if (file_exists($folderPath . '/index.blade.php')) {
-            $code = file_get_contents($folderPath . '/index.blade.php');
+        if (file_exists($folderPath.'/index.blade.php')) {
+            $code = file_get_contents($folderPath.'/index.blade.php');
         }
 
         return view('dashboard.template-creator.create', array_merge(compact('template', 'categories', 'baseTemplates'), ['code' => $code]));
@@ -285,11 +289,11 @@ PROMPT;
         $slug = $template->slug;
         $folderPath = resource_path("views/templates/{$slug}");
 
-        if (!file_exists($folderPath)) {
+        if (! file_exists($folderPath)) {
             mkdir($folderPath, 0755, true);
         }
 
-        file_put_contents($folderPath . '/index.blade.php', $request->input('code'));
+        file_put_contents($folderPath.'/index.blade.php', $request->input('code'));
 
         if ($request->hasFile('thumbnail')) {
             $thumb = $this->storeThumbnail($request->file('thumbnail'));
@@ -313,7 +317,7 @@ PROMPT;
         $folderPath = resource_path("views/templates/{$template->slug}");
 
         if (file_exists($folderPath)) {
-            \Illuminate\Support\Facades\File::deleteDirectory($folderPath);
+            File::deleteDirectory($folderPath);
         }
 
         if ($template->thumbnail && Storage::disk('public')->exists($template->thumbnail)) {
@@ -331,8 +335,8 @@ PROMPT;
     {
         $this->authorizeTemplate($template);
 
-        $invitation = new \App\Models\Invitation([
-            'slug' => 'preview-' . $template->id,
+        $invitation = new Invitation([
+            'slug' => 'preview-'.$template->id,
             'groom_name' => 'Romeo',
             'groom_nickname' => 'Romeo',
             'bride_name' => 'Juliet',
@@ -348,10 +352,10 @@ PROMPT;
         $invitation->setRelation('galleries', collect([]));
         $invitation->setRelation('rsvps', collect([]));
 
-        $templateView = 'templates.' . $template->slug . '.index';
+        $templateView = 'templates.'.$template->slug.'.index';
 
-        if (!view()->exists($templateView)) {
-            return response('Template view tidak ditemukan: ' . $templateView, 404);
+        if (! view()->exists($templateView)) {
+            return response('Template view tidak ditemukan: '.$templateView, 404);
         }
 
         return view($templateView, compact('invitation'));
@@ -364,23 +368,23 @@ PROMPT;
         ]);
 
         $code = $request->input('code');
-        $tempSlug = 'preview-code-' . uniqid();
+        $tempSlug = 'preview-code-'.uniqid();
         $folderPath = resource_path("views/templates/{$tempSlug}");
 
-        if (!file_exists($folderPath)) {
+        if (! file_exists($folderPath)) {
             mkdir($folderPath, 0755, true);
         }
 
-        file_put_contents($folderPath . '/index.blade.php', $code);
+        file_put_contents($folderPath.'/index.blade.php', $code);
 
-        $template = new \App\Models\Template([
+        $template = new Template([
             'slug' => $tempSlug,
             'name' => 'Preview',
         ]);
         $template->id = 0;
 
-        $invitation = new \App\Models\Invitation([
-            'slug' => 'preview-' . $tempSlug,
+        $invitation = new Invitation([
+            'slug' => 'preview-'.$tempSlug,
             'groom_name' => 'Romeo',
             'groom_nickname' => 'Romeo',
             'groom_father_name' => 'Ahmad',
@@ -413,20 +417,20 @@ PROMPT;
         $invitation->id = 0;
         $invitation->setRelation('template', $template);
         $invitation->setRelation('galleries', collect([
-            (object)['image' => 'default/gallery1.jpg'],
-            (object)['image' => 'default/gallery2.jpg'],
-            (object)['image' => 'default/gallery3.jpg'],
+            (object) ['image' => 'default/gallery1.jpg'],
+            (object) ['image' => 'default/gallery2.jpg'],
+            (object) ['image' => 'default/gallery3.jpg'],
         ]));
         $invitation->setRelation('rsvps', collect([]));
         $invitation->setRelation('gifts', collect([
-            (object)['bank' => 'BCA', 'number' => '1234567890', 'name' => 'Romeo'],
-            (object)['bank' => 'Mandiri', 'number' => '0987654321', 'name' => 'Juliet'],
+            (object) ['bank' => 'BCA', 'number' => '1234567890', 'name' => 'Romeo'],
+            (object) ['bank' => 'Mandiri', 'number' => '0987654321', 'name' => 'Juliet'],
         ]));
 
-        $templateView = 'templates.' . $tempSlug . '.index';
+        $templateView = 'templates.'.$tempSlug.'.index';
 
-        if (!view()->exists($templateView)) {
-            return response('Template view tidak ditemukan: ' . $templateView, 404);
+        if (! view()->exists($templateView)) {
+            return response('Template view tidak ditemukan: '.$templateView, 404);
         }
 
         return view($templateView, compact('invitation'));
@@ -435,7 +439,7 @@ PROMPT;
     private function authorizeTemplate($template): void
     {
         $user = Auth::user();
-        if ($template->is_user_template && $template->user_id !== $user->id && !$user->hasRole('admin')) {
+        if ($template->is_user_template && $template->user_id !== $user->id && ! $user->hasRole('admin')) {
             abort(403, 'Anda tidak memiliki akses ke template ini.');
         }
     }
@@ -443,23 +447,23 @@ PROMPT;
     private function storeThumbnail($file): string
     {
         $dir = storage_path('app/public/templates');
-        if (!file_exists($dir)) {
+        if (! file_exists($dir)) {
             mkdir($dir, 0755, true);
         }
 
-        $filename = uniqid() . '.webp';
-        $destFile = $dir . '/' . $filename;
+        $filename = uniqid().'.webp';
+        $destFile = $dir.'/'.$filename;
 
         try {
-            $driver = new \Intervention\Image\Drivers\Gd\Driver();
-            $manager = new \Intervention\Image\ImageManager($driver);
+            $driver = new Driver;
+            $manager = new ImageManager($driver);
             $image = $manager->read($file->getRealPath());
             $image->save($destFile, 75, 'webp');
         } catch (\Throwable $e) {
             $file->move($dir, $filename);
         }
 
-        return 'templates/' . $filename;
+        return 'templates/'.$filename;
     }
 
     private function buildTemplateSystemPrompt(string $style, string $colorScheme, ?Template $baseTemplate): string
@@ -590,7 +594,7 @@ PROMPT;
         }
 
         if (str_starts_with($raw, '@')) {
-            $raw = '<!DOCTYPE html>' . "\n" . '<html lang="id">' . "\n" . $raw . "\n" . '</html>';
+            $raw = '<!DOCTYPE html>'."\n".'<html lang="id">'."\n".$raw."\n".'</html>';
         }
 
         return $raw;
