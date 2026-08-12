@@ -1,38 +1,9 @@
 <x-app-layout>
     <style>
-        /* Tema & Font */
         h4 {
             font-family: 'Plus Jakarta Sans', sans-serif;
             font-weight: 700;
             color: var(--bs-body-color);
-        }
-
-        /* Stat Cards */
-        .stat-card-custom {
-            background: #ffffff;
-            border: 1px solid var(--bs-border-color);
-            border-radius: 16px;
-            transition: all 0.3s ease;
-            height: 100%;
-        }
-
-        [data-bs-theme=dark] .stat-card-custom {
-            background: none;
-        }
-
-        .stat-card-custom:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 25px rgba(27, 42, 74, 0.08);
-            border-color: rgba(198, 169, 98, 0.4);
-        }
-
-        [data-bs-theme="dark"] .stat-card-custom:hover {
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
-            border-color: var(--adminuiux-theme-1);
-        }
-
-        .stat-card-custom.border-start-danger {
-            border-left: 4px solid #dc3545 !important;
         }
 
         .stat-icon-box {
@@ -44,6 +15,11 @@
             justify-content: center;
             font-size: 1.2rem;
             flex-shrink: 0;
+        }
+
+        /* Penanda khusus untuk kartu Terlambat */
+        .adminuiux-card.border-start-danger {
+            border-left: 4px solid #dc3545 !important;
         }
 
         /* Filter Area */
@@ -133,8 +109,7 @@
             <p class="text-muted mb-0">Kelola dan pantau persiapan pernikahanmu</p>
         </div>
         <a href="{{ route('weeding-plan.create') }}"
-            class="btn btn-primary flex-grow-1 flex-md-grow-0 text-white px-4 py-2 fw-bold"
-            style="border-radius: 12px;">
+            class="btn btn-primary flex-grow-1 flex-md-grow-0 px-4 py-2 fw-bold" style="border-radius: 12px;">
             <i class="bi bi-plus-lg me-1"></i> Tambah Rencana
         </a>
     </div>
@@ -142,9 +117,11 @@
     <!-- Statistik Cards -->
     <div class="row g-3 mb-4">
         <div class="col-6 col-md-3">
-            <div class="card stat-card-custom shadow-sm">
+            <div class="card adminuiux-card shadow-sm h-100">
                 <div class="card-body d-flex align-items-center gap-3">
-                    <div class="stat-icon-box bg-primary-subtle text-primary"><i class="bi bi-list-task"></i></div>
+                    <div class="stat-icon-box bg-primary-subtle text-primary">
+                        <i class="bi bi-list-task"></i>
+                    </div>
                     <div>
                         <div class="fw-bold fs-5">{{ $stats['total'] }}</div>
                         <div class="text-muted small">Total Tugas</div>
@@ -153,9 +130,10 @@
             </div>
         </div>
         <div class="col-6 col-md-3">
-            <div class="card stat-card-custom shadow-sm">
+            <div class="card adminuiux-card shadow-sm h-100">
                 <div class="card-body d-flex align-items-center gap-3">
-                    <div class="stat-icon-box bg-warning-subtle text-warning"><i class="bi bi-hourglass-split"></i>
+                    <div class="stat-icon-box bg-warning-subtle text-warning">
+                        <i class="bi bi-hourglass-split"></i>
                     </div>
                     <div>
                         <div class="fw-bold fs-5">{{ $stats['pending'] }}</div>
@@ -165,9 +143,11 @@
             </div>
         </div>
         <div class="col-6 col-md-3">
-            <div class="card stat-card-custom shadow-sm">
+            <div class="card adminuiux-card shadow-sm h-100">
                 <div class="card-body d-flex align-items-center gap-3">
-                    <div class="stat-icon-box bg-info-subtle text-info"><i class="bi bi-arrow-repeat"></i></div>
+                    <div class="stat-icon-box bg-info-subtle text-info">
+                        <i class="bi bi-arrow-repeat"></i>
+                    </div>
                     <div>
                         <div class="fw-bold fs-5">{{ $stats['in_progress'] }}</div>
                         <div class="text-muted small">Sedang Dikerjakan</div>
@@ -176,9 +156,10 @@
             </div>
         </div>
         <div class="col-6 col-md-3">
-            <div class="card stat-card-custom shadow-sm">
+            <div class="card adminuiux-card shadow-sm h-100">
                 <div class="card-body d-flex align-items-center gap-3">
-                    <div class="stat-icon-box bg-success-subtle text-success"><i class="bi bi-check-circle-fill"></i>
+                    <div class="stat-icon-box bg-success-subtle text-success">
+                        <i class="bi bi-check-circle-fill"></i>
                     </div>
                     <div>
                         <div class="fw-bold fs-5">{{ $stats['completed'] }}</div>
@@ -189,10 +170,11 @@
         </div>
         @if($stats['overdue'] > 0)
             <div class="col-6 col-md-3">
-                <div class="card stat-card-custom shadow-sm border-start-danger">
+                <div class="card adminuiux-card shadow-sm h-100 border-start-danger">
                     <div class="card-body d-flex align-items-center gap-3">
-                        <div class="stat-icon-box bg-danger-subtle text-danger"><i
-                                class="bi bi-exclamation-triangle-fill"></i></div>
+                        <div class="stat-icon-box bg-danger-subtle text-danger">
+                            <i class="bi bi-exclamation-triangle-fill"></i>
+                        </div>
                         <div>
                             <div class="fw-bold fs-5 text-danger">{{ $stats['overdue'] }}</div>
                             <div class="text-muted small">Terlambat</div>
@@ -204,16 +186,16 @@
     </div>
 
     <!-- Tabel Rencana -->
-    <div class="card border-0 shadow-sm mb-4" style="border-radius: 16px; overflow: hidden;">
+    <div class="card adminuiux-card shadow-sm mb-4">
         <div class="card-header bg-transparent border-0 py-3">
             <div
                 class="d-flex flex-column flex-md-row justify-content-between align-items-stretch align-items-md-center gap-3">
                 <div class="input-group input-group-pill flex-grow-1 flex-md-grow-0" style="max-width: 320px;">
-                    <span class="input-group-text border-0"><i class="bi bi-search"></i></span>
-                    <input type="text" id="searchPlan" class="form-control border-0 ps-0" placeholder="Cari tugas..."
+                    <span class="input-group-text"><i class="bi bi-search"></i></span>
+                    <input type="text" id="searchPlan" class="form-control ps-0" placeholder="Cari tugas..."
                         value="{{ request('search') }}">
                 </div>
-                <div class="d-flex  gap-2">
+                <div class="d-flex gap-2 flex-wrap">
                     <select id="statusFilter" class="form-select filter-pill" style="max-width: 180px;">
                         <option value="">Semua Status</option>
                         <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Menunggu</option>
@@ -253,7 +235,7 @@
                         <th>Kategori</th>
                         <th class="d-none d-sm-table-cell">Prioritas</th>
                         <th class="d-none d-md-table-cell">Batas Waktu</th>
-                        <th class="text-nowrap">Status</th> <!-- Tambahan text-nowrap di header -->
+                        <th class="text-nowrap">Status</th>
                         <th class="text-end pe-4">Aksi</th>
                     </tr>
                 </thead>
@@ -312,7 +294,7 @@
                                                     <span class="text-muted">-</span>
                                                 @endif
                                             </td>
-                                            <td class="text-nowrap"> <!-- Tambahan text-nowrap agar status 1 baris -->
+                                            <td class="text-nowrap">
                                                 @if($plan->status == 'completed')
                                                     <span
                                                         class="badge bg-success-subtle text-success border border-success-subtle">Selesai</span>
@@ -329,7 +311,6 @@
                                                     <form action="{{ route('weeding-plan.toggle', $plan) }}" method="POST" class="d-inline"
                                                         title="Ubah Status">
                                                         @csrf
-                                                        @method('POST')
                                                         <button type="submit"
                                                             class="btn btn-sm btn-outline-success rounded-circle p-2 d-flex align-items-center justify-content-center">
                                                             <i class="bi bi-arrow-repeat"></i>
@@ -358,18 +339,23 @@
                                                                 <form action="{{ route('weeding-plan.toggle', $plan) }}" method="POST"
                                                                     class="d-inline w-100">
                                                                     @csrf
-                                                                    @method('POST')
                                                                     <button type="submit" class="dropdown-item py-2">
                                                                         <i class="bi bi-arrow-repeat me-2"></i>Ubah Status
                                                                     </button>
                                                                 </form>
                                                             </li>
-                                                            <li><a class="dropdown-item py-2"
-                                                                    href="{{ route('weeding-plan.edit', $plan) }}"><i
-                                                                        class="bi bi-pencil me-2"></i>Edit</a></li>
-                                                            <li><button type="button" class="dropdown-item text-danger py-2"
-                                                                    onclick="confirmDelete({{ $plan->id }})"><i
-                                                                        class="bi bi-trash me-2"></i>Hapus</button></li>
+                                                            <li>
+                                                                <a class="dropdown-item py-2"
+                                                                    href="{{ route('weeding-plan.edit', $plan) }}">
+                                                                    <i class="bi bi-pencil me-2"></i>Edit
+                                                                </a>
+                                                            </li>
+                                                            <li>
+                                                                <button type="button" class="dropdown-item text-danger py-2"
+                                                                    onclick="confirmDelete({{ $plan->id }})">
+                                                                    <i class="bi bi-trash me-2"></i>Hapus
+                                                                </button>
+                                                            </li>
                                                         </ul>
                                                     </div>
                                                 </div>
@@ -419,13 +405,11 @@
                 const priority = priorityFilter.value;
                 const url = new URL(window.location.href);
 
-                // Bersihkan parameter yang ada
                 url.searchParams.delete('search');
                 url.searchParams.delete('status');
                 url.searchParams.delete('category');
                 url.searchParams.delete('priority');
 
-                // Set parameter hanya jika ada nilainya
                 if (search) url.searchParams.set('search', search);
                 if (status) url.searchParams.set('status', status);
                 if (category) url.searchParams.set('category', category);
@@ -445,7 +429,6 @@
             priorityFilter.addEventListener('change', applyFilters);
         });
 
-        // Swal2 Delete Confirmation
         function confirmDelete(id) {
             Swal.fire({
                 title: 'Hapus rencana ini?',

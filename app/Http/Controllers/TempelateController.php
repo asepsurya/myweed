@@ -341,7 +341,10 @@ class TempelateController extends Controller
             return 'Pilih template terlebih dahulu';
         }
 
-        $template = Template::findOrFail($templateId);
+        $template = Template::find($templateId);
+        if (! $template) {
+            return 'Pilih template terlebih dahulu';
+        }
 
         // Create a mock invitation object
         $invitation = new Invitation($request->all());

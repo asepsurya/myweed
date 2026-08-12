@@ -24,6 +24,9 @@ class DatabaseSeeder extends Seeder
         $this->call([InvitationSeed::class]);
         $this->call([GiftSeeder::class]);
         $this->call([SubscriptionSeed::class]);
+        $this->call([BudgetSeeder::class]);
+        $this->call([WeddingPlanSeeder::class]);
+        $this->call([FinancialOverviewSeeder::class]);
 
     }
 }

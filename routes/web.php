@@ -8,6 +8,7 @@ use App\Http\Controllers\BudgetExpenseController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CouponController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DocumentationController;
 use App\Http\Controllers\EnvSettingController;
 use App\Http\Controllers\FinancialDashboardController;
 use App\Http\Controllers\GiftController;
@@ -79,6 +80,11 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('invitation/{invitation}', [UserInvitationController::class, 'destroy'])->name('invitation.destroy');
     Route::delete('/gallery/{id}', [UserInvitationController::class, 'destroyGallery'])->name('gallery.delete');
     Route::post('premium/upgrade', [UserInvitationController::class, 'upgradeToPremium'])->name('premium.upgrade');
+
+    Route::post('invitation/{invitation}/invite-partner', [UserInvitationController::class, 'invitePartner'])->name('invitation.invite-partner');
+    Route::get('partner/accept/{token}', [UserInvitationController::class, 'acceptPartner'])->name('partner.accept');
+    Route::post('invitation/{invitation}/accept-partner', [UserInvitationController::class, 'acceptPartnerDirect'])->name('partner.accept-direct');
+    Route::post('invitation/{invitation}/remove-partner', [UserInvitationController::class, 'removePartner'])->name('invitation.remove-partner');
 
     Route::post('/templates/import-code', [TempelateController::class, 'importCode'])->name('templates.import-code');
     Route::get('/tema', [DashboardController::class, 'temaIndex'])->name('tema.index');
@@ -238,6 +244,8 @@ Route::middleware(['auth'])->group(function () {
 
         /* ---- Unified Financial Overview ---- */
         Route::get('/financial-overview', [FinancialDashboardController::class, 'index'])->name('financial-overview.index');
+
+        Route::get('/documentation', [DocumentationController::class, 'index'])->name('documentation.index');
     });
 
 });

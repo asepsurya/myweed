@@ -254,7 +254,7 @@
                         <td class="d-none d-sm-table-cell">
                             @php $remaining = ($category->allocated_amount ?? 0) - ($category->expenses_sum_amount ?? 0); @endphp
                             <span class="{{ $remaining < 0 ? 'text-danger fw-bold' : 'text-muted' }}">
-                                {{ $remaining >= 0 ? number_format($remaining, 0, ',', '.') : 'Lebih ' . abs(number_format($remaining, 0, ',', '.')) }}
+                                {{ $remaining >= 0 ? number_format($remaining, 0, ',', '.') : 'Lebih ' . number_format(abs($remaining), 0, ',', '.') }}
                             </span>
                         </td>
                         <td class="d-none d-md-table-cell">

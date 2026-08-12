@@ -171,6 +171,22 @@
                                         <i class="bi bi-calendar3 me-1"></i>
                                         {{ $inv->wedding_date ? \Carbon\Carbon::parse($inv->wedding_date)->format('d M Y') : 'Tanggal belum ditentukan' }}
                                     </small>
+                                    @if(auth()->user()->id === $inv->partner_user_id && $inv->partner_accepted_at)
+                                        <small class="text-muted d-block">
+                                            <i class="bi bi-person-heart me-1"></i>
+                                            Sebagai pasangan
+                                            @if($inv->partner_can_edit)
+                                                <span class="badge bg-success-subtle text-success ms-1">Dapat mengedit</span>
+                                            @else
+                                                <span class="badge bg-warning-subtle text-warning ms-1">Hanya melihat</span>
+                                            @endif
+                                        </small>
+                                    @elseif(auth()->user()->id === $inv->partner_user_id && !$inv->partner_accepted_at)
+                                        <small class="text-muted d-block">
+                                            <i class="bi bi-clock me-1"></i>
+                                            <span class="badge bg-warning-subtle text-warning">Menunggu penerimaan</span>
+                                        </small>
+                                    @endif
                                 </div>
 
                                 <!-- Tombol Aksi -->
@@ -180,14 +196,21 @@
                                         <a href="{{ route('invitation.show', $inv->slug) }}" class="btn btn-outline-secondary btn-sm" target="_blank" title="Lihat">
                                             <i class="bi bi-eye"></i>
                                         </a>
-                                        <a href="{{ route('invitation.edit', $inv) }}" class="btn btn-outline-primary btn-sm" title="Edit">
-                                            <i class="bi bi-pencil"></i>
-                                        </a>
+                                        @if(auth()->user()->id === $inv->user_id || (auth()->user()->id === $inv->partner_user_id && $inv->partner_accepted_at && $inv->partner_can_edit))
+                                            <a href="{{ route('invitation.edit', $inv) }}" class="btn btn-outline-primary btn-sm" title="Edit">
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
+                                        @endif
+                                        @if(auth()->user()->id === $inv->partner_user_id && !$inv->partner_accepted_at)
+                                            <button type="button" class="btn btn-outline-success btn-sm accept-partner-btn" title="Terima Undangan" data-url="{{ route('partner.accept-direct', $inv) }}">
+                                                <i class="bi bi-check-lg"></i>
+                                            </button>
+                                        @endif
                                         <button type="button" class="btn btn-outline-success btn-sm" data-bs-toggle="modal" data-bs-target="#shareModalDynamic" data-id="{{ $inv->id }}" title="Bagikan Undangan">
                                             <i class="bi bi-share"></i>
                                         </button>
 
-                                        @if(!$inv->is_default)
+                                        @if(auth()->user()->id === $inv->user_id && !$inv->is_default)
                                             <form action="{{ route('invitation.destroy', $inv) }}" method="POST" class="d-inline delete-invitation-form">
                                                 @csrf
                                                 @method('DELETE')
@@ -209,17 +232,26 @@
                                                     <i class="bi bi-eye me-2"></i> Lihat
                                                 </a>
                                             </li>
-                                            <li>
-                                                <a class="dropdown-item" href="{{ route('invitation.edit', $inv) }}">
-                                                    <i class="bi bi-pencil me-2"></i> Edit
-                                                </a>
-                                            </li>
+                                            @if(auth()->user()->id === $inv->user_id || (auth()->user()->id === $inv->partner_user_id && $inv->partner_accepted_at && $inv->partner_can_edit))
+                                                <li>
+                                                    <a class="dropdown-item" href="{{ route('invitation.edit', $inv) }}">
+                                                        <i class="bi bi-pencil me-2"></i> Edit
+                                                    </a>
+                                                </li>
+                                            @endif
+                                            @if(auth()->user()->id === $inv->partner_user_id && !$inv->partner_accepted_at)
+                                                <li>
+                                                    <button type="button" class="dropdown-item text-success w-100 text-start accept-partner-btn" data-url="{{ route('partner.accept-direct', $inv) }}">
+                                                        <i class="bi bi-check-lg me-2"></i> Terima Undangan
+                                                    </button>
+                                                </li>
+                                            @endif
                                             <li>
                                                 <button type="button" class="dropdown-item text-success" data-bs-toggle="modal" data-bs-target="#shareModalDynamic" data-id="{{ $inv->id }}">
                                                     <i class="bi bi-share me-2"></i> Bagikan Undangan
                                                 </button>
                                             </li>
-                                            @if(!$inv->is_default)
+                                            @if(auth()->user()->id === $inv->user_id && !$inv->is_default)
                                                 <li><hr class="dropdown-divider"></li>
                                                 <li>
                                                     <form action="{{ route('invitation.destroy', $inv) }}" method="POST" class="delete-invitation-form">
@@ -598,6 +630,40 @@
                     });
                 });
             }
-        </script>
+
+            // Accept Partner Direct
+            document.querySelectorAll('.accept-partner-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const url = this.dataset.url;
+                    const btn = this;
+                    btn.disabled = true;
+                    btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
+
+                    fetch(url, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'Accept': 'application/json',
+                        },
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.success) {
+                            location.reload();
+                        } else {
+                            alert(data.message || 'Gagal menerima undangan.');
+                            btn.disabled = false;
+                            btn.innerHTML = '<i class="bi bi-check-lg"></i>';
+                        }
+                    })
+                    .catch(err => {
+                        alert('Terjadi kesalahan. Coba lagi.');
+                        btn.disabled = false;
+                        btn.innerHTML = '<i class="bi bi-check-lg"></i>';
+                    });
+                });
+            });
+        });
+    </script>
     </div>
 </x-app-layout>

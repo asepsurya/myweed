@@ -16,11 +16,15 @@ class SavingsController extends Controller
         $user = $request->user();
         $invitationId = $this->resolveInvitationId($request, $user);
         $activeInvitationId = (int) $invitationId;
+        $invitation = Invitation::find($invitationId);
 
         $goals = SavingsGoal::where('invitation_id', $invitationId)
-            ->where(function ($q) use ($user) {
+            ->where(function ($q) use ($user, $invitation) {
                 $q->where('user_id', $user->id)
                     ->orWhere('is_shared', true);
+                if ($invitation && $user->id === $invitation->partner_user_id && $invitation->partner_accepted_at) {
+                    $q->orWhere('invitation_id', $invitation->id);
+                }
             })
             ->with('contributions')
             ->latest()
@@ -41,6 +45,7 @@ class SavingsController extends Controller
             ->get();
 
         $invitations = $this->invitationsFor($user);
+        $partner = $invitation?->partner;
 
         return view('savings.dashboard', compact(
             'goals',
@@ -50,7 +55,10 @@ class SavingsController extends Controller
             'nextAuto',
             'contributors',
             'invitations',
-            'activeInvitationId'
+            'activeInvitationId',
+            'user',
+            'invitation',
+            'partner'
         ));
     }
 
@@ -88,9 +96,13 @@ class SavingsController extends Controller
             return (int) $invitationId;
         }
 
-        return $user->isAdmin()
-            ? Invitation::first()->id
-            : Invitation::where('user_id', $user->id)->first()?->id;
+        if ($user->isAdmin()) {
+            return Invitation::first()->id;
+        }
+
+        return Invitation::where('user_id', $user->id)
+            ->orWhere('partner_user_id', $user->id)
+            ->first()?->id ?? 0;
     }
 
     private function invitationsFor($user)

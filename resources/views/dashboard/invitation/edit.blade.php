@@ -3,8 +3,14 @@
         /* =============================================
            LAYOUT & BUILDER WRAPPER
         ============================================= */
-        .adminuiux-sidebar-close .adminuiux-sidebar-inner { display: none !important; }
-        .adminuiux-sidebar-close .adminuiux-sidebar { width: 0 !important; border: none !important; }
+        .adminuiux-sidebar-close .adminuiux-sidebar-inner {
+            display: none !important;
+        }
+
+        .adminuiux-sidebar-close .adminuiux-sidebar {
+            width: 0 !important;
+            border: none !important;
+        }
 
         @media (min-width: 992px) {
             .adminuiux-sidebar-close .adminuiux-content.has-sidebar {
@@ -46,7 +52,10 @@
             flex-direction: column;
             overflow: hidden;
         }
-        [data-theme=dark] .sidebar-content-pane { background-color: var(--bs-dark); }
+
+        [data-theme=dark] .sidebar-content-pane {
+            background-color: var(--bs-dark);
+        }
 
         .sidebar-header {
             padding: 1.25rem 1.5rem;
@@ -70,9 +79,12 @@
         }
 
         .nav-vertical-link {
-            width: 44px; height: 44px;
-            display: flex; flex-direction: column;
-            align-items: center; justify-content: center;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
             border-radius: 0.75rem;
             color: var(--bs-secondary-color);
             cursor: pointer;
@@ -80,16 +92,31 @@
             font-size: 1.25rem;
             position: relative;
         }
-        .nav-vertical-link span { font-size: 0.65rem; font-weight: 600; margin-top: 2px; display: none; }
-        .nav-vertical-link:hover { background: var(--bs-secondary-bg); color: var(--adminuiux-theme-1); }
+
+        .nav-vertical-link span {
+            font-size: 0.65rem;
+            font-weight: 600;
+            margin-top: 2px;
+            display: none;
+        }
+
+        .nav-vertical-link:hover {
+            background: var(--bs-secondary-bg);
+            color: var(--adminuiux-theme-1);
+        }
+
         .nav-vertical-link.active {
             background: var(--adminuiux-theme-1);
             color: #fff;
             box-shadow: 0 0 15px rgba(198, 169, 98, 0.4);
         }
+
         .premium-lock-icon {
-            position: absolute; top: 2px; right: 2px;
-            font-size: 10px; color: #f59e0b;
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            font-size: 10px;
+            color: #f59e0b;
         }
 
         .btn-builder-next {
@@ -103,8 +130,10 @@
         ============================================= */
         .builder-canvas {
             flex: 1;
-            display: flex; flex-direction: column;
-            align-items: center; justify-content: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
             position: relative;
             background-color: var(--bs-tertiary-bg);
             background-image: radial-gradient(var(--bs-border-color) 1px, transparent 1px);
@@ -126,31 +155,44 @@
             overflow: hidden;
             transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
             position: relative;
-            width: 375px; height: 750px;
+            width: 375px;
+            height: 750px;
             border-radius: 3rem;
             border: 10px solid var(--bs-emphasis-color);
             outline: 1px solid var(--bs-border-color);
         }
 
         .preview-notch {
-            position: absolute; top: 10px; left: 50%;
+            position: absolute;
+            top: 10px;
+            left: 50%;
             transform: translateX(-50%);
-            width: 95px; height: 22px;
+            width: 95px;
+            height: 22px;
             background: var(--bs-emphasis-color);
-            border-radius: 1rem; z-index: 30;
+            border-radius: 1rem;
+            z-index: 30;
         }
 
         .preview-iframe {
-            width: 100%; height: 100%; border: none;
+            width: 100%;
+            height: 100%;
+            border: none;
             background-color: var(--bs-body-bg);
             border-radius: 2rem;
         }
 
         #previewLoader {
-            position: absolute; top: 0; left: 0;
-            width: 100%; height: 100%; z-index: 40;
-            display: flex; flex-direction: column;
-            align-items: center; justify-content: center;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 40;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
             background: rgba(var(--bs-body-bg-rgb), 0.85);
             backdrop-filter: blur(4px);
             border-radius: 2.5rem;
@@ -160,99 +202,252 @@
            UI ELEMENTS (Music, Templates, etc.)
         ============================================= */
         .music-list-item {
-            display: flex; align-items: center;
-            padding: 0.75rem 1rem; border-radius: 0.75rem;
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            border-radius: 0.75rem;
             border: 1px solid var(--bs-border-color);
             background: var(--bs-card-bg);
-            margin-bottom: 0.5rem; cursor: pointer;
-            transition: all 0.2s; gap: 1rem;
+            margin-bottom: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            gap: 1rem;
         }
-        .music-list-item:hover { border-color: var(--adminuiux-theme-1); background: rgba(198, 169, 98, 0.05); }
-        .music-list-item.selected { border-color: var(--adminuiux-theme-1); background: rgba(198, 169, 98, 0.1); }
+
+        .music-list-item:hover {
+            border-color: var(--adminuiux-theme-1);
+            background: rgba(198, 169, 98, 0.05);
+        }
+
+        .music-list-item.selected {
+            border-color: var(--adminuiux-theme-1);
+            background: rgba(198, 169, 98, 0.1);
+        }
 
         .music-icon-box {
-            width: 36px; height: 36px; flex-shrink: 0;
-            display: flex; align-items: center; justify-content: center;
-            background: var(--bs-tertiary-bg); border-radius: 0.5rem;
+            width: 36px;
+            height: 36px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bs-tertiary-bg);
+            border-radius: 0.5rem;
             color: var(--adminuiux-theme-1);
         }
-        .music-list-item.selected .music-icon-box { background: var(--adminuiux-theme-1); color: #fff; }
+
+        .music-list-item.selected .music-icon-box {
+            background: var(--adminuiux-theme-1);
+            color: #fff;
+        }
 
         .template-card-selector {
-            position: relative; border: 2px solid transparent;
-            transition: 0.3s; cursor: pointer;
-            border-radius: 0.75rem; overflow: hidden;
+            position: relative;
+            border: 2px solid transparent;
+            transition: 0.3s;
+            cursor: pointer;
+            border-radius: 0.75rem;
+            overflow: hidden;
         }
-        .template-card-selector.selected { border-color: var(--adminuiux-theme-1); }
+
+        .template-card-selector.selected {
+            border-color: var(--adminuiux-theme-1);
+        }
+
         .template-card-selector .check-icon {
-            position: absolute; top: 8px; left: 8px;
-            background: var(--adminuiux-theme-1); color: #fff;
-            width: 22px; height: 22px; border-radius: 50%;
-            display: none; align-items: center; justify-content: center;
-            font-size: 12px; z-index: 10;
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            background: var(--adminuiux-theme-1);
+            color: #fff;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            z-index: 10;
         }
-        .template-card-selector.selected .check-icon { display: flex; }
 
-        .premium-badge { background: linear-gradient(45deg, #f59e0b, #fbbf24); color: #000; font-weight: 800; padding: 2px 6px; border-radius: 4px; font-size: 8px !important; }
-        .basic-badge { background: #10b981; color: #fff; font-weight: 800; padding: 2px 6px; border-radius: 4px; font-size: 8px !important; }
+        .template-card-selector.selected .check-icon {
+            display: flex;
+        }
 
-        .mobile-next-prev { display: none; }
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        .sidebar-content.no-scrollbar { overflow-y: auto; flex: 1; }
+        .premium-badge {
+            background: linear-gradient(45deg, #f59e0b, #fbbf24);
+            color: #000;
+            font-weight: 800;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 8px !important;
+        }
+
+        .basic-badge {
+            background: #10b981;
+            color: #fff;
+            font-weight: 800;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 8px !important;
+        }
+
+        .mobile-next-prev {
+            display: none;
+        }
+
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        .sidebar-content.no-scrollbar {
+            overflow-y: auto;
+            flex: 1;
+        }
 
         /* =============================================
            RESPONSIVE (MOBILE)
         ============================================= */
         @media (max-width: 991px) {
-            .adminuiux-content { padding: 0 !important; }
+            .adminuiux-content {
+                padding: 0 !important;
+            }
+
             .builder-wrapper {
-                flex-direction: column; height: 100vh !important;
-                width: 100vw !important; margin: 0 !important;
-                border-radius: 0 !important; border: none !important;
-                position: fixed; top: 0; left: 0; z-index: 9999;
+                flex-direction: column;
+                height: 100vh !important;
+                width: 100vw !important;
+                margin: 0 !important;
+                border-radius: 0 !important;
+                border: none !important;
+                position: fixed;
+                top: 0;
+                left: 0;
+                z-index: 9999;
                 background: var(--bs-body-bg);
             }
+
             .builder-sidebar {
-                width: 100% !important; height: 100% !important;
-                flex-direction: column-reverse !important; border-right: none !important;
+                width: 100% !important;
+                height: 100% !important;
+                flex-direction: column-reverse !important;
+                border-right: none !important;
             }
+
             .sidebar-nav-vertical {
-                width: 100% !important; height: auto !important;
-                flex-direction: row !important; flex-wrap: nowrap !important;
-                overflow-x: auto !important; border-right: none !important;
-                border-top: 1px solid var(--bs-border-color); padding: 0.4rem !important;
-                justify-content: space-around !important; gap: 0.25rem !important;
-                background: var(--bs-tertiary-bg); z-index: 1000;
+                width: 100% !important;
+                height: auto !important;
+                flex-direction: row !important;
+                flex-wrap: nowrap !important;
+                overflow-x: auto !important;
+                border-right: none !important;
+                border-top: 1px solid var(--bs-border-color);
+                padding: 0.4rem !important;
+                justify-content: space-around !important;
+                gap: 0.25rem !important;
+                background: var(--bs-tertiary-bg);
+                z-index: 1000;
             }
-            .nav-vertical-link { width: 40px !important; height: 40px !important; border-radius: 0.6rem !important; border: none !important; }
-            .nav-vertical-link span { display: none !important; }
-            .nav-vertical-link i { font-size: 1.15rem !important; }
-            
-            .builder-canvas { display: none !important; }
-            
+
+            .nav-vertical-link {
+                width: 40px !important;
+                height: 40px !important;
+                border-radius: 0.6rem !important;
+                border: none !important;
+            }
+
+            .nav-vertical-link span {
+                display: none !important;
+            }
+
+            .nav-vertical-link i {
+                font-size: 1.15rem !important;
+            }
+
+            .builder-canvas {
+                display: none !important;
+            }
+
             .sidebar-header {
-                padding: 0.75rem 1rem !important; background: var(--bs-card-bg) !important;
-                border-bottom: 1px solid var(--bs-border-color); flex-wrap: nowrap !important; justify-content: space-between !important;
+                padding: 0.75rem 1rem !important;
+                background: var(--bs-card-bg) !important;
+                border-bottom: 1px solid var(--bs-border-color);
+                flex-wrap: nowrap !important;
+                justify-content: space-between !important;
             }
-            .sidebar-content { padding: 1.25rem 1rem !important; background: rgba(var(--bs-tertiary-bg-rgb), 0.3); }
-            .form-control, .form-select { padding: 0.6rem 0.75rem !important; border-radius: 0.75rem !important; }
-            label { margin-bottom: 0.4rem !important; font-size: 13px !important; }
+
+            .sidebar-content {
+                padding: 1.25rem 1rem !important;
+                background: rgba(var(--bs-tertiary-bg-rgb), 0.3);
+            }
+
+            .form-control,
+            .form-select {
+                padding: 0.6rem 0.75rem !important;
+                border-radius: 0.75rem !important;
+            }
+
+            label {
+                margin-bottom: 0.4rem !important;
+                font-size: 13px !important;
+            }
 
             .mobile-next-prev {
-                display: flex; align-items: center; justify-content: space-between;
-                gap: 0.5rem; padding: 0.75rem; background: var(--bs-card-bg);
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 0.5rem;
+                padding: 0.75rem;
+                background: var(--bs-card-bg);
                 border-top: 1px solid var(--bs-border-color);
             }
-            .mobile-next-prev .btn { flex: 1; display: inline-flex; align-items: center; justify-content: center; }
-            .mobile-next-prev #mobileTabLabel { flex: 0 0 auto; text-align: center; min-width: 50px; }
 
-            #cropModal, #cropModal .modal-dialog { z-index: 10001 !important; }
-            #cropModal .modal-backdrop { z-index: 10000 !important; }
+            .mobile-next-prev .btn {
+                flex: 1;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .mobile-next-prev #mobileTabLabel {
+                flex: 0 0 auto;
+                text-align: center;
+                min-width: 50px;
+            }
+
+            #cropModal,
+            #cropModal .modal-dialog {
+                z-index: 10001 !important;
+            }
+
+            #cropModal .modal-backdrop {
+                z-index: 10000 !important;
+            }
+
+            #partnerModal,
+            #partnerModal .modal-dialog {
+                z-index: 10001 !important;
+            }
+
+            #partnerModal .modal-backdrop {
+                z-index: 10000 !important;
+            }
         }
 
-        #prevPage:disabled, #nextPage:disabled { opacity: 0.4; cursor: not-allowed; }
-        .pagination-hidden { display: none !important; }
+        #prevPage:disabled,
+        #nextPage:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .pagination-hidden {
+            display: none !important;
+        }
     </style>
 
     <div class="builder-wrapper">
@@ -271,42 +466,47 @@
                 <div class="nav-vertical-link" data-tab="tab-6" title="Acara">
                     <i class="bi bi-calendar-event"></i><span>Acara</span>
                 </div>
-                
+
                 @if(auth()->check() ? auth()->user()->hasFeature('gallery') : true)
-                <div class="nav-vertical-link" data-tab="tab-3" title="Galeri">
-                    <i class="bi bi-images"></i><span>Galeri</span>
-                </div>
+                    <div class="nav-vertical-link" data-tab="tab-3" title="Galeri">
+                        <i class="bi bi-images"></i><span>Galeri</span>
+                    </div>
                 @endif
-                
+
                 @if(auth()->check() ? (auth()->user()->hasFeature('background_music') || auth()->user()->hasFeature('custom_music')) : true)
-                <div class="nav-vertical-link" data-tab="tab-4" title="Musik">
-                    <i class="bi bi-music-note-beamed"></i><span>Musik</span>
-                </div>
+                    <div class="nav-vertical-link" data-tab="tab-4" title="Musik">
+                        <i class="bi bi-music-note-beamed"></i><span>Musik</span>
+                    </div>
                 @endif
-                
+
                 @if(auth()->check() ? auth()->user()->hasFeature('love_story') : true)
-                <div class="nav-vertical-link" data-tab="tab-8" title="Kisah">
-                    <i class="bi bi-journal-text"></i><span>Kisah</span>
-                </div>
+                    <div class="nav-vertical-link" data-tab="tab-8" title="Kisah">
+                        <i class="bi bi-journal-text"></i><span>Kisah</span>
+                    </div>
                 @endif
-                
+
                 @if(auth()->check() ? auth()->user()->hasFeature('rsvp_messages') : true)
-                <div class="nav-vertical-link" data-tab="tab-5" title="RSVP">
-                    <i class="bi bi-envelope-check"></i><span>RSVP</span>
-                </div>
+                    <div class="nav-vertical-link" data-tab="tab-5" title="RSVP">
+                        <i class="bi bi-envelope-check"></i><span>RSVP</span>
+                    </div>
                 @endif
-                
+
                 @if(auth()->check() ? auth()->user()->hasFeature('virtual_gift') : true)
-                <div class="nav-vertical-link" data-tab="tab-9" title="Hadiah">
-                    <i class="bi bi-gift"></i><span>Hadiah</span>
-                </div>
+                    <div class="nav-vertical-link" data-tab="tab-9" title="Hadiah">
+                        <i class="bi bi-gift"></i><span>Hadiah</span>
+                    </div>
                 @endif
+
+                <div class="nav-vertical-link" data-bs-toggle="modal" data-bs-target="#partnerModal" title="Pasangan">
+                    <i class="bi bi-person-hearts"></i><span>Pasangan</span>
+                </div>
             </div>
 
             <div class="sidebar-content-pane">
                 <div class="sidebar-header flex-wrap gap-2">
                     <div class="d-flex align-items-center gap-2">
-                        <a href="{{ route('dashboard.user') }}" class="btn btn-xs btn-outline-secondary border-0 px-2" title="Kembali ke List">
+                        <a href="{{ route('dashboard.user') }}" class="btn btn-xs btn-outline-secondary border-0 px-2"
+                            title="Kembali ke List">
                             <i class="bi bi-arrow-left fs-5"></i>
                         </a>
                         <div>
@@ -316,23 +516,25 @@
                             </span>
                         </div>
                     </div>
-                    <button type="button" class="btn btn-sm px-3 text-white rounded-pill btn-builder-next" onclick="document.getElementById('myForm').submit()">
+                    <button type="button" class="btn btn-sm px-3 text-white rounded-pill btn-builder-next"
+                        onclick="document.getElementById('myForm').submit()">
                         <i class="bi bi-send-fill me-1"></i> Publikasikan
                     </button>
                 </div>
 
                 <div class="sidebar-content no-scrollbar">
-                    <form id="myForm" method="POST" action="{{ route('invitation.update', $invitation) }}" enctype="multipart/form-data">
+                    <form id="myForm" method="POST" action="{{ route('invitation.update', $invitation) }}"
+                        enctype="multipart/form-data">
                         @csrf
                         @method('PUT')
                         <input type="hidden" name="id" value="{{ $invitation->id }}">
                         @include('dashboard.invitation.form_tabs', ['invitation' => $invitation, 'music' => $music, 'templates' => $templates])
-                        <input type="hidden" name="template_id" id="template_id_hidden" value="{{ $invitation->template_id }}">
                     </form>
                 </div>
 
                 <div class="mobile-next-prev">
-                    <button type="button" id="mobilePrevBtn" class="btn btn-outline-secondary btn-sm">Sebelumnya</button>
+                    <button type="button" id="mobilePrevBtn"
+                        class="btn btn-outline-secondary btn-sm">Sebelumnya</button>
                     <span id="mobileTabLabel" class="small fw-semibold text-muted">Tema</span>
                     <button type="button" id="mobileNextBtn" class="btn btn-sm btn-builder-next">Selanjutnya</button>
                 </div>
@@ -344,14 +546,16 @@
             <div class="preview-device">
                 <div id="previewWindow" class="preview-window no-scrollbar">
                     <div class="preview-notch"></div>
-                    <iframe id="livePreviewIframe" name="livePreviewIframe" class="preview-iframe no-scrollbar" src="about:blank"></iframe>
+                    <iframe id="livePreviewIframe" name="livePreviewIframe" class="preview-iframe no-scrollbar"
+                        src="about:blank"></iframe>
                     <div id="previewLoader" class="d-none">
                         <div class="spinner-border mb-3" role="status" style="color: var(--adminuiux-theme-1);"></div>
                         <p class="small fw-bold">Updating...</p>
                     </div>
                 </div>
             </div>
-            <form id="previewForm" action="{{ route('invitation.live-preview') }}" method="POST" target="livePreviewIframe" style="display:none;" class="no-scrollbar">
+            <form id="previewForm" action="{{ route('invitation.live-preview') }}" method="POST"
+                target="livePreviewIframe" style="display:none;" class="no-scrollbar">
                 @csrf
                 <div id="previewFormInputs"></div>
             </form>
@@ -370,7 +574,74 @@
                     <img id="cropImage" style="max-width:100%; display:block;">
                 </div>
                 <div class="modal-footer border-0">
-                    <button type="button" class="btn px-5 text-white btn-builder-next" onclick="cropImage()">Simpan</button>
+                    <button type="button" class="btn px-5 text-white btn-builder-next"
+                        onclick="cropImage()">Simpan</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PARTNER MODAL -->
+    <div class="modal fade" id="partnerModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg rounded-4">
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title fw-bold">Kelola Pasangan</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    @if(!$invitation)
+                        <div class="alert alert-info">
+                            <i class="bi bi-info-circle me-2"></i>
+                            Simpan atau publikasikan undangan terlebih dahulu sebelum mengundang pasangan.
+                        </div>
+                    @elseif($invitation->partner_user_id && $invitation->partner_accepted_at)
+                        <div class="alert alert-success">
+                            <i class="bi bi-check-circle me-2"></i>
+                            <strong>{{ $invitation->partner->name }}</strong> ({{ $invitation->partner->email }}) telah menerima undangan.
+                            @if($invitation->partner_can_edit)
+                                <span class="badge bg-success-subtle text-success ms-2">Dapat mengedit</span>
+                            @else
+                                <span class="badge bg-warning-subtle text-warning ms-2">Hanya melihat</span>
+                            @endif
+                        </div>
+                        <form id="removePartnerForm" action="{{ route('invitation.remove-partner', $invitation) }}" method="POST" class="mt-3">
+                            @csrf
+                            @method('DELETE')
+                            <button type="button" class="btn btn-outline-danger btn-sm" id="removePartnerBtn">
+                                <i class="bi bi-person-x me-1"></i> Hapus Pasangan
+                            </button>
+                        </form>
+                    @elseif($invitation->partner_user_id && !$invitation->partner_accepted_at)
+                        <div class="alert alert-warning">
+                            <i class="bi bi-clock me-2"></i>
+                            Undangan sedang menunggu <strong>{{ $invitation->partner->name }}</strong> ({{ $invitation->partner->email }}) menerima.
+                        </div>
+                    @else
+                        <form id="invitePartnerForm">
+                            @csrf
+                            <div class="mb-3">
+                                <label for="partner_email" class="form-label fw-semibold mb-2">Email Pasangan</label>
+                                <input type="email" class="form-control" id="partner_email" name="email" required placeholder="contoh: pasangan@email.com">
+                                <small class="text-muted">Pasangan harus sudah memiliki akun terdaftar di sistem.</small>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold mb-2">Hak Akses</label>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="can_edit" id="can_edit_yes" value="1" checked>
+                                    <label class="form-check-label" for="can_edit_yes">Bisa mengedit undangan</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="can_edit" id="can_edit_no" value="0">
+                                    <label class="form-check-label" for="can_edit_no">Hanya bisa melihat</label>
+                                </div>
+                            </div>
+                            <button type="button" class="btn btn-primary" id="invitePartnerBtn">
+                                <i class="bi bi-send me-1"></i> Kirim Undangan
+                            </button>
+                            <div id="partnerFormMessage" class="mt-2"></div>
+                        </form>
+                    @endif
                 </div>
             </div>
         </div>
@@ -476,10 +747,10 @@
             const items = Array.from(gallery.querySelectorAll('.template-selector-item'));
             const visibleItems = items.filter(item => !item.classList.contains('d-none'));
             const totalPages = Math.max(1, Math.ceil(visibleItems.length / ITEMS_PER_PAGE));
-            
+
             if (currentPage > totalPages) currentPage = 1;
 
-            visibleItems.forEach(function(item, index) {
+            visibleItems.forEach(function (item, index) {
                 const pageIndex = Math.floor(index / ITEMS_PER_PAGE) + 1;
                 item.classList.toggle('pagination-hidden', pageIndex !== currentPage);
             });
@@ -496,7 +767,8 @@
         function selectTemplate(el, id) {
             document.querySelectorAll('.template-card-selector').forEach(c => c.classList.remove('selected'));
             el.classList.add('selected');
-            document.getElementById('template_id_hidden').value = id;
+            const hiddenInput = document.getElementById('template_id_hidden');
+            if (hiddenInput) hiddenInput.value = id;
 
             const templateItem = el.closest('.template-selector-item');
             if (templateItem && templateItem.dataset.color) {
@@ -506,19 +778,37 @@
             updateLivePreview();
         }
 
+        window.selectTemplate = selectTemplate;
+
         function autoSelectTemplate(templateId) {
             const items = Array.from(document.querySelectorAll('.template-selector-item')).filter(item => !item.classList.contains('d-none'));
-            const targetItem = items.find(item => item.dataset.templateId == templateId);
+            let targetItem = null;
+
+            if (templateId) {
+                targetItem = items.find(item => item.dataset.templateId == templateId);
+            }
+
+            if (!targetItem || targetItem.querySelector('.template-card-selector.locked')) {
+                targetItem = items.find(item => !item.querySelector('.template-card-selector.locked')) || items[0];
+            }
+
             if (!targetItem) return;
 
+            const newTemplateId = targetItem.dataset.templateId;
             const index = items.indexOf(targetItem);
-            const targetPage = Math.floor(index / ITEMS_PER_PAGE) + 1;
-            currentPage = targetPage;
-            renderPagination();
+            if (index !== -1) {
+                const targetPage = Math.floor(index / ITEMS_PER_PAGE) + 1;
+                currentPage = targetPage;
+                renderPagination();
+            }
 
             const card = targetItem.querySelector('.template-card-selector');
-            if (card) selectTemplate(card, templateId);
+            if (card) {
+                selectTemplate(card, newTemplateId);
+            }
         }
+
+        window.autoSelectTemplate = autoSelectTemplate;
 
         window.showPremiumAlert = function () {
             Swal.fire({
@@ -551,8 +841,9 @@
 
         // --- Live Preview & Autosave ---
         function updateLivePreview() {
-            const templateId = document.getElementById('template_id_hidden').value;
-            if (!templateId) return;
+            const hiddenInput = document.getElementById('template_id_hidden');
+            const templateId = hiddenInput ? hiddenInput.value : '';
+            if (!templateId) return; // Stop jika template belum dipilih
 
             clearTimeout(previewTimer);
             const loader = document.getElementById('previewLoader');
@@ -564,6 +855,10 @@
                 container.innerHTML = '';
 
                 const formData = new FormData(document.getElementById('myForm'));
+                if (!formData.has('template_id') || !formData.get('template_id')) {
+                    formData.set('template_id', templateId);
+                }
+
                 formData.forEach((v, k) => {
                     if (!(v instanceof File)) {
                         const i = document.createElement('input');
@@ -625,7 +920,7 @@
             if (!device) return;
             const canvas = device.closest('.builder-canvas');
             if (!canvas) return;
-            
+
             const padding = 60;
             const cw = canvas.clientWidth - padding;
             const ch = canvas.clientHeight - padding;
@@ -638,9 +933,19 @@
         function dbAutoSave() {
             clearTimeout(saveTimer);
             saveTimer = setTimeout(() => {
-                const formData = new FormData(document.getElementById('myForm'));
-                const cleanData = new URLSearchParams();
+                const myForm = document.getElementById('myForm');
+                if (!myForm) return;
 
+                const hiddenInput = document.getElementById('template_id_hidden');
+                const templateId = hiddenInput ? hiddenInput.value : '';
+                if (!templateId) return;
+
+                const formData = new FormData(myForm);
+                if (!formData.has('template_id') || !formData.get('template_id')) {
+                    formData.set('template_id', templateId);
+                }
+
+                const cleanData = new URLSearchParams();
                 formData.forEach((v, k) => {
                     if (!(v instanceof File) && k !== '_method') cleanData.append(k, v);
                 });
@@ -650,18 +955,24 @@
 
                 fetch("{{ route('invitation.autosave') }}", {
                     method: 'POST',
-                    headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json' },
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
                     body: cleanData
                 })
-                .then(res => res.json())
-                .then(data => {
-                    if (data.success) {
-                        if (badge) badge.innerHTML = '<i class="bi bi-cloud-check me-1 text-success"></i>Tersimpan ✨';
-                    }
-                })
-                .catch(err => {
-                    if (badge) badge.innerHTML = '<i class="bi bi-cloud-slash me-1 text-danger"></i>Gagal simpan';
-                });
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.success) {
+                            if (badge) badge.innerHTML = '<i class="bi bi-cloud-check me-1 text-success"></i>Tersimpan ✨';
+                        } else {
+                            if (badge) badge.innerHTML = '<i class="bi bi-cloud-slash me-1 text-danger"></i>Gagal simpan';
+                        }
+                    })
+                    .catch(err => {
+                        if (badge) badge.innerHTML = '<i class="bi bi-cloud-slash me-1 text-danger"></i>Gagal simpan';
+                    });
             }, 800);
         }
 
@@ -750,14 +1061,14 @@
             const div = document.createElement('div');
             div.className = 'love-story-item border rounded p-2 mb-2 bg-body-tertiary';
             div.innerHTML = `
-                <input type="text" name="story_title[]" class="form-control form-control-sm mb-1" placeholder="Judul">
-                <textarea name="love_story[]" rows="2" class="form-control form-control-sm x-small mb-1"></textarea>
-                <div class="mb-2">
-                    <label class="form-label fw-semibold mb-1" style="font-size: 12px;">Foto Kisah</label>
-                    <input type="file" name="story_photo[]" accept="image/*" class="form-control form-control-sm">
-                </div>
-                <button type="button" class="btn btn-link text-danger btn-xs p-0" onclick="this.closest('.love-story-item').remove(); updateLivePreview();">Hapus</button>
-            `;
+            <input type="text" name="story_title[]" class="form-control form-control-sm mb-1" placeholder="Judul">
+            <textarea name="love_story[]" rows="2" class="form-control form-control-sm x-small mb-1"></textarea>
+            <div class="mb-2">
+                <label class="form-label fw-semibold mb-1" style="font-size: 12px;">Foto Kisah</label>
+                <input type="file" name="story_photo[]" accept="image/*" class="form-control form-control-sm">
+            </div>
+            <button type="button" class="btn btn-link text-danger btn-xs p-0" onclick="this.closest('.love-story-item').remove(); updateLivePreview();">Hapus</button>
+        `;
             document.getElementById('loveStoryWrapper').appendChild(div);
             updateLivePreview();
         };
@@ -766,25 +1077,25 @@
             const div = document.createElement('div');
             div.className = 'gift-item border rounded p-3 mb-2 bg-body-tertiary position-relative shadow-sm';
             div.innerHTML = `
-                <button type="button" class="btn-close x-small position-absolute top-0 end-0 m-2" onclick="this.closest('.gift-item').remove(); updateLivePreview();"></button>
-                <div class="row g-2">
-                    <div class="col-12">
-                        <label class="x-small fw-bold text-muted mb-1">Bank / E-Wallet</label>
-                        <select name="bank[]" class="form-select form-select-sm">
-                            <option value="BCA">BCA</option><option value="BNI">BNI</option><option value="BRI">BRI</option>
-                            <option value="Mandiri">Mandiri</option><option value="Dana">DANA</option><option value="OVO">OVO</option><option value="Gopay">Gopay</option>
-                        </select>
-                    </div>
-                    <div class="col-12">
-                        <label class="x-small fw-bold text-muted mb-1">No. Rekening / HP</label>
-                        <input type="text" name="number[]" placeholder="Contoh: 12345678" class="form-control form-control-sm">
-                    </div>
-                    <div class="col-12">
-                        <label class="x-small fw-bold text-muted mb-1">Atas Nama</label>
-                        <input type="text" name="name[]" placeholder="Nama pemilik rekening" class="form-control form-control-sm">
-                    </div>
+            <button type="button" class="btn-close x-small position-absolute top-0 end-0 m-2" onclick="this.closest('.gift-item').remove(); updateLivePreview();"></button>
+            <div class="row g-2">
+                <div class="col-12">
+                    <label class="x-small fw-bold text-muted mb-1">Bank / E-Wallet</label>
+                    <select name="bank[]" class="form-select form-select-sm">
+                        <option value="BCA">BCA</option><option value="BNI">BNI</option><option value="BRI">BRI</option>
+                        <option value="Mandiri">Mandiri</option><option value="Dana">DANA</option><option value="OVO">OVO</option><option value="Gopay">Gopay</option>
+                    </select>
                 </div>
-            `;
+                <div class="col-12">
+                    <label class="x-small fw-bold text-muted mb-1">No. Rekening / HP</label>
+                    <input type="text" name="number[]" placeholder="Contoh: 12345678" class="form-control form-control-sm">
+                </div>
+                <div class="col-12">
+                    <label class="x-small fw-bold text-muted mb-1">Atas Nama</label>
+                    <input type="text" name="name[]" placeholder="Nama pemilik rekening" class="form-control form-control-sm">
+                </div>
+            </div>
+        `;
             document.getElementById('giftContainer').appendChild(div);
             updateLivePreview();
         };
@@ -852,47 +1163,25 @@
                 nextPageBtn.addEventListener('click', function () {
                     var gallery = document.getElementById('templateGallery');
                     if (!gallery) return;
-                    var visibleItems = Array.from(gallery.querySelectorAll('.template-selector-item')).filter(function(item) { return !item.classList.contains('d-none'); });
+                    var visibleItems = Array.from(gallery.querySelectorAll('.template-selector-item')).filter(function (item) { return !item.classList.contains('d-none'); });
                     var totalPages = Math.max(1, Math.ceil(visibleItems.length / ITEMS_PER_PAGE));
                     if (currentPage < totalPages) { currentPage++; renderPagination(); }
                 });
             }
             renderPagination();
 
-            // Auto select template
+            // [FIX] Auto select template
             const urlParams = new URLSearchParams(window.location.search);
-            const templateId = urlParams.get('template_id') || '{{ $invitation->template_id }}';
-            if (templateId) autoSelectTemplate(templateId);
+            let templateId = urlParams.get('template_id') || '{{ $invitation->template_id }}' || document.getElementById('template_id_hidden')?.value;
+            autoSelectTemplate(templateId);
 
-            // Select all templates
-            const selectAllTemplates = document.getElementById('selectAllTemplates');
-            if (selectAllTemplates) {
-                selectAllTemplates.addEventListener('change', function () {
-                    const isChecked = this.checked;
-                    document.querySelectorAll('.template-card-selector').forEach(card => {
-                        if (isChecked) {
-                            card.classList.add('selected');
-                            const checkIcon = card.querySelector('.check-icon');
-                            if (checkIcon) checkIcon.style.display = 'flex';
-                        } else {
-                            card.classList.remove('selected');
-                            const checkIcon = card.querySelector('.check-icon');
-                            if (checkIcon) checkIcon.style.display = 'none';
-                        }
-                    });
-                    if (isChecked) {
-                        const firstSelected = document.querySelector('.template-card-selector.selected');
-                        if (firstSelected) {
-                            const templateItem = firstSelected.closest('.template-selector-item');
-                            if (templateItem && templateItem.dataset.templateId) {
-                                document.getElementById('template_id_hidden').value = templateItem.dataset.templateId;
-                            }
-                        }
-                    } else {
-                        document.getElementById('template_id_hidden').value = '';
-                    }
-                    updateLivePreview();
-                });
+            // Fallback: jika masih belum ada template yang terpilih, pilih yang pertama
+            const currentTemplateVal = document.getElementById('template_id_hidden')?.value;
+            if (!currentTemplateVal) {
+                const firstUnlocked = document.querySelector('.template-card-selector:not(.locked)');
+                if (firstUnlocked) {
+                    selectTemplate(firstUnlocked, firstUnlocked.closest('.template-selector-item').dataset.templateId);
+                }
             }
 
             // Form Events
@@ -946,7 +1235,7 @@
             // Iframe scrollbar hide
             const livePreviewIframe = document.getElementById('livePreviewIframe');
             if (livePreviewIframe) {
-                livePreviewIframe.addEventListener('load', function() {
+                livePreviewIframe.addEventListener('load', function () {
                     try {
                         const css = `::-webkit-scrollbar { display: none !important; } html, body { scrollbar-width: none !important; -ms-overflow-style: none !important; overflow-y: auto !important; }`;
                         const style = this.contentWindow.document.createElement('style');

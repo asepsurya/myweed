@@ -14,11 +14,17 @@ class SavingsGoalController extends Controller
     {
         $user = $request->user();
         $invitationId = $this->resolveInvitationId($request, $user);
+        $invitation = Invitation::find($invitationId);
 
         $goals = SavingsGoal::where('invitation_id', $invitationId)
-            ->where(function ($q) use ($user) {
+            ->where(function ($q) use ($user, $invitation) {
                 $q->where('user_id', $user->id)
-                    ->orWhere('is_shared', true);
+                    ->orWhere('is_shared', true)
+                    ->orWhere(function ($q2) use ($user, $invitation) {
+                        if ($invitation && $user->id === $invitation->partner_user_id && $invitation->partner_accepted_at) {
+                            $q2->where('invitation_id', $invitation->id);
+                        }
+                    });
             })
             ->withCount('contributions')
             ->withSum('contributions', 'amount')
@@ -152,9 +158,13 @@ class SavingsGoalController extends Controller
             return (int) $invitationId;
         }
 
-        return $user->isAdmin()
-            ? Invitation::first()->id
-            : Invitation::where('user_id', $user->id)->first()?->id;
+        if ($user->isAdmin()) {
+            return Invitation::first()->id;
+        }
+
+        return Invitation::where('user_id', $user->id)
+            ->orWhere('partner_user_id', $user->id)
+            ->first()?->id ?? 0;
     }
 
     private function contributorsFor(int $invitationId)

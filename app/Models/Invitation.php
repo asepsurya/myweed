@@ -62,6 +62,10 @@ class Invitation extends Model
         'rsvp_whatsapp',
         'music',
         'music_youtube_url',
+        'partner_user_id',
+        'partner_invite_token',
+        'partner_accepted_at',
+        'partner_can_edit',
     ];
 
     public function template()

@@ -34,8 +34,8 @@
     <link href="{{ asset('assets/css/app435e.css?1096aad991449c8654b2') }}" rel="stylesheet">
     <script defer src="{{ asset('assets/js/app435e.js?1096aad991449c8654b2') }}"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <!-- WeddingInv Theme Overrides -->
 
+    <!-- WeddingInv Theme Overrides -->
     <style>
         :root,
         [data-bs-theme=light] {
@@ -96,8 +96,8 @@
         }
 
         /* =============================================
-       DARK MODE PROFESSIONAL
-    ============================================= */
+           DARK MODE PROFESSIONAL
+        ============================================= */
         [data-bs-theme="dark"] {
             /* Warna Utama Gold (Diterangkan sedikit untuk kontras dark mode) */
             --adminuiux-theme-1: #E8D5A3;
@@ -105,7 +105,6 @@
             --adminuiux-theme-1-active: #C6A962;
             --adminuiux-theme-1-rgb: 232, 213, 163;
             --adminuiux-theme-1-text: #0B0F19;
-            /* Teks gelap di atas gold terang */
 
             /* Warna Sekunder Navy (Diterangkan untuk kontras) */
             --adminuiux-theme-2: #2A3F6A;
@@ -125,11 +124,8 @@
 
             /* Background Dasar (Dark Navy Pekat) */
             --adminuiux-bg-1: #0B0F19;
-            /* Hitam Navy */
             --adminuiux-bg-2: #111827;
-            /* Navy Sedikit Terang untuk kartu */
             --adminuiux-text: #F1F5F9;
-            /* Teks putih bersih */
 
             /* Layout Dark */
             --adminuiux-header-active-bg-rgb: 11, 15, 25;
@@ -203,7 +199,6 @@
             background: linear-gradient(135deg, var(--adminuiux-theme-1), var(--adminuiux-theme-1-hover));
         }
 
-        /* Card accents */
         .theme-gold .card.border-start {
             border-left-color: var(--adminuiux-theme-1) !important;
         }
@@ -213,8 +208,8 @@
         }
 
         /* =============================================
-       MUSIC PLAYER
-    ============================================= */
+           MUSIC PLAYER
+        ============================================= */
         .wedding-music-player {
             position: fixed;
             bottom: 20px;
@@ -435,12 +430,11 @@
         }
 
         /* =============================================
-       ADMINUIUX CARD PREMIUM OVERRIDE
-    ============================================= */
+           ADMINUIUX CARD PREMIUM OVERRIDE
+        ============================================= */
         .adminuiux-card {
             border: 1px solid var(--bs-border-color) !important;
             border-radius: 16px !important;
-            /* Sudut lebih membulat */
             background-color: var(--adminuiux-bg-2) !important;
             color: var(--adminuiux-text) !important;
             transition: all 0.3s ease-in-out !important;
@@ -448,15 +442,12 @@
             overflow: hidden;
         }
 
-        /* Efek Hover untuk Kartu Statistik */
         .adminuiux-card.h-100:hover {
             transform: translateY(-5px) !important;
             box-shadow: 0 12px 30px rgba(27, 42, 74, 0.08) !important;
             border-color: rgba(198, 169, 98, 0.3) !important;
-            /* Border sedapat emas saat di-hover */
         }
 
-        /* Header Kartu */
         .adminuiux-card .card-header {
             background-color: transparent !important;
             border-bottom: 1px solid var(--bs-border-color) !important;
@@ -465,12 +456,10 @@
             font-weight: 600 !important;
         }
 
-        /* Body Kartu */
         .adminuiux-card .card-body {
             padding: 1.25rem !important;
         }
 
-        /* Avatar di dalam kartu (Ikon) */
         .adminuiux-card .avatar {
             display: inline-flex !important;
             align-items: center !important;
@@ -478,7 +467,6 @@
             border-radius: 12px !important;
         }
 
-        /* Penyesuaian untuk Dark Mode */
         [data-bs-theme="dark"] .adminuiux-card {
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2) !important;
         }
@@ -487,17 +475,38 @@
             box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4) !important;
             border-color: rgba(232, 213, 163, 0.3) !important;
         }
+
+        /* Sidebar dropdown animation */
+        .adminuiux-sidebar .collapse {
+            transition: all 0.3s ease-in-out;
+        }
+
+        .adminuiux-sidebar .nav-item:hover>.collapse {
+            display: block;
+        }
+
+        .adminuiux-sidebar .nav-item>a[data-bs-toggle="collapse"] .bi-chevron-down {
+            transition: transform 0.3s ease;
+        }
+
+        .adminuiux-sidebar .nav-item>a[aria-expanded="true"] .bi-chevron-down {
+            transform: rotate(180deg);
+        }
+
+        .breadcrumb-item+.breadcrumb-item::before {
+            content: "\f285";
+            font-family: "bootstrap-icons";
+            padding-right: 0.5rem;
+            color: var(--bs-secondary-color);
+        }
     </style>
 </head>
-<!-- roundedui -->
 
-<body
-    class="main-bg main-bg-opac main-bg-blur adminuiux-sidebar-fill-white adminuiux-sidebar-boxed theme-gold adminuiux-header-standard adminuiux-sidebar-iconic adminuiux-header-transparent scrolldown"
+<body class="main-bg main-bg-opac main-bg-blur adminuiux-sidebar-fill-white adminuiux-sidebar-boxed theme-gold"
     data-theme="theme-gold" data-sidebarfill="adminuiux-sidebar-fill-white"
     data-headerlayout="adminuiux-header-standard" data-sidebarlayout="adminuiux-sidebar-iconic" data-bs-spy="scroll"
     data-bs-target="#list-example" data-bs-smooth-scroll="true" tabindex="0">
 
-    {{-- Header --}}
     @include('layouts.partial.header')
 
     {{-- Page Wrapper --}}
@@ -510,35 +519,82 @@
         <main class="adminuiux-content has-sidebar" onclick="contentClick()" style="padding-top: 68px;">
             <div class="container-fluid mt-4" id="main-content">
 
-                @if(session('warning'))
-                    <div class="alert alert-warning d-flex align-items-center gap-2" role="alert">
-                        <i class="bi bi-exclamation-triangle-fill flex-shrink-0"></i>
-                        <div>{{ session('warning') }}</div>
-                    </div>
-                @endif
+                {{-- Notifikasi / Alert dibungkus dalam Card --}}
+                @if(session('warning') || (auth()->check() && !auth()->user()->hasVerifiedEmail() && !auth()->user()->isAdmin()) || request()->has('verified'))
+                    <div class="card border-0 mb-3">
+                        <div class="card-body p-2">
+                            @if(session('warning'))
+                                <div class="alert alert-warning d-flex align-items-center gap-2 mb-0" role="alert">
+                                    <i class="bi bi-exclamation-triangle-fill flex-shrink-0"></i>
+                                    <div>{{ session('warning') }}</div>
+                                </div>
+                            @endif
 
-                @if(auth()->check() && !auth()->user()->hasVerifiedEmail() && !auth()->user()->isAdmin())
-                    <div class="alert alert-warning d-flex align-items-center justify-content-between gap-2" role="alert">
-                        <div class="d-flex align-items-center gap-2">
-                            <i class="bi bi-envelope-exclamation-fill flex-shrink-0"></i>
-                            <div>
-                                Email Anda belum diverifikasi.
-                                <a href="{{ route('verification.notice') }}" class="alert-link">Verifikasi sekarang</a>
-                            </div>
+                            @if(auth()->check() && !auth()->user()->hasVerifiedEmail() && !auth()->user()->isAdmin())
+                                <div class="alert alert-warning d-flex align-items-center justify-content-between gap-2 mb-0"
+                                    role="alert">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <i class="bi bi-envelope-exclamation-fill flex-shrink-0"></i>
+                                        <div>
+                                            Email Anda belum diverifikasi.
+                                            <a href="{{ route('verification.notice') }}" class="alert-link">Verifikasi
+                                                sekarang</a>
+                                        </div>
+                                    </div>
+                                    <form method="POST" action="{{ route('verification.send') }}" class="d-inline">
+                                        @csrf
+                                        <button type="submit" class="btn btn-sm btn-outline-warning">
+                                            <i class="bi bi-send me-1"></i>Kirim Ulang
+                                        </button>
+                                    </form>
+                                </div>
+                            @endif
+
+                            @if(request()->has('verified'))
+                                <div class="alert alert-success d-flex align-items-center gap-2 mb-0" role="alert">
+                                    <i class="bi bi-check-circle-fill flex-shrink-0"></i>
+                                    <div>Email Anda berhasil diverifikasi.</div>
+                                </div>
+                            @endif
                         </div>
-                        <form method="POST" action="{{ route('verification.send') }}" class="d-inline">
-                            @csrf
-                            <button type="submit" class="btn btn-sm btn-outline-warning">
-                                <i class="bi bi-send me-1"></i>Kirim Ulang
-                            </button>
-                        </form>
                     </div>
                 @endif
 
-                @if(request()->has('verified'))
-                    <div class="alert alert-success d-flex align-items-center gap-2" role="alert">
-                        <i class="bi bi-check-circle-fill flex-shrink-0"></i>
-                        <div>Email Anda berhasil diverifikasi.</div>
+                {{-- Breadcrumbs dibungkus dalam Card --}}
+                @php
+                    $breadcrumbs = get_breadcrumbs();
+                @endphp
+
+                @if(!empty($breadcrumbs) && count($breadcrumbs) > 1)
+                    <div class="card border-1 mb-4"
+                        style="background-color: rgba(198, 169, 98, 0.1); border-color: rgba(198, 169, 98, 0.2) !important;">
+                        <div class="card-body py-2 px-3">
+                            <nav aria-label="breadcrumb" class="mb-0">
+                                <ol class="breadcrumb mb-0 align-items-center">
+                                    @foreach($breadcrumbs as $crumb)
+                                        @if($loop->last)
+                                            <li class="breadcrumb-item active" aria-current="page">
+                                                @if(!empty($crumb['icon']))
+                                                    <i class="bi {{ $crumb['icon'] }} me-1 fs-14"></i>
+                                                @endif
+                                                {{ $crumb['label'] }}
+                                            </li>
+                                        @else
+                                            <li class="breadcrumb-item">
+                                                @if(!empty($crumb['icon']))
+                                                    <i class="bi {{ $crumb['icon'] }} me-1 fs-14"></i>
+                                                @endif
+                                                @if(!empty($crumb['route']))
+                                                    <a href="{{ route($crumb['route']) }}">{{ $crumb['label'] }}</a>
+                                                @else
+                                                    {{ $crumb['label'] }}
+                                                @endif
+                                            </li>
+                                        @endif
+                                    @endforeach
+                                </ol>
+                            </nav>
+                        </div>
                     </div>
                 @endif
 
@@ -581,7 +637,6 @@
                 });
             }
 
-            // Wait for framework loader if present
             const loader = document.getElementById('pageLoader');
             if (loader) {
                 const obs = new MutationObserver(() => {
@@ -591,16 +646,13 @@
                     }
                 });
                 obs.observe(loader, { attributes: true });
-                // Fallback: init after 5s even if loader stuck
                 setTimeout(() => { initToasts(); obs.disconnect(); }, 5000);
             } else {
                 initToasts();
             }
-
         });
 
         function contentClick() {
-            // Close sidebar collapse elements when clicking main content
             const sidebarProfile = document.getElementById('usersidebarprofile');
             if (sidebarProfile && sidebarProfile.classList.contains('show')) {
                 const collapse = bootstrap.Collapse.getOrCreateInstance(sidebarProfile);

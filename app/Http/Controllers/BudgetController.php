@@ -98,9 +98,13 @@ class BudgetController extends Controller
             return (int) $invitationId;
         }
 
-        return $user->isAdmin()
-            ? Invitation::first()->id
-            : Invitation::where('user_id', $user->id)->value('id');
+        if ($user->isAdmin()) {
+            return Invitation::first()->id;
+        }
+
+        return Invitation::where('user_id', $user->id)
+            ->orWhere('partner_user_id', $user->id)
+            ->first()?->id ?? 0;
     }
 
     private function invitationsForDropdown($user)

@@ -4,7 +4,7 @@
         <div class="px-3 not-iconic mt-3">
             <div class="row">
                 <div class="col align-self-center ">
-                    <h6 class="fw-medium">Main Menu</h6>
+                    <h6 class="fw-medium">Menu Saya</h6>
                 </div>
                 <div class="col-auto">
                     <a class="btn btn-link btn-square" data-bs-toggle="collapse" data-bs-target="#usersidebarprofile"
@@ -24,153 +24,154 @@
 
         <ul class="nav flex-column menu-active-line">
 
-            <!-- Dashboard -->
+            @role('admin')
             <li class="nav-item">
-                <a href="{{ route('dashboard')  }}" class="nav-link" :active="request()->routeIs('dashboard')">
-                    <i class="menu-icon bi bi-columns-gap"></i>
+                <a class="nav-link" href="{{ route('dashboard') }}" data-bs-toggle="tooltip" data-bs-placement="right"
+                    title="Dashboard">
+                    <i class="menu-icon bi bi-columns-gap me-2"></i>
                     <span class="menu-name">Dashboard</span>
                 </a>
             </li>
 
-            <!-- Data Pasangan -->
             <li class="nav-item">
-                <a href="{{ route('invitation.index') }}" class="nav-link "
-                    :active="request()->routeIs('invitation.index*')">
-                    <i class="menu-icon bi bi-heart"></i>
-                    <span class="menu-name">Data Pasangan</span>
+                <a class="nav-link" href="{{ route('invitation.index') }}" data-bs-toggle="tooltip"
+                    data-bs-placement="right" title="Daftar Pasangan">
+                    <i class="menu-icon bi bi-gem me-2"></i>
+                    <span class="menu-name">Daftar Pasangan</span>
                 </a>
             </li>
 
-            <!-- Detail Acara -->
             <li class="nav-item">
-                <a href="acara.html" class="nav-link">
-                    <i class="menu-icon bi bi-calendar-event"></i>
-                    <span class="menu-name">Detail Acara</span>
+                <a class="nav-link" href="{{ route('music.index') }}" data-bs-toggle="tooltip" data-bs-placement="right"
+                    title="Music Library">
+                    <i class="menu-icon bi bi-music-note-list me-2"></i>
+                    <span class="menu-name">Music Library</span>
+                </a>
+            </li>
+            @endrole
+
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('dashboard.user') }}" data-bs-toggle="tooltip"
+                    data-bs-placement="right" title="Pasangan Saya">
+                    <i class="menu-icon bi bi-heart me-2"></i>
+                    <span class="menu-name">Pasangan Saya</span>
                 </a>
             </li>
 
-            <!-- Galeri -->
-            <li class="nav-item">
-                <a href="galeri.html" class="nav-link">
-                    <i class="menu-icon bi bi-images"></i>
-                    <span class="menu-name">Galeri Foto</span>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="menu-icon bi bi-folder me-2"></i>
+                    <span class="menu-name">Planner</span>
                 </a>
+                <div class="dropdown-menu" id="financeMenu">
+                    <div class="nav-item">
+                        <a href="{{ route('weeding-plan.index') }}" class="nav-link"
+                            :active="request()->routeIs('weeding-plan.index')">
+                            <i class="menu-icon bi bi-calendar-check me-2"></i>
+                            <span class="menu-name">Rencana Pernikahan</span>
+                        </a>
+                    </div>
+                    <div class="nav-item">
+                        <a href="{{ route('budget.dashboard') }}" class="nav-link"
+                            :active="request()->routeIs('budget.dashboard')">
+                            <i class="menu-icon bi bi-calculator me-2"></i>
+                            <span class="menu-name">Anggaran</span>
+                        </a>
+                    </div>
+                    <div class="nav-item">
+                        <a href="{{ route('savings.dashboard') }}" class="nav-link"
+                            :active="request()->routeIs('savings.dashboard')">
+                            <i class="menu-icon bi bi-piggy-bank me-2"></i>
+                            <span class="menu-name">Tabungan</span>
+                        </a>
+                    </div>
+                    <div class="nav-item">
+                        <a href="{{ route('financial-overview.index') }}" class="nav-link"
+                            :active="request()->routeIs('financial-overview.index')">
+                            <i class="menu-icon bi bi-bar-chart-line me-2"></i>
+                            <span class="menu-name">Ikhtisar Keuangan</span>
+                        </a>
+                    </div>
+                </div>
             </li>
 
-            <!-- Musik -->
             <li class="nav-item">
-                <a href="{{ route('music.index') }}" class="nav-link" :active="request()->routeIs('music.index')">
-                    <i class="menu-icon bi bi-music-note-beamed"></i>
-                    <span class="menu-name">Musik Undangan</span>
-                </a>
-            </li>
-
-            <!-- Lokasi -->
-            <li class="nav-item">
-                <a href="#" class="nav-link">
-                    <i class="menu-icon bi bi-geo-alt"></i>
-                    <span class="menu-name">Lokasi Acara</span>
-                </a>
-            </li>
-
-            <!-- RSVP -->
-            <li class="nav-item">
-                <a href="rsvp.html" class="nav-link">
-                    <i class="menu-icon bi bi-clipboard-check"></i>
-                    <span class="menu-name">RSVP Tamu</span>
-                </a>
-            </li>
-
-            <!-- Ucapan -->
-            <li class="nav-item">
-                <a href="{{ route('rsvp.index') }}" class="nav-link" :active="request()->routeIs('rsvp.index')">
-                    <i class="menu-icon bi bi-chat-dots"></i>
+                <a class="nav-link" href="{{ route('rsvp.index') }}" data-bs-toggle="tooltip" data-bs-placement="right"
+                    title="Ucapan & Doa">
+                    <i class="menu-icon bi bi-clipboard-check me-2"></i>
                     <span class="menu-name">Ucapan & Doa</span>
                 </a>
             </li>
 
 
-
-            <!-- Tema -->
+            @role('admin')
             <li class="nav-item">
-                <a href="{{ route('tempelate.index') }}" class="nav-link"
-                    :active="request()->routeIs('tempelate.index')">
-                    <i class="menu-icon bi bi-palette"></i>
-                    <span class="menu-name">Tema & Tampilan</span>
+                <a class="nav-link" href="{{ route('subscription-plans.index') }}" data-bs-toggle="tooltip"
+                    data-bs-placement="right" title="Paket & Harga">
+                    <i class="menu-icon bi bi-tags me-2"></i>
+                    <span class="menu-name">Paket & Harga</span>
                 </a>
             </li>
 
-            <!-- Template Creator -->
             <li class="nav-item">
-                <a href="{{ route('template-creator.index') }}" class="nav-link"
-                    :active="request()->routeIs('template-creator.*')">
-                    <i class="menu-icon bi bi-stars"></i>
-                    <span class="menu-name">Template Creator</span>
+                <a class="nav-link" href="{{ route('coupons.index') }}" data-bs-toggle="tooltip"
+                    data-bs-placement="right" title="Kupon Promo">
+                    <i class="menu-icon bi bi-ticket-perforated me-2"></i>
+                    <span class="menu-name">Kupon Promo</span>
                 </a>
             </li>
 
-            <!-- Pengaturan -->
             <li class="nav-item">
-                <a href="pengaturan.html" class="nav-link">
-                    <i class="menu-icon bi bi-gear"></i>
-                    <span class="menu-name">Pengaturan</span>
+                <a class="nav-link" href="{{ route('promotions.index') }}" data-bs-toggle="tooltip"
+                    data-bs-placement="right" title="Promosi">
+                    <i class="menu-icon bi bi-megaphone me-2"></i>
+                    <span class="menu-name">Promosi</span>
                 </a>
             </li>
+
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('user.index') }}" data-bs-toggle="tooltip" data-bs-placement="right"
+                    title="Daftar Pengguna">
+                    <i class="menu-icon bi bi-people me-2"></i>
+                    <span class="menu-name">Daftar Pengguna</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('settings.env') }}" data-bs-toggle="tooltip"
+                    data-bs-placement="right" title="Pengaturan .env">
+                    <i class="menu-icon bi bi-sliders me-2"></i>
+                    <span class="menu-name">Pengaturan .env</span>
+                </a>
+            </li>
+            @endrole
 
         </ul>
 
-        <div class=" mt-auto "></div>
-        {{-- <!-- quick links -->
-        <div class="px-3 mb-3 not-iconic">
-            <h6 class="mb-3 fw-medium">Quick Links</h6>
-            <div class="card adminuiux-card">
-                <div class="card-body p-2">
-                    <div class="row gx-2">
-                        <div class="col-12 d-flex justify-content-between">
-                            <a href="investment-search-mutual-funds.html" class="btn btn-square btn-link theme-red">
-                                <span class="position-relative">
-                                    <i data-feather="heart"></i>
-                                    <span
-                                        class="position-absolute top-0 start-100 translate-middle p-1 bg-success rounded-circle">
-                                        <span class="visually-hidden">New alerts</span>
-                                    </span>
-                                </span>
-                            </a>
-                            <a href="investment-schedule.html" class="btn btn-square btn-link">
-                                <span class="position-relative">
-                                    <i data-feather="calendar"></i>
-                                    <span
-                                        class="position-absolute top-0 start-100 translate-middle p-1 bg-warning rounded-circle">
-                                        <span class="visually-hidden">New alerts</span>
-                                    </span>
-                                </span>
-                            </a>
-                            <a href="investment-inbox.html" class="btn btn-square btn-link">
-                                <i data-feather="inbox"></i>
-                            </a>
-                            <a href="investment-help-center.html" class="btn btn-square btn-link">
-                                <i data-feather="help-circle"></i>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div> --}}
-        <!-- User account -->
-        <ul class="nav flex-column menu-active-line">
-            <!-- bottom sidebar menu -->
-            <li class="nav-item">
-                <a href="investment-referral.html" class="nav-link">
-                    <i class="menu-icon" data-feather="users"></i>
-                    <span class="menu-name">Akun Saya</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="investment-settings.html" class="nav-link">
-                    <i class="menu-icon" data-feather="settings"></i>
-                    <span class="menu-name">Setelan</span>
-                </a>
-            </li>
-        </ul>
+
     </div>
 </div>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const tooltipTriggerList = [].slice.call(
+            document.querySelectorAll('[data-bs-toggle="tooltip"]')
+        );
+
+        tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+
+        const financeDropdown = document.getElementById('financeMenu');
+        if (financeDropdown) {
+            const activeLink = financeDropdown.querySelector('.nav-link.active');
+            if (activeLink) {
+                const dropdownToggle = financeDropdown.closest('.dropdown').querySelector('[data-bs-toggle="dropdown"]');
+                const dropdownMenu = financeDropdown.closest('.dropdown').querySelector('.dropdown-menu');
+                if (dropdownToggle) dropdownToggle.classList.add('show');
+                if (dropdownMenu) dropdownMenu.classList.add('show');
+                dropdownToggle.setAttribute('aria-expanded', 'true');
+            }
+        }
+    });
+
+</script>

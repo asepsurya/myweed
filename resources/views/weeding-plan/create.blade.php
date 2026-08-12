@@ -1,22 +1,9 @@
 <x-app-layout>
     <style>
-        /* Tema & Font */
         h4 {
             font-family: 'Plus Jakarta Sans', sans-serif;
             font-weight: 700;
             color: var(--bs-body-color);
-        }
-
-        .form-card {
-            background: var(--bs-body-bg);
-            border: 1px solid var(--bs-border-color);
-            border-radius: 16px;
-            box-shadow: 0 4px 20px rgba(27, 42, 74, 0.05);
-            overflow: hidden;
-        }
-
-        [data-bs-theme="dark"] .form-card {
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
         }
 
         .form-label {
@@ -63,36 +50,15 @@
             box-shadow: 0 0 0 0.2rem rgba(198, 169, 98, 0.2) !important;
         }
 
-        /* Button Styles */
-        .btn-gold-custom {
-            background: linear-gradient(135deg, var(--adminuiux-theme-1), var(--adminuiux-theme-1-hover));
-            border: none;
-            color: var(--adminuiux-theme-1-text);
-            padding: 0.75rem 1.5rem;
-            border-radius: 10px;
-            font-weight: 600;
-            transition: all 0.3s ease;
+        .ts-wrapper .ts-dropdown {
+            background-color: var(--bs-body-bg) !important;
+            border-color: var(--bs-border-color) !important;
+            color: var(--bs-body-color) !important;
         }
 
-        .btn-gold-custom:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 6px 16px rgba(198, 169, 98, 0.3);
-            color: var(--adminuiux-theme-1-text);
-        }
-
-        .btn-outline-custom {
-            border-radius: 10px;
-            padding: 0.75rem 1.5rem;
-            font-weight: 600;
-            border-color: var(--bs-border-color);
-            color: var(--bs-secondary-color);
-            transition: all 0.2s ease;
-        }
-
-        .btn-outline-custom:hover {
-            background-color: var(--bs-tertiary-bg);
-            border-color: var(--bs-secondary-color);
-            color: var(--bs-body-color);
+        .ts-wrapper .ts-dropdown .active {
+            background-color: var(--bs-tertiary-bg) !important;
+            color: var(--bs-body-color) !important;
         }
     </style>
 
@@ -102,12 +68,12 @@
             <h4 class="mb-1">Tambah Rencana Weeding</h4>
             <p class="text-muted mb-0">Buat rencana persiapan pernikahan baru</p>
         </div>
-        <a href="{{ route('weeding-plan.index') }}" class="btn btn-outline-custom flex-grow-1 flex-md-grow-0">
+        <a href="{{ route('weeding-plan.index') }}" class="btn btn-outline-secondary flex-grow-1 flex-md-grow-0">
             <i class="bi bi-arrow-left me-1"></i> Kembali
         </a>
     </div>
 
-    <div class="card form-card">
+    <div class="card adminuiux-card">
         <div class="card-body p-4 p-md-5">
             <form action="{{ route('weeding-plan.store') }}" method="POST">
                 @csrf
@@ -122,7 +88,8 @@
                                 id="task_name" name="task_name" value="{{ old('task_name') }}" required
                                 placeholder="Contoh: Pesan akad nikah">
                             @error('task_name')
-                            <div class="invalid-feedback">{{ $message }}</div> @enderror
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
 
                         <div class="mb-3">
@@ -131,7 +98,8 @@
                                 name="description" rows="3"
                                 placeholder="Jelaskan detail tugas...">{{ old('description') }}</textarea>
                             @error('description')
-                            <div class="invalid-feedback">{{ $message }}</div> @enderror
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
 
                         <div class="row g-3">
@@ -159,7 +127,8 @@
                                             Lainnya</option>
                                     </select>
                                     @error('category')
-                                    <div class="invalid-feedback">{{ $message }}</div> @enderror
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -177,7 +146,8 @@
                                         </option>
                                     </select>
                                     @error('priority')
-                                    <div class="invalid-feedback">{{ $message }}</div> @enderror
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
                                 </div>
                             </div>
                         </div>
@@ -189,7 +159,8 @@
                                     <input type="date" class="form-control @error('due_date') is-invalid @enderror"
                                         id="due_date" name="due_date" value="{{ old('due_date') }}">
                                     @error('due_date')
-                                    <div class="invalid-feedback">{{ $message }}</div> @enderror
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -205,7 +176,8 @@
                                         @endforeach
                                     </select>
                                     @error('invitation_id')
-                                    <div class="invalid-feedback">{{ $message }}</div> @enderror
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
                                 </div>
                             </div>
                         </div>
@@ -218,16 +190,17 @@
                             <textarea class="form-control @error('notes') is-invalid @enderror" id="notes" name="notes"
                                 rows="10" placeholder="Tambahkan catatan tambahan...">{{ old('notes') }}</textarea>
                             @error('notes')
-                            <div class="invalid-feedback">{{ $message }}</div> @enderror
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
                     </div>
                 </div>
 
                 <div class="d-flex justify-content-end gap-2 mt-4 pt-3 border-top">
-                    <a href="{{ route('weeding-plan.index') }}" class="btn btn-outline-custom">
+                    <a href="{{ route('weeding-plan.index') }}" class="btn btn-outline-secondary">
                         Batal
                     </a>
-                    <button type="submit" class="btn btn-gold-custom">
+                    <button type="submit" class="btn btn-primary">
                         <i class="bi bi-check-lg me-1"></i> Simpan Rencana
                     </button>
                 </div>
