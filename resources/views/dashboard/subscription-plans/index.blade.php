@@ -1,13 +1,19 @@
 <x-app-layout>
     <x-slot name="header">
         <div class="d-flex justify-content-between align-items-center">
-            <h2 class="fw-bold m-0" style="font-family: 'Plus Jakarta Sans', sans-serif; color: var(--bs-body-color);">
+            <h2 class="fw-bold text-dark m-0" style="font-family: 'Plus Jakarta Sans', sans-serif; color: var(--bs-body-color);">
                 <i class="bi bi-tags me-2" style="color: var(--adminuiux-theme-1);"></i> Manajemen Paket & Harga
             </h2>
-            <a href="{{ route('subscription-plans.create') }}" class="btn btn-primary btn-sm px-3 py-2 fw-bold"
-                style="border-radius: 10px;">
-                <i class="bi bi-plus-lg me-1"></i> Tambah Paket
-            </a>
+            <div class="d-flex gap-2">
+                <a href="{{ route('admin.subscriptions.index') }}" class="btn btn-outline-primary btn-sm px-3 py-2 fw-bold"
+                    style="border-radius: 10px;">
+                    <i class="bi bi-people me-1"></i> Pengguna
+                </a>
+                <a href="{{ route('subscription-plans.create') }}" class="btn btn-primary btn-sm px-3 py-2 fw-bold"
+                    style="border-radius: 10px;">
+                    <i class="bi bi-plus-lg me-1"></i> Tambah Paket
+                </a>
+            </div>
         </div>
     </x-slot>
 
@@ -62,6 +68,69 @@
                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
         @endif
+
+        <div class="row g-3 mb-4">
+            <div class="col-md-3">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="avatar avatar-sm bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                <i class="bi bi-tags"></i>
+                            </div>
+                            <div>
+                                <div class="small text-muted">Total Paket</div>
+                                <div class="fw-bold fs-5">{{ $plans->count() }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="avatar avatar-sm bg-success text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                <i class="bi bi-people"></i>
+                            </div>
+                            <div>
+                                <div class="small text-muted">Total Pengguna Berlangganan</div>
+                                <div class="fw-bold fs-5">{{ \App\Models\Subscription::where('is_active', true)->where('end_date', '>', now())->count() }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="avatar avatar-sm bg-warning text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                <i class="bi bi-currency-dollar"></i>
+                            </div>
+                            <div>
+                                <div class="small text-muted">Pendapatan Bulan Ini</div>
+                                <div class="fw-bold fs-5">Rp {{ number_format(\App\Models\Payment::where('status', 'paid')->whereMonth('created_at', now()->month)->sum('amount'), 0, ',', '.') }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="avatar avatar-sm bg-danger text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                <i class="bi bi-exclamation-triangle"></i>
+                            </div>
+                            <div>
+                                <div class="small text-muted">Akan Expired (7 Hari)</div>
+                                <div class="fw-bold fs-5">{{ \App\Models\Subscription::where('is_active', true)->whereBetween('end_date', [now(), now()->addDays(7)])->count() }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <div class="row g-4">
             @forelse($plans as $plan)

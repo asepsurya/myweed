@@ -90,15 +90,13 @@
         }
 
         .navbar-brand img {
-            height: 40px; /* Ukuran logo di navbar */
+            height: 40px;
             width: auto;
-            /* Agar logo gelap terlihat di atas video hero yang gelap */
             filter: brightness(0) invert(1); 
             transition: filter var(--speed) ease;
         }
 
         .navbar.scrolled .navbar-brand img {
-            /* Kembali ke warna asli saat navbar putih */
             filter: none;
         }
 
@@ -432,7 +430,7 @@
             margin-bottom: 1.5rem;
         }
         .footer-logo img {
-            height: 40px; /* Ukuran logo di footer */
+            height: 40px;
             width: auto;
         }
 
@@ -458,12 +456,89 @@
 
         @keyframes tagScroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 
+        /* AI Chat Widget Styles Moved Here For Cleanliness */
+        .ai-message-bubble p { margin: 0 0 4px 0; }
+        .ai-message-bubble p:last-child { margin-bottom: 0; }
+        .ai-message-bubble ul { margin: 0 0 4px 0; padding-left: 18px; }
+        .ai-message-bubble ul li { margin-bottom: 2px; }
+
+        .ai-chat-widget {
+            position: fixed; bottom: 20px; right: 20px; z-index: 9999; font-family: var(--font);
+        }
+        .ai-chat-toggle {
+            width: 56px; height: 56px; border: none; border-radius: 50%;
+            background: linear-gradient(135deg, var(--gold), var(--gold-dark)); color: var(--white);
+            font-size: 1.5rem; cursor: pointer; box-shadow: 0 8px 24px rgba(198, 169, 98, 0.45);
+            transition: transform 0.25s ease, box-shadow 0.25s ease; display: inline-flex;
+            align-items: center; justify-content: center;
+        }
+        .ai-chat-toggle:hover { transform: translateY(-2px) scale(1.05); box-shadow: 0 12px 30px rgba(198, 169, 98, 0.55); }
+
+        .ai-chat-panel {
+            position: absolute; bottom: 70px; right: 0; width: 360px; max-width: calc(100vw - 40px);
+            height: 500px; max-height: calc(100vh - 120px); background: var(--white); border: 1px solid var(--border);
+            border-radius: 16px; box-shadow: 0 20px 60px rgba(27, 42, 74, 0.18);
+            display: none; flex-direction: column; overflow: hidden; animation: aiChatIn 0.3s ease;
+        }
+        .ai-chat-panel.open { display: flex; }
+        @keyframes aiChatIn { from { opacity: 0; transform: translateY(12px) scale(0.97); } to { opacity: 1; transform: translateY(0) scale(1); } }
+
+        .ai-chat-header {
+            padding: 14px 16px; border-bottom: 1px solid var(--border);
+            background: linear-gradient(135deg, var(--navy), #243b6b); color: var(--white);
+            display: flex; align-items: center; justify-content: space-between; flex-shrink: 0;
+        }
+        .ai-chat-avatar { width: 36px; height: 36px; border-radius: 10px; background: rgba(255, 255, 255, 0.15); display: inline-flex; align-items: center; justify-content: center; font-size: 1rem; }
+        .ai-chat-title { font-weight: 700; font-size: 0.95rem; line-height: 1.2; }
+        .ai-chat-subtitle { font-size: 0.75rem; opacity: 0.8; }
+        .ai-chat-close { width: 32px; height: 32px; border: none; border-radius: 8px; background: rgba(255, 255, 255, 0.12); color: var(--white); cursor: pointer; display: inline-flex; align-items: center; justify-content: center; transition: background 0.2s ease; flex-shrink: 0; }
+        .ai-chat-close:hover { background: rgba(255, 255, 255, 0.25); }
+
+        .ai-chat-messages { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 12px; background: var(--bg); -webkit-overflow-scrolling: touch; }
+        .ai-message { display: flex; flex-direction: column; }
+        .ai-message.user { align-items: flex-end; }
+        .ai-message.ai { align-items: flex-start; }
+        .ai-message-bubble { max-width: 85%; padding: 10px 14px; border-radius: 14px; font-size: 0.9rem; line-height: 1.5; word-wrap: break-word; }
+        .ai-message.user .ai-message-bubble { background: var(--navy); color: var(--white); border-bottom-right-radius: 4px; }
+        .ai-message.ai .ai-message-bubble { background: var(--white); color: var(--text); border: 1px solid var(--border); border-bottom-left-radius: 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.03); }
+
+        .ai-chat-suggestions { padding: 10px 12px; background: var(--white); border-top: 1px solid var(--border); display: flex; flex-wrap: wrap; gap: 8px; flex-shrink: 0; }
+        .ai-chip { padding: 6px 12px; border: 1px solid var(--border); border-radius: 50px; background: var(--bg); color: var(--text-secondary); font-size: 0.8rem; font-weight: 500; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; transition: all 0.2s ease; }
+        .ai-chip:hover { background: var(--navy); color: var(--white); border-color: var(--navy); }
+
+        .ai-chat-create { padding: 12px 16px; background: var(--white); border-top: 1px solid var(--border); display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; }
+        .ai-chat-create-btn { padding: 10px; border-radius: 10px; background: linear-gradient(135deg, var(--gold), var(--gold-dark)); color: var(--white); font-weight: 700; font-size: 0.9rem; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; gap: 6px; transition: transform 0.2s ease, box-shadow 0.2s ease; }
+        .ai-chat-create-btn:hover { color: var(--white); transform: translateY(-1px); box-shadow: 0 8px 20px rgba(198, 169, 98, 0.35); }
+        .ai-chat-login-link { font-size: 0.8rem; text-align: center; color: var(--text-secondary); text-decoration: none; }
+        .ai-chat-login-link:hover { color: var(--gold-dark); }
+
+        .ai-chat-form { padding: 12px 16px 16px; background: var(--white); border-top: 1px solid var(--border); flex-shrink: 0; }
+        .ai-chat-form .input-group { border: 1px solid var(--border); border-radius: 10px; overflow: hidden; background: var(--bg); }
+        .ai-chat-form input { padding: 12px 14px; border: none; background: transparent; box-shadow: none; font-size: 0.95rem; }
+        .ai-chat-form input:focus { border: none; box-shadow: none; }
+        .ai-chat-send { padding: 0 14px; border: none; background: transparent; color: var(--gold-dark); font-size: 1.5rem; cursor: pointer; transition: color 0.2s ease, transform 0.2s ease; }
+        .ai-chat-send:hover { color: var(--gold); transform: translateX(1px); }
+        .ai-chat-error { margin-top: 6px; font-size: 0.8rem; color: #dc2626; }
+
+        .ai-typing { display: inline-flex; gap: 4px; padding: 8px 12px; }
+        .ai-typing span { width: 7px; height: 7px; border-radius: 50%; background: var(--text-muted); animation: aiBounce 1.2s infinite ease-in-out; }
+        .ai-typing span:nth-child(2) { animation-delay: 0.15s; }
+        .ai-typing span:nth-child(3) { animation-delay: 0.3s; }
+        @keyframes aiBounce { 0%, 60%, 100% { transform: translateY(0); opacity: 0.4; } 30% { transform: translateY(-6px); opacity: 1; } }
+
         @media (max-width: 768px) {
             .tag-list { gap: 8px; animation-duration: 20s; }
             .tag-item { padding: 7px 15px; }
             .hero-section h1 { font-size: 2.5rem; }
             .section-title { font-size: 1.8rem; }
             .cta-box h2 { font-size: 2rem; }
+        }
+
+        @media (max-width: 480px) {
+            .ai-chat-widget { bottom: 16px; right: 16px; }
+            .ai-chat-panel { width: calc(100vw - 32px); right: 0; bottom: 65px; height: 80vh; border-radius: 14px; }
+            .ai-chat-messages { padding: 12px; }
+            .ai-chat-form { padding: 10px 12px 14px; }
         }
     </style>
 </head>
@@ -628,7 +703,7 @@
                     <div class="feature-card">
                         <div class="feature-icon"><i class="bi bi-camera-reels"></i></div>
                         <h4>Galeri Foto & Video</h4>
-                        <p>Bagikan momen pra-pernikan Anda melalui galeri foto interaktif dan video sinematik yang memukau.</p>
+                        <p>Bagikan momen pra-pernikahan Anda melalui galeri foto interaktif dan video sinematik yang memukau.</p>
                     </div>
                 </div>
             </div>
@@ -694,6 +769,11 @@
                 <a href="{{ route('register') }}" class="btn-gold" style="font-size: 1rem; padding: 1rem 2.5rem;">
                     Buat Undangan Sekarang <i class="bi bi-arrow-right ms-2"></i>
                 </a>
+                @if($promotions->isNotEmpty())
+                    <button type="button" class="btn btn-outline-light ms-3 mt-3 mt-md-0" style="font-size: 1rem; padding: 1rem 2.5rem; border-radius: 50px;" data-bs-toggle="modal" data-bs-target="#promoModal">
+                        <i class="bi bi-megaphone me-2"></i> Lihat Promo
+                    </button>
+                @endif
             </div>
         </div>
     </section>
@@ -748,70 +828,130 @@
         </div>
     </footer>
 
+    @if($promotions->isNotEmpty())
+        <style>
+            #promoModal .modal-dialog { max-width: 900px; }
+            #promoModal .modal-content { background: rgba(0,0,0,0.85); backdrop-filter: blur(4px); }
+            #promoModal .carousel-item img { border-radius: 12px; }
+            #promoModal .carousel-control-prev,
+            #promoModal .carousel-control-next { width: 10%; opacity: 1; }
+            #promoModal .carousel-control-prev-icon,
+            #promoModal .carousel-control-next-icon { filter: invert(1); width: 3rem; height: 3rem; }
+            #promoModal .btn-close-white { opacity: 0.8; }
+            #promoModal .btn-close-white:hover { opacity: 1; }
+        </style>
+        <!-- Promotion Modal -->
+        <div class="modal fade" id="promoModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-centered">
+                <div class="modal-content" style="background: transparent; border: none; box-shadow: none;">
+                    <div class="modal-body p-0">
+                        <div id="promoCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="4000">
+                            <div class="carousel-inner rounded-4 overflow-hidden" style="box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
+                                @foreach($promotions as $index => $promo)
+                                    <div class="carousel-item {{ $index === 0 ? 'active' : '' }}">
+                                        @if($promo->link_url)
+                                            <a href="{{ $promo->link_url }}" target="_blank" rel="noopener">
+                                                <img src="{{ asset('storage/' . $promo->image) }}" class="d-block w-100" alt="{{ $promo->title ?? 'Promosi' }}" style="max-height: 70vh; object-fit: contain; background: #000;">
+                                            </a>
+                                        @else
+                                            <img src="{{ asset('storage/' . $promo->image) }}" class="d-block w-100" alt="{{ $promo->title ?? 'Promosi' }}" style="max-height: 70vh; object-fit: contain; background: #000;">
+                                        @endif
+                                    </div>
+                                @endforeach
+                            </div>
+                            @if($promotions->count() > 1)
+                                <button class="carousel-control-prev" type="button" data-bs-target="#promoCarousel" data-bs-slide="prev" style="filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));">
+                                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                    <span class="visually-hidden">Previous</span>
+                                </button>
+                                <button class="carousel-control-next" type="button" data-bs-target="#promoCarousel" data-bs-slide="next" style="filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));">
+                                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                    <span class="visually-hidden">Next</span>
+                                </button>
+                            @endif
+                        </div>
+                    </div>
+                    <button type="button" class="btn-close btn-close-white position-absolute top-0 end-0 m-3" data-bs-dismiss="modal" aria-label="Close" style="filter: drop-shadow(0 1px 2px rgba(0,0,0,0.5));"></button>
+                </div>
+            </div>
+        </div>
+    @endif
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Navbar Scroll Effect
-        const navbar = document.getElementById('mainNav');
-        window.addEventListener('scroll', () => {
-            if (window.scrollY > 50) {
-                navbar.classList.add('scrolled');
-            } else {
-                navbar.classList.remove('scrolled');
+        var hasPromotions = @json($promotions->isNotEmpty());
+        document.addEventListener('DOMContentLoaded', function () {
+            if (hasPromotions) {
+                var promoModalEl = document.getElementById('promoModal');
+                if (promoModalEl) {
+                    var promoModal = new bootstrap.Modal(promoModalEl);
+                    promoModal.show();
+                }
             }
-        });
 
-        // Scroll Reveal Animation (Intersection Observer)
-        const reveals = document.querySelectorAll('.reveal');
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('active');
-                    observer.unobserve(entry.target); // Stop observing once it's visible
+            // Navbar Scroll Effect
+            const navbar = document.getElementById('mainNav');
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 50) {
+                    navbar.classList.add('scrolled');
+                } else {
+                    navbar.classList.remove('scrolled');
                 }
             });
-        }, { threshold: 0.15 });
 
-        reveals.forEach(reveal => {
-            observer.observe(reveal);
-        });
-
-        // Like Button Logic
-        document.querySelectorAll('.like-btn').forEach(btn => {
-            btn.addEventListener('click', function (e) {
-                e.preventDefault();
-                const id = this.getAttribute('data-id');
-                const countSpan = this.querySelector('.likes-count');
-                const heartIcon = this.querySelector('i');
-
-                if (this.classList.contains('processing')) return;
-                this.classList.add('processing');
-
-                fetch(`/templates/${id}/like`, {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                        'Accept': 'application/json'
+            // Scroll Reveal Animation (Intersection Observer)
+            const reveals = document.querySelectorAll('.reveal');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('active');
+                        observer.unobserve(entry.target); // Stop observing once it's visible
                     }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        countSpan.textContent = data.likes_count.toLocaleString();
-                        heartIcon.classList.remove('bi-heart-fill');
-                        heartIcon.classList.add('bi-heart');
-                        setTimeout(() => {
-                            heartIcon.classList.remove('bi-heart');
-                            heartIcon.classList.add('bi-heart-fill');
-                        }, 200);
-                    }
-                    this.classList.remove('processing');
-                })
-                .catch(err => {
-                    console.error(err);
-                    this.classList.remove('processing');
+                });
+            }, { threshold: 0.15 });
+
+            reveals.forEach(reveal => {
+                observer.observe(reveal);
+            });
+
+            // Like Button Logic
+            document.querySelectorAll('.like-btn').forEach(btn => {
+                btn.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const id = this.getAttribute('data-id');
+                    const countSpan = this.querySelector('.likes-count');
+                    const heartIcon = this.querySelector('i');
+
+                    if (this.classList.contains('processing')) return;
+                    this.classList.add('processing');
+
+                    fetch(`/templates/${id}/like`, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                            'Accept': 'application/json'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            countSpan.textContent = data.likes_count.toLocaleString();
+                            heartIcon.classList.remove('bi-heart-fill');
+                            heartIcon.classList.add('bi-heart');
+                            setTimeout(() => {
+                                heartIcon.classList.remove('bi-heart');
+                                heartIcon.classList.add('bi-heart-fill');
+                            }, 200);
+                        }
+                        this.classList.remove('processing');
+                    })
+                    .catch(err => {
+                        console.error(err);
+                        this.classList.remove('processing');
+                    });
                 });
             });
-        });
+        }); // <-- PERBAIKAN: Kurung kurawal penutup DOMContentLoaded
     </script>
 
     <!-- ============================================================= -->
@@ -859,12 +999,7 @@
                     </div>
                 </div>
             </div>
-            <style>
-                .ai-message-bubble p { margin: 0 0 4px 0; /* Jarak paragraf hanya 4px */ }
-                .ai-message-bubble p:last-child { margin-bottom: 0; }
-                .ai-message-bubble ul { margin: 0 0 4px 0; /* Jarak bawah list hanya 4px */ padding-left: 18px; }
-                .ai-message-bubble ul li { margin-bottom: 2px; /* Jarak antar item hanya 2px */ }
-            </style>
+
             <!-- Quick Suggestions -->
             <div id="ai-chat-suggestions" class="ai-chat-suggestions">
                 <button type="button" class="ai-chip" data-message="Saya mau buat undangan pernikahan">
@@ -903,286 +1038,6 @@
             </form>
         </div>
     </div>
-
-    <style>
-        /* =========================================================== */
-        /* Widget Container                                            */
-        /* =========================================================== */
-        .ai-chat-widget {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            z-index: 9999;
-            font-family: var(--font);
-        }
-
-        /* =========================================================== */
-        /* Toggle Button                                               */
-        /* =========================================================== */
-        .ai-chat-toggle {
-            width: 56px; height: 56px;
-            border: none;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--gold), var(--gold-dark));
-            color: var(--white);
-            font-size: 1.5rem;
-            cursor: pointer;
-            box-shadow: 0 8px 24px rgba(198, 169, 98, 0.45);
-            transition: transform 0.25s ease, box-shadow 0.25s ease;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .ai-chat-toggle:hover {
-            transform: translateY(-2px) scale(1.05);
-            box-shadow: 0 12px 30px rgba(198, 169, 98, 0.55);
-        }
-
-        /* =========================================================== */
-        /* Chat Panel                                                  */
-        /* =========================================================== */
-        .ai-chat-panel {
-            position: absolute;
-            bottom: 70px; right: 0;
-            width: 360px;
-            max-width: calc(100vw - 40px);
-            height: 500px; /* Tinggi tetap agar tidak tertekan */
-            max-height: calc(100vh - 120px);
-            background: var(--white);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            box-shadow: 0 20px 60px rgba(27, 42, 74, 0.18);
-            display: none;
-            flex-direction: column;
-            overflow: hidden;
-            animation: aiChatIn 0.3s ease;
-        }
-
-        .ai-chat-panel.open { display: flex; }
-
-        @keyframes aiChatIn {
-            from { opacity: 0; transform: translateY(12px) scale(0.97); }
-            to { opacity: 1; transform: translateY(0) scale(1); }
-        }
-
-        /* ---------- Header ---------- */
-        .ai-chat-header {
-            padding: 14px 16px;
-            border-bottom: 1px solid var(--border);
-            background: linear-gradient(135deg, var(--navy), #243b6b);
-            color: var(--white);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-shrink: 0; /* Mencegah header tertekan */
-        }
-
-        .ai-chat-avatar {
-            width: 36px; height: 36px;
-            border-radius: 10px;
-            background: rgba(255, 255, 255, 0.15);
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1rem;
-        }
-
-        .ai-chat-title { font-weight: 700; font-size: 0.95rem; line-height: 1.2; }
-        .ai-chat-subtitle { font-size: 0.75rem; opacity: 0.8; }
-
-        .ai-chat-close {
-            width: 32px; height: 32px;
-            border: none;
-            border-radius: 8px;
-            background: rgba(255, 255, 255, 0.12);
-            color: var(--white);
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            transition: background 0.2s ease;
-            flex-shrink: 0;
-        }
-
-        .ai-chat-close:hover { background: rgba(255, 255, 255, 0.25); }
-
-        /* ---------- Messages ---------- */
-        .ai-chat-messages {
-            flex: 1;
-            overflow-y: auto;
-            padding: 16px;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            background: var(--bg);
-            -webkit-overflow-scrolling: touch; /* Scroll mulus di iOS */
-        }
-
-        .ai-message { display: flex; flex-direction: column; }
-        .ai-message.user { align-items: flex-end; }
-        .ai-message.ai { align-items: flex-start; }
-
-        .ai-message-bubble {
-            max-width: 85%;
-            padding: 10px 14px;
-            border-radius: 14px;
-            font-size: 0.9rem;
-            line-height: 1.5;
-            word-wrap: break-word;
-        }
-
-        .ai-message.user .ai-message-bubble {
-            background: var(--navy);
-            color: var(--white);
-            border-bottom-right-radius: 4px;
-        }
-
-        .ai-message.ai .ai-message-bubble {
-            background: var(--white);
-            color: var(--text);
-            border: 1px solid var(--border);
-            border-bottom-left-radius: 4px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.03);
-        }
-
-        /* ---------- Quick Suggestions ---------- */
-        .ai-chat-suggestions {
-            padding: 10px 12px;
-            background: var(--white);
-            border-top: 1px solid var(--border);
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            flex-shrink: 0; /* Mencegah saran tertekan */
-        }
-
-        .ai-chip {
-            padding: 6px 12px;
-            border: 1px solid var(--border);
-            border-radius: 50px;
-            background: var(--bg);
-            color: var(--text-secondary);
-            font-size: 0.8rem;
-            font-weight: 500;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            transition: all 0.2s ease;
-        }
-
-        .ai-chip:hover {
-            background: var(--navy);
-            color: var(--white);
-            border-color: var(--navy);
-        }
-
-        /* ---------- Create CTA ---------- */
-        .ai-chat-create {
-            padding: 12px 16px;
-            background: var(--white);
-            border-top: 1px solid var(--border);
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            flex-shrink: 0; /* Mencegah CTA tertekan */
-        }
-
-        .ai-chat-create-btn {
-            padding: 10px;
-            border-radius: 10px;
-            background: linear-gradient(135deg, var(--gold), var(--gold-dark));
-            color: var(--white);
-            font-weight: 700;
-            font-size: 0.9rem;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-
-        .ai-chat-create-btn:hover {
-            color: var(--white);
-            transform: translateY(-1px);
-            box-shadow: 0 8px 20px rgba(198, 169, 98, 0.35);
-        }
-
-        .ai-chat-login-link {
-            font-size: 0.8rem;
-            text-align: center;
-            color: var(--text-secondary);
-            text-decoration: none;
-        }
-
-        .ai-chat-login-link:hover { color: var(--gold-dark); }
-
-        /* ---------- Input Form ---------- */
-        .ai-chat-form {
-            padding: 12px 16px 16px;
-            background: var(--white);
-            border-top: 1px solid var(--border);
-            flex-shrink: 0; /* Mencegah form tertekan */
-        }
-
-        .ai-chat-form .input-group {
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            overflow: hidden;
-            background: var(--bg);
-        }
-
-        .ai-chat-form input {
-            padding: 12px 14px;
-            border: none;
-            background: transparent;
-            box-shadow: none;
-            font-size: 0.95rem;
-        }
-
-        .ai-chat-form input:focus { border: none; box-shadow: none; }
-
-        .ai-chat-send {
-            padding: 0 14px;
-            border: none;
-            background: transparent;
-            color: var(--gold-dark);
-            font-size: 1.5rem;
-            cursor: pointer;
-            transition: color 0.2s ease, transform 0.2s ease;
-        }
-
-        .ai-chat-send:hover { color: var(--gold); transform: translateX(1px); }
-
-        .ai-chat-error { margin-top: 6px; font-size: 0.8rem; color: #dc2626; }
-
-        /* ---------- Typing Indicator ---------- */
-        .ai-typing { display: inline-flex; gap: 4px; padding: 8px 12px; }
-        .ai-typing span { width: 7px; height: 7px; border-radius: 50%; background: var(--text-muted); animation: aiBounce 1.2s infinite ease-in-out; }
-        .ai-typing span:nth-child(2) { animation-delay: 0.15s; }
-        .ai-typing span:nth-child(3) { animation-delay: 0.3s; }
-
-        @keyframes aiBounce {
-            0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
-            30% { transform: translateY(-6px); opacity: 1; }
-        }
-
-        /* ---------- Responsive Mobile ---------- */
-        @media (max-width: 480px) {
-            .ai-chat-widget { bottom: 16px; right: 16px; }
-            .ai-chat-panel {
-                width: calc(100vw - 32px); /* Rapi di sisi kanan kiri */
-                right: 0;
-                bottom: 65px;
-                height: 80vh; /* Tinggi adaptif di mobile */
-                border-radius: 14px;
-            }
-            .ai-chat-messages { padding: 12px; }
-            .ai-chat-form { padding: 10px 12px 14px; }
-        }
-    </style>
 
     <script>
         (function () {

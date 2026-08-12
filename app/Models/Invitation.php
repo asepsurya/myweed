@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Invitation extends Model
 {
+    use HasFactory;
+
     protected $casts = [
         'custom_data' => 'array',
         'love_story' => 'array',
@@ -89,6 +92,21 @@ class Invitation extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function partner()
+    {
+        return $this->belongsTo(User::class, 'partner_user_id');
+    }
+
+    public function budgets()
+    {
+        return $this->hasMany(Budget::class);
+    }
+
+    public function savingsGoals()
+    {
+        return $this->hasMany(SavingsGoal::class);
     }
 
     public function getGroomChildOrderTextAttribute()

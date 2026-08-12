@@ -1,0 +1,1 @@
+@include('dashboard.promotions.form')

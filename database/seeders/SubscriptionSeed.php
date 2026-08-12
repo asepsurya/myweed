@@ -12,6 +12,99 @@ class SubscriptionSeed extends Seeder
      */
     public function run(): void
     {
+        $freeFeatures = [
+            'all_themes' => false,
+            'edit_guest_name' => true,
+            'rsvp_messages' => true,
+            'maps_location' => true,
+            'unlimited_recipients' => true,
+            'countdown_calendar' => false,
+            'gallery' => false,
+            'gallery_limit' => 0,
+            'virtual_gift' => false,
+            'shareable' => false,
+            'background_music' => false,
+            'gift_accounts' => false,
+            'streaming_video' => false,
+            'auto_scroll' => false,
+            'custom_music' => false,
+            'love_story' => false,
+            'custom_theme_color' => false,
+            'admin_setup' => false,
+            'website_builder' => false,
+            'budget_management' => false,
+            'budget_expenses' => false,
+            'vendor_payments' => false,
+            'vendor_payment_limit' => 0,
+            'savings_goals' => 0,
+            'savings_multi_user' => false,
+            'auto_savings_rules' => false,
+            'savings_projection' => false,
+            'financial_export' => false,
+        ];
+
+        $basicFeatures = [
+            'all_themes' => true,
+            'edit_guest_name' => true,
+            'rsvp_messages' => true,
+            'maps_location' => true,
+            'unlimited_recipients' => true,
+            'countdown_calendar' => true,
+            'gallery' => true,
+            'gallery_limit' => 10,
+            'virtual_gift' => true,
+            'shareable' => true,
+            'background_music' => true,
+            'gift_accounts' => true,
+            'streaming_video' => true,
+            'auto_scroll' => true,
+            'custom_music' => true,
+            'love_story' => true,
+            'custom_theme_color' => true,
+            'admin_setup' => false,
+            'website_builder' => false,
+            'budget_management' => true,
+            'budget_expenses' => true,
+            'vendor_payments' => true,
+            'vendor_payment_limit' => 3,
+            'savings_goals' => 5,
+            'savings_multi_user' => true,
+            'auto_savings_rules' => true,
+            'savings_projection' => false,
+            'financial_export' => false,
+        ];
+
+        $proFeatures = [
+            'all_themes' => true,
+            'edit_guest_name' => true,
+            'rsvp_messages' => true,
+            'maps_location' => true,
+            'unlimited_recipients' => true,
+            'countdown_calendar' => true,
+            'gallery' => true,
+            'gallery_limit' => null,
+            'virtual_gift' => true,
+            'shareable' => true,
+            'background_music' => true,
+            'gift_accounts' => true,
+            'streaming_video' => true,
+            'auto_scroll' => true,
+            'custom_music' => true,
+            'love_story' => true,
+            'custom_theme_color' => true,
+            'admin_setup' => true,
+            'website_builder' => true,
+            'budget_management' => true,
+            'budget_expenses' => true,
+            'vendor_payments' => true,
+            'vendor_payment_limit' => null,
+            'savings_goals' => null,
+            'savings_multi_user' => true,
+            'auto_savings_rules' => true,
+            'savings_projection' => true,
+            'financial_export' => true,
+        ];
+
         SubscriptionPlan::updateOrCreate(
             ['slug' => 'free'],
             [
@@ -39,6 +132,7 @@ class SubscriptionSeed extends Seeder
                     'Custom Warna Tema: No',
                 ]),
                 'is_free' => true,
+                'features' => $freeFeatures,
             ]
         );
 
@@ -68,6 +162,7 @@ class SubscriptionSeed extends Seeder
                     'Custom Warna Tema: Yes',
                 ]),
                 'is_free' => false,
+                'features' => $basicFeatures,
             ]
         );
 
@@ -99,6 +194,7 @@ class SubscriptionSeed extends Seeder
                     'Website Builder: Yes',
                 ]),
                 'is_free' => false,
+                'features' => $proFeatures,
             ]
         );
     }

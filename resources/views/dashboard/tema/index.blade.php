@@ -49,10 +49,18 @@
 
         <div class="row g-3 g-md-4">
             @forelse ($templates as $template)
+                @php
+                    $canAccess = auth()->user()->hasFeature('all_themes') || $template->slug === 'simple-theme';
+                @endphp
                 <div class="col-6 col-md-4 col-lg-3">
-                    <div class="card tema-card h-100 shadow-sm">
+                    <div class="card tema-card h-100 shadow-sm {{ !$canAccess ? 'opacity-75' : '' }}">
                         @if($template->is_premium)
                             <span class="badge bg-warning premium-badge">Premium</span>
+                        @endif
+                        @if(!$canAccess)
+                            <div class="position-absolute top-50 start-50 translate-middle" style="z-index: 2;">
+                                <i class="bi bi-lock-fill fs-2 text-white shadow-lg"></i>
+                            </div>
                         @endif
                         @php
                             $thumb = $template->thumbnail;
@@ -69,6 +77,7 @@
                         <div class="card-body d-flex flex-column">
                             <h6 class="fw-semibold mb-2 text-truncate">{{ $template->name }}</h6>
                             <p class="text-muted small mb-3 text-truncate">{{ $template->category->name ?? 'Template' }}</p>
+                            @if($canAccess)
                             <button type="button" 
                                     class="btn btn-primary btn-gunakan mt-auto w-100" 
                                     data-bs-toggle="modal" 
@@ -77,6 +86,13 @@
                                     data-template-name="{{ $template->name }}">
                                 <i class="bi bi-check-circle me-1"></i> Gunakan
                             </button>
+                            @else
+                            <button type="button" 
+                                    class="btn btn-secondary btn-gunakan mt-auto w-100" 
+                                    onclick="showTemplateLockAlert()">
+                                <i class="bi bi-lock me-1"></i> Tertutup
+                            </button>
+                            @endif
                         </div>
                     </div>
                 </div>
@@ -171,6 +187,23 @@
     </div>
 
     <script>
+        function showTemplateLockAlert() {
+            Swal.fire({
+                title: 'Template Tertutup 🔒',
+                text: 'Template ini hanya tersedia untuk pengguna dengan paket berbayar. Upgrade sekarang untuk mengakses semua tema!',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#0d9488',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Upgrade Sekarang',
+                cancelButtonText: 'Mungkin Nanti'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = "{{ route('subscribe.page') }}";
+                }
+            });
+        }
+
         document.addEventListener('DOMContentLoaded', function () {
             const createModal = document.getElementById('createInvitationModal');
             const templateIdInput = document.getElementById('modal_template_id');

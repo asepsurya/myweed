@@ -67,6 +67,30 @@
             </li>
 
             <li class="nav-item">
+                <a class="nav-link" href="{{ route('budget.dashboard') }}" data-bs-toggle="tooltip"
+                    data-bs-placement="right" title="Anggaran">
+                    <i class="menu-icon bi bi-wallet2 me-2"></i>
+                    <span class="menu-name">Anggaran</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('savings.dashboard') }}" data-bs-toggle="tooltip"
+                    data-bs-placement="right" title="Tabungan">
+                    <i class="menu-icon bi bi-pig-coin me-2"></i>
+                    <span class="menu-name">Tabungan</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('financial-overview.index') }}" data-bs-toggle="tooltip"
+                    data-bs-placement="right" title="Ikhtisar Keuangan">
+                    <i class="menu-icon bi bi-graph-up-arrow me-2"></i>
+                    <span class="menu-name">Ikhtisar Keuangan</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
                 <a class="nav-link" href="{{ route('rsvp.index') }}" data-bs-toggle="tooltip" data-bs-placement="right"
                     title="Ucapan & Doa">
                     <i class="menu-icon bi bi-clipboard-check me-2"></i>
@@ -93,10 +117,26 @@
             </li>
 
             <li class="nav-item">
+                <a class="nav-link" href="{{ route('promotions.index') }}" data-bs-toggle="tooltip" data-bs-placement="right"
+                    title="Promosi">
+                    <i class="menu-icon bi bi-megaphone me-2"></i>
+                    <span class="menu-name">Promosi</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
                 <a class="nav-link" href="{{ route('user.index') }}" data-bs-toggle="tooltip" data-bs-placement="right"
                     title="Daftar Pengguna">
                     <i class="menu-icon bi bi-people me-2"></i>
                     <span class="menu-name">Daftar Pengguna</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('settings.env') }}" data-bs-toggle="tooltip" data-bs-placement="right"
+                    title="Pengaturan .env">
+                    <i class="menu-icon bi bi-sliders me-2"></i>
+                    <span class="menu-name">Pengaturan .env</span>
                 </a>
             </li>
             @endrole

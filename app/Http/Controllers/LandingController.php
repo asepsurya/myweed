@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Models\Invitation;
+use App\Models\Promotion;
 use App\Models\SubscriptionPlan;
 use App\Models\Template;
 use Illuminate\Http\Request;
@@ -48,7 +49,12 @@ class LandingController extends Controller
             ];
         });
 
-        return view('index', compact('templates', 'categories', 'invitations'));
+        $promotions = Promotion::where('is_active', true)
+            ->orderBy('sort_order')
+            ->orderByDesc('id')
+            ->get();
+
+        return view('index', compact('templates', 'categories', 'invitations', 'promotions'));
     }
 
     public function caraPemesanan()

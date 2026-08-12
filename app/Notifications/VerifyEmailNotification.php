@@ -31,9 +31,9 @@ class VerifyEmailNotification extends Notification
 
         return (new MailMessage)
             ->subject('Verifikasi Email — WeddingInv')
-            ->view('notifications.email', [
+            ->view('notifications.email-verification', [
                 'verificationUrl' => $verificationUrl,
-                'name' => $notifiable->name,
+                'userName' => $notifiable->name,
             ]);
     }
 

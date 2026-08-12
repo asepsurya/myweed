@@ -8,6 +8,7 @@ use App\Models\Invitation;
 use App\Models\Music;
 use App\Models\Subscription;
 use App\Models\Template;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -17,6 +18,24 @@ use Intervention\Image\ImageManager;
 
 class UserInvitationController extends Controller
 {
+    private function ensureFeature(Request $request, string $feature, string $message): ?RedirectResponse
+    {
+        $user = $request->user();
+
+        if ($user->isAdmin() || $user->hasFeature($feature)) {
+            return null;
+        }
+
+        if ($request->wantsJson() || $request->ajax()) {
+            return response()->json([
+                'success' => false,
+                'message' => $message,
+            ], 403);
+        }
+
+        return redirect()->back()->with('error', $message);
+    }
+
     public function index()
     {
         $invitations = Invitation::with('user')->get();
@@ -228,8 +247,43 @@ class UserInvitationController extends Controller
 
         // Check Template Premium Access
         $template = Template::findOrFail($request->template_id);
-        if ($template->is_premium && ! $user->isSubscribed()) {
+        if ($template->is_premium && ! $user->hasFeature('all_themes')) {
             return redirect()->back()->with('error', 'Template Premium hanya tersedia untuk member aktif! ✨');
+        }
+
+        // Check RSVP feature
+        if ($request->has('enable_rsvp') && ! $user->hasFeature('rsvp_messages')) {
+            return redirect()->back()->with('error', 'Fitur RSVP hanya tersedia untuk paket berbayar.');
+        }
+
+        // Check Gallery feature
+        if ($request->hasFile('gallery') && ! $user->hasFeature('gallery')) {
+            return redirect()->back()->with('error', 'Fitur Galeri hanya tersedia untuk paket berbayar.');
+        }
+
+        $galleryLimit = data_get($user->subscription->plan->features ?? [], 'gallery_limit');
+        if ($request->hasFile('gallery') && ! is_null($galleryLimit) && count($request->file('gallery')) > $galleryLimit) {
+            return redirect()->back()->with('error', "Maksimal {$galleryLimit} foto untuk paket ini.");
+        }
+
+        // Check Love Story feature
+        if ($request->has('love_story') && ! $user->hasFeature('love_story')) {
+            return redirect()->back()->with('error', 'Fitur Kisah Cinta hanya tersedia untuk paket berbayar.');
+        }
+
+        // Check Custom Music feature
+        if ($request->hasFile('custom_music') && ! $user->hasFeature('custom_music')) {
+            return redirect()->back()->with('error', 'Fitur Custom Music hanya tersedia untuk paket berbayar.');
+        }
+
+        // Check Streaming Video feature
+        if ($request->filled('video_link') && ! $user->hasFeature('streaming_video')) {
+            return redirect()->back()->with('error', 'Fitur Link Video hanya tersedia untuk paket berbayar.');
+        }
+
+        // Check Virtual Gift feature
+        if ($request->has('enable_gift') && $request->enable_gift && ! $user->hasFeature('virtual_gift')) {
+            return redirect()->back()->with('error', 'Fitur Hadiah Digital hanya tersedia untuk paket berbayar.');
         }
 
         // Check if same user already has this slug → redirect to edit
@@ -503,10 +557,45 @@ class UserInvitationController extends Controller
     public function update(Request $request, Invitation $invitation)
     {
         $user = auth()->user();
-        // Check Template Premium Access
+        // Check Template Access
         $template = Template::findOrFail($request->template_id);
-        if ($template->is_premium && ! $user->isSubscribed()) {
-            return redirect()->back()->with('error', 'Template Premium hanya tersedia untuk member aktif! ✨');
+        if (! $user->hasFeature('all_themes') && $template->slug !== 'simple-theme') {
+            return redirect()->back()->with('error', 'Template ini hanya tersedia untuk paket berbayar. Upgrade untuk mengakses semua tema.');
+        }
+
+        // Check RSVP feature
+        if ($request->has('enable_rsvp') && ! $user->hasFeature('rsvp_messages')) {
+            return redirect()->back()->with('error', 'Fitur RSVP hanya tersedia untuk paket berbayar.');
+        }
+
+        // Check Gallery feature
+        if ($request->hasFile('gallery') && ! $user->hasFeature('gallery')) {
+            return redirect()->back()->with('error', 'Fitur Galeri hanya tersedia untuk paket berbayar.');
+        }
+
+        $galleryLimit = data_get($user->subscription->plan->features ?? [], 'gallery_limit');
+        if ($request->hasFile('gallery') && ! is_null($galleryLimit) && count($request->file('gallery')) > $galleryLimit) {
+            return redirect()->back()->with('error', "Maksimal {$galleryLimit} foto untuk paket ini.");
+        }
+
+        // Check Love Story feature
+        if ($request->has('love_story') && ! $user->hasFeature('love_story')) {
+            return redirect()->back()->with('error', 'Fitur Kisah Cinta hanya tersedia untuk paket berbayar.');
+        }
+
+        // Check Custom Music feature
+        if ($request->hasFile('custom_music') && ! $user->hasFeature('custom_music')) {
+            return redirect()->back()->with('error', 'Fitur Custom Music hanya tersedia untuk paket berbayar.');
+        }
+
+        // Check Streaming Video feature
+        if ($request->filled('video_link') && ! $user->hasFeature('streaming_video')) {
+            return redirect()->back()->with('error', 'Fitur Link Video hanya tersedia untuk paket berbayar.');
+        }
+
+        // Check Virtual Gift feature
+        if ($request->enable_gift == 1 && ! $user->hasFeature('virtual_gift')) {
+            return redirect()->back()->with('error', 'Fitur Hadiah Digital hanya tersedia untuk paket berbayar.');
         }
 
         $request->validate([
@@ -852,10 +941,10 @@ class UserInvitationController extends Controller
         ]);
 
         $user = auth()->user();
-        // Check Template Premium Access
+        // Check Template Access
         $template = Template::findOrFail($request->template_id);
-        if ($template->is_premium && ! $user->isSubscribed()) {
-            return response()->json(['success' => false, 'message' => 'Template Premium 💎'], 403);
+        if (! $user->hasFeature('all_themes') && $template->slug !== 'simple-theme') {
+            return redirect()->back()->with('error', 'Template ini hanya tersedia untuk paket berbayar. Upgrade untuk mengakses semua tema.');
         }
 
         $id = $request->id;

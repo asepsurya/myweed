@@ -54,9 +54,11 @@ class SubscriptionPlanController extends Controller
             $validated['description'] = json_encode([]);
         }
 
+        $validated['features'] = $this->buildFeatureMatrix($request);
+
         SubscriptionPlan::create($validated);
 
-        return redirect()->route('subscribe.page')->with('success', 'Paket berhasil ditambahkan.');
+        return redirect()->route('subscription-plans.index')->with('success', 'Paket berhasil ditambahkan.');
     }
 
     public function edit(SubscriptionPlan $subscriptionPlan)
@@ -86,9 +88,42 @@ class SubscriptionPlanController extends Controller
             $validated['description'] = json_encode([]);
         }
 
+        $validated['features'] = $this->buildFeatureMatrix($request);
+
         $subscriptionPlan->update($validated);
 
-        return redirect()->route('subscribe.page')->with('success', 'Paket berhasil diperbarui.');
+        return redirect()->route('subscription-plans.index')->with('success', 'Paket berhasil diperbarui.');
+    }
+
+    private function buildFeatureMatrix(Request $request): array
+    {
+        $booleanKeys = [
+            'all_themes', 'edit_guest_name', 'rsvp_messages', 'maps_location',
+            'unlimited_recipients', 'countdown_calendar', 'gallery', 'virtual_gift',
+            'shareable', 'background_music', 'gift_accounts', 'streaming_video',
+            'auto_scroll', 'custom_music', 'love_story', 'custom_theme_color',
+            'admin_setup', 'website_builder',
+        ];
+
+        $numericKeys = ['gallery_limit'];
+
+        $features = [];
+
+        foreach ($booleanKeys as $key) {
+            $features[$key] = $request->has('features.'.$key);
+        }
+
+        foreach ($numericKeys as $key) {
+            $value = $request->input('features.'.$key.'_value');
+
+            if ($value !== null && $value !== '') {
+                $features[$key] = is_numeric($value) ? (int) $value : 0;
+            } else {
+                $features[$key] = $request->has('features.'.$key) ? 0 : 0;
+            }
+        }
+
+        return $features;
     }
 
     public function destroy(SubscriptionPlan $subscriptionPlan)
@@ -330,5 +365,92 @@ class SubscriptionPlanController extends Controller
         $payments = $query->latest()->get();
 
         return view('payment.index', compact('payments'));
+    }
+
+    public function userIndex(Request $request)
+    {
+        $query = User::with('subscription.plan');
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%");
+            });
+        }
+
+        if ($request->filled('plan')) {
+            $query->whereHas('subscription', function ($q) use ($request) {
+                $q->where('subscription_plan_id', $request->plan);
+            });
+        }
+
+        $users = $query->latest()->paginate(20);
+        $plans = SubscriptionPlan::all();
+
+        return view('dashboard.subscription-plans.users', compact('users', 'plans'));
+    }
+
+    public function updateUserPlan(Request $request, User $user)
+    {
+        $request->validate([
+            'subscription_plan_id' => 'required|exists:subscription_plans,id',
+            'duration' => 'nullable|integer|min:1',
+        ]);
+
+        $plan = SubscriptionPlan::findOrFail($request->subscription_plan_id);
+        $duration = $request->duration ?? $plan->duration;
+
+        $subscription = $user->subscription;
+        if ($subscription && $subscription->end_date && $subscription->end_date->isFuture()) {
+            $startDate = $subscription->start_date;
+            $endDate = $subscription->end_date->addDays($duration);
+        } else {
+            $startDate = now();
+            $endDate = now()->addDays($duration);
+        }
+
+        Subscription::updateOrCreate(
+            ['user_id' => $user->id],
+            [
+                'subscription_plan_id' => $plan->id,
+                'start_date' => $startDate,
+                'end_date' => $endDate,
+                'is_active' => true,
+            ]
+        );
+
+        return back()->with('success', 'Paket langganan pengguna berhasil diperbarui.');
+    }
+
+    public function cancelUserSubscription(User $user)
+    {
+        $subscription = $user->subscription;
+
+        if ($subscription) {
+            $subscription->update([
+                'is_active' => false,
+                'end_date' => now(),
+            ]);
+        }
+
+        return back()->with('success', 'Langganan pengguna berhasil dibatalkan.');
+    }
+
+    public function cancel(Request $request)
+    {
+        $user = $request->user();
+        $subscription = $user->subscription;
+
+        if (! $subscription || ! $subscription->end_date || ! $subscription->end_date->isFuture()) {
+            return redirect()->route('subscribe.page')->with('error', 'Tidak ada langganan aktif yang dapat dibatalkan.');
+        }
+
+        $subscription->update([
+            'is_active' => false,
+            'end_date' => now(),
+        ]);
+
+        return redirect()->route('subscribe.page')->with('success', 'Langganan Anda berhasil dibatalkan.');
     }
 }

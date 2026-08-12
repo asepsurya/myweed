@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Notifications\ResetPassword;
 use Database\Factories\UserFactory;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -73,9 +74,50 @@ class User extends Authenticatable implements MustVerifyEmail
             $this->subscription->end_date->isFuture();
     }
 
+    public function hasFeature(string $key): bool
+    {
+        if ($this->isAdmin()) {
+            return true;
+        }
+
+        if (! $this->isSubscribed()) {
+            return false;
+        }
+
+        $plan = $this->subscription->plan;
+
+        return $plan ? $plan->hasFeature($key) : false;
+    }
+
     public function invitations()
     {
         return $this->hasMany(Invitation::class);
+    }
+
+    public function partnerIn()
+    {
+        return $this->hasMany(Invitation::class, 'partner_user_id');
+    }
+
+    public function budgets()
+    {
+        return $this->hasMany(Budget::class);
+    }
+
+    public function savingsGoals()
+    {
+        return $this->hasMany(SavingsGoal::class);
+    }
+
+    public function savingsContributions()
+    {
+        return $this->hasMany(SavingsContribution::class, 'contributor_id');
+    }
+
+    public function canAccessInvitation(Invitation $invitation): bool
+    {
+        return $this->id === $invitation->user_id
+            || ($this->id === $invitation->partner_user_id && $invitation->partner_accepted_at !== null);
     }
 
     public function subscriptionStatus()
@@ -102,5 +144,10 @@ class User extends Authenticatable implements MustVerifyEmail
 
         // MASIH AKTIF
         return 'active';
+    }
+
+    public function sendPasswordResetNotification($token)
+    {
+        $this->notify(new ResetPassword($token));
     }
 }

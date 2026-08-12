@@ -2,9 +2,11 @@
 
     <div class="card adminuiux-card mt-4 mb-0">
         <div class="card-body">
-            <div class="row mb-3">
-                <div class="col align-self-center">
-                    <h6 class="fw-medium">Daftar Pengguna</h6>
+            
+            <!-- Header -->
+            <div class="row mb-3 align-items-center">
+                <div class="col">
+                    <h6 class="fw-medium mb-0">Daftar Pengguna</h6>
                 </div>
                 <div class="col-auto">
                     <a class="btn btn-link btn-square" data-bs-toggle="collapse" data-bs-target="#usersidebarprofile">
@@ -17,6 +19,8 @@
                     </a>
                 </div>
             </div>
+
+            <!-- Table -->
             <table id="dataTable" class="dataTable table w-100 nowrap">
                 <thead>
                     <tr>
@@ -30,9 +34,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @php
-                        $no = 1;
-                    @endphp
+                    @php $no = 1; @endphp
                     @foreach ($users as $user)
                         <tr>
                             <td>{{ $no++ }}</td>
@@ -46,7 +48,7 @@
                                     </div>
                                     <div class="col ps-0">
                                         <p class="mb-0 fw-medium">{{ $user->name }}</p>
-                                        <p class="text-secondary small">
+                                        <p class="text-secondary small mb-0">
                                             Registered {{ $user->created_at->diffForHumans() }}
                                         </p>
                                     </div>
@@ -55,7 +57,6 @@
 
                             <td>
                                 <p class="mb-0">{{ $user->email }}</p>
-
                             </td>
 
                             <td>
@@ -77,36 +78,39 @@
                             </td>
 
                             <td>
-                                <a href="" class="btn btn-square btn-link" data-bs-toggle="tooltip" title="View">
-                                    <i class="bi bi-eye"></i>
-                                </a>
-
-                                <div class="dropdown d-inline-block">
-                                    <a class="btn btn-link no-caret" data-bs-toggle="dropdown">
-                                        <i class="bi bi-three-dots"></i>
+                                <div class="d-flex align-items-center gap-1">
+                                    <!-- View Button -->
+                                    <a href="#" class="btn btn-square btn-link" data-bs-toggle="tooltip" title="View">
+                                        <i class="bi bi-eye"></i>
                                     </a>
-                                    <ul class="dropdown-menu dropdown-menu-end">
-                                        <li>
-                                            <a class="dropdown-item" href="">
-                                                Edit
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <form action="" method="POST" onsubmit="return confirm('Hapus user ini?')">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button class="dropdown-item theme-red">
-                                                    Delete
-                                                </button>
-                                            </form>
-                                        </li>
-                                    </ul>
+
+                                    <!-- Dropdown Actions -->
+                                    <div class="dropdown d-inline-block">
+                                        <a class="btn btn-link no-caret" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="bi bi-three-dots"></i>
+                                        </a>
+                                        <ul class="dropdown-menu dropdown-menu-end">
+                                            <li>
+                                                <a class="dropdown-item" href="#">
+                                                    <i class="bi bi-pencil-square me-2"></i> Edit
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <form action="#" method="POST" onsubmit="return confirm('Hapus user ini?')">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="dropdown-item text-danger">
+                                                        <i class="bi bi-trash me-2"></i> Delete
+                                                    </button>
+                                                </form>
+                                            </li>
+                                        </ul>
+                                    </div>
                                 </div>
                             </td>
                         </tr>
                     @endforeach
                 </tbody>
-
             </table>
 
         </div>

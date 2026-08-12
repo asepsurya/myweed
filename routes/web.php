@@ -2,20 +2,31 @@
 
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\GoogleController;
+use App\Http\Controllers\BudgetCategoryController;
+use App\Http\Controllers\BudgetController;
+use App\Http\Controllers\BudgetExpenseController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CouponController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\EnvSettingController;
+use App\Http\Controllers\FinancialDashboardController;
 use App\Http\Controllers\GiftController;
 use App\Http\Controllers\LandingController;
 use App\Http\Controllers\MayarController;
 use App\Http\Controllers\MusicController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\PromotionController;
 use App\Http\Controllers\RsvpController;
+use App\Http\Controllers\SavingsAutomationController;
+use App\Http\Controllers\SavingsContributionController;
+use App\Http\Controllers\SavingsController;
+use App\Http\Controllers\SavingsGoalController;
 use App\Http\Controllers\SubscriptionPlanController;
 use App\Http\Controllers\TempelateController;
 use App\Http\Controllers\TemplateCreatorController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserInvitationController;
+use App\Http\Controllers\VendorPaymentController;
 use App\Http\Controllers\WeddingController;
 use App\Http\Controllers\WeedingPlanController;
 use Illuminate\Support\Facades\File;
@@ -128,9 +139,15 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/subscription-plans', [SubscriptionPlanController::class, 'index'])->name('subscribe.page');
     Route::get('/subscription-plans/{planId}', [SubscriptionPlanController::class, 'subscribe'])->name('subscribe');
+    Route::post('/subscription/cancel', [SubscriptionPlanController::class, 'cancel'])->name('subscription.cancel')->middleware('auth');
     Route::get('/payments', [SubscriptionPlanController::class, 'paymentIndex'])->name('payments.index');
     Route::post('/coupons/validate', [SubscriptionPlanController::class, 'validateCoupon'])->name('coupons.validate');
     Route::post('/mayar/create-payment-link', [MayarController::class, 'createPaymentLink'])->middleware('auth')->name('mayar.create-payment-link');
+
+    Route::middleware('role:admin')->prefix('admin/settings')->name('settings.')->group(function () {
+        Route::get('/env', [EnvSettingController::class, 'index'])->name('env');
+        Route::post('/env', [EnvSettingController::class, 'update'])->name('env.update');
+    });
 
     Route::middleware('role:admin')->prefix('admin/subscription-plans')->name('subscription-plans.')->group(function () {
         Route::get('/', [SubscriptionPlanController::class, 'adminIndex'])->name('index');
@@ -139,6 +156,21 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/{subscriptionPlan}/edit', [SubscriptionPlanController::class, 'edit'])->name('edit');
         Route::put('/{subscriptionPlan}', [SubscriptionPlanController::class, 'update'])->name('update');
         Route::delete('/{subscriptionPlan}', [SubscriptionPlanController::class, 'destroy'])->name('destroy');
+    });
+
+    Route::middleware('role:admin')->prefix('admin/subscriptions')->name('admin.subscriptions.')->group(function () {
+        Route::get('/', [SubscriptionPlanController::class, 'userIndex'])->name('index');
+        Route::post('/{user}/plan', [SubscriptionPlanController::class, 'updateUserPlan'])->name('update-plan');
+        Route::post('/{user}/cancel', [SubscriptionPlanController::class, 'cancelUserSubscription'])->name('cancel');
+    });
+
+    Route::middleware('role:admin')->prefix('admin/promotions')->name('promotions.')->group(function () {
+        Route::get('/', [PromotionController::class, 'index'])->name('index');
+        Route::get('/create', [PromotionController::class, 'create'])->name('create');
+        Route::post('/', [PromotionController::class, 'store'])->name('store');
+        Route::get('/{promotion}/edit', [PromotionController::class, 'edit'])->name('edit');
+        Route::put('/{promotion}', [PromotionController::class, 'update'])->name('update');
+        Route::delete('/{promotion}', [PromotionController::class, 'destroy'])->name('destroy');
     });
 
     Route::middleware('role:admin')->prefix('admin/coupons')->name('coupons.')->group(function () {
@@ -157,6 +189,56 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/weeding-plan/{weedingPlan}', [WeedingPlanController::class, 'update'])->name('weeding-plan.update');
     Route::delete('/weeding-plan/{weedingPlan}', [WeedingPlanController::class, 'destroy'])->name('weeding-plan.destroy');
     Route::post('/weeding-plan/{weedingPlan}/toggle', [WeedingPlanController::class, 'toggleStatus'])->name('weeding-plan.toggle');
+
+    /* ================== FINANCIAL MODULES ================== */
+    Route::middleware(['auth', 'subscription'])->group(function () {
+        /* ---- Budget Management ---- */
+        Route::get('/budget', [BudgetController::class, 'dashboard'])->name('budget.dashboard');
+        Route::put('/budget/{budget}', [BudgetController::class, 'update'])->name('budget.update');
+
+        Route::get('/budget/categories', [BudgetCategoryController::class, 'index'])->name('budget.category.index');
+        Route::post('/budget/categories', [BudgetCategoryController::class, 'store'])->name('budget.category.store');
+        Route::get('/budget/categories/{category}/edit', [BudgetCategoryController::class, 'edit'])->name('budget.category.edit');
+        Route::put('/budget/categories/{category}', [BudgetCategoryController::class, 'update'])->name('budget.category.update');
+        Route::delete('/budget/categories/{category}', [BudgetCategoryController::class, 'destroy'])->name('budget.category.destroy');
+
+        Route::get('/budget/expenses', [BudgetExpenseController::class, 'index'])->name('budget.expense.index');
+        Route::get('/budget/expenses/create', [BudgetExpenseController::class, 'create'])->name('budget.expense.create');
+        Route::post('/budget/expenses', [BudgetExpenseController::class, 'store'])->name('budget.expense.store');
+        Route::get('/budget/expenses/{expense}/edit', [BudgetExpenseController::class, 'edit'])->name('budget.expense.edit');
+        Route::put('/budget/expenses/{expense}', [BudgetExpenseController::class, 'update'])->name('budget.expense.update');
+        Route::delete('/budget/expenses/{expense}', [BudgetExpenseController::class, 'destroy'])->name('budget.expense.destroy');
+
+        Route::get('/budget/payments', [VendorPaymentController::class, 'index'])->name('budget.payment.index');
+        Route::post('/budget/payments', [VendorPaymentController::class, 'store'])->name('budget.payment.store');
+        Route::put('/budget/payments/{payment}/pay', [VendorPaymentController::class, 'markPaid'])->name('budget.payment.mark-paid');
+        Route::put('/budget/payments/{payment}', [VendorPaymentController::class, 'update'])->name('budget.payment.update');
+        Route::delete('/budget/payments/{payment}', [VendorPaymentController::class, 'destroy'])->name('budget.payment.destroy');
+
+        /* ---- Joint Savings Tracker ---- */
+        Route::get('/savings', [SavingsController::class, 'dashboard'])->name('savings.dashboard');
+        Route::get('/savings/projection', [SavingsController::class, 'projection'])->name('savings.projection');
+
+        Route::get('/savings/goals', [SavingsGoalController::class, 'index'])->name('savings.goal.index');
+        Route::get('/savings/goals/create', [SavingsGoalController::class, 'create'])->name('savings.goal.create');
+        Route::post('/savings/goals', [SavingsGoalController::class, 'store'])->name('savings.goal.store');
+        Route::get('/savings/goals/{goal}/edit', [SavingsGoalController::class, 'edit'])->name('savings.goal.edit');
+        Route::put('/savings/goals/{goal}', [SavingsGoalController::class, 'update'])->name('savings.goal.update');
+        Route::delete('/savings/goals/{goal}', [SavingsGoalController::class, 'destroy'])->name('savings.goal.destroy');
+        Route::post('/savings/goals/{goal}/toggle', [SavingsGoalController::class, 'toggleActive'])->name('savings.goal.toggle');
+
+        Route::get('/savings/contributions', [SavingsContributionController::class, 'index'])->name('savings.contribution.index');
+        Route::post('/savings/contributions', [SavingsContributionController::class, 'store'])->name('savings.contribution.store');
+        Route::get('/savings/contributions/{contribution}/edit', [SavingsContributionController::class, 'edit'])->name('savings.contribution.edit');
+        Route::put('/savings/contributions/{contribution}', [SavingsContributionController::class, 'update'])->name('savings.contribution.update');
+        Route::delete('/savings/contributions/{contribution}', [SavingsContributionController::class, 'destroy'])->name('savings.contribution.destroy');
+
+        Route::get('/savings/automation', [SavingsAutomationController::class, 'index'])->name('savings.automation.index');
+        Route::post('/savings/automation', [SavingsAutomationController::class, 'updateRule'])->name('savings.automation.update');
+
+        /* ---- Unified Financial Overview ---- */
+        Route::get('/financial-overview', [FinancialDashboardController::class, 'index'])->name('financial-overview.index');
+    });
 
 });
 
