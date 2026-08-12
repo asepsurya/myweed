@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=yes">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
     <title>Masuk — WeddingInv</title>
@@ -57,14 +57,17 @@
             font-family: var(--font);
             background: var(--bg);
             color: var(--text);
-            min-height: 100vh;
+            min-height: 100dvh;
+            min-height: -webkit-fill-available;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 1.5rem;
+            padding: 1.25rem;
             -webkit-font-smoothing: antialiased;
             position: relative;
-            overflow: hidden;
+            overflow-y: auto;
+            overflow-x: hidden;
+            -webkit-overflow-scrolling: touch;
         }
 
         body::before {
@@ -582,12 +585,20 @@
         /* ===== Responsive ===== */
         @media (max-width: 480px) {
             body { padding: 1rem; }
-            .card-header { padding: 2rem 1.5rem 0; }
-            .card-body { padding: 1.5rem 1.5rem 0.5rem; }
-            .card-footer { padding: 1.25rem 1.5rem 1.75rem; }
-            .card-header h1 { font-size: 1.25rem; }
+            .card-header { padding: 2rem 1.25rem 0; }
+            .card-body { padding: 1.5rem 1.25rem 0.5rem; }
+            .card-footer { padding: 1.25rem 1.25rem 1.75rem; }
+            .card-header h1 { font-size: 1.2rem; }
             .field-input { height: 48px; font-size: 0.875rem; }
             .btn-submit, .btn-google { height: 48px; }
+        }
+
+        @media (max-width: 360px) {
+            body { padding: 0.75rem; }
+            .card-header { padding: 1.5rem 1rem 0; }
+            .card-body { padding: 1.25rem 1rem 0.5rem; }
+            .card-footer { padding: 1rem 1rem 1.5rem; }
+            .card-logo img { width: 130px; }
         }
 
         @media (min-width: 1600px) {
