@@ -1,4 +1,4 @@
-<style>
+<!-- <style>
 .mobile-bottom-nav {
     position: fixed;
     bottom: 0;
@@ -202,4 +202,4 @@ document.querySelectorAll('.more-item').forEach(item => {
         closeMore();
     });
 });
-</script>
+</script> -->

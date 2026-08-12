@@ -314,6 +314,9 @@
            RESPONSIVE (MOBILE)
         ============================================= */
         @media (max-width: 991px) {
+            .hide{
+                display: none !important;
+            }
             .adminuiux-content {
                 padding: 0 !important;
             }
@@ -453,7 +456,7 @@
     <div class="builder-wrapper">
         <!-- 1. SIDEBAR (KIRI) -->
         <div class="builder-sidebar shadow-sm">
-            <div class="sidebar-nav-vertical no-scrollbar">
+            <div class="sidebar-nav-vertical no-scrollbar hide">
                 <div class="nav-vertical-link active" data-tab="tab-2" title="Tema">
                     <i class="bi bi-palette"></i><span>Tema</span>
                 </div>

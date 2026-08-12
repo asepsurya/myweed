@@ -246,7 +246,7 @@
 @endif
 
 {{-- Navbar Khusus Edit Undangan (Tabbed Menu & More Drawer) --}}
-@if(request()->routeIs('invitation.edit*'))
+<!-- @if(request()->routeIs('invitation.edit*'))
 <nav class="mobile-bottom-nav">
     <a class="nav-item tab-btn active" data-tab="2">
         <i class="bi bi-palette"></i>
@@ -287,9 +287,9 @@
         <a class="more-item tab-btn" data-tab="5"><i class="bi bi-chat-dots"></i> RSVP</a>
         <a class="more-item tab-btn" data-tab="9"><i class="bi bi-gift"></i> Hadiah & Donasi</a>
     </div>
-</div>
+</div> -->
 
-<script>
+<!-- <script>
     document.addEventListener('DOMContentLoaded', () => {
         const moreBtn = document.getElementById('openMore');
         const moreMenu = document.getElementById('moreMenu');
@@ -339,5 +339,5 @@
             });
         });
     });
-</script>
+</script> -->
 @endif
