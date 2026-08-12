@@ -1017,7 +1017,15 @@ class UserInvitationController extends Controller
         $invitation = null;
 
         if ($id && $id != 0) {
-            $invitation = Invitation::where('id', $id)->where('user_id', auth()->id())->first();
+            $invitation = Invitation::where('id', $id)->first();
+
+            if (!$invitation || !auth()->user()->canAccessInvitation($invitation)) {
+                abort(403, 'Anda tidak memiliki akses ke undangan ini.');
+            }
+
+            if (auth()->user()->id === $invitation->partner_user_id && !$invitation->partner_can_edit) {
+                abort(403, 'Anda hanya memiliki akses melihat undangan ini.');
+            }
         }
 
         // Data yang akan disimpan (hanya teks/json, bukan file agar ringan)

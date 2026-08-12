@@ -6,6 +6,8 @@ use App\Models\Coupon;
 use App\Models\Payment;
 use App\Models\Subscription;
 use App\Models\SubscriptionPlan;
+use App\Models\User;
+use App\Notifications\SubscriptionSuccessNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Midtrans\Notification;
@@ -136,6 +138,12 @@ class SubscriptionPlanController extends Controller
     public function subscribe($planId, Request $request)
     {
         $plan = SubscriptionPlan::findOrFail($planId);
+
+        if (! $request->user()->hasVerifiedEmail()) {
+            return redirect()->route('verification.notice')
+                ->with('error', 'Silakan verifikasi email Anda sebelum melakukan langganan.');
+        }
+
         $gateway = $request->query('gateway', 'mayar');
         $couponCode = $request->query('coupon');
         $coupon = null;
@@ -180,6 +188,9 @@ class SubscriptionPlanController extends Controller
                     'is_active' => true,
                 ]
             );
+
+            $user = User::find(auth()->id());
+            $user->notify(new SubscriptionSuccessNotification($plan, null, 'free'));
 
             return redirect()->back()->with('success', 'Berhasil berlangganan paket gratis!');
         }
@@ -320,6 +331,9 @@ class SubscriptionPlanController extends Controller
             );
 
             $payment->update(['status' => 'paid']);
+
+            $user = User::find($payment->user_id);
+            $user->notify(new SubscriptionSuccessNotification($plan, $payment, 'paid'));
         }
 
         return response()->json(['success' => true], 200);

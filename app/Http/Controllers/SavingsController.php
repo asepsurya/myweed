@@ -13,6 +13,10 @@ class SavingsController extends Controller
 {
     public function dashboard(Request $request)
     {
+        if (! $request->user()->hasFeature('budget_management')) {
+            return back()->with('warning', 'Fitur Tabungan membutuhkan langganan Basic atau Pro.');
+        }
+
         $user = $request->user();
         $invitationId = $this->resolveInvitationId($request, $user);
         $activeInvitationId = (int) $invitationId;
@@ -64,6 +68,10 @@ class SavingsController extends Controller
 
     public function projection(Request $request)
     {
+        if (! $request->user()->hasFeature('savings_projection')) {
+            return back()->with('warning', 'Fitur Proyeksi Tabungan membutuhkan langganan Pro.');
+        }
+
         $user = $request->user();
         $invitationId = $this->resolveInvitationId($request, $user);
         $activeInvitationId = (int) $invitationId;

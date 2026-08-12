@@ -195,7 +195,7 @@
                     <input type="text" id="searchPlan" class="form-control ps-0" placeholder="Cari tugas..."
                         value="{{ request('search') }}">
                 </div>
-                <div class="d-flex gap-2 flex-wrap">
+                <div class="d-flex gap-2 ">
                     <select id="statusFilter" class="form-select filter-pill" style="max-width: 180px;">
                         <option value="">Semua Status</option>
                         <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Menunggu</option>

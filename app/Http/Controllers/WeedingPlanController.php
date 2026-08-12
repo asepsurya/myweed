@@ -10,6 +10,10 @@ class WeedingPlanController extends Controller
 {
     public function index(Request $request)
     {
+        if (! auth()->user()->hasFeature('budget_management')) {
+            return back()->with('warning', 'Fitur Rencana Pernikahan membutuhkan langganan Basic atau Pro.');
+        }
+
         $query = WeedingPlan::where('user_id', auth()->id())
             ->with('invitation')
             ->latest();
@@ -53,6 +57,10 @@ class WeedingPlanController extends Controller
 
     public function create()
     {
+        if (! auth()->user()->hasFeature('budget_management')) {
+            return back()->with('warning', 'Fitur Rencana Pernikahan membutuhkan langganan Basic atau Pro.');
+        }
+
         $invitations = Invitation::where('user_id', auth()->id())->get();
 
         return view('weeding-plan.create', compact('invitations'));
@@ -60,6 +68,10 @@ class WeedingPlanController extends Controller
 
     public function store(Request $request)
     {
+        if (! auth()->user()->hasFeature('budget_management')) {
+            return back()->with('warning', 'Fitur Rencana Pernikahan membutuhkan langganan Basic atau Pro.');
+        }
+
         $validated = $request->validate([
             'invitation_id' => 'nullable|exists:invitations,id',
             'task_name' => 'required|string|max:255',
@@ -86,6 +98,10 @@ class WeedingPlanController extends Controller
 
     public function edit(WeedingPlan $weedingPlan)
     {
+        if (! auth()->user()->hasFeature('budget_management')) {
+            return back()->with('warning', 'Fitur Rencana Pernikahan membutuhkan langganan Basic atau Pro.');
+        }
+
         $this->authorizePlan($weedingPlan);
         $invitations = Invitation::where('user_id', auth()->id())->get();
 
@@ -94,6 +110,10 @@ class WeedingPlanController extends Controller
 
     public function update(Request $request, WeedingPlan $weedingPlan)
     {
+        if (! auth()->user()->hasFeature('budget_management')) {
+            return back()->with('warning', 'Fitur Rencana Pernikahan membutuhkan langganan Basic atau Pro.');
+        }
+
         $this->authorizePlan($weedingPlan);
 
         $validated = $request->validate([
@@ -120,6 +140,10 @@ class WeedingPlanController extends Controller
 
     public function destroy(WeedingPlan $weedingPlan)
     {
+        if (! auth()->user()->hasFeature('budget_management')) {
+            return back()->with('warning', 'Fitur Rencana Pernikahan membutuhkan langganan Basic atau Pro.');
+        }
+
         $this->authorizePlan($weedingPlan);
         $weedingPlan->delete();
 
@@ -128,6 +152,10 @@ class WeedingPlanController extends Controller
 
     public function toggleStatus(WeedingPlan $weedingPlan)
     {
+        if (! auth()->user()->hasFeature('budget_management')) {
+            return back()->with('warning', 'Fitur Rencana Pernikahan membutuhkan langganan Basic atau Pro.');
+        }
+
         $this->authorizePlan($weedingPlan);
 
         $statuses = ['pending', 'in_progress', 'completed'];

@@ -15,6 +15,10 @@ class FinancialDashboardController extends Controller
 {
     public function index(Request $request)
     {
+        if (! $request->user()->hasFeature('budget_management')) {
+            return back()->with('warning', 'Fitur Ikhtisar Keuangan membutuhkan langganan Basic atau Pro.');
+        }
+
         $user = $request->user();
         $invitationId = $this->resolveInvitationId($request, $user);
 

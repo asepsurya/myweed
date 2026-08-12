@@ -61,9 +61,10 @@
                 </a>
             </li>
 
+            @if(auth()->user()->hasFeature('budget_management'))
             <?php 
                 // Cek apakah rute saat ini berada di dalam menu Wedding Planner
-$isWeddingPlannerActive = request()->routeIs(['weeding-plan.index', 'budget.dashboard', 'savings.dashboard', 'financial-overview.index']);
+                $isWeddingPlannerActive = request()->routeIs(['weeding-plan.index', 'budget.dashboard', 'savings.dashboard', 'financial-overview.index']);
             ?>
             <li class="nav-item">
                 <a class="nav-link " data-bs-toggle="collapse" data-bs-target="#financeMenu"
@@ -96,6 +97,7 @@ $isWeddingPlannerActive = request()->routeIs(['weeding-plan.index', 'budget.dash
                     </a>
                 </div>
             </li>
+            @endif
 
             <li class="nav-item">
                 <a class="nav-link {{ request()->routeIs('rsvp.index') ? 'active' : '' }}"

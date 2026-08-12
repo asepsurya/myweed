@@ -8,7 +8,7 @@
     /* ===== Import Fonts ===== */
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap');
 
-    /* ===== Custom Theme Variables (Light Mode Default) ===== */
+    /* ===== Custom Theme Variables ===== */
     :root {
         --gold: #C6A962;
         --gold-light: #E8D5A3;
@@ -24,15 +24,10 @@
         --font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
         --font-display: 'Playfair Display', Georgia, serif;
         --danger: #dc3545;
-        
-        /* Bootstrap Overlays */
-        --bs-body-bg: var(--bg);
-        --bs-body-color: var(--text);
-        --bs-border-color: var(--border);
     }
 
     /* ===== Dark Mode Overrides ===== */
-    [data-theme="dark"] {
+    [data-bs-theme="dark"] {
         --gold: #E8D5A3;
         --gold-light: #C6A962;
         --gold-dark: #E8D5A3;
@@ -45,10 +40,6 @@
         --text: #F7F5F2;
         --text-secondary: #94A3B8;
         --danger: #f87171;
-        
-        --bs-body-bg: var(--bg);
-        --bs-body-color: var(--text);
-        --bs-border-color: var(--border);
     }
 
     /* ===== Page Layout ===== */
@@ -93,13 +84,14 @@
     .premium-card {
         border: 1px solid var(--border);
         border-radius: 20px;
+        background: var(--white);
         box-shadow: 0 10px 40px rgba(27, 42, 74, 0.08);
         transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1), background-color 0.3s ease, border-color 0.3s ease;
         overflow: hidden;
         position: relative;
     }
 
-    [data-theme="dark"] .premium-card {
+    [data-bs-theme="dark"] .premium-card {
         box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
     }
 
@@ -157,7 +149,7 @@
         border-color: var(--gold-light);
     }
     
-    [data-theme="dark"] .pricing-card:hover {
+    [data-bs-theme="dark"] .pricing-card:hover {
         box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
     }
 
@@ -171,7 +163,7 @@
         transform: scale(1.03) translateY(-10px);
     }
 
-    [data-theme="dark"] .pricing-card.popular {
+    [data-bs-theme="dark"] .pricing-card.popular {
         background: linear-gradient(180deg, #1B2A4A 0%, #172033 100%);
     }
 
@@ -244,6 +236,8 @@
         border: none;
         transition: all 0.3s ease;
         box-shadow: 0 4px 15px rgba(198, 169, 98, 0.3);
+        display: inline-block;
+        text-decoration: none;
     }
 
     .btn-gold:hover {
@@ -261,6 +255,8 @@
         font-weight: 600;
         font-size: 0.95rem;
         transition: all 0.3s ease;
+        display: inline-block;
+        text-decoration: none;
     }
 
     .btn-outline-navy:hover {
@@ -279,6 +275,8 @@
         font-weight: 600;
         font-size: 0.95rem;
         transition: all 0.3s ease;
+        display: inline-block;
+        text-decoration: none;
     }
 
     .btn-outline-danger-custom:hover {
@@ -298,9 +296,11 @@
         width: 100%;
         border: none;
         cursor: not-allowed;
+        display: block;
+        text-align: center;
     }
 
-    [data-theme="dark"] .btn-disabled-custom {
+    [data-bs-theme="dark"] .btn-disabled-custom {
         background: #243353;
         color: #5f6985 !important;
     }
@@ -331,7 +331,7 @@
         box-shadow: 0 20px 60px rgba(0,0,0,0.15);
     }
 
-    [data-theme="dark"] .modal-content.custom-modal {
+    [data-bs-theme="dark"] .modal-content.custom-modal {
         box-shadow: 0 20px 60px rgba(0,0,0,0.5);
     }
 
@@ -357,7 +357,7 @@
         gap: 10px;
     }
 
-    [data-theme="dark"] .modal-backdrop.show {
+    [data-bs-theme="dark"] .modal-backdrop.show {
         opacity: 0.8;
     }
 
@@ -504,7 +504,7 @@
                                         <i class="bi bi-lock-fill me-2"></i> Paket Free Sudah Digunakan
                                     </button>
                                 @else
-                                    <a href="{{ route('subscribe', $plan->id) }}" class="{{ $plan->slug === 'pro' ? 'btn-gold' : 'btn-outline-navy' }} d-block text-center">
+                                    <a href="{{ route('subscribe', $plan->id) }}" class="{{ $plan->slug === 'pro' ? 'btn-gold' : 'btn-outline-navy' }} w-100 text-center d-block">
                                         @if($isActive)
                                             <i class="bi bi-arrow-repeat me-2"></i> Perpanjang Paket
                                         @else

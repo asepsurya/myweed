@@ -74,6 +74,23 @@ class User extends Authenticatable implements MustVerifyEmail
             $this->subscription->end_date->isFuture();
     }
 
+    public function isPaidSubscribed()
+    {
+        if ($this->isAdmin()) {
+            return true;
+        }
+
+        if (! $this->subscription || ! $this->subscription->is_active) {
+            return false;
+        }
+
+        if ($this->subscription->end_date && ! $this->subscription->end_date->isFuture()) {
+            return false;
+        }
+
+        return ! $this->subscription->plan->is_free;
+    }
+
     public function hasFeature(string $key): bool
     {
         if ($this->isAdmin()) {

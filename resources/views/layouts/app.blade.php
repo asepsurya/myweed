@@ -499,6 +499,15 @@
             padding-right: 0.5rem;
             color: var(--bs-secondary-color);
         }
+        [data-bs-theme=dark] .breadcrumb .breadcrumb-item a {
+            color: #f9fafb;
+        }
+        .breadcrumb .breadcrumb-item a {
+            color: #000000ff;
+        }
+        .breadcrumb .breadcrumb-item.active {
+            color: #C6A962;
+        }
     </style>
 </head>
 
@@ -519,46 +528,7 @@
         <main class="adminuiux-content has-sidebar" onclick="contentClick()" style="padding-top: 68px;">
             <div class="container-fluid mt-4" id="main-content">
 
-                {{-- Notifikasi / Alert dibungkus dalam Card --}}
-                @if(session('warning') || (auth()->check() && !auth()->user()->hasVerifiedEmail() && !auth()->user()->isAdmin()) || request()->has('verified'))
-                    <div class="card border-0 mb-3">
-                        <div class="card-body p-2">
-                            @if(session('warning'))
-                                <div class="alert alert-warning d-flex align-items-center gap-2 mb-0" role="alert">
-                                    <i class="bi bi-exclamation-triangle-fill flex-shrink-0"></i>
-                                    <div>{{ session('warning') }}</div>
-                                </div>
-                            @endif
-
-                            @if(auth()->check() && !auth()->user()->hasVerifiedEmail() && !auth()->user()->isAdmin())
-                                <div class="alert alert-warning d-flex align-items-center justify-content-between gap-2 mb-0"
-                                    role="alert">
-                                    <div class="d-flex align-items-center gap-2">
-                                        <i class="bi bi-envelope-exclamation-fill flex-shrink-0"></i>
-                                        <div>
-                                            Email Anda belum diverifikasi.
-                                            <a href="{{ route('verification.notice') }}" class="alert-link">Verifikasi
-                                                sekarang</a>
-                                        </div>
-                                    </div>
-                                    <form method="POST" action="{{ route('verification.send') }}" class="d-inline">
-                                        @csrf
-                                        <button type="submit" class="btn btn-sm btn-outline-warning">
-                                            <i class="bi bi-send me-1"></i>Kirim Ulang
-                                        </button>
-                                    </form>
-                                </div>
-                            @endif
-
-                            @if(request()->has('verified'))
-                                <div class="alert alert-success d-flex align-items-center gap-2 mb-0" role="alert">
-                                    <i class="bi bi-check-circle-fill flex-shrink-0"></i>
-                                    <div>Email Anda berhasil diverifikasi.</div>
-                                </div>
-                            @endif
-                        </div>
-                    </div>
-                @endif
+              
 
                 {{-- Breadcrumbs dibungkus dalam Card --}}
                 @php
@@ -597,7 +567,58 @@
                         </div>
                     </div>
                 @endif
+                {{-- Notifikasi / Alert Premium Gold --}}
+                @if(session('warning') || (auth()->check() && !auth()->user()->hasVerifiedEmail() && !auth()->user()->isAdmin()) || request()->has('verified'))
+                    <div class="mb-3">
+                        
+                        {{-- 1. Warning Session --}}
+                        @if(session('warning'))
+                            <div class="d-flex align-items-center gap-3 p-3 rounded-4 mb-2" style="background-color: rgba(198, 169, 98, 0.15); border: 1px solid rgba(198, 169, 98, 0.4);">
+                                <div class="d-flex align-items-center justify-content-center rounded-circle flex-shrink-0 text-white" style="width: 42px; height: 42px; background: linear-gradient(135deg, #C6A962, #A68B4B);">
+                                    <i class="bi bi-exclamation-triangle-fill fs-6"></i>
+                                </div>
+                                <div class="fw-medium" style="color: #8f743e;">
+                                    {{ session('warning') }}
+                                </div>
+                            </div>
+                        @endif
 
+                        {{-- 2. Unverified Email --}}
+                        @if(auth()->check() && !auth()->user()->hasVerifiedEmail() && !auth()->user()->isAdmin())
+                            <div class="d-flex flex-column flex-md-row align-items-start align-items-md-center justify-content-between gap-3 p-3 rounded-4 mb-2" style="background-color: rgba(198, 169, 98, 0.15); border: 1px solid rgba(198, 169, 98, 0.4);">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="d-flex align-items-center justify-content-center rounded-circle flex-shrink-0 text-white" style="width: 42px; height: 42px; background: linear-gradient(135deg, #C6A962, #A68B4B);">
+                                        <i class="bi bi-envelope-exclamation-fill fs-6"></i>
+                                    </div>
+                                    <div class="fw-medium" style="color: #8f743e;">
+                                        Email Anda belum diverifikasi.
+                                        <a href="{{ route('verification.notice') }}" class="fw-bold text-decoration-underline" style="color: #A68B4B;">Verifikasi sekarang</a>
+                                    </div>
+                                </div>
+                                <form method="POST" action="{{ route('verification.send') }}" class="d-inline flex-shrink-0">
+                                    @csrf
+                                    <button type="submit" class="btn btn-sm fw-semibold rounded-pill px-3 py-2 text-white border-0" style="background: linear-gradient(135deg, #C6A962, #A68B4B);">
+                                        <i class="bi bi-send-fill me-1"></i>Kirim Ulang
+                                    </button>
+                                </form>
+                            </div>
+                        @endif
+
+                        {{-- 3. Verified Success --}}
+                        {{-- Untuk sukses, saya tetap menggunakan warna emas agar konsisten dengan tema, namun dengan ikon checklis --}}
+                        @if(request()->has('verified'))
+                            <div class="d-flex align-items-center gap-3 p-3 rounded-4" style="background-color: rgba(198, 169, 98, 0.15); border: 1px solid rgba(198, 169, 98, 0.4);">
+                                <div class="d-flex align-items-center justify-content-center rounded-circle flex-shrink-0 text-white" style="width: 42px; height: 42px; background: linear-gradient(135deg, #C6A962, #A68B4B);">
+                                    <i class="bi bi-check-lg fs-5"></i>
+                                </div>
+                                <div class="fw-medium" style="color: #8f743e;">
+                                    Email Anda berhasil diverifikasi.
+                                </div>
+                            </div>
+                        @endif
+
+                    </div>
+                @endif
                 {{ $slot }}
 
                 @include('layouts.partial.toastr')
@@ -613,6 +634,55 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+
+            /* ── Dark/Light Mode Toggle ── */
+            const themeBtn = document.getElementById('btn-layout-modes-dark-page');
+            const htmlEl = document.documentElement;
+
+            function getSystemTheme() {
+                return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            }
+
+            function getStoredTheme() {
+                return localStorage.getItem('theme');
+            }
+
+            function setTheme(theme) {
+                htmlEl.setAttribute('data-bs-theme', theme);
+                localStorage.setItem('theme', theme);
+                updateButtonIcon(theme);
+            }
+
+            function updateButtonIcon(theme) {
+                if (!themeBtn) return;
+                const sunIcon = themeBtn.querySelector('.sun');
+                const moonIcon = themeBtn.querySelector('.moon');
+                if (theme === 'dark') {
+                    if (sunIcon) sunIcon.style.display = 'none';
+                    if (moonIcon) moonIcon.style.display = 'block';
+                } else {
+                    if (sunIcon) sunIcon.style.display = 'block';
+                    if (moonIcon) moonIcon.style.display = 'none';
+                }
+            }
+
+            if (themeBtn) {
+                themeBtn.addEventListener('click', function () {
+                    const current = htmlEl.getAttribute('data-bs-theme') || getSystemTheme();
+                    const next = current === 'dark' ? 'light' : 'dark';
+                    setTheme(next);
+                });
+            }
+
+            const stored = getStoredTheme();
+            if (stored) {
+                setTheme(stored);
+            } else {
+                setTheme(getSystemTheme());
+                if (window.autoThemeMode) {
+                    window.autoThemeMode();
+                }
+            }
 
             /* ── Page Title & Breadcrumb ── */
             const path = window.location.pathname.split('/').filter(Boolean);
@@ -663,7 +733,7 @@
 
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="{{ asset('assets/js/component/component-toasts.js') }}"></script>
-
+        @yield('js')
 </body>
 
 </html>

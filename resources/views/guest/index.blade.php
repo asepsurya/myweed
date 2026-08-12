@@ -206,9 +206,11 @@
                                                 <i class="bi bi-check-lg"></i>
                                             </button>
                                         @endif
-                                        <button type="button" class="btn btn-outline-success btn-sm" data-bs-toggle="modal" data-bs-target="#shareModalDynamic" data-id="{{ $inv->id }}" title="Bagikan Undangan">
-                                            <i class="bi bi-share"></i>
-                                        </button>
+                                        @if(auth()->user()->isPaidSubscribed())
+                                            <button type="button" class="btn btn-outline-success btn-sm" data-bs-toggle="modal" data-bs-target="#shareModalDynamic" data-id="{{ $inv->id }}" title="Bagikan Undangan">
+                                                <i class="bi bi-share"></i>
+                                            </button>
+                                        @endif
 
                                         @if(auth()->user()->id === $inv->user_id && !$inv->is_default)
                                             <form action="{{ route('invitation.destroy', $inv) }}" method="POST" class="d-inline delete-invitation-form">
@@ -247,9 +249,11 @@
                                                 </li>
                                             @endif
                                             <li>
-                                                <button type="button" class="dropdown-item text-success" data-bs-toggle="modal" data-bs-target="#shareModalDynamic" data-id="{{ $inv->id }}">
-                                                    <i class="bi bi-share me-2"></i> Bagikan Undangan
-                                                </button>
+                                                @if(auth()->user()->isPaidSubscribed())
+                                                    <button type="button" class="dropdown-item text-success" data-bs-toggle="modal" data-bs-target="#shareModalDynamic" data-id="{{ $inv->id }}">
+                                                        <i class="bi bi-share me-2"></i> Bagikan Undangan
+                                                    </button>
+                                                @endif
                                             </li>
                                             @if(auth()->user()->id === $inv->user_id && !$inv->is_default)
                                                 <li><hr class="dropdown-divider"></li>
@@ -393,6 +397,7 @@
         </div>
 
         <!-- Modal: Share Invitation -->
+        @if(auth()->user()->isPaidSubscribed())
         <div class="modal fade" id="shareModalDynamic" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog modal-lg modal-dialog-centered">
                 <div class="modal-content">
@@ -436,6 +441,7 @@
                 </div>
             </div>
         </div>
+        @endif
 
         <script>
             document.addEventListener('DOMContentLoaded', function () {
@@ -573,9 +579,9 @@
             }
 
             function getInvitationUrl() {
-                const activeInvitation = @json($invitations->first());
-                if (activeInvitation && activeInvitation.slug) {
-                    return '{{ url($invitations->first()->slug) }}';
+                const invitation = @json($invitations->first());
+                if (invitation && invitation.slug) {
+                    return @json(url('/')) + '/' + invitation.slug;
                 }
                 return window.location.href;
             }
@@ -663,7 +669,6 @@
                     });
                 });
             });
-        });
-    </script>
+        </script>
     </div>
 </x-app-layout>

@@ -6,6 +6,8 @@ use App\Models\Coupon;
 use App\Models\Payment;
 use App\Models\Subscription;
 use App\Models\SubscriptionPlan;
+use App\Models\User;
+use App\Notifications\SubscriptionSuccessNotification;
 use App\Services\MayarService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -151,6 +153,9 @@ class MayarController extends Controller
                 'transaction_status' => 'paid',
                 'paid_at' => now(),
             ]);
+
+            $user = User::find($payment->user_id);
+            $user->notify(new SubscriptionSuccessNotification($plan, $payment, 'paid'));
         } elseif (in_array(strtolower($status), ['failed', 'expire', 'cancel', 'deny'])) {
             $payment->update([
                 'status' => 'failed',
