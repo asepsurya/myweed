@@ -133,6 +133,10 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function canAccessInvitation(Invitation $invitation): bool
     {
+        if ($this->isAdmin()) {
+            return true;
+        }
+
         return $this->id === $invitation->user_id
             || ($this->id === $invitation->partner_user_id && $invitation->partner_accepted_at !== null);
     }

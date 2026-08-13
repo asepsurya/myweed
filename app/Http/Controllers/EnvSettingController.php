@@ -62,6 +62,16 @@ class EnvSettingController extends Controller
             'AI_MODEL_PRIMARY' => 'nullable|string',
             'AI_MODEL_SECONDARY' => 'nullable|string',
             'AI_API_KEY' => 'nullable|string',
+
+            // Storage settings
+            'STORAGE_DRIVER' => 'required|string|in:local,r2',
+            'R2_ACCESS_KEY_ID' => 'nullable|string',
+            'R2_SECRET_ACCESS_KEY' => 'nullable|string',
+            'R2_REGION' => 'nullable|string',
+            'R2_BUCKET' => 'nullable|string',
+            'R2_ENDPOINT' => 'nullable|url',
+            'R2_URL' => 'nullable|url',
+            'R2_PUBLIC_URL' => 'nullable|url',
         ]);
 
         // Save keys

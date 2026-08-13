@@ -10,7 +10,9 @@
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap"
+        rel="stylesheet">
 
     <!-- Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
@@ -39,8 +41,13 @@
             --font-display: 'Playfair Display', Georgia, serif;
         }
 
-        * { box-sizing: border-box; }
-        html { scroll-behavior: smooth; }
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
 
         body {
             font-family: var(--font);
@@ -52,25 +59,90 @@
             overflow-x: hidden;
         }
 
-        a { text-decoration: none; color: inherit; transition: all var(--speed) ease; }
-        h1, h2, h3, h4 { font-family: var(--font-display); }
+        a {
+            text-decoration: none;
+            color: inherit;
+            transition: all var(--speed) ease;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4 {
+            font-family: var(--font-display);
+        }
 
         /* ===== Keyframes ===== */
-        @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes fadeInDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes float { 0%, 100% { transform: translateY(0) translateX(0); } 50% { transform: translateY(-15px) translateX(5px); } }
-        @keyframes pulseSoft { 0%, 100% { transform: scale(1); opacity: 0.5; } 50% { transform: scale(1.05); opacity: 0.8; } }
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0) translateX(0);
+            }
+
+            50% {
+                transform: translateY(-15px) translateX(5px);
+            }
+        }
+
+        @keyframes pulseSoft {
+
+            0%,
+            100% {
+                transform: scale(1);
+                opacity: 0.5;
+            }
+
+            50% {
+                transform: scale(1.05);
+                opacity: 0.8;
+            }
+        }
 
         /* ===== Scroll Reveal ===== */
-        .reveal { opacity: 0; transform: translateY(40px); transition: opacity 0.8s cubic-bezier(0.25, 1, 0.5, 1), transform 0.8s cubic-bezier(0.25, 1, 0.5, 1); }
-        .reveal.active { opacity: 1; transform: translateY(0); }
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 0.8s cubic-bezier(0.25, 1, 0.5, 1), transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
 
         /* ===== Navbar ===== */
         .navbar {
             padding: 1.5rem 0;
             background: transparent;
             position: fixed;
-            top: 0; left: 0; width: 100%;
+            top: 0;
+            left: 0;
+            width: 100%;
             z-index: 1000;
             transition: all var(--speed) ease;
         }
@@ -92,7 +164,7 @@
         .navbar-brand img {
             height: 40px;
             width: auto;
-            filter: brightness(0) invert(1); 
+            filter: brightness(0) invert(1);
             transition: filter var(--speed) ease;
         }
 
@@ -108,9 +180,17 @@
             position: relative;
         }
 
-        .navbar.scrolled .nav-link { color: var(--text-secondary) !important; }
-        .nav-link:hover { color: var(--gold-light) !important; }
-        .navbar.scrolled .nav-link:hover { color: var(--gold-dark) !important; }
+        .navbar.scrolled .nav-link {
+            color: var(--text-secondary) !important;
+        }
+
+        .nav-link:hover {
+            color: var(--gold-light) !important;
+        }
+
+        .navbar.scrolled .nav-link:hover {
+            color: var(--gold-dark) !important;
+        }
 
         .btn-gold {
             background: linear-gradient(135deg, var(--gold), var(--gold-dark));
@@ -144,14 +224,20 @@
 
         .hero-video {
             position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             object-fit: cover;
             z-index: 0;
         }
 
         .hero-overlay {
             position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             background: linear-gradient(rgba(27, 42, 74, 0.8), rgba(27, 42, 74, 0.95));
             z-index: 1;
         }
@@ -164,11 +250,38 @@
             animation: float 10s infinite ease-in-out;
         }
 
-        .shape-1 { width: 400px; height: 400px; top: -100px; left: -100px; }
-        .shape-2 { width: 300px; height: 300px; bottom: -50px; right: -50px; border-color: rgba(255, 255, 255, 0.1); animation-direction: reverse; animation-duration: 12s; }
-        .shape-3 { width: 150px; height: 150px; top: 20%; right: 15%; background: radial-gradient(circle, rgba(198, 169, 98, 0.2) 0%, transparent 70%); border: none; animation: pulseSoft 6s infinite ease-in-out; }
+        .shape-1 {
+            width: 400px;
+            height: 400px;
+            top: -100px;
+            left: -100px;
+        }
 
-        .hero-content { position: relative; z-index: 3; max-width: 800px; }
+        .shape-2 {
+            width: 300px;
+            height: 300px;
+            bottom: -50px;
+            right: -50px;
+            border-color: rgba(255, 255, 255, 0.1);
+            animation-direction: reverse;
+            animation-duration: 12s;
+        }
+
+        .shape-3 {
+            width: 150px;
+            height: 150px;
+            top: 20%;
+            right: 15%;
+            background: radial-gradient(circle, rgba(198, 169, 98, 0.2) 0%, transparent 70%);
+            border: none;
+            animation: pulseSoft 6s infinite ease-in-out;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 3;
+            max-width: 800px;
+        }
 
         .hero-tag {
             display: inline-block;
@@ -196,7 +309,10 @@
             opacity: 0;
         }
 
-        .hero-section h1 em { font-style: italic; color: var(--gold-light); }
+        .hero-section h1 em {
+            font-style: italic;
+            color: var(--gold-light);
+        }
 
         .hero-section p {
             font-size: 1.15rem;
@@ -229,13 +345,25 @@
             outline: none;
         }
 
-        .search-container input:focus { border-color: var(--gold); box-shadow: 0 0 0 4px rgba(198, 169, 98, 0.2); }
+        .search-container input:focus {
+            border-color: var(--gold);
+            box-shadow: 0 0 0 4px rgba(198, 169, 98, 0.2);
+        }
 
-        .search-container i { position: absolute; left: 1.5rem; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 1.1rem; }
+        .search-container i {
+            position: absolute;
+            left: 1.5rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
 
         .search-container .btn-search {
             position: absolute;
-            right: 8px; top: 8px; bottom: 8px;
+            right: 8px;
+            top: 8px;
+            bottom: 8px;
             background: linear-gradient(135deg, var(--gold), var(--gold-dark));
             color: white;
             border: none;
@@ -246,7 +374,13 @@
         }
 
         /* Tags */
-        .tag-list { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
+        .tag-list {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
         .tag-item {
             padding: 0.5rem 1.4rem;
             border-radius: 50px;
@@ -256,11 +390,19 @@
             font-size: 0.82rem;
             font-weight: 500;
         }
-        .tag-item.active, .tag-item:hover { background: var(--gold); color: var(--white); border-color: var(--gold); transform: translateY(-2px); }
+
+        .tag-item.active,
+        .tag-item:hover {
+            background: var(--gold);
+            color: var(--white);
+            border-color: var(--gold);
+            transform: translateY(-2px);
+        }
 
         .scroll-down {
             position: absolute;
-            bottom: 30px; left: 50%;
+            bottom: 30px;
+            left: 50%;
             transform: translateX(-50%);
             color: rgba(255, 255, 255, 0.6);
             font-size: 1.5rem;
@@ -268,85 +410,263 @@
             animation: bounce 2s infinite;
         }
 
-        @keyframes bounce { 0%, 20%, 50%, 80%, 100% { transform: translateY(0) translateX(-50%); } 40% { transform: translateY(-10px) translateX(-50%); } 60% { transform: translateY(-5px) translateX(-50%); } }
+        @keyframes bounce {
 
-        /* ===== Real Wedding Slider ===== */
-        .real-wedding-section {
-            padding: 100px 0;
-            background: linear-gradient(180deg, var(--white) 0%, var(--bg) 100%);
-            border-bottom: 1px solid var(--border);
-            overflow: hidden;
+            0%,
+            20%,
+            50%,
+            80%,
+            100% {
+                transform: translateY(0) translateX(-50%);
+            }
+
+            40% {
+                transform: translateY(-10px) translateX(-50%);
+            }
+
+            60% {
+                transform: translateY(-5px) translateX(-50%);
+            }
         }
 
-        .section-header-center { text-align: center; margin-bottom: 60px; }
-        .section-subtitle { color: var(--gold-dark); font-weight: 600; font-size: 0.85rem; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 0.5rem; display: block; }
-        .section-title { font-size: 2.2rem; font-weight: 600; color: var(--navy); margin-bottom: 0.5rem; }
-        .section-desc { color: var(--text-secondary); max-width: 500px; margin: 0 auto; }
+        /* =========================
+           ART GALLERY WEDDING SECTION
+        ========================== */
+        .real-wedding-section {
+            padding: 120px 0;
+            background: var(--bg-alt);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .section-header-center {
+            text-align: center;
+            margin-bottom: 80px;
+        }
+
+        .section-subtitle {
+            font-family: var(--font);
+            color: var(--gold-dark);
+            font-weight: 600;
+            font-size: 0.75rem;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .section-title {
+            font-size: 3rem;
+            font-weight: 400;
+            font-style: italic;
+            /* Gaya Gallery Exhibition */
+            color: var(--navy);
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+
+        .section-desc {
+            color: var(--text-secondary);
+            max-width: 500px;
+            margin: 0 auto;
+            font-size: 0.95rem;
+        }
 
         .wedding-slider {
             display: flex;
-            gap: 50px;
-            overflow-x: auto;
-            padding: 30px 0 40px;
-            scrollbar-width: none;
+            flex-wrap: wrap;
             justify-content: center;
-            scroll-snap-type: x mandatory;
+            gap: 40px;
+            margin-top: 50px;
         }
-        .wedding-slider::-webkit-scrollbar { display: none; }
 
         .wedding-item {
+            flex: 0 1 320px;
+            max-width: 320px;
+            display: flex;
+            flex-direction: column;
+            background: var(--white);
+            border: 1px solid var(--border);
+            padding: 15px;
+            text-decoration: none;
             text-align: center;
-            min-width: 160px;
-            transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1);
-            scroll-snap-align: center;
             cursor: pointer;
-            padding: 20px;
-            border-radius: var(--radius-lg);
-            background: transparent;
+            box-shadow: 0 15px 40px rgba(27, 42, 74, 0.06);
+            transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+            position: relative;
         }
-        .wedding-item:hover { transform: translateY(-12px); }
 
-        .couple-avatar-group { position: relative; width: 140px; height: 140px; margin: 0 auto 20px; transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1); }
-        .wedding-item:hover .couple-avatar-group { transform: scale(1.05); }
-        .wedding-item:nth-child(even) .couple-avatar-group { animation-delay: 2s; }
-
-        .couple-avatar-group::before {
+        .wedding-item::before {
             content: '';
             position: absolute;
-            inset: -12px;
-            border: 2px dashed var(--gold);
-            border-radius: 50%;
-            opacity: 0.4;
-            animation: spin 25s linear infinite;
+            top: 5px;
+            left: 5px;
+            right: 5px;
+            bottom: 5px;
+            border: 1px solid rgba(198, 169, 98, 0.3);
+            pointer-events: none;
             transition: all 0.5s ease;
+            z-index: 1;
         }
-        .wedding-item:hover .couple-avatar-group::before { opacity: 0.8; inset: -16px; border-width: 3px; }
-        @keyframes spin { 100% { transform: rotate(360deg); } }
+
+        .wedding-item:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 25px 60px rgba(27, 42, 74, 0.12);
+        }
+
+        .wedding-item:hover::before {
+            border-color: var(--gold);
+            top: 8px;
+            left: 8px;
+            right: 8px;
+            bottom: 8px;
+        }
+
+        .couple-avatar-group {
+            position: relative;
+            width: 100%;
+            height: 250px;
+            background: var(--bg);
+            margin-bottom: 25px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
 
         .couple-avatar {
-            width: 100px; height: 100px;
-            border-radius: 50%;
-            border: 4px solid var(--white);
-            box-shadow: 0 8px 25px rgba(27, 42, 74, 0.15);
-            object-fit: cover;
             position: absolute;
-            transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            object-fit: cover;
+            background: var(--white);
+            border: 5px solid var(--white);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+            transition: all 0.5s ease;
+            z-index: 2;
         }
-        .wedding-item:hover .couple-avatar { box-shadow: 0 12px 35px rgba(27, 42, 74, 0.25); }
-        .avatar-1 { top: 0; left: 0; z-index: 2; }
-        .avatar-2 { bottom: 0; right: 0; z-index: 1; }
 
-        .couple-names { font-family: var(--font-display); font-size: 1.1rem; font-weight: 600; color: var(--navy); margin-bottom: 6px; white-space: nowrap; transition: color 0.3s ease; }
-        .wedding-item:hover .couple-names { color: var(--gold-dark); }
+        .avatar-1 {
+            left: 50px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
 
-        .wedding-date { font-size: 0.8rem; color: var(--text-muted); font-weight: 500; letter-spacing: 0.5px; transition: color 0.3s ease; }
-        .wedding-item:hover .wedding-date { color: var(--text-secondary); }
+        .avatar-2 {
+            right: 50px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
 
-        .wedding-divider { width: 30px; height: 2px; background: var(--gold); margin: 8px auto; border-radius: 2px; opacity: 0; transition: all 0.4s ease; }
-        .wedding-item:hover .wedding-divider { opacity: 1; width: 40px; }
+        .wedding-item:hover .avatar-1 {
+            transform: translateY(-50%) translateX(-8px);
+        }
+
+        .wedding-item:hover .avatar-2 {
+            transform: translateY(-50%) translateX(8px);
+        }
+
+        .wedding-info {
+            padding: 0 10px 15px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .couple-names {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 400;
+            font-style: italic;
+            color: var(--navy);
+            margin-bottom: 15px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .wedding-divider {
+            width: 40px;
+            height: 1px;
+            background: var(--gold);
+            margin: 0 auto 15px;
+            transition: width 0.5s ease;
+        }
+
+        .wedding-item:hover .wedding-divider {
+            width: 70px;
+        }
+
+        .wedding-date {
+            font-family: var(--font);
+            font-size: 0.75rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        /* Responsive Mobile - 1 Item Slide Horizontal */
+        @media (max-width: 768px) {
+            .real-wedding-section {
+                padding: 70px 0;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+
+            .wedding-slider {
+                flex-wrap: nowrap;
+                /* Cegah turun baris */
+                overflow-x: auto;
+                /* Aktifkan swipe horizontal */
+                justify-content: flex-start;
+                /* Mulai dari kiri */
+                scroll-snap-type: x mandatory;
+                /* Snap saat geser */
+                gap: 16px;
+                padding: 10px 15px 30px;
+                /* Ruang agar tak ketabrak layar */
+                margin: 0 -15px;
+                /* Tarik ke tepi layar */
+                -webkit-overflow-scrolling: touch;
+                /* Halus di iOS */
+                scrollbar-width: none;
+                /* Sembunyikan scrollbar Firefox */
+            }
+
+            .wedding-slider::-webkit-scrollbar {
+                display: none;
+                /* Sembunyikan scrollbar Chrome/Safari */
+            }
+
+            .wedding-item {
+                flex: 0 0 85%;
+                /* Lebar 85% layar, sisanya mengintip */
+                max-width: 85%;
+                scroll-snap-align: center;
+                /* Selalu di tengah saat di swipe */
+                padding: 12px;
+            }
+
+            .couple-avatar-group {
+                height: 220px;
+            }
+
+            .avatar-1 {
+                left: 30px;
+            }
+
+            .avatar-2 {
+                right: 30px;
+            }
+        }
 
         /* ===== Features Section ===== */
-        .features-section { padding: 80px 0; background: var(--bg); }
+        .features-section {
+            padding: 80px 0;
+            background: var(--bg);
+        }
 
         .feature-card {
             background: var(--white);
@@ -362,34 +682,65 @@
         .feature-card::before {
             content: '';
             position: absolute;
-            top: 0; left: 0; width: 100%; height: 4px;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
             background: linear-gradient(90deg, var(--gold), var(--gold-dark));
             transform: scaleX(0);
             transform-origin: left;
             transition: transform 0.5s ease;
         }
 
-        .feature-card:hover { transform: translateY(-10px); border-color: var(--gold-light); box-shadow: 0 20px 50px rgba(27, 42, 74, 0.1); }
-        .feature-card:hover::before { transform: scaleX(1); }
+        .feature-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--gold-light);
+            box-shadow: 0 20px 50px rgba(27, 42, 74, 0.1);
+        }
+
+        .feature-card:hover::before {
+            transform: scaleX(1);
+        }
 
         .feature-icon {
-            width: 60px; height: 60px;
+            width: 60px;
+            height: 60px;
             border-radius: 16px;
             background: linear-gradient(135deg, rgba(198, 169, 98, 0.1), rgba(198, 169, 98, 0.05));
-            display: flex; align-items: center; justify-content: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             margin-bottom: 1.5rem;
             font-size: 1.5rem;
             color: var(--gold-dark);
             transition: all 0.5s ease;
         }
 
-        .feature-card:hover .feature-icon { transform: scale(1.1) rotate(-5deg); background: linear-gradient(135deg, var(--gold), var(--gold-dark)); color: var(--white); }
+        .feature-card:hover .feature-icon {
+            transform: scale(1.1) rotate(-5deg);
+            background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+            color: var(--white);
+        }
 
-        .feature-card h4 { font-size: 1.2rem; font-weight: 600; color: var(--navy); margin-bottom: 0.75rem; }
-        .feature-card p { color: var(--text-secondary); font-size: 0.9rem; line-height: 1.6; margin: 0; }
+        .feature-card h4 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--navy);
+            margin-bottom: 0.75rem;
+        }
+
+        .feature-card p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            line-height: 1.6;
+            margin: 0;
+        }
 
         /* ===== Templates Grid ===== */
-        .template-section { padding: 80px 0 100px; background: var(--bg-alt); }
+        .template-section {
+            padding: 80px 0 100px;
+            background: var(--bg-alt);
+        }
 
         .template-grid {
             display: grid;
@@ -398,147 +749,688 @@
             padding: 20px 0;
         }
 
-        .template-card { border-radius: var(--radius); overflow: hidden; transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1); background: transparent; }
+        .template-card {
+            border-radius: var(--radius);
+            overflow: hidden;
+            transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+            background: transparent;
+        }
 
-        .template-img-container { aspect-ratio: 4/3; border-radius: var(--radius); overflow: hidden; position: relative; background: var(--bg); border: 1px solid var(--border); }
-        .template-img-container img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1); }
-        .template-card:hover .template-img-container img { transform: scale(1.08); }
+        .template-img-container {
+            aspect-ratio: 4/3;
+            border-radius: var(--radius);
+            overflow: hidden;
+            position: relative;
+            background: var(--bg);
+            border: 1px solid var(--border);
+        }
 
-        .template-overlay { position: absolute; inset: 0; background: rgba(27, 42, 74, 0.7); backdrop-filter: blur(3px); display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.4s ease; gap: 10px; }
-        .template-card:hover .template-overlay { opacity: 1; }
+        .template-img-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+        }
 
-        .template-footer { padding: 12px 4px; display: flex; justify-content: space-between; align-items: center; }
-        .user-info { display: flex; align-items: center; gap: 8px; }
-        .user-avatar { width: 24px; height: 24px; border-radius: 50%; background: var(--border); }
-        .user-name { font-size: 0.85rem; font-weight: 700; color: var(--navy); }
-        .card-stats { display: flex; gap: 10px; font-size: 0.75rem; font-weight: 600; color: var(--text-secondary); }
-        .card-stats i { font-size: 0.85rem; }
-        .badge-pro { background: var(--gold); color: white; font-size: 0.65rem; padding: 1px 5px; border-radius: 3px; font-weight: 800; }
+        .template-card:hover .template-img-container img {
+            transform: scale(1.08);
+        }
+
+        .template-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(27, 42, 74, 0.7);
+            backdrop-filter: blur(3px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            gap: 10px;
+        }
+
+        .template-card:hover .template-overlay {
+            opacity: 1;
+        }
+
+        .template-footer {
+            padding: 12px 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .user-avatar {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--border);
+        }
+
+        .user-name {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--navy);
+        }
+
+        .card-stats {
+            display: flex;
+            gap: 10px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .card-stats i {
+            font-size: 0.85rem;
+        }
+
+        .badge-pro {
+            background: var(--gold);
+            color: white;
+            font-size: 0.65rem;
+            padding: 1px 5px;
+            border-radius: 3px;
+            font-weight: 800;
+        }
 
         /* ===== CTA Section ===== */
-        .cta-section { padding: 80px 0; background: var(--navy); position: relative; overflow: hidden; }
-        .cta-section::before { content: ''; position: absolute; top: -50%; right: -10%; width: 500px; height: 500px; background: radial-gradient(circle, rgba(198, 169, 98, 0.15) 0%, transparent 70%); pointer-events: none; animation: pulseSoft 8s infinite ease-in-out; }
-        .cta-box { text-align: center; color: var(--white); position: relative; z-index: 2; }
-        .cta-box h2 { font-size: 2.5rem; font-weight: 600; margin-bottom: 1rem; }
-        .cta-box p { font-size: 1.1rem; color: rgba(255, 255, 255, 0.7); margin-bottom: 2rem; font-weight: 300; }
+        .cta-section {
+            padding: 80px 0;
+            background: var(--navy);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(198, 169, 98, 0.15) 0%, transparent 70%);
+            pointer-events: none;
+            animation: pulseSoft 8s infinite ease-in-out;
+        }
+
+        .cta-box {
+            text-align: center;
+            color: var(--white);
+            position: relative;
+            z-index: 2;
+        }
+
+        .cta-box h2 {
+            font-size: 2.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .cta-box p {
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 2rem;
+            font-weight: 300;
+        }
 
         /* ===== Footer ===== */
-        footer { background: var(--bg-alt); border-top: 1px solid var(--border); padding: 80px 0 30px; }
+        footer {
+            background: var(--bg-alt);
+            border-top: 1px solid var(--border);
+            padding: 80px 0 30px;
+        }
 
         .footer-logo {
             display: inline-block;
             margin-bottom: 1.5rem;
         }
+
         .footer-logo img {
             height: 40px;
             width: auto;
         }
 
-        .footer-links { list-style: none; padding: 0; }
-        .footer-links li { margin-bottom: 0.8rem; font-size: 0.9rem; }
-        .footer-links li a { color: var(--text-secondary); display: inline-block; transition: transform 0.2s ease; }
-        .footer-links li a:hover { color: var(--gold-dark); transform: translateX(5px); }
+        .footer-links {
+            list-style: none;
+            padding: 0;
+        }
 
-        .footer-heading { font-family: var(--font); font-weight: 700; color: var(--navy); margin-bottom: 1.5rem; font-size: 0.95rem; text-transform: uppercase; letter-spacing: 1px; }
+        .footer-links li {
+            margin-bottom: 0.8rem;
+            font-size: 0.9rem;
+        }
 
-        .footer-social { display: flex; gap: 12px; margin-top: 1.5rem; }
-        .social-btn { width: 40px; height: 40px; border-radius: 50%; background: var(--bg); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; color: var(--navy); font-size: 1rem; }
-        .social-btn:hover { background: var(--navy); color: var(--white); transform: translateY(-5px) rotate(5deg); box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); }
+        .footer-links li a {
+            color: var(--text-secondary);
+            display: inline-block;
+            transition: transform 0.2s ease;
+        }
 
-        .footer-bottom { border-top: 1px solid var(--border); margin-top: 60px; padding-top: 30px; text-align: center; color: var(--text-muted); font-size: 0.85rem; }
+        .footer-links li a:hover {
+            color: var(--gold-dark);
+            transform: translateX(5px);
+        }
+
+        .footer-heading {
+            font-family: var(--font);
+            font-weight: 700;
+            color: var(--navy);
+            margin-bottom: 1.5rem;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .footer-social {
+            display: flex;
+            gap: 12px;
+            margin-top: 1.5rem;
+        }
+
+        .social-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--navy);
+            font-size: 1rem;
+        }
+
+        .social-btn:hover {
+            background: var(--navy);
+            color: var(--white);
+            transform: translateY(-5px) rotate(5deg);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .footer-bottom {
+            border-top: 1px solid var(--border);
+            margin-top: 60px;
+            padding-top: 30px;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
 
         /* Tag Wrapper Animation */
-        .tag-wrapper { width: 100%; overflow: hidden; animation: fadeInUp 1s ease-out 1.2s forwards; opacity: 0; }
-        .tag-list { display: flex; align-items: center; flex-wrap: nowrap; gap: 10px; width: max-content; animation: tagScroll 25s linear infinite; }
-        .tag-item { flex: 0 0 auto; white-space: nowrap; border-radius: 50px; padding: 8px 18px; text-decoration: none; transition: all .3s ease; }
-        .tag-item:hover { transform: translateY(-2px); }
-        .tag-wrapper:hover .tag-list { animation-play-state: paused; }
-
-        @keyframes tagScroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
-
-        /* AI Chat Widget Styles Moved Here For Cleanliness */
-        .ai-message-bubble p { margin: 0 0 4px 0; }
-        .ai-message-bubble p:last-child { margin-bottom: 0; }
-        .ai-message-bubble ul { margin: 0 0 4px 0; padding-left: 18px; }
-        .ai-message-bubble ul li { margin-bottom: 2px; }
-
-        .ai-chat-widget {
-            position: fixed; bottom: 20px; right: 20px; z-index: 9999; font-family: var(--font);
+        .tag-wrapper {
+            width: 100%;
+            overflow: hidden;
+            animation: fadeInUp 1s ease-out 1.2s forwards;
+            opacity: 0;
         }
-        .ai-chat-toggle {
-            width: 56px; height: 56px; border: none; border-radius: 50%;
-            background: linear-gradient(135deg, var(--gold), var(--gold-dark)); color: var(--white);
-            font-size: 1.5rem; cursor: pointer; box-shadow: 0 8px 24px rgba(198, 169, 98, 0.45);
-            transition: transform 0.25s ease, box-shadow 0.25s ease; display: inline-flex;
-            align-items: center; justify-content: center;
+
+        .tag-list {
+            display: flex;
+            align-items: center;
+            flex-wrap: nowrap;
+            gap: 10px;
+            width: max-content;
+            animation: tagScroll 25s linear infinite;
         }
-        .ai-chat-toggle:hover { transform: translateY(-2px) scale(1.05); box-shadow: 0 12px 30px rgba(198, 169, 98, 0.55); }
 
-        .ai-chat-panel {
-            position: absolute; bottom: 70px; right: 0; width: 360px; max-width: calc(100vw - 40px);
-            height: 500px; max-height: calc(100vh - 120px); background: var(--white); border: 1px solid var(--border);
-            border-radius: 16px; box-shadow: 0 20px 60px rgba(27, 42, 74, 0.18);
-            display: none; flex-direction: column; overflow: hidden; animation: aiChatIn 0.3s ease;
+        .tag-item {
+            flex: 0 0 auto;
+            white-space: nowrap;
+            border-radius: 50px;
+            padding: 8px 18px;
+            text-decoration: none;
+            transition: all .3s ease;
         }
-        .ai-chat-panel.open { display: flex; }
-        @keyframes aiChatIn { from { opacity: 0; transform: translateY(12px) scale(0.97); } to { opacity: 1; transform: translateY(0) scale(1); } }
 
-        .ai-chat-header {
-            padding: 14px 16px; border-bottom: 1px solid var(--border);
-            background: linear-gradient(135deg, var(--navy), #243b6b); color: var(--white);
-            display: flex; align-items: center; justify-content: space-between; flex-shrink: 0;
+        .tag-item:hover {
+            transform: translateY(-2px);
         }
-        .ai-chat-avatar { width: 36px; height: 36px; border-radius: 10px; background: rgba(255, 255, 255, 0.15); display: inline-flex; align-items: center; justify-content: center; font-size: 1rem; }
-        .ai-chat-title { font-weight: 700; font-size: 0.95rem; line-height: 1.2; }
-        .ai-chat-subtitle { font-size: 0.75rem; opacity: 0.8; }
-        .ai-chat-close { width: 32px; height: 32px; border: none; border-radius: 8px; background: rgba(255, 255, 255, 0.12); color: var(--white); cursor: pointer; display: inline-flex; align-items: center; justify-content: center; transition: background 0.2s ease; flex-shrink: 0; }
-        .ai-chat-close:hover { background: rgba(255, 255, 255, 0.25); }
 
-        .ai-chat-messages { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 12px; background: var(--bg); -webkit-overflow-scrolling: touch; }
-        .ai-message { display: flex; flex-direction: column; }
-        .ai-message.user { align-items: flex-end; }
-        .ai-message.ai { align-items: flex-start; }
-        .ai-message-bubble { max-width: 85%; padding: 10px 14px; border-radius: 14px; font-size: 0.9rem; line-height: 1.5; word-wrap: break-word; }
-        .ai-message.user .ai-message-bubble { background: var(--navy); color: var(--white); border-bottom-right-radius: 4px; }
-        .ai-message.ai .ai-message-bubble { background: var(--white); color: var(--text); border: 1px solid var(--border); border-bottom-left-radius: 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.03); }
+        .tag-wrapper:hover .tag-list {
+            animation-play-state: paused;
+        }
 
-        .ai-chat-suggestions { padding: 10px 12px; background: var(--white); border-top: 1px solid var(--border); display: flex; flex-wrap: wrap; gap: 8px; flex-shrink: 0; }
-        .ai-chip { padding: 6px 12px; border: 1px solid var(--border); border-radius: 50px; background: var(--bg); color: var(--text-secondary); font-size: 0.8rem; font-weight: 500; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; transition: all 0.2s ease; }
-        .ai-chip:hover { background: var(--navy); color: var(--white); border-color: var(--navy); }
+        @keyframes tagScroll {
+            from {
+                transform: translateX(0);
+            }
 
-        .ai-chat-create { padding: 12px 16px; background: var(--white); border-top: 1px solid var(--border); display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; }
-        .ai-chat-create-btn { padding: 10px; border-radius: 10px; background: linear-gradient(135deg, var(--gold), var(--gold-dark)); color: var(--white); font-weight: 700; font-size: 0.9rem; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; gap: 6px; transition: transform 0.2s ease, box-shadow 0.2s ease; }
-        .ai-chat-create-btn:hover { color: var(--white); transform: translateY(-1px); box-shadow: 0 8px 20px rgba(198, 169, 98, 0.35); }
-        .ai-chat-login-link { font-size: 0.8rem; text-align: center; color: var(--text-secondary); text-decoration: none; }
-        .ai-chat-login-link:hover { color: var(--gold-dark); }
-
-        .ai-chat-form { padding: 12px 16px 16px; background: var(--white); border-top: 1px solid var(--border); flex-shrink: 0; }
-        .ai-chat-form .input-group { border: 1px solid var(--border); border-radius: 10px; overflow: hidden; background: var(--bg); }
-        .ai-chat-form input { padding: 12px 14px; border: none; background: transparent; box-shadow: none; font-size: 0.95rem; }
-        .ai-chat-form input:focus { border: none; box-shadow: none; }
-        .ai-chat-send { padding: 0 14px; border: none; background: transparent; color: var(--gold-dark); font-size: 1.5rem; cursor: pointer; transition: color 0.2s ease, transform 0.2s ease; }
-        .ai-chat-send:hover { color: var(--gold); transform: translateX(1px); }
-        .ai-chat-error { margin-top: 6px; font-size: 0.8rem; color: #dc2626; }
-
-        .ai-typing { display: inline-flex; gap: 4px; padding: 8px 12px; }
-        .ai-typing span { width: 7px; height: 7px; border-radius: 50%; background: var(--text-muted); animation: aiBounce 1.2s infinite ease-in-out; }
-        .ai-typing span:nth-child(2) { animation-delay: 0.15s; }
-        .ai-typing span:nth-child(3) { animation-delay: 0.3s; }
-        @keyframes aiBounce { 0%, 60%, 100% { transform: translateY(0); opacity: 0.4; } 30% { transform: translateY(-6px); opacity: 1; } }
+            to {
+                transform: translateX(-50%);
+            }
+        }
 
         @media (max-width: 768px) {
-            .tag-list { gap: 8px; animation-duration: 20s; }
-            .tag-item { padding: 7px 15px; }
-            .hero-section h1 { font-size: 2.5rem; }
-            .section-title { font-size: 1.8rem; }
-            .cta-box h2 { font-size: 2rem; }
+            .tag-list {
+                gap: 8px;
+                animation-duration: 20s;
+            }
+
+            .tag-item {
+                padding: 7px 15px;
+            }
+
+            .hero-section h1 {
+                font-size: 2.5rem;
+            }
+
+            .section-title {
+                font-size: 1.8rem;
+            }
+
+            .cta-box h2 {
+                font-size: 2rem;
+            }
+        }
+
+        /* =========================================================== */
+        /* AI Chat Widget Styles                                       */
+        /* =========================================================== */
+        .ai-chat-widget {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 9999;
+            font-family: var(--font);
+        }
+
+        .ai-chat-toggle {
+            width: 56px;
+            height: 56px;
+            border: none;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+            color: var(--white);
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 8px 24px rgba(198, 169, 98, 0.45);
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .ai-chat-toggle:hover {
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 12px 30px rgba(198, 169, 98, 0.55);
+        }
+
+        .ai-chat-panel {
+            position: absolute;
+            bottom: 70px;
+            right: 0;
+            width: 360px;
+            max-width: calc(100vw - 40px);
+            height: 500px;
+            max-height: calc(100vh - 120px);
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(27, 42, 74, 0.18);
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+            animation: aiChatIn 0.3s ease;
+        }
+
+        .ai-chat-panel.open {
+            display: flex;
+        }
+
+        @keyframes aiChatIn {
+            from {
+                opacity: 0;
+                transform: translateY(12px) scale(0.97);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .ai-chat-header {
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--border);
+            background: linear-gradient(135deg, var(--navy), #243b6b);
+            color: var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-shrink: 0;
+        }
+
+        .ai-chat-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.15);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+        }
+
+        .ai-chat-title {
+            font-weight: 700;
+            font-size: 0.95rem;
+            line-height: 1.2;
+        }
+
+        .ai-chat-subtitle {
+            font-size: 0.75rem;
+            opacity: 0.8;
+        }
+
+        .ai-chat-close {
+            width: 32px;
+            height: 32px;
+            border: none;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.12);
+            color: var(--white);
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s ease;
+            flex-shrink: 0;
+        }
+
+        .ai-chat-close:hover {
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        .ai-chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            background: var(--bg);
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .ai-message {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .ai-message.user {
+            align-items: flex-end;
+        }
+
+        .ai-message.ai {
+            align-items: flex-start;
+        }
+
+        .ai-message-bubble {
+            max-width: 85%;
+            padding: 10px 14px;
+            border-radius: 14px;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            word-wrap: break-word;
+        }
+
+        .ai-message.user .ai-message-bubble {
+            background: var(--navy);
+            color: var(--white);
+            border-bottom-right-radius: 4px;
+        }
+
+        .ai-message.ai .ai-message-bubble {
+            background: var(--white);
+            color: var(--text);
+            border: 1px solid var(--border);
+            border-bottom-left-radius: 4px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.03);
+        }
+
+        .ai-message-bubble p {
+            margin: 0 0 4px 0;
+        }
+
+        .ai-message-bubble p:last-child {
+            margin-bottom: 0;
+        }
+
+        .ai-message-bubble ul {
+            margin: 0 0 4px 0;
+            padding-left: 18px;
+        }
+
+        .ai-message-bubble ul li {
+            margin-bottom: 2px;
+        }
+
+        .ai-chat-suggestions {
+            padding: 10px 12px;
+            background: var(--white);
+            border-top: 1px solid var(--border);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+        .ai-chip {
+            padding: 6px 12px;
+            border: 1px solid var(--border);
+            border-radius: 50px;
+            background: var(--bg);
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            font-weight: 500;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            transition: all 0.2s ease;
+        }
+
+        .ai-chip:hover {
+            background: var(--navy);
+            color: var(--white);
+            border-color: var(--navy);
+        }
+
+        .ai-chat-create {
+            padding: 12px 16px;
+            background: var(--white);
+            border-top: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+        .ai-chat-create-btn {
+            padding: 10px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+            color: var(--white);
+            font-weight: 700;
+            font-size: 0.9rem;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .ai-chat-create-btn:hover {
+            color: var(--white);
+            transform: translateY(-1px);
+            box-shadow: 0 8px 20px rgba(198, 169, 98, 0.35);
+        }
+
+        .ai-chat-login-link {
+            font-size: 0.8rem;
+            text-align: center;
+            color: var(--text-secondary);
+            text-decoration: none;
+        }
+
+        .ai-chat-login-link:hover {
+            color: var(--gold-dark);
+        }
+
+        .ai-chat-form {
+            padding: 12px 16px 16px;
+            background: var(--white);
+            border-top: 1px solid var(--border);
+            flex-shrink: 0;
+        }
+
+        .ai-chat-form .input-group {
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            overflow: hidden;
+            background: var(--bg);
+        }
+
+        .ai-chat-form input {
+            padding: 12px 14px;
+            border: none;
+            background: transparent;
+            box-shadow: none;
+            font-size: 0.95rem;
+        }
+
+        .ai-chat-form input:focus {
+            border: none;
+            box-shadow: none;
+        }
+
+        .ai-chat-send {
+            padding: 0 14px;
+            border: none;
+            background: transparent;
+            color: var(--gold-dark);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: color 0.2s ease, transform 0.2s ease;
+        }
+
+        .ai-chat-send:hover {
+            color: var(--gold);
+            transform: translateX(1px);
+        }
+
+        .ai-chat-error {
+            margin-top: 6px;
+            font-size: 0.8rem;
+            color: #dc2626;
+        }
+
+        .ai-typing {
+            display: inline-flex;
+            gap: 4px;
+            padding: 8px 12px;
+        }
+
+        .ai-typing span {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--text-muted);
+            animation: aiBounce 1.2s infinite ease-in-out;
+        }
+
+        .ai-typing span:nth-child(2) {
+            animation-delay: 0.15s;
+        }
+
+        .ai-typing span:nth-child(3) {
+            animation-delay: 0.3s;
+        }
+
+        @keyframes aiBounce {
+
+            0%,
+            60%,
+            100% {
+                transform: translateY(0);
+                opacity: 0.4;
+            }
+
+            30% {
+                transform: translateY(-6px);
+                opacity: 1;
+            }
         }
 
         @media (max-width: 480px) {
-            .ai-chat-widget { bottom: 16px; right: 16px; }
-            .ai-chat-panel { width: calc(100vw - 32px); right: 0; bottom: 65px; height: 80vh; border-radius: 14px; }
-            .ai-chat-messages { padding: 12px; }
-            .ai-chat-form { padding: 10px 12px 14px; }
+            .ai-chat-widget {
+                bottom: 16px;
+                right: 16px;
+            }
+
+            .ai-chat-panel {
+                width: calc(100vw - 32px);
+                right: 0;
+                bottom: 65px;
+                height: 80vh;
+                border-radius: 14px;
+            }
+
+            .ai-chat-messages {
+                padding: 12px;
+            }
+
+            .ai-chat-form {
+                padding: 10px 12px 14px;
+            }
+        }
+
+        .tag-wrapper {
+            width: 100%;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .tag-list {
+            display: flex;
+            width: max-content;
+            animation: tagLoop 25s linear infinite;
+        }
+
+        /* Jangan ubah style tag-item yang sudah ada */
+        .tag-list .tag-item {
+            flex-shrink: 0;
+            white-space: nowrap;
+        }
+
+        /* Grup kedua untuk looping */
+        .tag-group {
+            display: flex;
+            gap: inherit;
+            flex-shrink: 0;
+        }
+
+        /* Bergerak terus ke kiri */
+        @keyframes tagLoop {
+            from {
+                transform: translateX(0);
+            }
+
+            to {
+                transform: translateX(-50%);
+            }
+        }
+
+        .tag-wrapper:hover .tag-list {
+            animation-play-state: paused;
         }
     </style>
 </head>
@@ -551,7 +1443,8 @@
             <a class="navbar-brand" href="{{ route('landing') }}">
                 <img src="{{ asset('assets/logo.png') }}" alt="Logo WeddingInv">
             </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" style="border-color: rgba(255,255,255,0.3);">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                style="border-color: rgba(255,255,255,0.3);">
                 <span class="navbar-toggler-icon" style="filter: invert(1);"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
@@ -586,26 +1479,51 @@
         <div class="container hero-content">
             <span class="hero-tag">Platform Undangan Digital Premium</span>
             <h1>Unggah Momen Spesial <br> dengan <em>Keindahan Abadi</em></h1>
-            <p>Rancang undangan pernikahan digital yang memikat hati tamu Anda sejak detik pertama. Eksklusif, modern, dan mudah dibagikan.</p>
+            <p>Rancang undangan pernikahan digital yang memikat hati tamu Anda sejak detik pertama. Eksklusif, modern,
+                dan mudah dibagikan.</p>
 
             <form action="{{ route('landing') }}#templates" method="GET">
                 <div class="search-container">
                     <i class="bi bi-search"></i>
-                    <input type="text" name="search" placeholder="Cari tema impian... (Rustic, Modern, Floral)" value="{{ request('search') }}">
+                    <input type="text" name="search" placeholder="Cari tema impian... (Rustic, Modern, Floral)"
+                        value="{{ request('search') }}">
                     <button type="submit" class="btn-search">Cari</button>
                 </div>
             </form>
 
             <div class="tag-wrapper">
                 <div class="tag-list">
-                    <a href="{{ route('landing') }}#templates" class="tag-item {{ !request('category') || request('category') == 'All' ? 'active' : '' }}">
-                        Semua Tema
-                    </a>
-                    @foreach($categories as $cat)
-                        <a href="{{ route('landing', ['category' => $cat['name']]) }}#templates" class="tag-item {{ request('category') == $cat['name'] ? 'active' : '' }}">
-                            {{ $cat['name'] }}
+
+                    {{-- TAG ASLI --}}
+                    <div class="tag-group">
+                        <a href="{{ route('landing') }}#templates"
+                            class="tag-item {{ !request('category') || request('category') == 'All' ? 'active' : '' }}">
+                            Semua Tema
                         </a>
-                    @endforeach
+
+                        @foreach($categories as $cat)
+                            <a href="{{ route('landing', ['category' => $cat['name']]) }}#templates"
+                                class="tag-item {{ request('category') == $cat['name'] ? 'active' : '' }}">
+                                {{ $cat['name'] }}
+                            </a>
+                        @endforeach
+                    </div>
+
+                    {{-- DUPLIKAT UNTUK LOOP --}}
+                    <div class="tag-group" aria-hidden="true">
+                        <a href="{{ route('landing') }}#templates"
+                            class="tag-item {{ !request('category') || request('category') == 'All' ? 'active' : '' }}">
+                            Semua Tema
+                        </a>
+
+                        @foreach($categories as $cat)
+                            <a href="{{ route('landing', ['category' => $cat['name']]) }}#templates"
+                                class="tag-item {{ request('category') == $cat['name'] ? 'active' : '' }}">
+                                {{ $cat['name'] }}
+                            </a>
+                        @endforeach
+                    </div>
+
                 </div>
             </div>
         </div>
@@ -615,38 +1533,50 @@
         </a>
     </section>
 
-    <!-- Real Wedding Social Proof -->
+    <!-- Real Wedding Social Proof (Art Gallery Style) -->
     <section class="real-wedding-section" id="real-weddings">
         <div class="container">
             <div class="section-header-center reveal">
                 <span class="section-subtitle">Portofolio Nyata</span>
-                <h2 class="section-title">Telah Dipercaya 10.000+ Pasangan</h2>
-                <p class="section-desc">Ribuan pasangan bahagia telah mempercayakan momen sakral mereka kepada kami.</p>
+                <h2 class="section-title">Karya Cinta Yang Abadi</h2>
+                <p class="section-desc">Setiap pasangan memiliki cerita unik. Biarkan momen sakral Anda menjadi karya
+                    seni yang tak terlupakan.</p>
             </div>
 
             <div class="wedding-slider reveal">
                 @foreach($invitations as $invitation)
                     <a href="{{ route('invitation.detail', ['slug' => $invitation->slug]) }}" class="wedding-item">
                         <div class="couple-avatar-group">
-                            <img src="{{ $invitation->foto_pria ? asset('storage/' . $invitation->foto_pria) : 'https://ui-avatars.com/api/?name=' . urlencode($invitation->groom_name) . '&background=E8D5A3&color=fff' }}" class="couple-avatar avatar-1" alt="">
-                            <img src="{{ $invitation->foto_wanita ? asset('storage/' . $invitation->foto_wanita) : 'https://ui-avatars.com/api/?name=' . urlencode($invitation->bride_name) . '&background=1B2A4A&color=fff' }}" class="couple-avatar avatar-2" alt="">
+                            <img src="{{ $invitation->foto_pria ? asset('storage/' . $invitation->foto_pria) : 'https://ui-avatars.com/api/?name=' . urlencode($invitation->groom_name) . '&background=E8D5A3&color=fff' }}"
+                                class="couple-avatar avatar-1" alt="Foto Mempelai Pria">
+                            <img src="{{ $invitation->foto_wanita ? asset('storage/' . $invitation->foto_wanita) : 'https://ui-avatars.com/api/?name=' . urlencode($invitation->bride_name) . '&background=1B2A4A&color=fff' }}"
+                                class="couple-avatar avatar-2" alt="Foto Mempelai Wanita">
                         </div>
-                        <div class="couple-names">{{ $invitation->groom_nickname ?? $invitation->groom_name }} & {{ $invitation->bride_nickname ?? $invitation->bride_name }}</div>
-                        <div class="wedding-divider"></div>
-                        <div class="wedding-date">{{ \Carbon\Carbon::parse($invitation->wedding_date)->format('d M Y') }}</div>
+
+                        <div class="wedding-info">
+                            <div class="couple-names">{{ $invitation->groom_nickname ?? $invitation->groom_name }} &amp;
+                                {{ $invitation->bride_nickname ?? $invitation->bride_name }}
+                            </div>
+                            <div class="wedding-divider"></div>
+                            <div class="wedding-date">
+                                {{ \Carbon\Carbon::parse($invitation->wedding_date)->format('d M Y') }}
+                            </div>
+                        </div>
                     </a>
                 @endforeach
 
-                @if($invitations->count() < 5)
-                    @for($i = 0; $i < 5 - $invitations->count(); $i++)
+                @if($invitations->count() < 3)
+                    @for($i = 0; $i < 3 - $invitations->count(); $i++)
                         <div class="wedding-item opacity-50">
                             <div class="couple-avatar-group">
                                 <img src="https://i.pravatar.cc/150?u={{ $i }}" class="couple-avatar avatar-1" alt="">
                                 <img src="https://i.pravatar.cc/150?u={{ $i + 10 }}" class="couple-avatar avatar-2" alt="">
                             </div>
-                            <div class="couple-names">Pasangan Baru</div>
-                            <div class="wedding-divider"></div>
-                            <div class="wedding-date">Segera Datang</div>
+                            <div class="wedding-info">
+                                <div class="couple-names">Pasangan Baru</div>
+                                <div class="wedding-divider"></div>
+                                <div class="wedding-date">Segera Datang</div>
+                            </div>
                         </div>
                     @endfor
                 @endif
@@ -668,42 +1598,48 @@
                     <div class="feature-card">
                         <div class="feature-icon"><i class="bi bi-phone"></i></div>
                         <h4>Desain Mobile First</h4>
-                        <p>Tampilan indah dan responsif di semua layar smartphone, tablet, maupun desktop. Tamu Anda akan kagum saat membukanya.</p>
+                        <p>Tampilan indah dan responsif di semua layar smartphone, tablet, maupun desktop. Tamu Anda
+                            akan kagum saat membukanya.</p>
                     </div>
                 </div>
                 <div class="col-lg-4 col-md-6 reveal" style="transition-delay: 0.2s;">
                     <div class="feature-card">
                         <div class="feature-icon"><i class="bi bi-music-note-beamed"></i></div>
                         <h4>Background Musik</h4>
-                        <p>Tambahkan lagu favorit Anda sebagai musik latar untuk menciptakan suasana romantis saat undangan dibuka.</p>
+                        <p>Tambahkan lagu favorit Anda sebagai musik latar untuk menciptakan suasana romantis saat
+                            undangan dibuka.</p>
                     </div>
                 </div>
                 <div class="col-lg-4 col-md-6 reveal" style="transition-delay: 0.3s;">
                     <div class="feature-card">
                         <div class="feature-icon"><i class="bi bi-map"></i></div>
                         <h4>Google Maps Integrasi</h4>
-                        <p>Tamu tidak akan tersesat. Integrasi peta langsung memandu mereka ke lokasi acara dengan satu klik.</p>
+                        <p>Tamu tidak akan tersesat. Integrasi peta langsung memandu mereka ke lokasi acara dengan satu
+                            klik.</p>
                     </div>
                 </div>
                 <div class="col-lg-4 col-md-6 reveal" style="transition-delay: 0.1s;">
                     <div class="feature-card">
                         <div class="feature-icon"><i class="bi bi-gift"></i></div>
                         <h4>Kirim Amplop Digital</h4>
-                        <p>Fasilitasi tamu untuk mengirimkan tanda kasih secara digital melalui transfer bank atau e-wallet dengan aman.</p>
+                        <p>Fasilitasi tamu untuk mengirimkan tanda kasih secara digital melalui transfer bank atau
+                            e-wallet dengan aman.</p>
                     </div>
                 </div>
                 <div class="col-lg-4 col-md-6 reveal" style="transition-delay: 0.2s;">
                     <div class="feature-card">
                         <div class="feature-icon"><i class="bi bi-people"></i></div>
                         <h4>RSVP & Hitung Tamu</h4>
-                        <p>Ketahui pasti berapa tamu yang akan hadir. Sistem RSVP otomatis memudahkan Anda mempersiapkan acara.</p>
+                        <p>Ketahui pasti berapa tamu yang akan hadir. Sistem RSVP otomatis memudahkan Anda mempersiapkan
+                            acara.</p>
                     </div>
                 </div>
                 <div class="col-lg-4 col-md-6 reveal" style="transition-delay: 0.3s;">
                     <div class="feature-card">
                         <div class="feature-icon"><i class="bi bi-camera-reels"></i></div>
                         <h4>Galeri Foto & Video</h4>
-                        <p>Bagikan momen pra-pernikahan Anda melalui galeri foto interaktif dan video sinematik yang memukau.</p>
+                        <p>Bagikan momen pra-pernikan Anda melalui galeri foto interaktif dan video sinematik yang
+                            memukau.</p>
                     </div>
                 </div>
             </div>
@@ -716,29 +1652,35 @@
             <div class="section-header-center reveal">
                 <span class="section-subtitle">Galeri Inspirasi</span>
                 <h2 class="section-title">Koleksi Tema Eksklusif</h2>
-                <p class="section-desc">Pilih dari puluhan desain premium yang dirancang oleh desainer profesional kami.</p>
+                <p class="section-desc">Pilih dari puluhan desain premium yang dirancang oleh desainer profesional kami.
+                </p>
             </div>
 
             <div class="template-grid">
                 @foreach($templates as $template)
                     <div class="template-card reveal">
                         <div class="template-img-container">
-                            <img src="{{ $template->thumbnail ? asset('storage/' . $template->thumbnail) : 'https://placehold.co/600x450?text=No+Thumbnail' }}" alt="{{ $template->name }}" loading="lazy">
+                            <img src="{{ $template->thumbnail ? asset('storage/' . $template->thumbnail) : 'https://placehold.co/600x450?text=No+Thumbnail' }}"
+                                alt="{{ $template->name }}" loading="lazy">
                             <div class="template-overlay">
-                                <a href="{{ route('template.preview', ['slug' => 'romeo-juliet', 'id' => $template->id]) }}" target="_blank" class="btn btn-light rounded-pill px-4 fw-bold shadow-sm">Pratinjau</a>
-                                <a href="{{ route('dashboard.user') }}?template_id={{ $template->id }}" class="btn btn-gold rounded-pill px-4 fw-bold shadow-sm">Gunakan</a>
+                                <a href="{{ route('template.preview', ['slug' => 'romeo-juliet', 'id' => $template->id]) }}"
+                                    target="_blank" class="btn btn-light rounded-pill px-4 fw-bold shadow-sm">Pratinjau</a>
+                                <a href="{{ route('dashboard.user') }}?template_id={{ $template->id }}"
+                                    class="btn btn-gold rounded-pill px-4 fw-bold shadow-sm">Gunakan</a>
                             </div>
                         </div>
                         <div class="template-footer">
                             <div class="user-info">
-                                <img src="https://ui-avatars.com/api/?name={{urlencode($template->name)}}&background=random" class="user-avatar" alt="">
+                                <img src="https://ui-avatars.com/api/?name={{urlencode($template->name)}}&background=random"
+                                    class="user-avatar" alt="">
                                 <span class="user-name">{{ $template->name }}</span>
                                 @if($loop->index % 4 == 0)
                                     <span class="badge-pro">PREMIUM</span>
                                 @endif
                             </div>
                             <div class="card-stats">
-                                <span title="Dilihat"><i class="bi bi-eye"></i> {{ number_format($template->views_count) }}</span>
+                                <span title="Dilihat"><i class="bi bi-eye"></i>
+                                    {{ number_format($template->views_count) }}</span>
                                 <span title="Suka" class="like-btn" data-id="{{ $template->id }}" style="cursor: pointer;">
                                     <i class="bi bi-heart-fill text-danger"></i>
                                     <span class="likes-count">{{ number_format($template->likes_count) }}</span>
@@ -754,7 +1696,8 @@
                     <i class="bi bi-search text-muted display-1 opacity-25"></i>
                     <h3 class="text-muted mt-3">Tema tidak ditemukan</h3>
                     <p>Coba gunakan kata kunci lain atau lihat semua tema.</p>
-                    <a href="{{ route('landing') }}" class="btn btn-outline-dark mt-2 rounded-pill px-4">Lihat Semua Tema</a>
+                    <a href="{{ route('landing') }}" class="btn btn-outline-dark mt-2 rounded-pill px-4">Lihat Semua
+                        Tema</a>
                 </div>
             @endif
         </div>
@@ -769,11 +1712,6 @@
                 <a href="{{ route('register') }}" class="btn-gold" style="font-size: 1rem; padding: 1rem 2.5rem;">
                     Buat Undangan Sekarang <i class="bi bi-arrow-right ms-2"></i>
                 </a>
-                @if($promotions->isNotEmpty())
-                    <button type="button" class="btn btn-outline-light ms-3 mt-3 mt-md-0" style="font-size: 1rem; padding: 1rem 2.5rem; border-radius: 50px;" data-bs-toggle="modal" data-bs-target="#promoModal">
-                        <i class="bi bi-megaphone me-2"></i> Lihat Promo
-                    </button>
-                @endif
             </div>
         </div>
     </section>
@@ -786,7 +1724,9 @@
                     <a href="#" class="footer-logo">
                         <img src="{{ asset('assets/logo.png') }}" alt="Logo WeddingInv">
                     </a>
-                    <p class="text-secondary small" style="max-width: 350px;">Solusi undangan digital premium untuk pernikahan, khitanan, aqiqah, dan berbagai momen spesial lainnya. Praktis, elegan, dan hemat biaya.</p>
+                    <p class="text-secondary small" style="max-width: 350px;">Solusi undangan digital premium untuk
+                        pernikahan, khitanan, aqiqah, dan berbagai momen spesial lainnya. Praktis, elegan, dan hemat
+                        biaya.</p>
                     <div class="footer-social">
                         <a href="#" class="social-btn"><i class="bi bi-instagram"></i></a>
                         <a href="#" class="social-btn"><i class="bi bi-facebook"></i></a>
@@ -823,115 +1763,58 @@
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>&copy; 2024 WeddingInv Digital Invitation. Dibuat dengan <i class="bi bi-heart-fill text-danger"></i> di Indonesia.</p>
+                <p>&copy; 2024 WeddingInv Digital Invitation. Dibuat dengan <i class="bi bi-heart-fill text-danger"></i>
+                    di Indonesia.</p>
             </div>
         </div>
     </footer>
 
-    @if($promotions->isNotEmpty())
-        <style>
-            #promoModal .modal-dialog { max-width: 900px; }
-            #promoModal .modal-content { background: rgba(0,0,0,0.85); backdrop-filter: blur(4px); }
-            #promoModal .carousel-item img { border-radius: 12px; }
-            #promoModal .carousel-control-prev,
-            #promoModal .carousel-control-next { width: 10%; opacity: 1; }
-            #promoModal .carousel-control-prev-icon,
-            #promoModal .carousel-control-next-icon { filter: invert(1); width: 3rem; height: 3rem; }
-            #promoModal .btn-close-white { opacity: 0.8; }
-            #promoModal .btn-close-white:hover { opacity: 1; }
-        </style>
-        <!-- Promotion Modal -->
-        <div class="modal fade" id="promoModal" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog modal-lg modal-dialog-centered">
-                <div class="modal-content" style="background: transparent; border: none; box-shadow: none;">
-                    <div class="modal-body p-0">
-                        <div id="promoCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="4000">
-                            <div class="carousel-inner rounded-4 overflow-hidden" style="box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
-                                @foreach($promotions as $index => $promo)
-                                    <div class="carousel-item {{ $index === 0 ? 'active' : '' }}">
-                                        @if($promo->link_url)
-                                            <a href="{{ $promo->link_url }}" target="_blank" rel="noopener">
-                                                <img src="{{ asset('storage/' . $promo->image) }}" class="d-block w-100" alt="{{ $promo->title ?? 'Promosi' }}" style="max-height: 70vh; object-fit: contain; background: #000;">
-                                            </a>
-                                        @else
-                                            <img src="{{ asset('storage/' . $promo->image) }}" class="d-block w-100" alt="{{ $promo->title ?? 'Promosi' }}" style="max-height: 70vh; object-fit: contain; background: #000;">
-                                        @endif
-                                    </div>
-                                @endforeach
-                            </div>
-                            @if($promotions->count() > 1)
-                                <button class="carousel-control-prev" type="button" data-bs-target="#promoCarousel" data-bs-slide="prev" style="filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));">
-                                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                                    <span class="visually-hidden">Previous</span>
-                                </button>
-                                <button class="carousel-control-next" type="button" data-bs-target="#promoCarousel" data-bs-slide="next" style="filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));">
-                                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                                    <span class="visually-hidden">Next</span>
-                                </button>
-                            @endif
-                        </div>
-                    </div>
-                    <button type="button" class="btn-close btn-close-white position-absolute top-0 end-0 m-3" data-bs-dismiss="modal" aria-label="Close" style="filter: drop-shadow(0 1px 2px rgba(0,0,0,0.5));"></button>
-                </div>
-            </div>
-        </div>
-    @endif
-
+    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        var hasPromotions = @json($promotions->isNotEmpty());
-        document.addEventListener('DOMContentLoaded', function () {
-            if (hasPromotions) {
-                var promoModalEl = document.getElementById('promoModal');
-                if (promoModalEl) {
-                    var promoModal = new bootstrap.Modal(promoModalEl);
-                    promoModal.show();
-                }
+        // Navbar Scroll Effect
+        const navbar = document.getElementById('mainNav');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
             }
+        });
 
-            // Navbar Scroll Effect
-            const navbar = document.getElementById('mainNav');
-            window.addEventListener('scroll', () => {
-                if (window.scrollY > 50) {
-                    navbar.classList.add('scrolled');
-                } else {
-                    navbar.classList.remove('scrolled');
+        // Scroll Reveal Animation (Intersection Observer)
+        const reveals = document.querySelectorAll('.reveal');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                    observer.unobserve(entry.target);
                 }
             });
+        }, { threshold: 0.15 });
 
-            // Scroll Reveal Animation (Intersection Observer)
-            const reveals = document.querySelectorAll('.reveal');
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('active');
-                        observer.unobserve(entry.target); // Stop observing once it's visible
+        reveals.forEach(reveal => {
+            observer.observe(reveal);
+        });
+
+        // Like Button Logic
+        document.querySelectorAll('.like-btn').forEach(btn => {
+            btn.addEventListener('click', function (e) {
+                e.preventDefault();
+                const id = this.getAttribute('data-id');
+                const countSpan = this.querySelector('.likes-count');
+                const heartIcon = this.querySelector('i');
+
+                if (this.classList.contains('processing')) return;
+                this.classList.add('processing');
+
+                fetch(`/templates/${id}/like`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                        'Accept': 'application/json'
                     }
-                });
-            }, { threshold: 0.15 });
-
-            reveals.forEach(reveal => {
-                observer.observe(reveal);
-            });
-
-            // Like Button Logic
-            document.querySelectorAll('.like-btn').forEach(btn => {
-                btn.addEventListener('click', function (e) {
-                    e.preventDefault();
-                    const id = this.getAttribute('data-id');
-                    const countSpan = this.querySelector('.likes-count');
-                    const heartIcon = this.querySelector('i');
-
-                    if (this.classList.contains('processing')) return;
-                    this.classList.add('processing');
-
-                    fetch(`/templates/${id}/like`, {
-                        method: 'POST',
-                        headers: {
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                            'Accept': 'application/json'
-                        }
-                    })
+                })
                     .then(response => response.json())
                     .then(data => {
                         if (data.success) {
@@ -949,25 +1832,19 @@
                         console.error(err);
                         this.classList.remove('processing');
                     });
-                });
             });
-        }); // <-- PERBAIKAN: Kurung kurawal penutup DOMContentLoaded
+        });
     </script>
 
     <!-- ============================================================= -->
     <!-- AI Chat Widget                                                 -->
     <!-- ============================================================= -->
     <div id="ai-chat-widget" class="ai-chat-widget">
-
-        <!-- Toggle Button -->
         <button id="ai-chat-toggle" class="ai-chat-toggle" type="button" aria-label="Buat Undangan dengan AI">
             <i class="bi bi-chat-dots-fill"></i>
         </button>
 
-        <!-- Chat Panel -->
         <div id="ai-chat-panel" class="ai-chat-panel">
-
-            <!-- Header -->
             <div class="ai-chat-header">
                 <div class="d-flex align-items-center gap-2">
                     <div class="ai-chat-avatar">
@@ -983,7 +1860,6 @@
                 </button>
             </div>
 
-            <!-- Messages -->
             <div id="ai-chat-messages" class="ai-chat-messages">
                 <div class="ai-message ai">
                     <div class="ai-message-bubble">
@@ -1000,7 +1876,6 @@
                 </div>
             </div>
 
-            <!-- Quick Suggestions -->
             <div id="ai-chat-suggestions" class="ai-chat-suggestions">
                 <button type="button" class="ai-chip" data-message="Saya mau buat undangan pernikahan">
                     <i class="bi bi-suit-heart me-1"></i> Undangan pernikahan
@@ -1013,7 +1888,6 @@
                 </button>
             </div>
 
-            <!-- Create Invitation CTA -->
             <div id="ai-chat-create" class="ai-chat-create d-none">
                 <a href="{{ route('dashboard.user') }}?template_id=2" class="ai-chat-create-btn">
                     <i class="bi bi-suit-heart-fill me-1"></i> Buat Undangan
@@ -1025,12 +1899,12 @@
                 @endguest
             </div>
 
-            <!-- Input Form -->
             <form id="ai-chat-form" class="ai-chat-form" autocomplete="off">
                 @csrf
                 <input type="hidden" id="ai-chat-history" value="[]">
                 <div class="input-group">
-                    <input type="text" id="ai-chat-input" class="form-control" placeholder="Tulis nama mempelai atau tanggal pernikahan..." maxlength="500">
+                    <input type="text" id="ai-chat-input" class="form-control"
+                        placeholder="Tulis nama mempelai atau tanggal pernikahan..." maxlength="500">
                     <button class="ai-chat-send" type="submit" aria-label="Kirim pesan">
                         <i class="bi bi-arrow-right-short"></i>
                     </button>
@@ -1043,9 +1917,6 @@
         (function () {
             "use strict";
 
-            /* =========================================================
-             * Element References
-             * ========================================================= */
             const widget = document.getElementById('ai-chat-widget');
             const toggleBtn = document.getElementById('ai-chat-toggle');
             const closeBtn = document.getElementById('ai-chat-close');
@@ -1058,9 +1929,6 @@
 
             if (!widget || !toggleBtn || !panel || !form || !input) return;
 
-            /* =========================================================
-             * Panel Toggle
-             * ========================================================= */
             function togglePanel(forceState) {
                 const isOpen = panel.classList.contains('open');
                 const nextState = forceState !== undefined ? forceState : !isOpen;
@@ -1071,9 +1939,6 @@
             toggleBtn.addEventListener('click', () => togglePanel());
             closeBtn.addEventListener('click', () => togglePanel(false));
 
-            /* =========================================================
-             * History Management
-             * ========================================================= */
             function getHistory() {
                 try {
                     return JSON.parse(historyInput.value || '[]');
@@ -1086,9 +1951,6 @@
                 historyInput.value = JSON.stringify(history.slice(-20));
             }
 
-            /* =========================================================
-             * Message Rendering
-             * ========================================================= */
             function appendMessage(role, text) {
                 const wrapper = document.createElement('div');
                 wrapper.className = 'ai-message ' + (role === 'user' ? 'user' : 'ai');
@@ -1132,9 +1994,6 @@
                 setTimeout(() => error.remove(), 4000);
             }
 
-            /* =========================================================
-             * Send Message
-             * ========================================================= */
             async function sendMessage(e) {
                 if (e) e.preventDefault();
 
@@ -1179,7 +2038,6 @@
                     history.push({ role: 'assistant', content: reply });
                     setHistory(history);
 
-                    // Tampilkan tombol "Buat Undangan" jika AI sudah siap
                     const lower = reply.toLowerCase();
                     const hasInvitationKeyword =
                         lower.includes('undangan') &&
@@ -1196,9 +2054,6 @@
                 }
             }
 
-            /* =========================================================
-             * Event Bindings
-             * ========================================================= */
             form.addEventListener('submit', sendMessage);
 
             document.querySelectorAll('.ai-chip').forEach(function (chip) {

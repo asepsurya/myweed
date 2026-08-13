@@ -9,6 +9,7 @@ use App\Models\Music;
 use App\Models\Subscription;
 use App\Models\Template;
 use App\Models\User;
+use App\Services\ImageProcessingService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -35,6 +36,11 @@ class UserInvitationController extends Controller
         }
 
         return redirect()->back()->with('error', $message);
+    }
+
+    private function imageDisk(): ImageProcessingService
+    {
+        return app(ImageProcessingService::class);
     }
 
     public function index()
@@ -144,52 +150,17 @@ class UserInvitationController extends Controller
         $fullPath = preg_replace('/\.(jpe?g|png|gif|webp)$/i', '.webp', $fullPath);
 
         $folder = pathinfo($fullPath, PATHINFO_DIRNAME);
-        if (!Storage::disk('public')->exists($folder)) {
-            Storage::disk('public')->makeDirectory($folder, 0755, true);
-        }
+        $filename = pathinfo($fullPath, PATHINFO_FILENAME);
 
-        $content = file_get_contents($file->getRealPath());
-
-        if ($content === false) {
-            throw new \Exception('Gagal membaca file: ' . $file->getRealPath());
-        }
-
-        if ($maxWidth && str_starts_with($file->getMimeType(), 'image/')) {
-            try {
-                $driver = new GdDriver;
-                $manager = new ImageManager($driver);
-                $image = $manager->read($file->getRealPath());
-
-                if ($image->width() > $maxWidth) {
-                    $image->scale(width: $maxWidth);
-                }
-
-                $encoded = $image->toWebp(75);
-                $content = (string) $encoded;
-            } catch (\Throwable $e) {
-                \Log::warning('GD resize failed, saving original: ' . $e->getMessage());
-            }
-        }
-
-        if (strlen($content) === 0) {
-            throw new \Exception("File content is empty for: {$fullPath}");
-        }
-
-        $saved = Storage::disk('public')->put($fullPath, $content);
+        $result = app(ImageProcessingService::class)->process($file, $folder, $filename, $maxWidth);
 
         \Log::debug('uploadImageAsWebP saved', [
-            'path' => $fullPath,
-            'size' => strlen($content),
-            'storage_result' => $saved,
-            'file_exists' => Storage::disk('public')->exists($fullPath),
+            'path' => $result['path'],
+            'url' => $result['url'],
+            'size' => $result['size'],
         ]);
 
-        if (!$saved || !Storage::disk('public')->exists($fullPath)) {
-            $errorPath = Storage::disk('public')->path($fullPath);
-            throw new \Exception("Gagal menyimpan file ke storage: {$fullPath} (path: {$errorPath})");
-        }
-
-        return $fullPath;
+        return $result['path'];
     }
 
     public function store(Request $request)
@@ -513,8 +484,8 @@ class UserInvitationController extends Controller
                     try {
                         $folder = "invitations/{$invitation->id}/gallery";
 
-                        if (!Storage::disk('public')->exists($folder)) {
-                            Storage::disk('public')->makeDirectory($folder, 0755, true);
+                        if (!$this->imageDisk()->exists($folder)) {
+                            $this->imageDisk()->ensureDirectory($folder);
                         }
 
                         $path = $this->uploadImageAsWebP(
@@ -679,8 +650,8 @@ class UserInvitationController extends Controller
 
                     if ($request->hasFile('story_photo.' . $index)) {
 
-                        if ($photoPath && Storage::disk('public')->exists($photoPath)) {
-                            Storage::disk('public')->delete($photoPath);
+                        if ($photoPath && $this->imageDisk()->exists($photoPath)) {
+                            $this->imageDisk()->delete($photoPath);
                         }
 
                         $photoPath = $this->uploadImageAsWebP(
@@ -772,7 +743,7 @@ class UserInvitationController extends Controller
             // --- REMOVE FOTO PRIA IF FLAGGED (only if no new file was uploaded) ---
             if ($request->input('remove_foto_pria') == 1 && !$request->hasFile('foto_pria')) {
                 if ($invitation->foto_pria) {
-                    Storage::disk('public')->delete($invitation->foto_pria);
+                    $this->imageDisk()->delete($invitation->foto_pria);
                 }
                 $invitation->update(['foto_pria' => null]);
             }
@@ -780,7 +751,7 @@ class UserInvitationController extends Controller
             // --- REMOVE FOTO WANITA IF FLAGGED (only if no new file was uploaded) ---
             if ($request->input('remove_foto_wanita') == 1 && !$request->hasFile('foto_wanita')) {
                 if ($invitation->foto_wanita) {
-                    Storage::disk('public')->delete($invitation->foto_wanita);
+                    $this->imageDisk()->delete($invitation->foto_wanita);
                 }
                 $invitation->update(['foto_wanita' => null]);
             }
@@ -793,7 +764,7 @@ class UserInvitationController extends Controller
                     $this->uploadImageAsWebP($request->file('foto_pria'), $pathPria, 1200);
 
                     if ($oldPath && $oldPath !== $pathPria) {
-                        Storage::disk('public')->delete($oldPath);
+                        $this->imageDisk()->delete($oldPath);
                     }
                     $invitation->update(['foto_pria' => $pathPria]);
                 } catch (\Throwable $e) {
@@ -810,7 +781,7 @@ class UserInvitationController extends Controller
                     $this->uploadImageAsWebP($request->file('foto_wanita'), $pathWanita, 1200);
 
                     if ($oldPath && $oldPath !== $pathWanita) {
-                        Storage::disk('public')->delete($oldPath);
+                        $this->imageDisk()->delete($oldPath);
                     }
                     $invitation->update(['foto_wanita' => $pathWanita]);
                 } catch (\Throwable $e) {
@@ -825,7 +796,7 @@ class UserInvitationController extends Controller
 
             if ($removeCover && !$hasNewCover) {
                 if ($invitation->gallery_cover) {
-                    Storage::disk('public')->delete($invitation->gallery_cover);
+                    $this->imageDisk()->delete($invitation->gallery_cover);
                 }
                 $invitation->update(['gallery_cover' => null]);
             }
@@ -837,7 +808,7 @@ class UserInvitationController extends Controller
                     $this->uploadImageAsWebP($request->file('gallery_cover'), $path, 1600);
 
                     if ($oldPath && $oldPath !== $path) {
-                        Storage::disk('public')->delete($oldPath);
+                        $this->imageDisk()->delete($oldPath);
                     }
                     $invitation->update(['gallery_cover' => $path]);
                 } catch (\Throwable $e) {
@@ -872,8 +843,8 @@ class UserInvitationController extends Controller
                     try {
                         $folder = "invitations/{$invitation->id}/gallery";
 
-                        if (!Storage::disk('public')->exists($folder)) {
-                            Storage::disk('public')->makeDirectory($folder, 0755, true);
+                        if (!$this->imageDisk()->exists($folder)) {
+                            $this->imageDisk()->ensureDirectory($folder);
                         }
 
                         $path = $this->uploadImageAsWebP(
@@ -967,7 +938,7 @@ class UserInvitationController extends Controller
     {
         $photo = Gallery::findOrFail($id);
 
-        Storage::disk('public')->delete($photo->image);
+        $this->imageDisk()->delete($photo->image);
 
         $photo->delete();
 
@@ -1082,13 +1053,13 @@ class UserInvitationController extends Controller
         DB::transaction(function () use ($invitation) {
             // Hapus file-file terkait
             if ($invitation->foto_pria) {
-                Storage::disk('public')->delete($invitation->foto_pria);
+                $this->imageDisk()->delete($invitation->foto_pria);
             }
             if ($invitation->foto_wanita) {
-                Storage::disk('public')->delete($invitation->foto_wanita);
+                $this->imageDisk()->delete($invitation->foto_wanita);
             }
             if ($invitation->gallery_cover) {
-                Storage::disk('public')->delete($invitation->gallery_cover);
+                $this->imageDisk()->delete($invitation->gallery_cover);
             }
 
             // Periksa apakah musik kustom atau ID musik
@@ -1098,7 +1069,7 @@ class UserInvitationController extends Controller
 
             // Hapus galeri
             foreach ($invitation->galleries as $gallery) {
-                Storage::disk('public')->delete($gallery->image);
+                $this->imageDisk()->delete($gallery->image);
                 $gallery->delete();
             }
 
@@ -1127,13 +1098,13 @@ class UserInvitationController extends Controller
 
                 // Hapus file-file terkait
                 if ($invitation->foto_pria) {
-                    Storage::disk('public')->delete($invitation->foto_pria);
+                    $this->imageDisk()->delete($invitation->foto_pria);
                 }
                 if ($invitation->foto_wanita) {
-                    Storage::disk('public')->delete($invitation->foto_wanita);
+                    $this->imageDisk()->delete($invitation->foto_wanita);
                 }
                 if ($invitation->gallery_cover) {
-                    Storage::disk('public')->delete($invitation->gallery_cover);
+                    $this->imageDisk()->delete($invitation->gallery_cover);
                 }
 
                 if ($invitation->music && !is_numeric($invitation->music)) {
@@ -1141,7 +1112,7 @@ class UserInvitationController extends Controller
                 }
 
                 foreach ($invitation->galleries as $gallery) {
-                    Storage::disk('public')->delete($gallery->image);
+                    $this->imageDisk()->delete($gallery->image);
                     $gallery->delete();
                 }
 

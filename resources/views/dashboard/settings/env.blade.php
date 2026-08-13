@@ -146,6 +146,11 @@
                                 <i class="bi bi-google-play me-1"></i> OAuth & AI
                             </button>
                         </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="storage-tab" data-bs-toggle="pill" data-bs-target="#storage" type="button" role="tab" aria-controls="storage" aria-selected="false">
+                                <i class="bi bi-cloud-arrow-up me-1"></i> Storage
+                            </button>
+                        </li>
                     </ul>
 
                     <!-- Tab Contents -->
@@ -376,6 +381,67 @@
                                         </div>
                                     </div>
                                 </div>
+                            </div>
+                        </div>
+
+                        <!-- TAB 6: STORAGE -->
+                        <div class="tab-pane fade" id="storage" role="tabpanel" aria-labelledby="storage-tab">
+                            <h5 class="section-title"><i class="bi bi-cloud-arrow-up me-1 text-primary"></i> Konfigurasi Storage</h5>
+                            <p class="text-muted small">Pilih driver penyimpanan untuk file gambar undangan. Local = server ini, R2 = Cloudflare R2.</p>
+
+                            <div class="mb-3 col-md-8">
+                                <label for="STORAGE_DRIVER" class="form-label fw-semibold">Driver Storage (STORAGE_DRIVER)</label>
+                                <select name="STORAGE_DRIVER" id="STORAGE_DRIVER" class="form-select" required>
+                                    <option value="local" {{ old('STORAGE_DRIVER', $envData['STORAGE_DRIVER'] ?? 'local') === 'local' ? 'selected' : '' }}>Local (Laravel Public Disk)</option>
+                                    <option value="r2" {{ old('STORAGE_DRIVER', $envData['STORAGE_DRIVER'] ?? '') === 'r2' ? 'selected' : '' }}>Cloudflare R2</option>
+                                </select>
+                            </div>
+
+                            <hr class="my-4">
+
+                            <h5 class="section-title"><i class="bi bi-cloud me-1 text-warning"></i> Cloudflare R2</h5>
+                            <p class="text-muted small">Isi kredensial R2 hanya jika memilih driver <strong>R2</strong>. Pastikan bucket dan API key sudah dibuat di dashboard Cloudflare.</p>
+
+                            <div class="mb-3 col-md-8">
+                                <label for="R2_ACCESS_KEY_ID" class="form-label fw-semibold">R2 Access Key ID (R2_ACCESS_KEY_ID)</label>
+                                <input type="text" name="R2_ACCESS_KEY_ID" id="R2_ACCESS_KEY_ID" class="form-control" value="{{ old('R2_ACCESS_KEY_ID', $envData['R2_ACCESS_KEY_ID'] ?? '') }}" placeholder="Access Key ID R2">
+                            </div>
+
+                            <div class="mb-3 col-md-8">
+                                <label for="R2_SECRET_ACCESS_KEY" class="form-label fw-semibold">R2 Secret Access Key (R2_SECRET_ACCESS_KEY)</label>
+                                <div class="input-group">
+                                    <input type="password" name="R2_SECRET_ACCESS_KEY" id="R2_SECRET_ACCESS_KEY" class="form-control" value="{{ old('R2_SECRET_ACCESS_KEY', $envData['R2_SECRET_ACCESS_KEY'] ?? '') }}" placeholder="Secret Access Key R2">
+                                    <button class="btn btn-outline-secondary" type="button" onclick="togglePasswordVisibility('R2_SECRET_ACCESS_KEY')">
+                                        <i class="bi bi-eye" id="toggle-R2_SECRET_ACCESS_KEY-icon"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="mb-3 col-md-8">
+                                <label for="R2_REGION" class="form-label fw-semibold">R2 Region (R2_REGION)</label>
+                                <input type="text" name="R2_REGION" id="R2_REGION" class="form-control" value="{{ old('R2_REGION', $envData['R2_REGION'] ?? 'auto') }}" placeholder="auto">
+                                <div class="form-text">Gunakan <code>auto</code> untuk Cloudflare R2.</div>
+                            </div>
+
+                            <div class="mb-3 col-md-8">
+                                <label for="R2_BUCKET" class="form-label fw-semibold">R2 Bucket Name (R2_BUCKET)</label>
+                                <input type="text" name="R2_BUCKET" id="R2_BUCKET" class="form-control" value="{{ old('R2_BUCKET', $envData['R2_BUCKET'] ?? 'loventa-storage') }}" placeholder="loventa-storage">
+                            </div>
+
+                            <div class="mb-3 col-md-8">
+                                <label for="R2_ENDPOINT" class="form-label fw-semibold">R2 Endpoint (R2_ENDPOINT)</label>
+                                <input type="url" name="R2_ENDPOINT" id="R2_ENDPOINT" class="form-control" value="{{ old('R2_ENDPOINT', $envData['R2_ENDPOINT'] ?? 'https://s3.us-east-1.r2.cloudflarestorage.com') }}" placeholder="https://s3.us-east-1.r2.cloudflarestorage.com">
+                            </div>
+
+                            <div class="mb-3 col-md-8">
+                                <label for="R2_URL" class="form-label fw-semibold">R2 URL (R2_URL)</label>
+                                <input type="url" name="R2_URL" id="R2_URL" class="form-control" value="{{ old('R2_URL', $envData['R2_URL'] ?? 'https://cdn.inopakinstitute.or.id') }}" placeholder="https://cdn.inopakinstitute.or.id">
+                            </div>
+
+                            <div class="mb-3 col-md-8">
+                                <label for="R2_PUBLIC_URL" class="form-label fw-semibold">R2 Public URL (R2_PUBLIC_URL)</label>
+                                <input type="url" name="R2_PUBLIC_URL" id="R2_PUBLIC_URL" class="form-control" value="{{ old('R2_PUBLIC_URL', $envData['R2_PUBLIC_URL'] ?? 'https://cdn.inopakinstitute.or.id') }}" placeholder="https://cdn.inopakinstitute.or.id">
+                                <div class="form-text">URL publik untuk akses file. Sama dengan R2_URL untuk public bucket.</div>
                             </div>
                         </div>
 
