@@ -57,7 +57,7 @@ class GiftController extends Controller
         $gift = Gift::findOrFail($id);
 
         if ($gift->qr) {
-            Storage::disk('public')->delete($gift->qr);
+            app(\App\Services\ImageProcessingService::class)->delete($gift->qr);
         }
 
         $gift->delete();

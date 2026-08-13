@@ -23,7 +23,7 @@
             <p class="text-sm text-gray-500">a.n {{ $gift->name }}</p>
 
             @if($gift->qr)
-            <img src="{{ $gift->qr ? '/storage/'.$gift->qr : '' }}" class="w-32 mt-2">
+            <img src="{{ $gift->qr ? storage_url($gift->qr) : '' }}" class="w-32 mt-2">
             @endif
 
             <form action="{{ route('gift.destroy', $gift->id) }}" method="POST" class="absolute top-2 right-2"

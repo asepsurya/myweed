@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Storage;
 
 if (! function_exists('get_breadcrumbs')) {
     function get_breadcrumbs(): array
@@ -50,5 +51,38 @@ if (! function_exists('get_breadcrumbs')) {
         }
 
         return $breadcrumbs;
+    }
+}
+
+if (! function_exists('storage_url')) {
+    /**
+     * Resolve the public URL for a storage path based on the configured image disk.
+     *
+     * - local/public disk → asset('storage/{path}')
+     * - r2 disk          → R2_PUBLIC_URL + / + path
+     * - already a URL    → returned as-is
+     * - null/empty       → null
+     */
+    function storage_url(?string $path): ?string
+    {
+        if (empty($path)) {
+            return null;
+        }
+
+        if (filter_var($path, FILTER_VALIDATE_URL)) {
+            return $path;
+        }
+
+        $disk = config('image.disk', 'public');
+
+        if ($disk === 'r2') {
+            $publicUrl = rtrim(config('filesystems.disks.r2.public_url', ''), '/');
+
+            if ($publicUrl) {
+                return $publicUrl.'/'.ltrim($path, '/');
+            }
+        }
+
+        return asset('storage/'.ltrim($path, '/'));
     }
 }
