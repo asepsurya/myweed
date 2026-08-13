@@ -840,7 +840,7 @@
                             @foreach($invitations as $inv)
                                 <div class="invite-item">
                                     @if($inv->gallery_cover)
-                                        <img src="{{ storage_url($inv->gallery_cover) }}" alt="Cover" class="invite-avatar"
+                                        <img src="{{ storage_url($inv->gallery_cover, $inv->updated_at->timestamp) }}" alt="Cover" class="invite-avatar"
                                             loading="lazy">
                                     @else
                                         <div class="invite-avatar placeholder">

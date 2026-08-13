@@ -1547,9 +1547,9 @@
                 @foreach($invitations as $invitation)
                     <a href="{{ route('invitation.detail', ['slug' => $invitation->slug]) }}" class="wedding-item">
                         <div class="couple-avatar-group">
-                            <img src="{{ $invitation->foto_pria ? storage_url($invitation->foto_pria) : 'https://ui-avatars.com/api/?name=' . urlencode($invitation->groom_name) . '&background=E8D5A3&color=fff' }}"
+                            <img src="{{ $invitation->foto_pria ? storage_url($invitation->foto_pria, $invitation->updated_at->timestamp) : 'https://ui-avatars.com/api/?name=' . urlencode($invitation->groom_name) . '&background=E8D5A3&color=fff' }}"
                                 class="couple-avatar avatar-1" alt="Foto Mempelai Pria">
-                            <img src="{{ $invitation->foto_wanita ? storage_url($invitation->foto_wanita) : 'https://ui-avatars.com/api/?name=' . urlencode($invitation->bride_name) . '&background=1B2A4A&color=fff' }}"
+                            <img src="{{ $invitation->foto_wanita ? storage_url($invitation->foto_wanita, $invitation->updated_at->timestamp) : 'https://ui-avatars.com/api/?name=' . urlencode($invitation->bride_name) . '&background=1B2A4A&color=fff' }}"
                                 class="couple-avatar avatar-2" alt="Foto Mempelai Wanita">
                         </div>
 

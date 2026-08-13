@@ -635,7 +635,10 @@ class UserInvitationController extends Controller
 
         $uploadErrors = [];
 
-        DB::transaction(function () use ($request, $invitation, &$uploadErrors) {
+        // ============================================
+        // STEP 1: Save text data in transaction
+        // ============================================
+        DB::transaction(function () use ($request, $invitation) {
             $oldStories = is_string($invitation->love_story)
                 ? json_decode($invitation->love_story, true)
                 : $invitation->love_story;
@@ -645,20 +648,7 @@ class UserInvitationController extends Controller
 
             if ($request->has('love_story')) {
                 foreach ($request->love_story as $index => $storyText) {
-
                     $photoPath = $oldStories[$index]['photo'] ?? null;
-
-                    if ($request->hasFile('story_photo.' . $index)) {
-
-                        if ($photoPath && $this->imageDisk()->exists($photoPath)) {
-                            $this->imageDisk()->delete($photoPath);
-                        }
-
-                        $photoPath = $this->uploadImageAsWebP(
-                            $request->file('story_photo.' . $index),
-                            "love_story/{$index}_" . uniqid() . '.webp'
-                        );
-                    }
 
                     $stories[] = [
                         'title' => $request->story_title[$index] ?? null,
@@ -720,7 +710,7 @@ class UserInvitationController extends Controller
 
                 'groom_instagram' => $request->groom_username_instagram ? 'https://www.instagram.com/' . $request->groom_username_instagram : $invitation->groom_instagram,
                 'groom_username_instagram' => $request->groom_username_instagram,
-                'bride_instagram' => $request->bride_username_instagram ? 'https://www.instagram.com/' . $request->bride_username_instagram : $invitation->bride_instagram,
+                'bride_instagram' => $request->bride_instagram,
                 'bride_username_instagram' => $request->bride_username_instagram,
                 'akad_address' => $request->akad_address,
                 'resepsi_address' => $request->resepsi_address,
@@ -733,180 +723,212 @@ class UserInvitationController extends Controller
             ];
 
             $invitation->update($updateData);
-
-            \Log::debug('Update foto debug', [
-                'has_foto_pria' => $request->hasFile('foto_pria'),
-                'has_foto_wanita' => $request->hasFile('foto_wanita'),
-                'all_files' => array_keys($request->files->all()),
-            ]);
-
-            // --- REMOVE FOTO PRIA IF FLAGGED (only if no new file was uploaded) ---
-            if ($request->input('remove_foto_pria') == 1 && !$request->hasFile('foto_pria')) {
-                if ($invitation->foto_pria) {
-                    $this->imageDisk()->delete($invitation->foto_pria);
-                }
-                $invitation->update(['foto_pria' => null]);
-            }
-
-            // --- REMOVE FOTO WANITA IF FLAGGED (only if no new file was uploaded) ---
-            if ($request->input('remove_foto_wanita') == 1 && !$request->hasFile('foto_wanita')) {
-                if ($invitation->foto_wanita) {
-                    $this->imageDisk()->delete($invitation->foto_wanita);
-                }
-                $invitation->update(['foto_wanita' => null]);
-            }
-
-            // --- FOTO PRIA ---
-            if ($request->hasFile('foto_pria')) {
-                try {
-                    $oldPath = $invitation->foto_pria;
-                    $pathPria = "invitations/{$invitation->id}/pria/pria.webp";
-                    $this->uploadImageAsWebP($request->file('foto_pria'), $pathPria, 1200);
-
-                    if ($oldPath && $oldPath !== $pathPria) {
-                        $this->imageDisk()->delete($oldPath);
-                    }
-                    $invitation->update(['foto_pria' => $pathPria]);
-                } catch (\Throwable $e) {
-                    \Log::error('Foto pria upload failed: ' . $e->getMessage());
-                    $uploadErrors[] = 'Foto mempelai pria: ' . $e->getMessage();
-                }
-            }
-
-            // --- FOTO WANITA ---
-            if ($request->hasFile('foto_wanita')) {
-                try {
-                    $oldPath = $invitation->foto_wanita;
-                    $pathWanita = "invitations/{$invitation->id}/wanita/wanita.webp";
-                    $this->uploadImageAsWebP($request->file('foto_wanita'), $pathWanita, 1200);
-
-                    if ($oldPath && $oldPath !== $pathWanita) {
-                        $this->imageDisk()->delete($oldPath);
-                    }
-                    $invitation->update(['foto_wanita' => $pathWanita]);
-                } catch (\Throwable $e) {
-                    \Log::error('Foto wanita upload failed: ' . $e->getMessage());
-                    $uploadErrors[] = 'Foto mempelai wanita: ' . $e->getMessage();
-                }
-            }
-
-            // --- GALLERY COVER ---
-            $removeCover = $request->input('remove_gallery_cover') == 1;
-            $hasNewCover = $request->hasFile('gallery_cover');
-
-            if ($removeCover && !$hasNewCover) {
-                if ($invitation->gallery_cover) {
-                    $this->imageDisk()->delete($invitation->gallery_cover);
-                }
-                $invitation->update(['gallery_cover' => null]);
-            }
-
-            if ($hasNewCover) {
-                try {
-                    $oldPath = $invitation->gallery_cover;
-                    $path = "invitations/{$invitation->id}/cover/cover.webp";
-                    $this->uploadImageAsWebP($request->file('gallery_cover'), $path, 1600);
-
-                    if ($oldPath && $oldPath !== $path) {
-                        $this->imageDisk()->delete($oldPath);
-                    }
-                    $invitation->update(['gallery_cover' => $path]);
-                } catch (\Throwable $e) {
-                    \Log::error('Gallery cover upload failed: ' . $e->getMessage());
-                    $uploadErrors[] = 'Cover galeri: ' . $e->getMessage();
-                }
-            }
-
-            if ($request->input('music_source') === 'youtube') {
-                $invitation->update([
-                    'music_youtube_url' => $request->music_youtube_url,
-                    'music' => 0,
-                ]);
-            } elseif ($request->hasFile('custom_music')) {
-                if ($invitation->music) {
-                    Storage::disk('public')->delete($invitation->music);
-                }
-                $musicPath = $request->file('custom_music')->store("invitations/{$invitation->id}/music", 'public');
-                $invitation->update([
-                    'music' => $musicPath,
-                    'music_youtube_url' => null,
-                ]);
-            } else {
-                $invitation->update([
-                    'music' => $request->music_id,
-                    'music_youtube_url' => null,
-                ]);
-            }
-
-            if ($request->hasFile('gallery')) {
-                foreach ($request->file('gallery') as $index => $imageFile) {
-                    try {
-                        $folder = "invitations/{$invitation->id}/gallery";
-
-                        if (!$this->imageDisk()->exists($folder)) {
-                            $this->imageDisk()->ensureDirectory($folder);
-                        }
-
-                        $path = $this->uploadImageAsWebP(
-                            $imageFile,
-                            $folder . '/' . uniqid() . '.webp'
-                        );
-
-                        Gallery::create([
-                            'invitation_id' => $invitation->id,
-                            'image' => $path,
-                        ]);
-                    } catch (\Throwable $e) {
-                        \Log::error('Gallery upload failed: ' . $e->getMessage());
-                        $uploadErrors[] = 'Galeri #' . ($index + 1) . ': ' . $e->getMessage();
-                    }
-                }
-            }
-
-            if ($request->enable_gift == 1) {
-
-                $banks = $request->bank ?? [];
-                $numbers = $request->number ?? [];
-                $names = $request->name ?? [];
-                $qrs = $request->file('qr') ?? [];
-
-                foreach ($banks as $i => $bank) {
-
-                    if (
-                        empty($numbers[$i]) ||
-                        empty($names[$i])
-                    ) {
-                        continue;
-                    }
-
-                    $data = [
-                        'number' => $numbers[$i] ?? null,
-                        'name' => $names[$i] ?? null,
-                    ];
-
-                    if (isset($qrs[$i])) {
-                        try {
-                            $data['qr'] = $this->uploadImageAsWebP(
-                                $qrs[$i],
-                                'gifts/' . uniqid() . '.webp'
-                            );
-                        } catch (\Throwable $e) {
-                            \Log::error('Gift QR upload failed: ' . $e->getMessage());
-                            $uploadErrors[] = 'QR Gift #' . ($i + 1) . ': ' . $e->getMessage();
-                        }
-                    }
-
-                    Gift::updateOrCreate(
-                        [
-                            'invitation_id' => $invitation->id,
-                            'bank' => $bank,
-                        ],
-                        $data
-                    );
-                }
-            }
-
         });
+
+        // ============================================
+        // STEP 2: Handle file uploads OUTSIDE transaction
+        // ============================================
+
+        // --- REMOVE FOTO PRIA IF FLAGGED ---
+        if ($request->input('remove_foto_pria') == 1 && !$request->hasFile('foto_pria')) {
+            if ($invitation->foto_pria) {
+                $this->imageDisk()->delete($invitation->foto_pria);
+            }
+            $invitation->update(['foto_pria' => null]);
+        }
+
+        // --- REMOVE FOTO WANITA IF FLAGGED ---
+        if ($request->input('remove_foto_wanita') == 1 && !$request->hasFile('foto_wanita')) {
+            if ($invitation->foto_wanita) {
+                $this->imageDisk()->delete($invitation->foto_wanita);
+            }
+            $invitation->update(['foto_wanita' => null]);
+        }
+
+        // --- FOTO PRIA ---
+        if ($request->hasFile('foto_pria')) {
+            try {
+                $oldPath = $invitation->foto_pria;
+                $pathPria = "invitations/{$invitation->id}/pria/pria.webp";
+                $this->uploadImageAsWebP($request->file('foto_pria'), $pathPria, 1200);
+
+                if ($oldPath && $oldPath !== $pathPria) {
+                    $this->imageDisk()->delete($oldPath);
+                }
+                $invitation->update(['foto_pria' => $pathPria]);
+            } catch (\Throwable $e) {
+                \Log::error('Foto pria upload failed: ' . $e->getMessage());
+                $uploadErrors[] = 'Foto mempelai pria: ' . $e->getMessage();
+            }
+        }
+
+        // --- FOTO WANITA ---
+        if ($request->hasFile('foto_wanita')) {
+            try {
+                $oldPath = $invitation->foto_wanita;
+                $pathWanita = "invitations/{$invitation->id}/wanita/wanita.webp";
+                $this->uploadImageAsWebP($request->file('foto_wanita'), $pathWanita, 1200);
+
+                if ($oldPath && $oldPath !== $pathWanita) {
+                    $this->imageDisk()->delete($oldPath);
+                }
+                $invitation->update(['foto_wanita' => $pathWanita]);
+            } catch (\Throwable $e) {
+                \Log::error('Foto wanita upload failed: ' . $e->getMessage());
+                $uploadErrors[] = 'Foto mempelai wanita: ' . $e->getMessage();
+            }
+        }
+
+        // --- GALLERY COVER ---
+        $removeCover = $request->input('remove_gallery_cover') == 1;
+        $hasNewCover = $request->hasFile('gallery_cover');
+
+        if ($removeCover && !$hasNewCover) {
+            if ($invitation->gallery_cover) {
+                $this->imageDisk()->delete($invitation->gallery_cover);
+            }
+            $invitation->update(['gallery_cover' => null]);
+        }
+
+        if ($hasNewCover) {
+            try {
+                $oldPath = $invitation->gallery_cover;
+                $path = "invitations/{$invitation->id}/cover/cover.webp";
+                $this->uploadImageAsWebP($request->file('gallery_cover'), $path, 1600);
+
+                if ($oldPath && $oldPath !== $path) {
+                    $this->imageDisk()->delete($oldPath);
+                }
+                $invitation->update(['gallery_cover' => $path]);
+            } catch (\Throwable $e) {
+                \Log::error('Gallery cover upload failed: ' . $e->getMessage());
+                $uploadErrors[] = 'Cover galeri: ' . $e->getMessage();
+            }
+        }
+
+        // --- CUSTOM MUSIC ---
+        if ($request->input('music_source') === 'youtube') {
+            $invitation->update([
+                'music_youtube_url' => $request->music_youtube_url,
+                'music' => 0,
+            ]);
+        } elseif ($request->hasFile('custom_music')) {
+            if ($invitation->music) {
+                Storage::disk('public')->delete($invitation->music);
+            }
+            $musicPath = $request->file('custom_music')->store("invitations/{$invitation->id}/music", 'public');
+            $invitation->update([
+                'music' => $musicPath,
+                'music_youtube_url' => null,
+            ]);
+        } else {
+            $invitation->update([
+                'music' => $request->music_id,
+                'music_youtube_url' => null,
+            ]);
+        }
+
+        // --- LOVE STORY PHOTOS ---
+        if ($request->has('love_story')) {
+            $oldStories = is_string($invitation->love_story)
+                ? json_decode($invitation->love_story, true)
+                : $invitation->love_story;
+            $oldStories = $oldStories ?? [];
+            $stories = [];
+
+            foreach ($request->love_story as $index => $storyText) {
+                $photoPath = $oldStories[$index]['photo'] ?? null;
+
+                if ($request->hasFile('story_photo.' . $index)) {
+                    try {
+                        if ($photoPath && $this->imageDisk()->exists($photoPath)) {
+                            $this->imageDisk()->delete($photoPath);
+                        }
+
+                        $photoPath = $this->uploadImageAsWebP(
+                            $request->file('story_photo.' . $index),
+                            "love_story/{$index}_" . uniqid() . '.webp'
+                        );
+                    } catch (\Throwable $e) {
+                        \Log::error('Love story photo upload failed: ' . $e->getMessage());
+                        $uploadErrors[] = 'Foto kisah #' . ($index + 1) . ': ' . $e->getMessage();
+                    }
+                }
+
+                $stories[] = [
+                    'title' => $request->story_title[$index] ?? null,
+                    'story' => $storyText,
+                    'photo' => $photoPath,
+                ];
+            }
+
+            $invitation->update(['love_story' => $stories]);
+        }
+
+        // --- GALLERY ---
+        if ($request->hasFile('gallery')) {
+            foreach ($request->file('gallery') as $index => $imageFile) {
+                try {
+                    $folder = "invitations/{$invitation->id}/gallery";
+
+                    if (!$this->imageDisk()->exists($folder)) {
+                        $this->imageDisk()->ensureDirectory($folder);
+                    }
+
+                    $path = $this->uploadImageAsWebP(
+                        $imageFile,
+                        $folder . '/' . uniqid() . '.webp'
+                    );
+
+                    Gallery::create([
+                        'invitation_id' => $invitation->id,
+                        'image' => $path,
+                    ]);
+                } catch (\Throwable $e) {
+                    \Log::error('Gallery upload failed: ' . $e->getMessage());
+                    $uploadErrors[] = 'Galeri #' . ($index + 1) . ': ' . $e->getMessage();
+                }
+            }
+        }
+
+        // --- GIFT QR ---
+        if ($request->enable_gift == 1) {
+            $banks = $request->bank ?? [];
+            $numbers = $request->number ?? [];
+            $names = $request->name ?? [];
+            $qrs = $request->file('qr') ?? [];
+
+            foreach ($banks as $i => $bank) {
+                if (empty($numbers[$i]) || empty($names[$i])) {
+                    continue;
+                }
+
+                $data = [
+                    'number' => $numbers[$i] ?? null,
+                    'name' => $names[$i] ?? null,
+                ];
+
+                if (isset($qrs[$i])) {
+                    try {
+                        $data['qr'] = $this->uploadImageAsWebP(
+                            $qrs[$i],
+                            'gifts/' . uniqid() . '.webp'
+                        );
+                    } catch (\Throwable $e) {
+                        \Log::error('Gift QR upload failed: ' . $e->getMessage());
+                        $uploadErrors[] = 'QR Gift #' . ($i + 1) . ': ' . $e->getMessage();
+                    }
+                }
+
+                Gift::updateOrCreate(
+                    [
+                        'invitation_id' => $invitation->id,
+                        'bank' => $bank,
+                    ],
+                    $data
+                );
+            }
+        }
 
         if (!empty($uploadErrors)) {
             if ($request->ajax()) {
@@ -943,6 +965,183 @@ class UserInvitationController extends Controller
         $photo->delete();
 
         return response()->json(['success' => true]);
+    }
+
+    public function uploadGallery(Request $request, Invitation $invitation)
+    {
+        $user = auth()->user();
+
+        if (!$user->canAccessInvitation($invitation)) {
+            abort(403, 'Anda tidak memiliki akses ke undangan ini.');
+        }
+
+        if ($user->id === $invitation->partner_user_id && !$invitation->partner_can_edit) {
+            abort(403, 'Anda hanya memiliki akses melihat undangan ini.');
+        }
+
+        $request->validate([
+            'image' => 'required|file|mimes:jpeg,jpg,png,gif,webp|max:10240',
+        ]);
+
+        try {
+            $folder = "invitations/{$invitation->id}/gallery";
+
+            if (!$this->imageDisk()->exists($folder)) {
+                $this->imageDisk()->ensureDirectory($folder);
+            }
+
+            $path = $this->uploadImageAsWebP(
+                $request->file('image'),
+                $folder . '/' . uniqid() . '.webp'
+            );
+
+            $gallery = Gallery::create([
+                'invitation_id' => $invitation->id,
+                'image' => $path,
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'gallery' => $gallery,
+                'url' => storage_url($path, $invitation->updated_at->timestamp),
+            ]);
+        } catch (\Throwable $e) {
+            \Log::error('Gallery upload failed: ' . $e->getMessage());
+
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function uploadCover(Request $request, Invitation $invitation)
+    {
+        $user = auth()->user();
+
+        if (!$user->canAccessInvitation($invitation)) {
+            abort(403, 'Anda tidak memiliki akses ke undangan ini.');
+        }
+
+        if ($user->id === $invitation->partner_user_id && !$invitation->partner_can_edit) {
+            abort(403, 'Anda hanya memiliki akses melihat undangan ini.');
+        }
+
+        $request->validate([
+            'cover' => 'required|file|mimes:jpeg,jpg,png,webp|max:10240',
+        ]);
+
+        try {
+            $oldPath = $invitation->gallery_cover;
+            $path = "invitations/{$invitation->id}/cover/cover.webp";
+
+            $this->uploadImageAsWebP($request->file('cover'), $path, 1600);
+
+            if ($oldPath && $oldPath !== $path) {
+                $this->imageDisk()->delete($oldPath);
+            }
+
+            $invitation->update(['gallery_cover' => $path]);
+
+            return response()->json([
+                'success' => true,
+                'url' => storage_url($path, $invitation->updated_at->timestamp),
+                'path' => $path,
+            ]);
+        } catch (\Throwable $e) {
+            \Log::error('Cover upload failed: ' . $e->getMessage());
+
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function uploadGroomPhoto(Request $request, Invitation $invitation)
+    {
+        $user = auth()->user();
+
+        if (!$user->canAccessInvitation($invitation)) {
+            abort(403, 'Anda tidak memiliki akses ke undangan ini.');
+        }
+
+        if ($user->id === $invitation->partner_user_id && !$invitation->partner_can_edit) {
+            abort(403, 'Anda hanya memiliki akses melihat undangan ini.');
+        }
+
+        $request->validate([
+            'photo' => 'required|file|mimes:jpeg,jpg,png,webp|max:10240',
+        ]);
+
+        try {
+            $oldPath = $invitation->foto_pria;
+            $path = "invitations/{$invitation->id}/pria/pria.webp";
+
+            $this->uploadImageAsWebP($request->file('photo'), $path, 1200);
+
+            if ($oldPath && $oldPath !== $path) {
+                $this->imageDisk()->delete($oldPath);
+            }
+
+            $invitation->update(['foto_pria' => $path]);
+
+            return response()->json([
+                'success' => true,
+                'url' => storage_url($path, $invitation->updated_at->timestamp),
+                'path' => $path,
+            ]);
+        } catch (\Throwable $e) {
+            \Log::error('Groom photo upload failed: ' . $e->getMessage());
+
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function uploadBridePhoto(Request $request, Invitation $invitation)
+    {
+        $user = auth()->user();
+
+        if (!$user->canAccessInvitation($invitation)) {
+            abort(403, 'Anda tidak memiliki akses ke undangan ini.');
+        }
+
+        if ($user->id === $invitation->partner_user_id && !$invitation->partner_can_edit) {
+            abort(403, 'Anda hanya memiliki akses melihat undangan ini.');
+        }
+
+        $request->validate([
+            'photo' => 'required|file|mimes:jpeg,jpg,png,webp|max:10240',
+        ]);
+
+        try {
+            $oldPath = $invitation->foto_wanita;
+            $path = "invitations/{$invitation->id}/wanita/wanita.webp";
+
+            $this->uploadImageAsWebP($request->file('photo'), $path, 1200);
+
+            if ($oldPath && $oldPath !== $path) {
+                $this->imageDisk()->delete($oldPath);
+            }
+
+            $invitation->update(['foto_wanita' => $path]);
+
+            return response()->json([
+                'success' => true,
+                'url' => storage_url($path, $invitation->updated_at->timestamp),
+                'path' => $path,
+            ]);
+        } catch (\Throwable $e) {
+            \Log::error('Bride photo upload failed: ' . $e->getMessage());
+
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], 500);
+        }
     }
 
     public function detail($slug)

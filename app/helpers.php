@@ -58,12 +58,19 @@ if (! function_exists('storage_url')) {
     /**
      * Resolve the public URL for a storage path based on the configured image disk.
      *
-     * - local/public disk → asset('storage/{path}')
-     * - r2 disk          → R2_PUBLIC_URL + / + path
+     * - r2 disk          → R2_PUBLIC_URL + / + path (+ ?v= if version provided)
+     * - local/public disk → asset('storage/{path}') (+ ?v= if version or filemtime)
      * - already a URL    → returned as-is
      * - null/empty       → null
+     *
+     * Note: This function does NOT check file existence to avoid network overhead.
+     *       Use storage_file_exists() if you need to verify a file is available.
+     *
+     * @param  string|null  $path
+     * @param  int|string|null  $version  Optional cache-buster value appended as ?v=
+     * @return string|null
      */
-    function storage_url(?string $path): ?string
+    function storage_url(?string $path, $version = null): ?string
     {
         if (empty($path)) {
             return null;
@@ -79,10 +86,147 @@ if (! function_exists('storage_url')) {
             $publicUrl = rtrim(config('filesystems.disks.r2.public_url', ''), '/');
 
             if ($publicUrl) {
-                return $publicUrl.'/'.ltrim($path, '/');
+                $url = $publicUrl.'/'.ltrim($path, '/');
+
+                if ($version !== null) {
+                    $url .= '?v='.$version;
+                }
+
+                return $url;
             }
         }
 
-        return asset('storage/'.ltrim($path, '/'));
+        $url = asset('storage/'.ltrim($path, '/'));
+
+        if ($disk === 'public' || $disk === 'local') {
+            $localPath = storage_path('app/'.($disk === 'local' ? 'private' : 'public').'/'.ltrim($path, '/'));
+            if (file_exists($localPath)) {
+                $url .= '?v='.filemtime($localPath);
+            }
+        } elseif ($version !== null) {
+            $url .= '?v='.$version;
+        }
+
+        return $url;
+    }
+}
+
+if (! function_exists('storage_file_exists')) {
+    /**
+     * Check if a storage file exists on the configured image disk.
+     *
+     * For R2: checks R2 first, then falls back to local public disk.
+     * For local/public: checks local filesystem.
+     *
+     * @param  string|null  $path
+     * @return bool
+     */
+    function storage_file_exists(?string $path): bool
+    {
+        if (empty($path)) {
+            return false;
+        }
+
+        $disk = config('image.disk', 'public');
+
+        if ($disk === 'r2') {
+            try {
+                if (Storage::disk('r2')->exists($path)) {
+                    return true;
+                }
+            } catch (\Throwable $e) {
+                // Fall through to local check
+            }
+
+            $localPath = storage_path('app/public/'.ltrim($path, '/'));
+            if (file_exists($localPath)) {
+                return true;
+            }
+
+            return Storage::disk('public')->exists($path);
+        }
+
+        $localPath = storage_path('app/'.($disk === 'local' ? 'private' : 'public').'/'.ltrim($path, '/'));
+        if (file_exists($localPath)) {
+            return true;
+        }
+
+        return Storage::disk($disk)->exists($path);
+    }
+}
+
+if (! function_exists('storage_url_with_fallback')) {
+    /**
+     * Resolve the public URL for a storage path with fallback chain.
+     *
+     * - r2 disk          → R2_PUBLIC_URL if file exists on R2
+     *                       else local public disk if file exists locally
+     *                       else fallback URL
+     * - local/public disk → asset('storage/{path}') if file exists locally
+     *                       else fallback URL
+     *
+     * @param  string|null  $path
+     * @param  string|null  $fallback  URL to use if file not found
+     * @param  int|string|null  $version  Optional cache-buster value
+     * @return string|null
+     */
+    function storage_url_with_fallback(?string $path, ?string $fallback = null, $version = null): ?string
+    {
+        if (empty($path)) {
+            return $fallback;
+        }
+
+        if (filter_var($path, FILTER_VALIDATE_URL)) {
+            return $path;
+        }
+
+        $disk = config('image.disk', 'public');
+
+        if ($disk === 'r2') {
+            $publicUrl = rtrim(config('filesystems.disks.r2.public_url', ''), '/');
+
+            if ($publicUrl) {
+                // Check R2 first
+                try {
+                    if (Storage::disk('r2')->exists($path)) {
+                        $url = $publicUrl.'/'.ltrim($path, '/');
+                        if ($version !== null) {
+                            $url .= '?v='.$version;
+                        }
+                        return $url;
+                    }
+                } catch (\Throwable $e) {
+                    // Fall through
+                }
+
+                // Fallback to local
+                $localPath = storage_path('app/public/'.ltrim($path, '/'));
+                if (file_exists($localPath) || Storage::disk('public')->exists($path)) {
+                    $url = asset('storage/'.ltrim($path, '/'));
+                    if ($version !== null) {
+                        $url .= '?v='.$version;
+                    }
+                    return $url;
+                }
+
+                return $fallback;
+            }
+        }
+
+        // Local/public disk
+        $localPath = storage_path('app/'.($disk === 'local' ? 'private' : 'public').'/'.ltrim($path, '/'));
+        if (file_exists($localPath) || Storage::disk($disk)->exists($path)) {
+            $url = asset('storage/'.ltrim($path, '/'));
+            if ($disk === 'public' || $disk === 'local') {
+                if (file_exists($localPath)) {
+                    $url .= '?v='.filemtime($localPath);
+                }
+            } elseif ($version !== null) {
+                $url .= '?v='.$version;
+            }
+            return $url;
+        }
+
+        return $fallback;
     }
 }

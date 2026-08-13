@@ -193,23 +193,28 @@ class TempelateController extends Controller
             ->first();
 
         if (! $invitation) {
-            $invitation = Invitation::create([
-                'user_id' => 1,
-                'template_id' => $id,
-                'slug' => $slug,
-                'is_default' => true,
-                'groom_name' => 'Romeo',
-                'groom_nickname' => 'Romeo',
-                'groom_father_name' => 'Tuan Montague',
-                'groom_mother_name' => 'Nyonya Montague',
-                'bride_name' => 'Juliet',
-                'bride_nickname' => 'Juliet',
-                'bride_father_name' => 'Tuan Capulet',
-                'bride_mother_name' => 'Nyonya Capulet',
-                'wedding_date' => date('Y-m-d'),
-                'enable_rsvp' => true,
-                'enable_gift' => false,
-            ]);
+            try {
+                $invitation = Invitation::create([
+                    'user_id' => 1,
+                    'template_id' => $id,
+                    'slug' => $slug,
+                    'is_default' => true,
+                    'groom_name' => 'Romeo',
+                    'groom_nickname' => 'Romeo',
+                    'groom_father_name' => 'Tuan Montague',
+                    'groom_mother_name' => 'Nyonya Montague',
+                    'bride_name' => 'Juliet',
+                    'bride_nickname' => 'Juliet',
+                    'bride_father_name' => 'Tuan Capulet',
+                    'bride_mother_name' => 'Nyonya Capulet',
+                    'wedding_date' => date('Y-m-d'),
+                    'enable_rsvp' => true,
+                    'enable_gift' => false,
+                ]);
+            } catch (\Throwable $e) {
+                \Log::error('Template preview create failed: ' . $e->getMessage());
+                abort(500, 'Gagal memuat preview template.');
+            }
         }
 
         $template = Template::findOrFail($id);
@@ -361,7 +366,20 @@ class TempelateController extends Controller
             return 'Template view not found: '.$templateView;
         }
 
-        $html = view($templateView, compact('invitation'))->render();
+        try {
+            $html = view($templateView, compact('invitation'))->render();
+        } catch (\Throwable $e) {
+            \Log::error('Live preview render failed: ' . $e->getMessage(), [
+                'template' => $templateView,
+                'exception' => $e,
+            ]);
+
+            return '<div style="padding:40px;text-align:center;font-family:sans-serif;">
+                <h3 style="color:#dc3545;">Preview Error</h3>
+                <p>Gagal memuat preview template. Coba lagi atau pilih template lain.</p>
+                <pre style="background:#f8f9fa;padding:10px;border-radius:4px;text-align:left;font-size:12px;overflow:auto;">'.e($e->getMessage()).'</pre>
+            </div>';
+        }
 
         // Inject script for live image synchronization
         $previewData = json_encode([

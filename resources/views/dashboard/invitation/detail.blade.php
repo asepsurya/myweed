@@ -94,7 +94,7 @@
                     {{-- Mempelai Pria --}}
                     <figure class="avatar avatar-120 rounded-circle"
                         style="
-                         background-image: url('{{ $invitation->foto_pria && \Illuminate\Support\Facades\Storage::disk(config('image.disk'))->exists($invitation->foto_pria) ? storage_url($invitation->foto_pria) : 'https://picsum.photos/seed/groom/300/300' }}');
+                         background-image: url('{{ $invitation->foto_pria && storage_file_exists($invitation->foto_pria) ? storage_url_with_fallback($invitation->foto_pria, 'https://picsum.photos/seed/groom/300/300', $invitation->updated_at->timestamp) : 'https://picsum.photos/seed/groom/300/300' }}');
                         background-size: cover;
                         background-position: center;
                         background-color: #fff;
@@ -108,7 +108,7 @@
                     {{-- Mempelai Wanita --}}
                     <figure class="avatar avatar-120 rounded-circle"
                         style="
-                         background-image: url('{{ $invitation->foto_wanita && \Illuminate\Support\Facades\Storage::disk(config('image.disk'))->exists($invitation->foto_wanita) ? storage_url($invitation->foto_wanita) : 'https://picsum.photos/seed/bride/300/300' }}');
+                         background-image: url('{{ $invitation->foto_wanita && storage_file_exists($invitation->foto_wanita) ? storage_url_with_fallback($invitation->foto_wanita, 'https://picsum.photos/seed/bride/300/300', $invitation->updated_at->timestamp) : 'https://picsum.photos/seed/bride/300/300' }}');
                         background-size: cover;
                         background-position: center;
                         background-color: #fff;
@@ -242,7 +242,7 @@
                                         class="text-center position-relative">
                                         <i
                                             class="bi bi-gender-male position-absolute top-0 end-0 m-3 text-white fs-4 opacity-50"></i>
-                                        <img src="{{ $invitation->foto_pria ? storage_url($invitation->foto_pria) : 'https://picsum.photos/seed/groom/200/200' }}"
+                                        <img src="{{ $invitation->foto_pria ? (storage_url($invitation->foto_pria, $invitation->updated_at->timestamp) ?? 'https://picsum.photos/seed/groom/200/200') : 'https://picsum.photos/seed/groom/200/200' }}"
                                             class="rounded-circle mb-3 shadow-lg" width="120" height="120"
                                             style="object-fit:cover; border:4px solid #fff;">
                                         <h5 class="fw-bold text-dark">{{ $invitation->groom_name ?? 'Nama Pria' }}
@@ -266,7 +266,7 @@
                                         class="text-center position-relative">
                                         <i
                                             class="bi bi-gender-female position-absolute top-0 end-0 m-3 text-white fs-4 opacity-50"></i>
-                                        <img src="{{ $invitation->foto_wanita ? storage_url($invitation->foto_wanita) : 'https://picsum.photos/seed/bride/200/200' }}"
+                                        <img src="{{ $invitation->foto_wanita ? (storage_url($invitation->foto_wanita, $invitation->updated_at->timestamp) ?? 'https://picsum.photos/seed/bride/200/200') : 'https://picsum.photos/seed/bride/200/200' }}"
                                             class="rounded-circle mb-3 shadow-lg" width="120" height="120"
                                             style="object-fit:cover; border:4px solid #fff;">
                                         <h5 class="fw-bold text-white">{{ $invitation->bride_name ?? 'Nama Wanita' }}
@@ -357,9 +357,9 @@
                             @if (isset($galleries) && $galleries->count())
                                 @foreach ($galleries as $gallery)
                                     <div class="col-6 col-md-4 col-lg-3">
-                                        <a href="{{ storage_url($gallery->image) }}"
+                                        <a href="{{ storage_url_with_fallback($gallery->image, 'https://placehold.co/600x400?text=No+Image', $invitation->updated_at->timestamp) }}"
                                             class="glightbox gallery-card">
-                                            <img src="{{ storage_url($gallery->image) }}"
+                                            <img src="{{ storage_url_with_fallback($gallery->image, 'https://placehold.co/600x400?text=No+Image', $invitation->updated_at->timestamp) }}"
                                                 class="gallery-img shadow-sm" alt="Gallery Photo">
                                         </a>
                                     </div>
@@ -405,7 +405,7 @@
                                         {{-- FOTO --}}
                                         @if (!empty($story['photo']))
                                         <div class="col-md-5 text-center">
-                                             <img src="{{ storage_url($story['photo']) }}" class="img-fluid rounded-4 shadow-sm love-story-img" alt="{{ $story['title'] ?? 'Love Story' }}">
+                                             <img src="{{ storage_url_with_fallback($story['photo'], 'https://placehold.co/600x400?text=No+Image', $invitation->updated_at->timestamp) }}" class="img-fluid rounded-4 shadow-sm love-story-img" alt="{{ $story['title'] ?? 'Love Story' }}">
                                         </div>
                                         @endif
 

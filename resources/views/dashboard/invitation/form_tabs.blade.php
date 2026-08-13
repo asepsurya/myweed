@@ -352,7 +352,7 @@
                     <div id="previewContainerGroom"
                         class="mt-3 {{ ($inv && $inv->foto_pria) ? '' : 'd-none' }} text-center position-relative">
                         <img id="previewGroom"
-                            src="{{ ($inv && $inv->foto_pria) ? storage_url($inv->foto_pria) : '' }}"
+                            src="{{ ($inv && $inv->foto_pria) ? storage_url_with_fallback($inv->foto_pria, asset('assets/fav.png'), ($inv->updated_at ?? now())->timestamp) : '' }}"
                             class="img-fluid rounded border shadow-sm" style="max-height: 200px; object-fit: cover;">
                         <button type="button" onclick="removePreview('groom')"
                             class="btn btn-danger btn-sm position-absolute top-0 end-0 m-2"><i
@@ -410,7 +410,7 @@
                             <div class="check-icon"><i class="bi bi-check-lg"></i></div>
                             @php
                                 $thumb = $template->thumbnail ?? $template->preview;
-                                $thumbUrl = $thumb ? storage_url($thumb) : 'https://placehold.co/300x400';
+                                $thumbUrl = $thumb ? storage_url_with_fallback($thumb, 'https://placehold.co/300x400', $template->updated_at->timestamp) : 'https://placehold.co/300x400';
                             @endphp
                             <img src="{{ $thumbUrl }}"
                                 class="card-img-top template-thumbnail {{ $isLocked ? 'grayscale' : '' }}"
@@ -450,7 +450,7 @@
                 <div id="previewContainerCover"
                     class="mt-3 {{ ($inv && $inv->gallery_cover) ? '' : 'd-none' }} text-center position-relative">
                     <img id="previewCover"
-                        src="{{ ($inv && $inv->gallery_cover) ? storage_url($inv->gallery_cover) : '' }}"
+                        src="{{ ($inv && $inv->gallery_cover) ? storage_url_with_fallback($inv->gallery_cover, asset('assets/fav.png'), ($inv->updated_at ?? now())->timestamp) : '' }}"
                         class="img-fluid rounded border shadow-sm w-100" style="max-height: 250px; object-fit: cover;">
                     <button type="button" onclick="removePreview('cover')"
                         class="btn btn-danger btn-sm position-absolute top-0 end-0 m-2"><i class="bi bi-x"></i></button>
@@ -489,10 +489,10 @@
                         @if($inv && $inv->galleries)
                             @foreach($inv->galleries as $image)
                                 <div class="position-relative border rounded overflow-hidden" style="width: 80px; height: 80px;">
-                                    <img src="{{ storage_url($image->image) }}" class="w-100 h-100 object-fit-cover">
+                                    <img src="{{ storage_url_with_fallback($image->image, 'https://placehold.co/80x80?text=No+Image', ($inv->updated_at ?? now())->timestamp) }}" class="w-100 h-100 object-fit-cover">
                                     <button type="button" class="btn btn-danger btn-sm position-absolute top-0 end-0 p-0"
                                         style="width:20px;height:20px; line-height: 1;"
-                                        onclick="deleteGallery({{ $image->id }})">&times;</button>
+                                        onclick="deleteGallery({{ $image->id }}, this)">&times;</button>
                                 </div>
                             @endforeach
                         @endif
@@ -835,7 +835,7 @@
                     <div id="previewContainerBride"
                         class="mt-3 {{ ($inv && $inv->foto_wanita) ? '' : 'd-none' }} text-center position-relative">
                         <img id="previewBride"
-                            src="{{ ($inv && $inv->foto_wanita) ? storage_url($inv->foto_wanita) : '' }}"
+                            src="{{ ($inv && $inv->foto_wanita) ? storage_url_with_fallback($inv->foto_wanita, asset('assets/fav.png'), ($inv->updated_at ?? now())->timestamp) : '' }}"
                             class="img-fluid rounded border shadow-sm" style="max-height: 200px; object-fit: cover;">
                         <button type="button" onclick="removePreview('bride')"
                             class="btn btn-danger btn-sm position-absolute top-0 end-0 m-2"><i
@@ -898,7 +898,7 @@
                                         <label class="form-label fw-semibold mb-1" style="font-size: 12px;">Foto Kisah</label>
                                         @if(!empty($story['photo']))
                                             <div class="position-relative d-inline-block">
-                                                 <img src="{{ storage_url($story['photo']) }}" class="img-fluid rounded border"
+                                                 <img src="{{ storage_url_with_fallback($story['photo'], 'https://placehold.co/300x200?text=No+Image', ($inv->updated_at ?? now())->timestamp) }}" class="img-fluid rounded border"
                                                     style="max-height: 120px; object-fit: cover;">
                                                 <button type="button" class="btn btn-danger btn-sm position-absolute top-0 end-0 m-1"
                                                     style="width:20px;height:20px;line-height:1;padding:0;"

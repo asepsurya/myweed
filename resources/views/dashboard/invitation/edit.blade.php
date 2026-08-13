@@ -314,9 +314,10 @@
            RESPONSIVE (MOBILE)
         ============================================= */
         @media (max-width: 991px) {
-            .hide{
+            .hide {
                 display: none !important;
             }
+
             .adminuiux-content {
                 padding: 0 !important;
             }
@@ -401,7 +402,7 @@
             }
 
             .mobile-next-prev {
-                display: flex;
+                display: flex !important;
                 align-items: center;
                 justify-content: space-between;
                 gap: 0.5rem;
@@ -450,6 +451,134 @@
 
         .pagination-hidden {
             display: none !important;
+        }
+
+        /* =============================================
+           UPLOAD TOAST NOTIFICATION
+        ============================================= */
+        .upload-toast-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 99999;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            pointer-events: none;
+        }
+
+        .upload-toast {
+            pointer-events: auto;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-width: 300px;
+            max-width: 400px;
+            transform: translateX(120%);
+            transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .upload-toast.show {
+            transform: translateX(0);
+        }
+
+        .upload-toast.hide {
+            transform: translateX(120%);
+        }
+
+        .upload-toast-thumb {
+            width: 48px;
+            height: 48px;
+            border-radius: 8px;
+            object-fit: cover;
+            flex-shrink: 0;
+            background: #f0f0f0;
+        }
+
+        .upload-toast-body {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .upload-toast-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: #1B2A4A;
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .upload-toast-status {
+            font-size: 11px;
+            color: #6c757d;
+            margin-bottom: 6px;
+        }
+
+        .upload-toast-progress {
+            height: 4px;
+            background: #e9ecef;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .upload-toast-progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #C6A962, #A68B4B);
+            border-radius: 2px;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .upload-toast-close {
+            background: none;
+            border: none;
+            color: #adb5bd;
+            cursor: pointer;
+            padding: 4px;
+            line-height: 1;
+            transition: color 0.2s;
+            flex-shrink: 0;
+        }
+
+        .upload-toast-close:hover {
+            color: #dc3545;
+        }
+
+        .upload-toast.success .upload-toast-progress-bar {
+            background: #198754;
+        }
+
+        .upload-toast.error .upload-toast-progress-bar {
+            background: #dc3545;
+        }
+
+        /* Mobile responsive */
+        @media (max-width: 576px) {
+            .upload-toast-container {
+                bottom: 10px;
+                right: 10px;
+                left: 10px;
+                align-items: stretch;
+            }
+
+            .upload-toast {
+                min-width: auto;
+                max-width: none;
+                width: 100%;
+                padding: 10px 14px;
+            }
+
+            .upload-toast-thumb {
+                width: 40px;
+                height: 40px;
+            }
         }
     </style>
 
@@ -520,7 +649,7 @@
                         </div>
                     </div>
                     <button type="button" class="btn btn-sm px-3 text-white rounded-pill btn-builder-next"
-                        onclick="document.getElementById('myForm').submit()">
+                        onclick="window.publishInvitation(); return false;">
                         <i class="bi bi-send-fill me-1"></i> Publikasikan
                     </button>
                 </div>
@@ -531,6 +660,7 @@
                         @csrf
                         @method('PUT')
                         <input type="hidden" name="id" value="{{ $invitation->id }}">
+                        <input type="hidden" name="uploaded_gallery_ids" id="uploadedGalleryIds" value="">
                         @include('dashboard.invitation.form_tabs', ['invitation' => $invitation, 'music' => $music, 'templates' => $templates])
                     </form>
                 </div>
@@ -550,7 +680,7 @@
                 <div id="previewWindow" class="preview-window no-scrollbar">
                     <div class="preview-notch"></div>
                     <iframe id="livePreviewIframe" name="livePreviewIframe" class="preview-iframe no-scrollbar"
-                        src="about:blank"></iframe>
+                        src="{{ route('invitation.show', $invitation->slug) }}?v={{ ($invitation->updated_at->timestamp ?? time()) }}"></iframe>
                     <div id="previewLoader" class="d-none">
                         <div class="spinner-border mb-3" role="status" style="color: var(--adminuiux-theme-1);"></div>
                         <p class="small fw-bold">Updating...</p>
@@ -564,6 +694,9 @@
             </form>
         </div>
     </div>
+
+    <!-- UPLOAD TOAST NOTIFICATION -->
+    <div class="upload-toast-container" id="uploadToastContainer"></div>
 
     <!-- CROP MODAL -->
     <div class="modal fade" id="cropModal" tabindex="-1">
@@ -601,14 +734,16 @@
                     @elseif($invitation->partner_user_id && $invitation->partner_accepted_at)
                         <div class="alert alert-success">
                             <i class="bi bi-check-circle me-2"></i>
-                            <strong>{{ $invitation->partner->name }}</strong> ({{ $invitation->partner->email }}) telah menerima undangan.
+                            <strong>{{ $invitation->partner->name }}</strong> ({{ $invitation->partner->email }}) telah
+                            menerima undangan.
                             @if($invitation->partner_can_edit)
                                 <span class="badge bg-success-subtle text-success ms-2">Dapat mengedit</span>
                             @else
                                 <span class="badge bg-warning-subtle text-warning ms-2">Hanya melihat</span>
                             @endif
                         </div>
-                        <form id="removePartnerForm" action="{{ route('invitation.remove-partner', $invitation) }}" method="POST" class="mt-3">
+                        <form id="removePartnerForm" action="{{ route('invitation.remove-partner', $invitation) }}"
+                            method="POST" class="mt-3">
                             @csrf
                             @method('DELETE')
                             <button type="button" class="btn btn-outline-danger btn-sm" id="removePartnerBtn">
@@ -618,20 +753,23 @@
                     @elseif($invitation->partner_user_id && !$invitation->partner_accepted_at)
                         <div class="alert alert-warning">
                             <i class="bi bi-clock me-2"></i>
-                            Undangan sedang menunggu <strong>{{ $invitation->partner->name }}</strong> ({{ $invitation->partner->email }}) menerima.
+                            Undangan sedang menunggu <strong>{{ $invitation->partner->name }}</strong>
+                            ({{ $invitation->partner->email }}) menerima.
                         </div>
                     @else
                         <form id="invitePartnerForm">
                             @csrf
                             <div class="mb-3">
                                 <label for="partner_email" class="form-label fw-semibold mb-2">Email Pasangan</label>
-                                <input type="email" class="form-control" id="partner_email" name="email" required placeholder="contoh: pasangan@email.com">
+                                <input type="email" class="form-control" id="partner_email" name="email" required
+                                    placeholder="contoh: pasangan@email.com">
                                 <small class="text-muted">Pasangan harus sudah memiliki akun terdaftar di sistem.</small>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label fw-semibold mb-2">Hak Akses</label>
                                 <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="can_edit" id="can_edit_yes" value="1" checked>
+                                    <input class="form-check-input" type="radio" name="can_edit" id="can_edit_yes" value="1"
+                                        checked>
                                     <label class="form-check-label" for="can_edit_yes">Bisa mengedit undangan</label>
                                 </div>
                                 <div class="form-check">
@@ -846,77 +984,79 @@
         function updateLivePreview() {
             const hiddenInput = document.getElementById('template_id_hidden');
             const templateId = hiddenInput ? hiddenInput.value : '';
-            if (!templateId) return; // Stop jika template belum dipilih
+            if (!templateId) return;
 
             clearTimeout(previewTimer);
             const loader = document.getElementById('previewLoader');
             if (loader) loader.classList.remove('d-none');
 
             previewTimer = setTimeout(() => {
-                const container = document.getElementById('previewFormInputs');
-                if (!container) return;
-                container.innerHTML = '';
-
-                const formData = new FormData(document.getElementById('myForm'));
-                if (!formData.has('template_id') || !formData.get('template_id')) {
-                    formData.set('template_id', templateId);
+                // Reload iframe directly to invitation preview URL with cache buster
+                const iframe = document.getElementById('livePreviewIframe');
+                if (iframe) {
+                    const previewUrl = `{{ route('invitation.show', $invitation->slug) }}?v=${Date.now()}`;
+                    iframe.src = previewUrl;
                 }
 
-                formData.forEach((v, k) => {
-                    if (!(v instanceof File)) {
-                        const i = document.createElement('input');
-                        i.type = 'hidden'; i.name = k; i.value = v;
-                        container.appendChild(i);
-                    }
-                });
+                if (loader) loader.classList.add('d-none');
 
-                const galleryImgs = [];
-                document.querySelectorAll('#gallery-preview img').forEach(img => galleryImgs.push(img.src));
-
-                const imgMap = {
-                    'preview_foto_pria': document.getElementById('previewGroom')?.src,
-                    'preview_foto_wanita': document.getElementById('previewBride')?.src,
-                    'preview_gallery_cover': document.getElementById('previewCover')?.src,
-                    'preview_gallery': galleryImgs
-                };
-
-                for (const [name, val] of Object.entries(imgMap)) {
-                    if (val) {
-                        if (Array.isArray(val)) {
-                            val.forEach(v => {
-                                if (v) {
-                                    const i = document.createElement('input');
-                                    i.type = 'hidden'; i.name = name + '[]'; i.value = v;
-                                    container.appendChild(i);
-                                }
-                            });
-                        } else {
-                            const i = document.createElement('input');
-                            i.type = 'hidden'; i.name = name; i.value = val;
-                            container.appendChild(i);
-                        }
-                    }
-                }
-
-                document.getElementById('previewForm').submit();
-
-                setTimeout(() => {
-                    const iframe = document.getElementById('livePreviewIframe');
-                    if (iframe && iframe.contentWindow) {
-                        const images = {
-                            pria: document.getElementById('previewGroom')?.src,
-                            wanita: document.getElementById('previewBride')?.src,
-                            cover: document.getElementById('previewCover')?.src,
-                            gallery: galleryImgs
-                        };
-                        iframe.contentWindow.postMessage({ type: 'syncImages', images }, '*');
-                    }
-                    if (loader) loader.classList.add('d-none');
-                }, 600);
-
+                // Trigger autosave after preview reload
                 dbAutoSave();
             }, 300);
         }
+
+        function reloadPreview() {
+            const iframe = document.getElementById('livePreviewIframe');
+            if (iframe) {
+                const previewUrl = `{{ route('invitation.show', $invitation->slug) }}?v=${Date.now()}`;
+                iframe.src = previewUrl;
+            }
+        }
+
+        window.publishInvitation = function() {
+            const myForm = document.getElementById('myForm');
+            if (!myForm) return;
+
+            const toastId = window.showUploadToast({name: 'Menyimpan undangan...'}, 'save');
+
+            const formData = new FormData(myForm);
+            if (!formData.has('_method')) {
+                formData.append('_method', 'PUT');
+            }
+
+            fetch("{{ route('invitation.update', $invitation) }}", {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: formData
+            })
+            .then(res => {
+                const contentType = res.headers.get('content-type') || '';
+                if (contentType.includes('application/json')) {
+                    return res.json().then(data => ({ ok: res.ok, data }));
+                }
+                // If server returns HTML (redirect), treat as success
+                return { ok: true, data: { success: true } };
+            })
+            .then(({ ok, data }) => {
+                if (ok && data.success) {
+                    window.hideUploadToast(toastId, true);
+                    reloadPreview();
+                } else {
+                    window.hideUploadToast(toastId, false);
+                    const badge = document.getElementById('autoSaveBadge');
+                    if (badge) badge.innerHTML = '<i class="bi bi-cloud-slash me-1 text-danger"></i>Gagal publikasi';
+                }
+            })
+            .catch(() => {
+                window.hideUploadToast(toastId, false);
+                const badge = document.getElementById('autoSaveBadge');
+                if (badge) badge.innerHTML = '<i class="bi bi-cloud-slash me-1 text-danger"></i>Gagal publikasi';
+            });
+        };
 
         function scaleLivePreview() {
             const device = document.querySelector('.preview-device');
@@ -956,6 +1096,20 @@
                 const badge = document.getElementById('autoSaveBadge');
                 if (badge) badge.innerHTML = '<i class="bi bi-cloud-arrow-up me-1 text-primary"></i>Menyimpan...';
 
+                // Show autosave toast
+                if (!window.autosaveToastId) {
+                    const toastId = window.showUploadToast({ name: 'Menyimpan perubahan...' }, 'save');
+                    window.autosaveToastId = toastId;
+                    // Update toast status after a short delay
+                    setTimeout(() => {
+                        const toast = document.getElementById('upload-toast-' + toastId);
+                        if (toast) {
+                            const statusEl = toast.querySelector('.upload-toast-status');
+                            if (statusEl) statusEl.textContent = 'Menyimpan perubahan...';
+                        }
+                    }, 100);
+                }
+
                 fetch("{{ route('invitation.autosave') }}", {
                     method: 'POST',
                     headers: {
@@ -969,8 +1123,18 @@
                     .then(data => {
                         if (data.success) {
                             if (badge) badge.innerHTML = '<i class="bi bi-cloud-check me-1 text-success"></i>Tersimpan ✨';
+                            if (window.autosaveToastId) {
+                                hideUploadToast(window.autosaveToastId, true);
+                                window.autosaveToastId = null;
+                            }
+                            // Reload preview after successful autosave
+                            reloadPreview();
                         } else {
                             if (badge) badge.innerHTML = '<i class="bi bi-cloud-slash me-1 text-danger"></i>Gagal simpan';
+                            if (window.autosaveToastId) {
+                                hideUploadToast(window.autosaveToastId, false);
+                                window.autosaveToastId = null;
+                            }
                         }
                     })
                     .catch(err => {
@@ -1020,44 +1184,122 @@
 
         const galleryInput = document.getElementById('gallery-input');
         const galleryDropzone = document.getElementById('gallery-dropzone');
+        window.uploadedGalleryIds = new Set();
 
         if (galleryDropzone && galleryInput) {
             galleryDropzone.addEventListener('click', () => galleryInput.click());
 
             galleryInput.addEventListener('change', function (e) {
                 Array.from(e.target.files).forEach(file => {
-                    const id = Math.random().toString(36).substr(2, 9);
-                    galleryFiles.push({ id, file });
+                    const tempId = Math.random().toString(36).substr(2, 9);
                     const reader = new FileReader();
                     reader.onload = (re) => {
                         const div = document.createElement('div');
                         div.className = 'position-relative border rounded overflow-hidden gallery-item-preview shadow-sm';
-                        div.id = 'gal-' + id;
+                        div.id = 'gal-' + tempId;
                         div.style.width = '70px'; div.style.height = '70px';
-                        div.innerHTML = `<img src="${re.target.result}" class="w-100 h-100 object-fit-cover"><button type="button" class="btn btn-danger btn-xs position-absolute top-0 end-0 p-0 m-1 shadow-sm" style="width:18px;height:18px;" onclick="removeGalleryItem('${id}')">×</button>`;
+                        div.innerHTML = `<img src="${re.target.result}" class="w-100 h-100 object-fit-cover" style="filter: blur(2px);"><div class="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center"><div class="spinner-border spinner-border-sm text-light" role="status"></div></div>`;
                         document.getElementById('gallery-preview').appendChild(div);
+
+                        // Show upload toast
+                        const toastId = showUploadToast(file, 'gallery');
+
+                        // Upload immediately via AJAX
+                        const formData = new FormData();
+                        formData.append('image', file);
+
+                        fetch(`{{ route('gallery.upload', $invitation) }}`, {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                'Accept': 'application/json',
+                                'X-Requested-With': 'XMLHttpRequest'
+                            },
+                            body: formData
+                        })
+                            .then(res => res.json())
+                            .then(data => {
+                                if (data.success) {
+                                    window.uploadedGalleryIds.add(data.gallery.id);
+                                    updateUploadedGalleryInput();
+
+                                    // Update preview with real image
+                                    div.innerHTML = `<img src="${data.url}" class="w-100 h-100 object-fit-cover"><button type="button" class="btn btn-danger btn-xs position-absolute top-0 end-0 p-0 m-1 shadow-sm" style="width:18px;height:18px;" onclick="deleteGallery(${data.gallery.id}, this)">&times;</button>`;
+                                    hideUploadToast(toastId, true);
+                                } else {
+                                    div.remove();
+                                    hideUploadToast(toastId, false);
+                                }
+                            })
+                            .catch(() => {
+                                div.remove();
+                                hideUploadToast(toastId, false);
+                            });
                     };
                     reader.readAsDataURL(file);
                 });
 
-                const dt = new DataTransfer();
-                galleryFiles.forEach(item => dt.items.add(item.file));
-                galleryInput.files = dt.files;
-
-                setTimeout(() => { updateLivePreview(); }, 100);
+                // Clear the input so same file can be selected again if needed
+                galleryInput.value = '';
             });
         }
 
+        window.updateUploadedGalleryInput = function () {
+            const input = document.getElementById('uploadedGalleryIds');
+            if (input) {
+                input.value = Array.from(window.uploadedGalleryIds).join(',');
+            }
+        };
+
         window.removeGalleryItem = (id) => {
-            galleryFiles = galleryFiles.filter(item => item.id !== id);
+            // Check if it's an uploaded gallery ID or a local temp ID
+            if (window.uploadedGalleryIds.has(id)) {
+                // It's an uploaded gallery, delete from server
+                window.uploadedGalleryIds.delete(id);
+                updateUploadedGalleryInput();
+            } else {
+                // It's a local file, remove from array
+                galleryFiles = galleryFiles.filter(item => item.id !== id);
+                const dt = new DataTransfer();
+                galleryFiles.forEach(item => dt.items.add(item.file));
+                galleryInput.files = dt.files;
+            }
+
             const el = document.getElementById('gal-' + id);
             if (el) el.remove();
 
-            const dt = new DataTransfer();
-            galleryFiles.forEach(item => dt.items.add(item.file));
-            galleryInput.files = dt.files;
-
             updateLivePreview();
+        };
+
+        window.deleteGallery = function (id, btn) {
+            const parent = btn ? btn.closest('.position-relative') : document.querySelector(`button[onclick*="deleteGallery(${id})"]`)?.closest('.position-relative');
+            if (!parent) return;
+
+            const toastId = window.showUploadToast({ name: 'Menghapus foto...' }, 'delete');
+
+            fetch(`/invitation/{{ $invitation->id }}/gallery/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        window.uploadedGalleryIds.delete(id);
+                        updateUploadedGalleryInput();
+                        parent.remove();
+                        window.hideUploadToast(toastId, true);
+                        updateLivePreview();
+                    } else {
+                        window.hideUploadToast(toastId, false);
+                    }
+                })
+                .catch(() => {
+                    window.hideUploadToast(toastId, false);
+                });
         };
 
         window.addLoveStory = () => {
@@ -1112,6 +1354,9 @@
             const image = document.getElementById('cropImage');
             image.src = URL.createObjectURL(file);
 
+            // Show upload toast
+            window.cropToastId = window.showUploadToast(file, 'crop');
+
             const modal = new bootstrap.Modal(document.getElementById('cropModal'));
             modal.show();
 
@@ -1139,7 +1384,53 @@
                 document.getElementById('uploadBox' + capitalized + 'Container').classList.add('d-none');
 
                 bootstrap.Modal.getInstance(document.getElementById('cropModal')).hide();
-                updateLivePreview();
+
+                if (window.cropToastId) {
+                    hideUploadToast(window.cropToastId, true);
+                    window.cropToastId = null;
+                }
+
+                // Upload immediately via AJAX so user doesn't need to submit full form
+                const uploadConfig = {
+                    'cover': { url: '{{ route('cover.upload', $invitation) }}', field: 'cover', inputId: 'gallery_cover' },
+                    'groom': { url: '{{ route('groom-photo.upload', $invitation) }}', field: 'photo', inputId: 'foto_pria' },
+                    'bride': { url: '{{ route('bride-photo.upload', $invitation) }}', field: 'photo', inputId: 'foto_wanita' },
+                };
+
+                const config = uploadConfig[currentTarget];
+                if (config) {
+                    const toastId = showUploadToast(file, currentTarget);
+                    const formData = new FormData();
+                    formData.append(config.field, file);
+
+                    fetch(config.url, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'Accept': 'application/json',
+                            'X-Requested-With': 'XMLHttpRequest'
+                        },
+                        body: formData
+                    })
+                        .then(res => res.json())
+                        .then(data => {
+                            if (data.success) {
+                                // Update preview with real URL from server
+                                document.getElementById('preview' + capitalized).src = data.url;
+                                // Clear the input so form submit doesn't re-upload
+                                const input = document.getElementById(config.inputId);
+                                if (input) input.value = '';
+                                hideUploadToast(toastId, true);
+                            } else {
+                                hideUploadToast(toastId, false);
+                            }
+                        })
+                        .catch(() => {
+                            hideUploadToast(toastId, false);
+                        });
+                } else {
+                    updateLivePreview();
+                }
             }, 'image/jpeg');
         };
 
@@ -1190,7 +1481,6 @@
             // Form Events
             const myForm = document.getElementById('myForm');
             if (myForm) {
-                myForm.addEventListener('input', (e) => { if (e.target.matches('input, textarea, select')) updateLivePreview(); });
                 myForm.addEventListener('change', (e) => { if (e.target.matches('input, textarea, select')) updateLivePreview(); });
             }
 
@@ -1235,7 +1525,7 @@
             // Initial Load
             updateLivePreview();
 
-            // Iframe scrollbar hide
+            // Iframe scrollbar hide + 403 retry
             const livePreviewIframe = document.getElementById('livePreviewIframe');
             if (livePreviewIframe) {
                 livePreviewIframe.addEventListener('load', function () {
@@ -1245,6 +1535,16 @@
                         style.innerHTML = css;
                         this.contentWindow.document.head.appendChild(style);
                     } catch (e) { console.warn("Cross-origin iframe scrollbar hide failed."); }
+
+                    // One-time retry for 403 to keep preview loaded
+                    try {
+                        const bodyText = this.contentWindow.document.body?.innerText || '';
+                        if ((bodyText.includes('403') || bodyText.includes('Forbidden') || bodyText.includes('Tidak memiliki akses')) && !livePreviewIframe.dataset.retried) {
+                            livePreviewIframe.dataset.retried = 'true';
+                            console.warn('Preview 403 detected, retrying once...');
+                            setTimeout(() => updateLivePreview(), 1500);
+                        }
+                    } catch (e) { /* ignore cross-origin errors */ }
                 });
             }
 
@@ -1255,5 +1555,115 @@
                 resizeTimer = setTimeout(scaleLivePreview, 100);
             });
         });
+
+        // --- Upload Toast Notification ---
+        window.uploadToastId = 0;
+
+        window.showUploadToast = function (file, type = 'image') {
+            const container = document.getElementById('uploadToastContainer');
+            if (!container) return;
+
+            const id = ++window.uploadToastId;
+            let thumbUrl = '';
+            let fileName = 'Upload...';
+
+            // Only create object URL for actual File/Blob objects
+            if (file instanceof File || file instanceof Blob) {
+                thumbUrl = URL.createObjectURL(file);
+                fileName = file.name || 'Upload...';
+            } else if (file && typeof file === 'object' && file.name) {
+                // Plain object with name property (for non-file toasts like autosave)
+                fileName = file.name;
+            }
+
+            const toast = document.createElement('div');
+            toast.className = 'upload-toast';
+            toast.id = 'upload-toast-' + id;
+            toast.innerHTML = `
+                <img src="${thumbUrl || 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2248%22 height=%2248%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%236c757d%22 stroke-width=%222%22%3E%3Cpath d=%22M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48l2.83-2.83%22/%3E%3C/svg%3E'}" class="upload-toast-thumb" alt="Preview" style="${thumbUrl ? '' : 'opacity: 0.5;'}">
+                <div class="upload-toast-body">
+                    <div class="upload-toast-title">${fileName}</div>
+                    <div class="upload-toast-status">Sedang mengupload...</div>
+                    <div class="upload-toast-progress">
+                        <div class="upload-toast-progress-bar" style="width: 0%"></div>
+                    </div>
+                </div>
+                <button type="button" class="upload-toast-close" onclick="hideUploadToast(${id})">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            `;
+
+            container.appendChild(toast);
+
+            // Trigger animation
+            requestAnimationFrame(() => {
+                toast.classList.add('show');
+            });
+
+            // Simulate progress with smooth easing
+            const progressBar = toast.querySelector('.upload-toast-progress-bar');
+            const statusEl = toast.querySelector('.upload-toast-status');
+            let progress = 0;
+
+            // Smooth easing function: slow start, fast middle, slow end
+            const easeInOutQuad = t => t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+
+            const totalDuration = 1500; // 1.5 seconds to reach 90%
+            const startTime = Date.now();
+
+            const animateProgress = () => {
+                const elapsed = Date.now() - startTime;
+                const rawProgress = Math.min(elapsed / totalDuration, 1);
+                progress = Math.round(easeInOutQuad(rawProgress) * 90);
+
+                if (progressBar) {
+                    progressBar.style.width = progress + '%';
+                }
+
+                if (rawProgress < 1) {
+                    toast._progressRaf = requestAnimationFrame(animateProgress);
+                }
+            };
+
+            toast._progressRaf = requestAnimationFrame(animateProgress);
+
+            // Store for cleanup
+            toast._thumbUrl = thumbUrl;
+
+            return id;
+        };
+
+        window.hideUploadToast = function (id, success = true) {
+            const toast = document.getElementById('upload-toast-' + id);
+            if (!toast) return;
+
+            const statusEl = toast.querySelector('.upload-toast-status');
+            const progressBar = toast.querySelector('.upload-toast-progress-bar');
+
+            // Cancel any running animation
+            if (toast._progressRaf) {
+                cancelAnimationFrame(toast._progressRaf);
+            }
+
+            if (progressBar) progressBar.style.width = '100%';
+            if (statusEl) statusEl.textContent = success ? 'Upload berhasil' : 'Upload gagal';
+            toast.classList.add(success ? 'success' : 'error');
+
+            setTimeout(() => {
+                toast.classList.remove('show');
+                toast.classList.add('hide');
+                setTimeout(() => {
+                    if (toast._thumbUrl) URL.revokeObjectURL(toast._thumbUrl);
+                    toast.remove();
+                }, 300);
+            }, 400);
+        };
+
+        window.updateUploadToast = function (id, status, message) {
+            const toast = document.getElementById('upload-toast-' + id);
+            if (!toast) return;
+            const statusEl = toast.querySelector('.upload-toast-status');
+            if (statusEl) statusEl.textContent = message || status;
+        };
     </script>
 </x-app-layout>

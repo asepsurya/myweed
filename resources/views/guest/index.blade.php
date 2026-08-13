@@ -154,7 +154,7 @@
                                 <!-- Cover -->
                                 <div class="flex-shrink-0">
                                     @if($inv->gallery_cover)
-                                        <img src="{{ storage_url($inv->gallery_cover) }}" class="rounded object-fit-cover" style="width: 48px; height: 48px;" alt="Cover">
+                                        <img src="{{ storage_url($inv->gallery_cover, $inv->updated_at->timestamp) }}" class="rounded object-fit-cover" style="width: 48px; height: 48px;" alt="Cover">
                                     @else
                                         <div class="rounded d-flex align-items-center justify-content-center" style="width: 48px; height: 48px; background-color: rgba(198, 169, 98, 0.1); color: var(--adminuiux-theme-1);">
                                             <i class="bi bi-image"></i>
