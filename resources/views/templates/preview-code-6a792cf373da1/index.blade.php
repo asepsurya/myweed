@@ -8,7 +8,7 @@
     <!-- Open Graph -->
     <meta property="og:title" content="{{ $invitation->title ?? 'Undangan Pernikahan' }}">
     <meta property="og:description" content="{{ $invitation->description ?? '' }}">
-    <meta property="og:image" content="{{ asset('storage/' . $invitation->gallery_cover) }}">
+    <meta property="og:image" content="{{ storage_url($invitation->gallery_cover) }}">
     <meta property="og:url" content="{{ url()->current() }}">
     <meta property="og:type" content="website">
 
@@ -16,7 +16,7 @@
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="{{ $invitation->title ?? 'Undangan Pernikahan' }}">
     <meta name="twitter:description" content="{{ $invitation->description ?? '' }}">
-    <meta name="twitter:image" content="{{ asset('storage/' . $invitation->gallery_cover) }}">
+    <meta name="twitter:image" content="{{ storage_url($invitation->gallery_cover) }}">
 
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Lato:wght@400;600&display=swap" rel="stylesheet">
@@ -56,7 +56,7 @@
         .hero{
             position:relative;
             height:100vh;
-            background:url('{{ asset('storage/' . $invitation->gallery_cover) }}') center/cover no-repeat;
+            background:url('{{ storage_url($invitation->gallery_cover) }}') center/cover no-repeat;
             display:flex;
             align-items:center;
             justify-content:center;
@@ -213,12 +213,12 @@
         <div class="container">
             <div class="flex flex-col md:flex-row items-center justify-center gap-4">
                 <div class="text-center">
-                    <img src="{{ asset('storage/' . $invitation->foto_pria) }}" alt="Foto Pria">
+                    <img src="{{ storage_url($invitation->foto_pria) }}" alt="Foto Pria">
                     <h2 class="serif-font">{{ $invitation->nama_pria }}</h2>
                     <p class="parents">{{ $invitation->ortu_pria ?? '' }}</p>
                 </div>
                 <div class="text-center">
-                    <img src="{{ asset('storage/' . $invitation->foto_wanita) }}" alt="Foto Wanita">
+                    <img src="{{ storage_url($invitation->foto_wanita) }}" alt="Foto Wanita">
                     <h2 class="serif-font">{{ $invitation->nama_wanita }}</h2>
                     <p class="parents">{{ $invitation->ortu_wanita ?? '' }}</p>
                 </div>
@@ -272,9 +272,9 @@
     @if($invitation->galleries->count())
     <section class="gallery section-padding fade-in" id="gallery">
         <div class="container masonry-gallery">
-            @foreach($invitation->galleries as $photo)
-                <a href="{{ asset('storage/' . $photo->image) }}" data-fancybox="gallery">
-                    <img src="{{ asset('storage/' . $photo->image) }}" alt="Gallery Image" class="masonry-item">
+            @if(($invitation->enable_gallery ?? true) && $invitation->galleries->count())@foreach($invitation->galleries as $photo)
+                <a href="{{ storage_url($photo->image) }}" data-fancybox="gallery">
+                    <img src="{{ storage_url($photo->image) }}" alt="Gallery Image" class="masonry-item">
                 </a>
             @endforeach
         </div>
@@ -390,5 +390,58 @@
             });
         }
     </script>
+
+    @if(($invitation->enable_love_story ?? true) && !empty($invitation->love_story))
+    @php
+        $loveStories = is_array($invitation->love_story) ? $invitation->love_story : json_decode($invitation->love_story, true);
+    @endphp
+    @if(!empty($loveStories[0]['title']) || !empty($loveStories[0]['story']))
+    <section class="py-16 px-6 text-center fade-in" id="love-story">
+        <h2 class="text-4xl font-serif text-primary italic mb-4">Love Story</h2>
+        <div class="max-w-2xl mx-auto space-y-8">
+            @foreach($loveStories as $index => $story)
+            <div class="{{ $index < count($loveStories) - 1 ? 'pb-8 border-b border-gray-200' : '' }}">
+                <h3 class="text-xl font-semibold text-gray-800 mb-2">{{ $story['title'] ?? '' }}</h3>
+                <p class="text-gray-600 leading-relaxed">{{ $story['story'] ?? '' }}</p>
+                @if(!empty($story['photo']))
+                <img src="{{ storage_url($story['photo']) }}" alt="{{ $story['title'] ?? 'Story Photo' }}" loading="lazy" class="mt-3 max-h-[200px] object-cover rounded-lg mx-auto">
+                @endif
+            </div>
+            @endforeach
+        </div>
+    </section>
+    @endif
+    @endif
+
+    @if(($invitation->enable_video ?? true) && !empty($invitation->video_link))
+    @php
+        preg_match('/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|v\/|u\/\w\/|shorts\/)(?<id>[A-Za-z0-9_-]{11}))/i', $invitation->video_link, $ytVideoMatches);
+        $youtubeVideoId = $ytVideoMatches['id'] ?? '';
+    @endphp
+    @if($youtubeVideoId)
+    <section class="py-16 px-6 text-center fade-in" id="video">
+        <h2 class="text-4xl font-serif text-primary italic mb-4">Video Pernikahan</h2>
+        <div class="max-w-2xl mx-auto">
+            <div class="relative aspect-video rounded-xl overflow-hidden bg-black/10 cursor-pointer" data-fancybox="video" data-src="https://www.youtube.com/embed/{{ $youtubeVideoId }}?enablejsapi=1&autoplay=1&loop=1&playlist={{ $youtubeVideoId }}&controls=1&modestbranding=1&rel=0">
+                <img src="https://img.youtube.com/vi/{{ $youtubeVideoId }}/hqdefault.jpg" alt="Video Pernikahan" class="w-full h-full object-cover">
+                <div class="absolute inset-0 flex items-center justify-center bg-primary/30">
+                    <span class="material-symbols-outlined text-white text-5xl">play_circle</span>
+                </div>
+            </div>
+        </div>
+    </section>
+    @else
+    <section class="py-16 px-6 text-center fade-in" id="video">
+        <h2 class="text-4xl font-serif text-primary italic mb-4">Video Pernikahan</h2>
+        <div class="max-w-2xl mx-auto">
+            <video controls class="w-full rounded-xl">
+                <source src="{{ storage_url($invitation->video_link) }}" type="video/mp4">
+            </video>
+        </div>
+    </section>
+    @endif
+    @endif
+</script>
 </body>
+
 </html>

@@ -209,7 +209,7 @@
                 <div class="absolute inset-0 bg-surface-container rounded-t-full rounded-b-3xl border-2 border-secondary/30 transform -rotate-2 animate-float"></div>
                 <div class="absolute inset-0 bg-surface-variant rounded-t-full rounded-b-3xl transform rotate-1 overflow-hidden shadow-2xl">
                     <img class="w-full h-full object-cover opacity-90 mix-blend-luminosity"
-                        src="{{ asset('storage/' . ($invitation->gallery_cover ?? 'default/cover.jpg')) }}" 
+                        src="{{ storage_url_with_fallback($invitation->gallery_cover, asset('default/cover.jpg')) }}" 
                         alt="Wedding Cover" loading="lazy">
                     <div class="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent opacity-80"></div>
                 </div>
@@ -251,7 +251,7 @@
                     <div class="w-48 h-64 mb-6 rounded-t-full border-4 border-surface-container shadow-2xl relative overflow-hidden hover-scale">
                         <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent z-10"></div>
                         <img class="w-full h-full object-cover relative z-0"
-                            src="{{ asset('storage/' . ($invitation->foto_pria ?? 'default/groom.jpg')) }}" 
+                            src="{{ storage_url_with_fallback($invitation->foto_pria, asset('default/groom.jpg')) }}" 
                             alt="{{ $invitation->groom_name ?? 'Groom' }}" loading="lazy">
                     </div>
                     <h3 class="font-headline-md text-on-background mb-2">{{ $invitation->groom_name }}</h3>
@@ -274,7 +274,7 @@
                     <div class="w-48 h-64 mb-6 rounded-t-full border-4 border-surface-container shadow-2xl relative overflow-hidden hover-scale">
                         <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent z-10"></div>
                         <img class="w-full h-full object-cover relative z-0"
-                            src="{{ asset('storage/' . ($invitation->foto_wanita ?? 'default/bride.jpg')) }}" 
+                            src="{{ storage_url_with_fallback($invitation->foto_wanita, asset('default/bride.jpg')) }}" 
                             alt="{{ $invitation->bride_name ?? 'Bride' }}" loading="lazy">
                     </div>
                     <h3 class="font-headline-md text-on-background mb-2">{{ $invitation->bride_name }}</h3>
@@ -378,11 +378,11 @@
         <section class="w-full py-section-padding-mobile px-margin-edge flex flex-col items-center animate-fade-in-up animate-item-1" id="gallery">
             <h2 class="font-headline-lg text-secondary mb-12 text-center animate-item-2" style="font-size: 50px;">Galeri Momen</h2>
             <div class="grid grid-cols-2 md:grid-cols-3 gap-4 w-full max-w-4xl">
-                @foreach($invitation->galleries as $index => $photo)
+                @if(($invitation->enable_gallery ?? true) && $invitation->galleries->count())@foreach($invitation->galleries as $index => $photo)
                 <div class="gallery-item {{ $index >= 6 ? 'hidden' : '' }} hover-scale animate-fade-in-up animate-item-{{ ($index % 6) + 1 }}">
                     <div class="{{ $index === 2 ? 'aspect-[4/3] rounded-xl overflow-hidden md:col-span-2' : ($index % 2 === 0 ? 'aspect-[3/4] rounded-xl overflow-hidden' : 'aspect-square rounded-xl overflow-hidden') }}">
-                        <a href="{{ asset('storage/' . $photo->image) }}" data-fancybox="gallery" data-caption="Wedding Moment">
-                            <img loading="lazy" src="{{ asset('storage/' . $photo->image) }}" alt="Wedding Moment" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110" />
+                        <a href="{{ storage_url($photo->image) }}" data-fancybox="gallery" data-caption="Wedding Moment">
+                            <img loading="lazy" src="{{ storage_url($photo->image) }}" alt="Wedding Moment" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110" />
                         </a>
                     </div>
                 </div>
@@ -741,7 +741,74 @@
         });
 
     });
-    </script>
+
+    @if(($invitation->enable_love_story ?? true) && !empty($invitation->love_story))
+    @php
+        $loveStories = is_array($invitation->love_story) ? $invitation->love_story : json_decode($invitation->love_story, true);
+    @endphp
+    @if(!empty($loveStories[0]['title']) || !empty($loveStories[0]['story']))
+    <section class="py-stack-lg px-margin-mobile bg-surface-container-low" id="love-story">
+        <div class="max-w-2xl mx-auto">
+            <div class="text-center mb-12 fade-in">
+                <p class="font-label-sm text-label-sm text-outline tracking-widest uppercase mb-2">Kisah Kami</p>
+                <h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary">Love Story</h2>
+            </div>
+            <div class="relative pl-6 fade-in">
+                @foreach($loveStories as $index => $story)
+                <div class="timeline-item {{ $index < count($loveStories) - 1 ? 'mb-8' : '' }} relative {{ $index < count($loveStories) - 1 ? 'timeline-line' : '' }}">
+                    <div class="absolute -left-6 top-1 w-6 h-6 rounded-full border-2 border-tertiary-fixed-dim bg-surface flex items-center justify-center z-10">
+                        <div class="w-2 h-2 rounded-full bg-tertiary-fixed-dim"></div>
+                    </div>
+                    <h3 class="font-body-lg text-body-lg font-semibold text-primary mb-2">{{ $story['title'] ?? '' }}</h3>
+                    <p class="font-body-md text-body-md text-on-surface-variant">{{ $story['story'] ?? '' }}</p>
+                    @if(!empty($story['photo']))
+                    <img src="{{ storage_url($story['photo']) }}" alt="{{ $story['title'] ?? 'Story Photo' }}" loading="lazy" class="mt-3 rounded-lg max-h-[200px] object-cover w-full" />
+                    @endif
+                </div>
+                @endforeach
+            </div>
+        </div>
+    </section>
+    @endif
+    @endif
+
+    @if(($invitation->enable_video ?? true) && !empty($invitation->video_link))
+    @php
+        preg_match('/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|v\/|u\/\w\/|shorts\/)(?<id>[A-Za-z0-9_-]{11}))/i', $invitation->video_link, $ytVideoMatches);
+        $youtubeVideoId = $ytVideoMatches['id'] ?? '';
+    @endphp
+    @if($youtubeVideoId)
+    <section class="py-stack-lg px-margin-mobile bg-surface" id="video">
+        <div class="max-w-4xl mx-auto">
+            <div class="text-center mb-12 fade-in">
+                <p class="font-label-sm text-label-sm text-outline tracking-widest uppercase mb-2">Video</p>
+                <h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary">Video Pernikahan</h2>
+            </div>
+            <div class="fade-in relative aspect-video rounded-xl overflow-hidden bg-surface-container-high cursor-pointer" data-fancybox="video" data-src="https://www.youtube.com/embed/{{ $youtubeVideoId }}?enablejsapi=1&autoplay=1&loop=1&playlist={{ $youtubeVideoId }}&controls=1&modestbranding=1&rel=0">
+                <img loading="lazy" src="https://img.youtube.com/vi/{{ $youtubeVideoId }}/hqdefault.jpg" alt="Video Pernikahan" class="w-full h-full object-cover">
+                <div class="absolute inset-0 flex items-center justify-center bg-primary/30">
+                    <span class="material-symbols-outlined text-white text-6xl">play_circle</span>
+                </div>
+            </div>
+        </div>
+    </section>
+    @else
+    <section class="py-stack-lg px-margin-mobile bg-surface" id="video">
+        <div class="max-w-4xl mx-auto">
+            <div class="text-center mb-12 fade-in">
+                <p class="font-label-sm text-label-sm text-outline tracking-widest uppercase mb-2">Video</p>
+                <h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary">Video Pernikahan</h2>
+            </div>
+            <div class="fade-in">
+                <video controls class="w-full rounded-xl" poster="{{ storage_url_with_fallback($invitation->gallery_cover, asset('default/cover.jpg')) }}">
+                    <source src="{{ storage_url($invitation->video_link) }}" type="video/mp4">
+                </video>
+            </div>
+        </div>
+    </section>
+    @endif
+    @endif
+</script>
 </body>
 
 </html>

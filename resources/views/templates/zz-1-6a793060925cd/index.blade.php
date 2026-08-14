@@ -298,5 +298,29 @@
             document.getElementById('seconds').innerText = seconds.toString().padStart(2,'0');
         },1000);
     </script>
+
+    @if(($invitation->enable_love_story ?? true) && !empty($invitation->love_story))
+    @php
+        $loveStories = is_array($invitation->love_story) ? $invitation->love_story : json_decode($invitation->love_story, true);
+    @endphp
+    @if(!empty($loveStories[0]['title']) || !empty($loveStories[0]['story']))
+    <section class="py-16 px-6 text-center fade-in" id="love-story">
+        <h2 class="text-4xl font-serif text-primary italic mb-4">Love Story</h2>
+        <div class="max-w-2xl mx-auto space-y-8">
+            @foreach($loveStories as $index => $story)
+            <div class="{{ $index < count($loveStories) - 1 ? 'pb-8 border-b border-gray-200' : '' }}">
+                <h3 class="text-xl font-semibold text-gray-800 mb-2">{{ $story['title'] ?? '' }}</h3>
+                <p class="text-gray-600 leading-relaxed">{{ $story['story'] ?? '' }}</p>
+                @if(!empty($story['photo']))
+                <img src="{{ storage_url($story['photo']) }}" alt="{{ $story['title'] ?? 'Story Photo' }}" loading="lazy" class="mt-3 max-h-[200px] object-cover rounded-lg mx-auto">
+                @endif
+            </div>
+            @endforeach
+        </div>
+    </section>
+    @endif
+    @endif
+</script>
 </body>
+
 </html>

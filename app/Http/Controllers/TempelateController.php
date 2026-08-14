@@ -209,7 +209,11 @@ class TempelateController extends Controller
                     'bride_mother_name' => 'Nyonya Capulet',
                     'wedding_date' => date('Y-m-d'),
                     'enable_rsvp' => true,
-                    'enable_gift' => false,
+                    'enable_gift' => true,
+                    'enable_gallery' => true,
+                    'enable_music' => true,
+                    'enable_video' => true,
+                    'enable_love_story' => true,
                 ]);
             } catch (\Throwable $e) {
                 \Log::error('Template preview create failed: ' . $e->getMessage());
@@ -255,7 +259,7 @@ class TempelateController extends Controller
                 'akad_maps', 'akad_address', 'resepsi_location', 'resepsi_time',
                 'resepsi_time_end', 'resepsi_maps', 'resepsi_address',
                 'theme_color', 'wedding_quote', 'quote_id', 'video_link',
-                'enable_rsvp', 'enable_gift', 'enable_music',
+                'enable_rsvp', 'enable_gift', 'enable_music', 'enable_gallery', 'enable_video', 'enable_love_story',
                 'rsvp_deadline', 'rsvp_message', 'rsvp_whatsapp',
                 'music_youtube_url',
             ];
@@ -280,6 +284,15 @@ class TempelateController extends Controller
             }
             if ($request->has('enable_music')) {
                 $data['enable_music'] = $request->boolean('enable_music');
+            }
+            if ($request->has('enable_gallery')) {
+                $data['enable_gallery'] = $request->boolean('enable_gallery');
+            }
+            if ($request->has('enable_video')) {
+                $data['enable_video'] = $request->boolean('enable_video');
+            }
+            if ($request->has('enable_love_story')) {
+                $data['enable_love_story'] = $request->boolean('enable_love_story');
             }
 
             if ($request->filled('music_youtube_url')) {

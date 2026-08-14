@@ -253,6 +253,26 @@ class UserInvitationController extends Controller
             return redirect()->back()->with('error', 'Fitur RSVP hanya tersedia untuk paket berbayar.');
         }
 
+        // Check Gallery toggle
+        if ($request->has('enable_gallery') && $request->enable_gallery && !$user->hasFeature('gallery')) {
+            return redirect()->back()->with('error', 'Fitur Galeri hanya tersedia untuk paket berbayar.');
+        }
+
+        // Check Music toggle
+        if ($request->has('enable_music') && $request->enable_music && !$user->hasFeature('background_music') && !$user->hasFeature('custom_music')) {
+            return redirect()->back()->with('error', 'Fitur Musik Latar hanya tersedia untuk paket berbayar.');
+        }
+
+        // Check Video toggle
+        if ($request->has('enable_video') && $request->enable_video && !$user->hasFeature('streaming_video')) {
+            return redirect()->back()->with('error', 'Fitur Link Video hanya tersedia untuk paket berbayar.');
+        }
+
+        // Check Love Story toggle
+        if ($request->has('enable_love_story') && $request->enable_love_story && !$user->hasFeature('love_story')) {
+            return redirect()->back()->with('error', 'Fitur Kisah Cinta hanya tersedia untuk paket berbayar.');
+        }
+
         // Check Gallery feature
         if ($request->hasFile('gallery') && !$user->hasFeature('gallery')) {
             return redirect()->back()->with('error', 'Fitur Galeri hanya tersedia untuk paket berbayar.');
@@ -334,23 +354,25 @@ class UserInvitationController extends Controller
 
             $stories = [];
 
-            if ($request->has('love_story')) {
-                foreach ($request->love_story as $index => $storyText) {
+            if ($request->has('enable_love_story') && $request->enable_love_story) {
+                if ($request->has('love_story')) {
+                    foreach ($request->love_story as $index => $storyText) {
 
-                    $photoPath = null;
+                        $photoPath = null;
 
-                    if ($request->hasFile('story_photo.' . $index)) {
-                        $photoPath = $this->uploadImageAsWebP(
-                            $request->file('story_photo.' . $index),
-                            'love_story/' . uniqid() . '.webp'
-                        );
+                        if ($request->hasFile('story_photo.' . $index)) {
+                            $photoPath = $this->uploadImageAsWebP(
+                                $request->file('story_photo.' . $index),
+                                'love_story/' . uniqid() . '.webp'
+                            );
+                        }
+
+                        $stories[] = [
+                            'title' => $request->story_title[$index] ?? null,
+                            'story' => $storyText,
+                            'photo' => $photoPath,
+                        ];
                     }
-
-                    $stories[] = [
-                        'title' => $request->story_title[$index] ?? null,
-                        'story' => $storyText,
-                        'photo' => $photoPath,
-                    ];
                 }
             }
             $baseSlug = Str::slug(
@@ -396,12 +418,13 @@ class UserInvitationController extends Controller
                 'theme_color' => $request->theme_color,
                 'quote_id' => $request->quote_id,
                 'wedding_quote' => $request->wedding_quote,
-                'video_link' => $request->video_link,
-                'youtube_url' => $request->youtube_url,
-                'love_story' => $stories,
 
                 'enable_rsvp' => $request->has('enable_rsvp'),
                 'enable_gift' => $request->has('enable_gift'),
+                'enable_gallery' => $request->has('enable_gallery'),
+                'enable_music' => $request->has('enable_music'),
+                'enable_video' => $request->has('enable_video'),
+                'enable_love_story' => $request->has('enable_love_story'),
 
                 'groom_instagram' => $request->groom_instagram,
                 'groom_username_instagram' => $request->groom_username_instagram,
@@ -416,6 +439,15 @@ class UserInvitationController extends Controller
                 'primary_color' => $request->primary_color ?? '#0d9488',
 
             ]);
+
+            if ($request->has('enable_video') && $request->enable_video) {
+                $invitation->update([
+                    'video_link' => $request->video_link,
+                    'youtube_url' => $request->youtube_url,
+                ]);
+            }
+
+            $invitation->update(['love_story' => $stories]);
             if ($request->hasFile('foto_pria')) {
                 try {
                     $path = "invitations/{$invitation->id}/pria/pria.webp";
@@ -468,18 +500,20 @@ class UserInvitationController extends Controller
                 }
             }
 
-            if ($request->hasFile('custom_music')) {
-                $musicPath = $request->file('custom_music')
-                    ->store("invitations/{$invitation->id}/music", 'public');
+            if ($request->has('enable_music') && $request->enable_music) {
+                if ($request->hasFile('custom_music')) {
+                    $musicPath = $request->file('custom_music')
+                        ->store("invitations/{$invitation->id}/music", 'public');
 
-                $invitation->update(['music' => $musicPath]);
-            } else {
-                $invitation->update([
-                    'music' => $request->music_id,
-                ]);
+                    $invitation->update(['music' => $musicPath]);
+                } else {
+                    $invitation->update([
+                        'music' => $request->music_id,
+                    ]);
+                }
             }
 
-            if ($request->hasFile('gallery')) {
+            if ($request->has('enable_gallery') && $request->enable_gallery && $request->hasFile('gallery')) {
                 foreach ($request->file('gallery') as $index => $imageFile) {
                     try {
                         $folder = "invitations/{$invitation->id}/gallery";
@@ -586,14 +620,36 @@ class UserInvitationController extends Controller
             return redirect()->back()->with('error', 'Fitur RSVP hanya tersedia untuk paket berbayar.');
         }
 
+        // Check Gallery toggle
+        if ($request->has('enable_gallery') && $request->enable_gallery && !$user->hasFeature('gallery')) {
+            return redirect()->back()->with('error', 'Fitur Galeri hanya tersedia untuk paket berbayar.');
+        }
+
+        // Check Music toggle
+        if ($request->has('enable_music') && $request->enable_music && !$user->hasFeature('background_music') && !$user->hasFeature('custom_music')) {
+            return redirect()->back()->with('error', 'Fitur Musik Latar hanya tersedia untuk paket berbayar.');
+        }
+
+        // Check Video toggle
+        if ($request->has('enable_video') && $request->enable_video && !$user->hasFeature('streaming_video')) {
+            return redirect()->back()->with('error', 'Fitur Link Video hanya tersedia untuk paket berbayar.');
+        }
+
+        // Check Love Story toggle
+        if ($request->has('enable_love_story') && $request->enable_love_story && !$user->hasFeature('love_story')) {
+            return redirect()->back()->with('error', 'Fitur Kisah Cinta hanya tersedia untuk paket berbayar.');
+        }
+
         // Check Gallery feature
         if ($request->hasFile('gallery') && !$user->hasFeature('gallery')) {
             return redirect()->back()->with('error', 'Fitur Galeri hanya tersedia untuk paket berbayar.');
         }
 
         $galleryLimit = data_get($user->subscription->plan->features ?? [], 'gallery_limit');
-        if ($request->hasFile('gallery') && !is_null($galleryLimit) && count($request->file('gallery')) > $galleryLimit) {
-            return redirect()->back()->with('error', "Maksimal {$galleryLimit} foto untuk paket ini.");
+        $currentGalleryCount = $invitation->galleries()->count();
+        $newGalleryCount = $request->hasFile('gallery') ? count($request->file('gallery')) : 0;
+        if (!is_null($galleryLimit) && ($currentGalleryCount + $newGalleryCount) > $galleryLimit) {
+            return redirect()->back()->with('error', "Maksimal {$galleryLimit} foto untuk paket ini. Anda sudah memiliki {$currentGalleryCount} foto.");
         }
 
         // Check Love Story feature
@@ -646,15 +702,17 @@ class UserInvitationController extends Controller
             $oldStories = $oldStories ?? [];
             $stories = [];
 
-            if ($request->has('love_story')) {
-                foreach ($request->love_story as $index => $storyText) {
-                    $photoPath = $oldStories[$index]['photo'] ?? null;
+            if ($request->has('enable_love_story') && $request->enable_love_story) {
+                if ($request->has('love_story')) {
+                    foreach ($request->love_story as $index => $storyText) {
+                        $photoPath = $oldStories[$index]['photo'] ?? null;
 
-                    $stories[] = [
-                        'title' => $request->story_title[$index] ?? null,
-                        'story' => $storyText,
-                        'photo' => $photoPath,
-                    ];
+                        $stories[] = [
+                            'title' => $request->story_title[$index] ?? null,
+                            'story' => $storyText,
+                            'photo' => $photoPath,
+                        ];
+                    }
                 }
             }
 
@@ -701,12 +759,13 @@ class UserInvitationController extends Controller
                 'theme_color' => $request->theme_color,
                 'quote_id' => $request->quote_id,
                 'wedding_quote' => $request->wedding_quote,
-                'video_link' => $request->video_link,
-                'youtube_url' => $request->youtube_url,
-                'love_story' => $stories,
 
                 'enable_rsvp' => $request->has('enable_rsvp'),
                 'enable_gift' => $request->has('enable_gift'),
+                'enable_gallery' => $request->has('enable_gallery'),
+                'enable_music' => $request->has('enable_music'),
+                'enable_video' => $request->has('enable_video'),
+                'enable_love_story' => $request->has('enable_love_story'),
 
                 'groom_instagram' => $request->groom_username_instagram ? 'https://www.instagram.com/' . $request->groom_username_instagram : $invitation->groom_instagram,
                 'groom_username_instagram' => $request->groom_username_instagram,
@@ -721,6 +780,13 @@ class UserInvitationController extends Controller
 
                 'music_youtube_url' => $request->music_youtube_url,
             ];
+
+            if ($request->has('enable_video') && $request->enable_video) {
+                $updateData['video_link'] = $request->video_link;
+                $updateData['youtube_url'] = $request->youtube_url;
+            }
+
+            $updateData['love_story'] = $stories;
 
             $invitation->update($updateData);
         });
@@ -807,29 +873,31 @@ class UserInvitationController extends Controller
         }
 
         // --- CUSTOM MUSIC ---
-        if ($request->input('music_source') === 'youtube') {
-            $invitation->update([
-                'music_youtube_url' => $request->music_youtube_url,
-                'music' => 0,
-            ]);
-        } elseif ($request->hasFile('custom_music')) {
-            if ($invitation->music) {
-                Storage::disk('public')->delete($invitation->music);
+        if ($request->has('enable_music') && $request->enable_music) {
+            if ($request->input('music_source') === 'youtube') {
+                $invitation->update([
+                    'music_youtube_url' => $request->music_youtube_url,
+                    'music' => 0,
+                ]);
+            } elseif ($request->hasFile('custom_music')) {
+                if ($invitation->music) {
+                    Storage::disk('public')->delete($invitation->music);
+                }
+                $musicPath = $request->file('custom_music')->store("invitations/{$invitation->id}/music", 'public');
+                $invitation->update([
+                    'music' => $musicPath,
+                    'music_youtube_url' => null,
+                ]);
+            } else {
+                $invitation->update([
+                    'music' => $request->music_id,
+                    'music_youtube_url' => null,
+                ]);
             }
-            $musicPath = $request->file('custom_music')->store("invitations/{$invitation->id}/music", 'public');
-            $invitation->update([
-                'music' => $musicPath,
-                'music_youtube_url' => null,
-            ]);
-        } else {
-            $invitation->update([
-                'music' => $request->music_id,
-                'music_youtube_url' => null,
-            ]);
         }
 
         // --- LOVE STORY PHOTOS ---
-        if ($request->has('love_story')) {
+        if ($request->has('enable_love_story') && $request->enable_love_story && $request->has('love_story')) {
             $oldStories = is_string($invitation->love_story)
                 ? json_decode($invitation->love_story, true)
                 : $invitation->love_story;
@@ -866,7 +934,7 @@ class UserInvitationController extends Controller
         }
 
         // --- GALLERY ---
-        if ($request->hasFile('gallery')) {
+        if ($request->has('enable_gallery') && $request->enable_gallery && $request->hasFile('gallery')) {
             foreach ($request->file('gallery') as $index => $imageFile) {
                 try {
                     $folder = "invitations/{$invitation->id}/gallery";
@@ -977,6 +1045,15 @@ class UserInvitationController extends Controller
 
         if ($user->id === $invitation->partner_user_id && !$invitation->partner_can_edit) {
             abort(403, 'Anda hanya memiliki akses melihat undangan ini.');
+        }
+
+        if (!$user->hasFeature('gallery')) {
+            return response()->json(['success' => false, 'message' => 'Fitur Galeri hanya tersedia untuk paket berbayar.'], 403);
+        }
+
+        $galleryLimit = data_get($user->subscription->plan->features ?? [], 'gallery_limit');
+        if (!is_null($galleryLimit) && $invitation->galleries()->count() >= $galleryLimit) {
+            return response()->json(['success' => false, 'message' => "Maksimal {$galleryLimit} foto untuk paket ini."], 403);
         }
 
         $request->validate([
@@ -1199,9 +1276,34 @@ class UserInvitationController extends Controller
         }
 
         // Data yang akan disimpan (hanya teks/json, bukan file agar ringan)
-        $data = $request->except(['foto_pria', 'foto_wanita', 'gallery_cover', 'gallery', 'custom_music', 'qr', 'story_photo']);
+        $data = $request->except(['foto_pria', 'foto_wanita', 'gallery_cover', 'gallery', 'custom_music', 'qr', 'story_photo', 'love_story', 'story_title']);
         $data['user_id'] = auth()->id();
         $data['status'] = 'draft';
+
+        // Proses love_story agar tersimpan dalam format yang benar
+        if ($request->has('enable_love_story') && $request->enable_love_story) {
+            $oldStories = [];
+            if ($invitation) {
+                $oldStories = is_string($invitation->love_story)
+                    ? json_decode($invitation->love_story, true)
+                    : $invitation->love_story;
+                $oldStories = $oldStories ?? [];
+            }
+
+            $stories = [];
+            if ($request->has('love_story')) {
+                foreach ($request->love_story as $index => $storyText) {
+                    $stories[] = [
+                        'title' => $request->story_title[$index] ?? null,
+                        'story' => $storyText,
+                        'photo' => $oldStories[$index]['photo'] ?? null,
+                    ];
+                }
+            }
+            $data['love_story'] = $stories;
+        } else {
+            $data['love_story'] = [];
+        }
 
         // Unique Slug for AutoSave
         $baseSlug = 'draft-' . auth()->id();
@@ -1223,6 +1325,10 @@ class UserInvitationController extends Controller
         // Khusus fields boolean/checkbox
         $data['enable_rsvp'] = $request->has('enable_rsvp');
         $data['enable_gift'] = $request->has('enable_gift');
+        $data['enable_gallery'] = $request->has('enable_gallery');
+        $data['enable_music'] = $request->has('enable_music');
+        $data['enable_video'] = $request->has('enable_video');
+        $data['enable_love_story'] = $request->has('enable_love_story');
 
         if ($invitation) {
             // Jika sudah ada, jangan ganti slugnya terus menerus kalau sudah punya nama

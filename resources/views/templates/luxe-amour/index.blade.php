@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,7 +12,7 @@
     <meta property="og:title" content="{{ $invitation->groom_nickname ?? 'Mempelai Pria' }} & {{ $invitation->bride_nickname ?? 'Mempelai Wanita' }} Wedding Invitation">
     <meta property="og:description" content="You are invited to the wedding of {{ $invitation->groom_nickname ?? 'Mempelai Pria' }} & {{ $invitation->bride_nickname ?? 'Mempelai Wanita' }}. Click to see the details.">
     @if(!empty($invitation->gallery_cover))
-    <meta property="og:image" content="{{ asset('storage/' . $invitation->gallery_cover) }}">
+        <meta property="og:image" content="{{ storage_url($invitation->gallery_cover) }}">
     @endif
 
     <!-- Twitter -->
@@ -20,7 +21,7 @@
     <meta property="twitter:title" content="{{ $invitation->groom_nickname ?? 'Mempelai Pria' }} & {{ $invitation->bride_nickname ?? 'Mempelai Wanita' }} Wedding Invitation">
     <meta property="twitter:description" content="You are invited to the wedding of {{ $invitation->groom_nickname ?? 'Mempelai Pria' }} & {{ $invitation->bride_nickname ?? 'Mempelai Wanita' }}. Click to see the details.">
     @if(!empty($invitation->gallery_cover))
-    <meta property="twitter:image" content="{{ asset('storage/' . $invitation->gallery_cover) }}">
+        <meta property="twitter:image" content="{{ storage_url($invitation->gallery_cover) }}">
     @endif
 
     <!-- Google Fonts -->
@@ -283,13 +284,14 @@
         }
     </style>
 </head>
+
 <body>
 
     <!-- Main Container -->
     <div class="mobile-container">
 
         <!-- Hero Section -->
-        <header id="preview-hero-bg" class="hero" style="background-image: linear-gradient(rgba(26, 60, 52, 0.4), rgba(26, 60, 52, 0.7)), url('{{ asset('storage/' . ($invitation->gallery_cover ?? 'default/cover.jpg')) }}');">
+        <header id="preview-hero-bg" class="hero" style="background-image: linear-gradient(rgba(26, 60, 52, 0.4), rgba(26, 60, 52, 0.7)), url('{{ storage_url_with_fallback($invitation->gallery_cover, asset('default/cover.jpg')) }}');">
             <div class="fade-in">
                 <div class="hero-subtitle">The Wedding Of</div>
                 <h1>{{ $invitation->groom_nickname ?? 'Mempelai Pria' }} & {{ $invitation->bride_nickname ?? 'Mempelai Wanita' }}</h1>
@@ -301,9 +303,9 @@
                 <p class="mt-4">{{ request('penerima') ?? 'Tamu Undangan' }}</p>
 
                 @if(!empty($invitation->wedding_date))
-                <div class="hero-date">{{ \Carbon\Carbon::parse($invitation->wedding_date)->locale('id')->translatedFormat('l, d F Y') }}</div>
+                    <div class="hero-date">{{ \Carbon\Carbon::parse($invitation->wedding_date)->locale('id')->translatedFormat('l, d F Y') }}</div>
                 @endif
-<br>
+                <br>
                 <button id="reminderBtn" class="reminder-btn">
                     <i class="ti ti-calendar-event"></i>
                     <span>Setel Pengingat</span>
@@ -339,14 +341,14 @@
                     <!-- Groom -->
                     <div class="couple-card">
                         <div class="img-frame">
-                            <img id="preview-foto-pria" src="{{ asset('storage/' . ($invitation->foto_pria ?? 'default/groom.jpg')) }}" alt="{{ $invitation->groom_name ?? 'Groom' }}" class="couple-img" loading="lazy">
+                            <img id="preview-foto-pria" src="{{ storage_url_with_fallback($invitation->foto_pria, asset('default/groom.jpg')) }}" alt="{{ $invitation->groom_name ?? 'Groom' }}" class="couple-img" loading="lazy">
                         </div>
                         <h3 class="couple-name">{{ $invitation->groom_name ?? 'Groom Name' }}</h3>
                         <p class="parent-name">{{ $invitation->groom_child_order_text ? 'Putra ' . $invitation->groom_child_order_text . ' dari' : 'Putra dari' }} Bpk. {{ $invitation->groom_father_name ?? '-' }} & Ibu {{ $invitation->groom_mother_name ?? '-' }}</p>
                         @if(!empty($invitation->groom_instagram))
-                        <a href="{{ $invitation->groom_instagram }}" target="_blank" style="color: var(--text-muted); font-size: 0.9rem;margin-top:10px;">
-                            <i class="ti ti-brand-instagram"></i> Instagram
-                        </a>
+                            <a href="{{ $invitation->groom_instagram }}" target="_blank" style="color: var(--text-muted); font-size: 0.9rem;margin-top:10px;">
+                                <i class="ti ti-brand-instagram"></i> Instagram
+                            </a>
                         @endif
                     </div>
 
@@ -355,14 +357,14 @@
                     <!-- Bride -->
                     <div class="couple-card">
                         <div class="img-frame">
-                            <img id="preview-foto-wanita" src="{{ asset('storage/' . ($invitation->foto_wanita ?? 'default/bride.jpg')) }}" alt="{{ $invitation->bride_name ?? 'Bride' }}" class="couple-img" loading="lazy">
+                            <img id="preview-foto-wanita" src="{{ storage_url_with_fallback($invitation->foto_wanita, asset('default/bride.jpg')) }}" alt="{{ $invitation->bride_name ?? 'Bride' }}" class="couple-img" loading="lazy">
                         </div>
                         <h3 class="couple-name">{{ $invitation->bride_name ?? 'Bride Name' }}</h3>
                         <p class="parent-name">{{ $invitation->bride_child_order_text ? 'Putri ' . $invitation->bride_child_order_text . ' dari' : 'Putri dari' }} Bpk. {{ $invitation->bride_father_name ?? '-' }} & Ibu {{ $invitation->bride_mother_name ?? '-' }}</p>
                         @if(!empty($invitation->bride_instagram))
-                        <a href="{{ $invitation->bride_instagram }}" target="_blank" style="color: var(--text-muted); font-size: 0.9rem;margin-top:10px;">
-                            <i class="ti ti-brand-instagram"></i> Instagram
-                        </a>
+                            <a href="{{ $invitation->bride_instagram }}" target="_blank" style="color: var(--text-muted); font-size: 0.9rem;margin-top:10px;">
+                                <i class="ti ti-brand-instagram"></i> Instagram
+                            </a>
                         @endif
                     </div>
                 </div>
@@ -384,7 +386,7 @@
                         <p style="color: var(--text-muted); margin-top: 10px;"><b>{{ $invitation->akad_location ?? 'Lokasi Belum Ditentukan' }}</b></p>
                         <p style="color: var(--text-muted); margin-top: 5px;margin-bottom:10px;">{{ $invitation->akad_address ?? '' }}</p>
                         @if(!empty($invitation->akad_maps))
-                        <a href="{{ $invitation->akad_maps }}" target="_blank" class="btn-outline">Lihat Peta</a>
+                            <a href="{{ $invitation->akad_maps }}" target="_blank" class="btn-outline">Lihat Peta</a>
                         @endif
                     </div>
 
@@ -395,7 +397,7 @@
                         <p style="color: var(--text-muted); margin-top: 10px;"><b>{{ $invitation->resepsi_location ?? 'Lokasi Belum Ditentukan' }}</b></p>
                         <p style="color: var(--text-muted); margin-top: 5px;margin-bottom:10px;">{{ $invitation->resepsi_address ?? '' }}</p>
                         @if(!empty($invitation->resepsi_maps))
-                        <a href="{{ $invitation->resepsi_maps }}" target="_blank" class="btn-outline">Lihat Peta</a>
+                            <a href="{{ $invitation->resepsi_maps }}" target="_blank" class="btn-outline">Lihat Peta</a>
                         @endif
                     </div>
                 </div>
@@ -403,19 +405,19 @@
 
             <!-- Countdown -->
             @if(!empty($invitation->wedding_date))
-            <section class="section-padding countdown-section">
-                <div class="fade-in">
-                    <p class="hero-subtitle" style="color: var(--white); opacity: 0.8;">Counting Down</p>
-                    <h2 class="serif-font" style="color: var(--white);">Menuju Bahagia</h2>
+                <section class="section-padding countdown-section">
+                    <div class="fade-in">
+                        <p class="hero-subtitle" style="color: var(--white); opacity: 0.8;">Counting Down</p>
+                        <h2 class="serif-font" style="color: var(--white);">Menuju Bahagia</h2>
 
-                    <div class="countdown-grid" id="countdown">
-                        <div class="text-center"><p id="days" class="timer-val">00</p><p class="timer-label">Hari</p></div>
-                        <div class="text-center"><p id="hours" class="timer-val">00</p><p class="timer-label">Jam</p></div>
-                        <div class="text-center"><p id="minutes" class="timer-val">00</p><p class="timer-label">Menit</p></div>
-                        <div class="text-center"><p id="seconds" class="timer-val">00</p><p class="timer-label">Detik</p></div>
+                        <div class="countdown-grid" id="countdown">
+                            <div class="text-center"><p id="days" class="timer-val">00</p><p class="timer-label">Hari</p></div>
+                            <div class="text-center"><p id="hours" class="timer-val">00</p><p class="timer-label">Jam</p></div>
+                            <div class="text-center"><p id="minutes" class="timer-val">00</p><p class="timer-label">Menit</p></div>
+                            <div class="text-center"><p id="seconds" class="timer-val">00</p><p class="timer-label">Detik</p></div>
+                        </div>
                     </div>
-                </div>
-            </section>
+                </section>
             @endif
 
             <!-- Love Story -->
@@ -423,29 +425,29 @@
                 $loveStories = is_array($invitation->love_story) ? $invitation->love_story : json_decode($invitation->love_story, true);
             @endphp
 
-            @if(!empty($loveStories[0]['title']) || !empty($loveStories[0]['story']))
-            <section id="love-story">
-                <div class="text-center mb-4">
-                    <p class="hero-subtitle" style="color: var(--text-muted);">Kisah Kami</p>
-                    <h2 class="serif-font" style="font-size: 2.5rem;">Love Story</h2>
-                </div>
-
-                <div class="timeline">
-                    @foreach($loveStories as $story)
-                    <div class="timeline-item fade-in">
-                        <h5>{{ $story['title'] ?? 'Untitled' }}</h5>
-                        <div class="timeline-content" style="font-size: 0.80rem; line-height: 1.8;">
-                            <p style="color: var(--text-muted); margin-top: 5px;margin-bottom:10px;font-family:Arial, Helvetica, sans-serif">{{ $story['story'] ?? '' }}</p>
-                            @if(!empty($story['photo']))
-                                <img src="{{ asset('storage/' . $story['photo']) }}" alt="Story Photo" loading="lazy">
-                            @endif
-                        </div>
+            @if(($invitation->enable_love_story ?? true) && (!empty($loveStories[0]['title']) || !empty($loveStories[0]['story'])))
+                <section id="love-story">
+                    <div class="text-center mb-4">
+                        <p class="hero-subtitle" style="color: var(--text-muted);">Kisah Kami</p>
+                        <h2 class="serif-font" style="font-size: 2.5rem;">Love Story</h2>
                     </div>
-                    @endforeach
-                </div>
-            </section>
-            @endif
 
+                    <div class="timeline">
+                        @foreach($loveStories as $story)
+                            <div class="timeline-item fade-in">
+                                <h5>{{ $story['title'] ?? 'Untitled' }}</h5>
+                                <div class="timeline-content" style="font-size: 0.80rem; line-height: 1.8;">
+                                    <p style="color: var(--text-muted); margin-top: 5px;margin-bottom:10px;font-family:Arial, Helvetica, sans-serif">{{ $story['story'] ?? '' }}</p>
+                                    @if(!empty($story['photo']))
+                                        <img src="{{ storage_url($story['photo']) }}" alt="Story Photo" loading="lazy">
+                                    @endif
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                </section>
+            @endif
+            @if($invitation->enable_gallery == 1)
             <!-- Gallery (Masonry) -->
             <section class="section-padding" style="background-color: var(--white);">
                 <div class="text-center mb-4 fade-in">
@@ -454,116 +456,154 @@
                 </div>
                 <div class="masonry-gallery fade-in" id="gallery-container">
                     @forelse ($invitation->galleries as $photo)
-                    <a href="{{ asset('storage/' . $photo->image) }}" data-fancybox="gallery" class="masonry-item">
-                        <img src="{{ asset('storage/' . $photo->image) }}" alt="Gallery Photo" loading="lazy">
-                    </a>
+                        <a href="{{ storage_url($photo->image) }}" data-fancybox="gallery" class="masonry-item">
+                            <img src="{{ storage_url($photo->image) }}" alt="Gallery Photo" loading="lazy">
+                        </a>
                     @empty
-                    <p class="text-center w-full text-muted">Belum ada foto galeri.</p>
+                        <p class="text-center w-full text-muted">Belum ada foto galeri.</p>
                     @endforelse
                 </div>
             </section>
+            @endif
+            <!-- Video -->
+            @if(($invitation->enable_video ?? true) && !empty($invitation->video_link))
+                @php
+                    preg_match('/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|v\/|u\/\w\/|shorts\/)(?<id>[A-Za-z0-9_-]{11}))/i', $invitation->video_link, $ytVideoMatches);
+                    $youtubeVideoId = $ytVideoMatches['id'] ?? '';
+                @endphp
+                @if($youtubeVideoId)
+                    <section id="video" style="padding: 100px 20px; background-color: var(--white);">
+                        <div style="max-width: 896px; margin: 0 auto;">
+                            <div class="text-center mb-4 fade-in">
+                                <p class="hero-subtitle" style="color: var(--text-muted);">Video</p>
+                                <h2 class="serif-font" style="font-size: 2.5rem;">Video Pernikahan</h2>
+                            </div>
+                            <div class="fade-in" style="position: relative; aspect-ratio: 16/9; border-radius: 0.75rem; overflow: hidden; background-color: rgba(197, 160, 89, 0.1); cursor: pointer;" data-fancybox="video" data-src="https://www.youtube.com/embed/{{ $youtubeVideoId }}?enablejsapi=1&autoplay=1&loop=1&playlist={{ $youtubeVideoId }}&controls=1&modestbranding=1&rel=0">
+                                <img loading="lazy" src="https://img.youtube.com/vi/{{ $youtubeVideoId }}/hqdefault.jpg" alt="Video Pernikahan" style="width: 100%; height: 100%; object-fit: cover;">
+                                <div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background-color: rgba(26, 60, 52, 0.3);">
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                @else
+                    <section id="video" style="padding: 100px 20px; background-color: var(--white);">
+                        <div style="max-width: 896px; margin: 0 auto;">
+                            <div class="text-center mb-4 fade-in">
+                                <p class="hero-subtitle" style="color: var(--text-muted);">Video</p>
+                                <h2 class="serif-font" style="font-size: 2.5rem;">Video Pernikahan</h2>
+                            </div>
+                            <div class="fade-in">
+                                <video controls style="width: 100%; border-radius: 0.75rem;" poster="{{ storage_url_with_fallback($invitation->gallery_cover, asset('default/cover.jpg')) }}">
+                                    <source src="{{ storage_url($invitation->video_link) }}" type="video/mp4">
+                                </video>
+                            </div>
+                        </div>
+                    </section>
+                @endif
+            @endif
 
             <!-- Gifts -->
             @if($invitation->enable_gift == 1 && $invitation->gifts->count())
-            <section id="gifts" style="background-color: #f7f7f7; padding: 50px 20px;">
-                <div class="text-center mb-4">
-                    <p class="hero-subtitle" style="color: var(--text-muted);">Beri Hadiah</p>
-                    <h2 class="serif-font" style="font-size: 2.5rem;">Wedding Gifts</h2>
-                </div>
-
-                <div class="grid" style="gap: 20px;">
-                    @foreach($invitation->gifts as $gift)
-                    <div class="gift-card">
-                        @php
-                            $bankLogos = [
-                                'BCA' => 'https://upload.wikimedia.org/wikipedia/commons/5/5c/Bank_Central_Asia.svg',
-                                'BNI' => 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f0/Bank_Negara_Indonesia_logo_%282004%29.svg/640px-Bank_Negara_Indonesia_logo_%282004%29.svg.png',
-                                'BRI' => 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/BANK_BRI_logo.svg/640px-BANK_BRI_logo.svg.png',
-                                'Mandiri' => 'https://upload.wikimedia.org/wikipedia/commons/a/ad/Bank_Mandiri_logo_2016.svg',
-                                'CIMB' => 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8f/CIMB_Group_Logo.svg/640px-CIMB_Group_Logo.svg.png',
-                                'OVO' => 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/Logo_ovo_purple.svg/640px-Logo_ovo_purple.svg.png',
-                                'GoPay' => 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/86/Gopay_logo.svg/640px-Gopay_logo.svg.png',
-                                'Dana' => 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/Logo_dana_blue.svg/960px-Logo_dana_blue.svg.png',
-                                'LinkAja' => 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/Link_logo_%282019%29.svg/3840px-Link_logo_%282019%29.svg.png',
-                                'ShopeePay' => 'https://images.seeklogo.com/logo-png/40/2/shopee-pay-logo-png_seeklogo-406839.png',
-                            ];
-                        @endphp
-
-                        <div class="gift-logo">
-                            @if(!empty($bankLogos[$gift->bank]))
-                                <img src="{{ $bankLogos[$gift->bank] }}" alt="{{ $gift->bank }}" style="height:30px; object-fit:contain;" loading="lazy">
-                            @else
-                                <i class="ti ti-wallet" style="font-size: 1.5rem;"></i>
-                            @endif
-                        </div>
-
-                        <div class="gift-content">
-                            <h5 class="gift-name">{{ strtoupper($gift->name) }}</h5>
-                            <p class="gift-number">{{ $gift->number }}</p>
-                        </div>
-
-                        <button class="gift-copy" onclick="copyText('{{ $gift->number }}')">
-                            <i class="ti ti-copy"></i> Salin
-                        </button>
+                <section id="gifts" style="background-color: #f7f7f7; padding: 50px 20px;">
+                    <div class="text-center mb-4">
+                        <p class="hero-subtitle" style="color: var(--text-muted);">Beri Hadiah</p>
+                        <h2 class="serif-font" style="font-size: 2.5rem;">Wedding Gifts</h2>
                     </div>
-                    @endforeach
-                </div>
-            </section>
+
+                    <div class="grid" style="gap: 20px;">
+                        @foreach($invitation->gifts as $gift)
+                            <div class="gift-card">
+                                @php
+                                    $bankLogos = [
+                                        'BCA' => 'https://upload.wikimedia.org/wikipedia/commons/5/5c/Bank_Central_Asia.svg',
+                                        'BNI' => 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f0/Bank_Negara_Indonesia_logo_%282004%29.svg/640px-Bank_Negara_Indonesia_logo_%282004%29.svg.png',
+                                        'BRI' => 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/BANK_BRI_logo.svg/640px-BANK_BRI_logo.svg.png',
+                                        'Mandiri' => 'https://upload.wikimedia.org/wikipedia/commons/a/ad/Bank_Mandiri_logo_2016.svg',
+                                        'CIMB' => 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8f/CIMB_Group_Logo.svg/640px-CIMB_Group_Logo.svg.png',
+                                        'OVO' => 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/Logo_ovo_purple.svg/640px-Logo_ovo_purple.svg.png',
+                                        'GoPay' => 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/86/Gopay_logo.svg/640px-Gopay_logo.svg.png',
+                                        'Dana' => 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/Logo_dana_blue.svg/960px-Logo_dana_blue.svg.png',
+                                        'LinkAja' => 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/Link_logo_%282019%29.svg/3840px-Link_logo_%282019%29.svg.png',
+                                        'ShopeePay' => 'https://images.seeklogo.com/logo-png/40/2/shopee-pay-logo-png_seeklogo-406839.png',
+                                    ];
+                                @endphp
+
+                                <div class="gift-logo">
+                                    @if(!empty($bankLogos[$gift->bank]))
+                                        <img src="{{ $bankLogos[$gift->bank] }}" alt="{{ $gift->bank }}" style="height:30px; object-fit:contain;" loading="lazy">
+                                    @else
+                                        <i class="ti ti-wallet" style="font-size: 1.5rem;"></i>
+                                    @endif
+                                </div>
+
+                                <div class="gift-content">
+                                    <h5 class="gift-name">{{ strtoupper($gift->name) }}</h5>
+                                    <p class="gift-number">{{ $gift->number }}</p>
+                                </div>
+
+                                <button class="gift-copy" onclick="copyText('{{ $gift->number }}')">
+                                    <i class="ti ti-copy"></i> Salin
+                                </button>
+                            </div>
+                        @endforeach
+                    </div>
+                </section>
             @endif
 
             <!-- RSVP -->
             @if($invitation->enable_rsvp == 1)
-            <section id="rsvp" style="padding: 100px 20px; background-color: var(--white);">
-                <div class="text-center mb-5 fade-in">
-                    <p class="hero-subtitle" style="color: var(--text-muted);">RSVP</p>
-                    <h2 class="serif-font" style="font-size: 2.5rem;">Ucapan & Doa</h2>
-                </div>
-                
-                <div class="rsvp-form fade-in" style="max-width: 500px; margin: 0 auto;">
-                    <form id="rsvpForm">
-                        @csrf
-                        <div class="form-group">
-                            <input type="text" name="name" id="rsvpName" class="form-control" placeholder="Nama Anda" required>
-                        </div>
-                        <div class="form-group">
-                            <select name="attending" class="form-control">
-                                <option value="1">Hadir</option>
-                                <option value="0">Tidak Hadir</option>
-                            </select>
-                        </div>
-
-                        <div class="emoji-picker" style="margin-bottom: 10px; display: flex; gap: 10px; justify-content: center;">
-                            <button type="button" onclick="addEmoji('🎉')" style="background: none; border: none; font-size: 1.5rem; cursor: pointer;">🎉</button>
-                            <button type="button" onclick="addEmoji('❤️')" style="background: none; border: none; font-size: 1.5rem; cursor: pointer;">❤️</button>
-                            <button type="button" onclick="addEmoji('🥳')" style="background: none; border: none; font-size: 1.5rem; cursor: pointer;">🥳</button>
-                            <button type="button" onclick="addEmoji('✨')" style="background: none; border: none; font-size: 1.5rem; cursor: pointer;">✨</button>
-                            <button type="button" onclick="addEmoji('🙏')" style="background: none; border: none; font-size: 1.5rem; cursor: pointer;">🙏</button>
-                        </div>
-
-                        <div class="form-group">
-                            <textarea name="message" id="rsvpMessageInput" class="form-control" rows="4" placeholder="Tulis ucapan selamat..." required></textarea>
-                        </div>
-                        
-                        <div id="rsvpMessage" class="text-center text-sm mt-2 hidden"></div>
-
-                        <button type="submit" id="rsvpButton" class="btn-primary" style="width: 100%; padding: 15px; background: var(--primary-color); color: #fff; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; display: flex; align-items: center; justify-content: center; gap: 8px;">
-                            <span id="buttonText">Kirim Ucapan</span>
-                            <span id="buttonSpinner" class="hidden animate-spin">⏳</span>
-                        </button>
-                    </form>
-                </div>
-
-                <!-- RSVP List -->
-                <div class="mt-6 bg-white rounded-lg mx-auto p-4" style="max-width: 500px;">
-                    <h4 class="text-center serif-font text-lg mb-4" style="color: var(--primary-color);">Tinggalkan kami doa terbaik anda untuk momen bahagia kami</h4>
-                    <div id="rsvpList" class="rsvp-list space-y-4">
-                        <!-- List loaded via JS -->
+                <section id="rsvp" style="padding: 100px 20px; background-color: var(--white);">
+                    <div class="text-center mb-5 fade-in">
+                        <p class="hero-subtitle" style="color: var(--text-muted);">RSVP</p>
+                        <h2 class="serif-font" style="font-size: 2.5rem;">Ucapan & Doa</h2>
                     </div>
-                    <div class="text-center mt-4">
-                        <span class="text-xs text-gray-400">(<span id="rsvpCount">{{ $invitation->rsvps->count() }}</span> Ucapan)</span>
+                    
+                    <div class="rsvp-form fade-in" style="max-width: 500px; margin: 0 auto;">
+                        <form id="rsvpForm">
+                            @csrf
+                            <div class="form-group">
+                                <input type="text" name="name" id="rsvpName" class="form-control" placeholder="Nama Anda" required>
+                            </div>
+                            <div class="form-group">
+                                <select name="attending" class="form-control">
+                                    <option value="1">Hadir</option>
+                                    <option value="0">Tidak Hadir</option>
+                                </select>
+                            </div>
+
+                            <div class="emoji-picker" style="margin-bottom: 10px; display: flex; gap: 10px; justify-content: center;">
+                                <button type="button" onclick="addEmoji('🎉')" style="background: none; border: none; font-size: 1.5rem; cursor: pointer;">🎉</button>
+                                <button type="button" onclick="addEmoji('❤️')" style="background: none; border: none; font-size: 1.5rem; cursor: pointer;">❤️</button>
+                                <button type="button" onclick="addEmoji('🥳')" style="background: none; border: none; font-size: 1.5rem; cursor: pointer;">🥳</button>
+                                <button type="button" onclick="addEmoji('✨')" style="background: none; border: none; font-size: 1.5rem; cursor: pointer;">✨</button>
+                                <button type="button" onclick="addEmoji('🙏')" style="background: none; border: none; font-size: 1.5rem; cursor: pointer;">🙏</button>
+                            </div>
+
+                            <div class="form-group">
+                                <textarea name="message" id="rsvpMessageInput" class="form-control" rows="4" placeholder="Tulis ucapan selamat..." required></textarea>
+                            </div>
+                            
+                            <div id="rsvpMessage" class="text-center text-sm mt-2 hidden"></div>
+
+                            <button type="submit" id="rsvpButton" class="btn-primary" style="width: 100%; padding: 15px; background: var(--primary-color); color: #fff; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                                <span id="buttonText">Kirim Ucapan</span>
+                                <span id="buttonSpinner" class="hidden animate-spin">⏳</span>
+                            </button>
+                        </form>
                     </div>
-                </div>
-            </section>
+
+                    <!-- RSVP List -->
+                    <div class="mt-6 bg-white rounded-lg mx-auto p-4" style="max-width: 500px;">
+                        <h4 class="text-center serif-font text-lg mb-4" style="color: var(--primary-color);">Tinggalkan kami doa terbaik anda untuk momen bahagia kami</h4>
+                        <div id="rsvpList" class="rsvp-list space-y-4">
+                            <!-- List loaded via JS -->
+                        </div>
+                        <div class="text-center mt-4">
+                            <span class="text-xs text-gray-400">(<span id="rsvpCount">{{ $invitation->rsvps->count() }}</span> Ucapan)</span>
+                        </div>
+                    </div>
+                </section>
             @endif
 
             <!-- Footer -->
@@ -602,6 +642,13 @@
                     console.error('Gagal menyalin', err);
                 });
             };
+
+            /* --- 2. FANCYBOX INIT --- */
+            $('[data-fancybox]').fancybox({
+                buttons: ["close"],
+                wheel: false,
+                transitionEffect: "slide",
+            });
 
             /* --- 3. COUNTDOWN TIMER --- */
             const weddingDateString = "{{ $invitation->wedding_date ?? '' }}";
@@ -651,7 +698,6 @@
             const rsvpCountEl = document.getElementById('rsvpCount');
             const textarea = document.getElementById('rsvpMessageInput');
             
-            // Set untuk menyimpan ID RSVP yang sudah ditampilkan di layar
             let loadedRsvpIds = new Set();
 
             if (textarea) {
@@ -661,7 +707,6 @@
                 });
             }
 
-            // Fungsi untuk membuat 1 element HTML untuk 1 RSVP
             function createRsvpItemHtml(rsvp) {
                 return `
                     <div class="rsvp-list-item comment-item" data-id="${rsvp.id}">
@@ -676,48 +721,35 @@
                 `;
             }
 
-            // Fungsi render hanya menambahkan item yang baru
-             function renderRsvpList(rsvps) {
+            function renderRsvpList(rsvps) {
                 if (!rsvps || rsvps.length === 0) {
-                    // Jika kosong dan layar juga kosong, tampilkan pesan default
                     if (loadedRsvpIds.size === 0) {
                         rsvpListEl.innerHTML = `<div class="text-center text-gray-400 py-4 text-sm" id="emptyRsvp">Belum ada ucapan. Jadilah yang pertama! 💖</div>`;
                     }
                     return;
                 }
 
-                // Urutkan array dari ID terbesar (terbaru) ke terkecil (terlama)
-                // Asumsi: ID di database auto-increment (makin besar makin baru)
                 rsvps.sort((a, b) => b.id - a.id);
 
-                // Update counter jumlah ucapan
                 if (rsvpCountEl) rsvpCountEl.innerText = rsvps.length;
 
-                // Hapus pesan kosong jika ada
                 const emptyMsg = document.getElementById('emptyRsvp');
                 if (emptyMsg) emptyMsg.remove();
 
-                // Cek jika ada data lama yang dihapus dari database (opsional, untuk antisipasi)
                 if (rsvps.length < loadedRsvpIds.size) {
                     rsvpListEl.innerHTML = '';
                     loadedRsvpIds.clear();
                 }
 
-                // Filter hanya item yang belum ada di layar
                 const newItems = rsvps.filter(rsvp => !loadedRsvpIds.has(rsvp.id));
 
                 if (newItems.length > 0) {
                     const newHtml = newItems.map(rsvp => createRsvpItemHtml(rsvp)).join('');
-                    
-                    // Tambahkan ke bagian ATAS (afterbegin) agar yang terbaru di puncak
                     rsvpListEl.insertAdjacentHTML('afterbegin', newHtml);
-
-                    // Catat ID yang baru ditambahkan agar tidak diduplikat
                     newItems.forEach(item => loadedRsvpIds.add(item.id));
                 }
             }
 
-            // Fetch Data RSVP
             function updateRsvpList() {
                 fetch(`/invitation/${invitationId}/rsvps`)
                     .then(res => res.json())
@@ -725,7 +757,6 @@
                     .catch(err => console.error('Gagal memuat RSVP:', err));
             }
 
-            // Submit Data RSVP
             if (form) {
                 form.addEventListener('submit', function(e) {
                     e.preventDefault();
@@ -750,7 +781,7 @@
                             form.reset();
                             if(textarea) textarea.style.height = 'auto';
                             showToast("RSVP berhasil dikirim!");
-                            updateRsvpList(); // Langsung ambil data terbaru
+                            updateRsvpList(); 
                         } else {
                             rsvpMessageEl.innerText = data.message || "Gagal mengirim RSVP.";
                             rsvpMessageEl.classList.remove('hidden');
@@ -769,9 +800,7 @@
                 });
             }
 
-            // Init Polling
             updateRsvpList();
-            // Cek RSVP baru setiap 10 detik (tidak akan kedip karena hanya nambah yang baru)
             setInterval(updateRsvpList, 10000); 
 
             /* --- 5. SCROLL ANIMATION (OBSERVER) --- */
@@ -865,4 +894,5 @@
         }
     </script>
 </body>
+
 </html>

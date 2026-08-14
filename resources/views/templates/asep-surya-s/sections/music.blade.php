@@ -3,11 +3,11 @@
   <audio id="bgMusic" loop autoplay>
       @if($invitation->music == 0 && $invitation->music)
       <!-- Musik Custom -->
-      <source src="{{ asset('storage/'.$invitation->music) }}" type="audio/mpeg">
+      <source src="{{ storage_url($invitation->music) }}" type="audio/mpeg">
 
       @elseif($invitation->music && $invitation->musicPreset)
       <!-- Musik dari Database -->
-      <source src="{{ asset('storage/'.$invitation->musicPreset->audio_url) }}" type="audio/mpeg">
+      <source src="{{ storage_url($invitation->musicPreset->audio_url) }}" type="audio/mpeg">
 
       @else
       <!-- Musik Default -->

@@ -19,6 +19,7 @@
 }
 </style>
 <!-- GALLERY -->
+    @if(($invitation->enable_gallery ?? true) && $invitation->galleries->count())
     <div class="animate-on-scroll px-6">
         <i class="ti ti-leaf-heart"></i>
 
@@ -28,9 +29,9 @@
         <div class="masonry-gallery gap-3 mt-6">
 
                 @foreach ($invitation->galleries as $photo)
-                    <a href="{{ asset('storage/' . $photo->image) }}" data-fancybox="gallery">
+                    <a href="{{ storage_url($photo->image) }}" data-fancybox="gallery">
                         <img
-                            src="{{ asset('storage/' . $photo->image) }}"
+                            src="{{ storage_url($photo->image) }}"
                             class="masonry-item"
                             loading="lazy">
                     </a>
@@ -52,6 +53,7 @@
         </div>
 
     </div>
+    @endif
 
 
 

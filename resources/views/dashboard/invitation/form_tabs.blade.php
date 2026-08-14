@@ -30,6 +30,15 @@
             height: 100% !important;
             flex-direction: column-reverse !important;
             border-right: none !important;
+            display: flex !important;
+        }
+
+        .sidebar-content-pane {
+            display: flex !important;
+            flex-direction: column !important;
+            flex: 1 !important;
+            min-height: 0 !important;
+            overflow: hidden !important;
         }
 
         .sidebar-nav-vertical {
@@ -45,6 +54,7 @@
             gap: 0.25rem !important;
             background: var(--bs-tertiary-bg);
             z-index: 1041;
+            flex-shrink: 0 !important;
         }
 
         .nav-vertical-link {
@@ -72,9 +82,13 @@
             border-bottom: 1px solid var(--bs-border-color);
             flex-wrap: nowrap !important;
             justify-content: space-between !important;
+            flex-shrink: 0 !important;
         }
 
         .sidebar-content {
+            flex: 1 !important;
+            overflow-y: auto !important;
+            min-height: 0 !important;
             padding: 1.25rem 1rem !important;
             background: rgba(var(--bs-tertiary-bg-rgb), 0.3);
         }
@@ -91,26 +105,7 @@
         }
 
         .mobile-next-prev {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 0.5rem;
-            padding: 0.75rem;
-            background: var(--bs-card-bg);
-            border-top: 1px solid var(--bs-border-color);
-        }
-
-        .mobile-next-prev .btn {
-            flex: 1;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .mobile-next-prev #mobileTabLabel {
-            flex: 0 0 auto;
-            text-align: center;
-            min-width: 50px;
+            display: none !important;
         }
 
         #cropModal {
@@ -270,6 +265,10 @@
     .country-dropdown-menu .country-option:hover {
         background-color: var(--bs-primary-bg-subtle);
     }
+    
+    .tab-content {
+        padding: 10px !important;
+    }
 </style>
 
 {{-- 1. MEMPELAI PRIA --}}
@@ -283,35 +282,26 @@
             <div class="row g-3">
                 <div class="col-12">
                     <label for="groom_name" class="form-label fw-semibold mb-2">Nama Lengkap</label>
-                    <input type="text" id="groom_name" name="groom_name"
-                        value="{{ old('groom_name', $inv?->groom_name ?? '') }}" placeholder="Contoh: Ahmad Fauzan"
-                        class="form-control">
+                    <input type="text" id="groom_name" name="groom_name" value="{{ old('groom_name', $inv?->groom_name ?? '') }}" placeholder="Contoh: Ahmad Fauzan" class="form-control">
                     <small class="text-muted">Nama lengkap sesuai KTP.</small>
                 </div>
                 <div class="col-12">
                     <label for="groom_nickname" class="form-label fw-semibold mb-2">Nama Panggilan</label>
-                    <input type="text" id="groom_nickname" name="groom_nickname"
-                        value="{{ old('groom_nickname', $inv?->groom_nickname ?? '') }}" placeholder="Contoh: Fauzan"
-                        class="form-control">
+                    <input type="text" id="groom_nickname" name="groom_nickname" value="{{ old('groom_nickname', $inv?->groom_nickname ?? '') }}" placeholder="Contoh: Fauzan" class="form-control">
                     <small class="text-muted">Nama panggilan yang akan ditampilkan di undangan.</small>
                 </div>
                 <div class="col-md-6">
                     <label for="groom_father_name" class="form-label fw-semibold mb-2">Nama Ayah</label>
-                    <input type="text" id="groom_father_name" name="groom_father_name"
-                        value="{{ old('groom_father_name', $inv?->groom_father_name ?? '') }}"
-                        placeholder="Contoh: Bapak Hadi" class="form-control">
+                    <input type="text" id="groom_father_name" name="groom_father_name" value="{{ old('groom_father_name', $inv?->groom_father_name ?? '') }}" placeholder="Contoh: Bapak Hadi" class="form-control">
                 </div>
                 <div class="col-md-6">
                     <label for="groom_mother_name" class="form-label fw-semibold mb-2">Nama Ibu</label>
-                    <input type="text" id="groom_mother_name" name="groom_mother_name"
-                        value="{{ old('groom_mother_name', $inv?->groom_mother_name ?? '') }}"
-                        placeholder="Contoh: Ibu Siti" class="form-control">
+                    <input type="text" id="groom_mother_name" name="groom_mother_name" value="{{ old('groom_mother_name', $inv?->groom_mother_name ?? '') }}" placeholder="Contoh: Ibu Siti" class="form-control">
                 </div>
                 <div class="col-12">
                     <label class="form-label fw-semibold mb-2">Anak ke-...</label>
                     <div class="d-flex gap-2 align-items-center">
-                        <select id="groom_child_order_select" class="form-select"
-                            onchange="handleChildOrderChange('groom', this.value)">
+                        <select id="groom_child_order_select" class="form-select" onchange="handleChildOrderChange('groom', this.value)">
                             <option value="">-- Pilih --</option>
                             <option value="Anak pertama">Anak pertama</option>
                             <option value="Anak ke-2">Anak ke-2</option>
@@ -320,11 +310,8 @@
                             <option value="Anak ke-5">Anak ke-5</option>
                             <option value="__other__">Lebih dari 5...</option>
                         </select>
-                        <input type="number" id="groom_child_order_number" class="form-control"
-                            style="display: none; max-width: 120px;" placeholder="Nomor" min="6"
-                            oninput="formatChildOrderNumber('groom', this.value)">
-                        <input type="hidden" id="groom_child_order" name="groom_child_order"
-                            value="{{ old('groom_child_order', $inv?->groom_child_order ?? '') }}">
+                        <input type="number" id="groom_child_order_number" class="form-control" style="display: none; max-width: 120px;" placeholder="Nomor" min="6" oninput="formatChildOrderNumber('groom', this.value)">
+                        <input type="hidden" id="groom_child_order" name="groom_child_order" value="{{ old('groom_child_order', $inv?->groom_child_order ?? '') }}">
                     </div>
                     <small class="text-muted">Tulis urutan anak mempelai pria dalam keluarganya.</small>
                 </div>
@@ -332,31 +319,22 @@
                     <label for="groom_username_instagram" class="form-label fw-semibold mb-2">Instagram Username</label>
                     <div class="input-group">
                         <span class="input-group-text bg-light">@</span>
-                        <input type="text" id="groom_username_instagram" name="groom_username_instagram"
-                            value="{{ old('groom_username_instagram', $inv?->groom_username_instagram ?? '') }}"
-                            class="form-control insta-username" placeholder="fauzan_akbar">
+                        <input type="text" id="groom_username_instagram" name="groom_username_instagram" value="{{ old('groom_username_instagram', $inv?->groom_username_instagram ?? '') }}" class="form-control insta-username" placeholder="fauzan_akbar">
                     </div>
                     <small class="text-muted">Username Instagram tanpa tanda @.</small>
                 </div>
                 <div class="col-12">
                     <label class="form-label fw-semibold mb-2">Foto Mempelai Pria</label>
-                    <div class="upload-zone border rounded p-4 text-center {{ ($inv && $inv->foto_pria) ? 'd-none' : '' }}"
-                        id="uploadBoxGroomContainer">
+                    <div class="upload-zone border rounded p-4 text-center {{ ($inv && $inv->foto_pria) ? 'd-none' : '' }}" id="uploadBoxGroomContainer">
                         <label for="foto_pria" class="cursor-pointer mb-0 d-block">
                             <i class="bi bi-cloud-upload fs-3 text-primary"></i>
                             <p class="text-muted mb-0 mt-2">Klik untuk upload foto</p>
-                            <input id="foto_pria" type="file" name="foto_pria" class="d-none"
-                                onchange="openCropModal(event, 'groom')">
+                            <input id="foto_pria" type="file" name="foto_pria" class="d-none" onchange="openCropModal(event, 'groom')">
                         </label>
                     </div>
-                    <div id="previewContainerGroom"
-                        class="mt-3 {{ ($inv && $inv->foto_pria) ? '' : 'd-none' }} text-center position-relative">
-                        <img id="previewGroom"
-                            src="{{ ($inv && $inv->foto_pria) ? storage_url_with_fallback($inv->foto_pria, asset('assets/fav.png'), ($inv->updated_at ?? now())->timestamp) : '' }}"
-                            class="img-fluid rounded border shadow-sm" style="max-height: 200px; object-fit: cover;">
-                        <button type="button" onclick="removePreview('groom')"
-                            class="btn btn-danger btn-sm position-absolute top-0 end-0 m-2"><i
-                                class="bi bi-x"></i></button>
+                    <div id="previewContainerGroom" class="mt-3 {{ ($inv && $inv->foto_pria) ? '' : 'd-none' }} text-center position-relative">
+                        <img id="previewGroom" src="{{ ($inv && $inv->foto_pria) ? storage_url_with_fallback($inv->foto_pria, asset('assets/fav.png'), ($inv->updated_at ?? now())->timestamp) : '' }}" class="img-fluid rounded border shadow-sm" style="max-height: 200px; object-fit: cover;">
+                        <button type="button" onclick="removePreview('groom')" class="btn btn-danger btn-sm position-absolute top-0 end-0 m-2"><i class="bi bi-x"></i></button>
                     </div>
                 </div>
             </div>
@@ -390,11 +368,8 @@
             <div class="row g-3" id="templateGallery">
                 @foreach ($templates as $template)
                     @php $isLocked = !auth()->user()->hasFeature('all_themes') && $template->slug !== 'simple-theme'; @endphp
-                    <div class="col-6 template-selector-item" data-category="{{ $template->category->name ?? 'modern' }}"
-                        data-name="{{ strtolower($template->name) }}"
-                        data-color="{{ $template->primary_color ?? '#0d9488' }}" data-template-id="{{ $template->id }}">
-                        <div class="card template-card-selector h-100 {{ $isLocked ? 'locked opacity-75' : '' }} {{ ($selectedTemplateId == $template->id) ? 'selected' : '' }}"
-                            onclick="{{ $isLocked ? 'showPremiumAlert()' : 'selectTemplate(this, ' . $template->id . ')' }}">
+                    <div class="col-6 template-selector-item" data-category="{{ $template->category->name ?? 'modern' }}" data-name="{{ strtolower($template->name) }}" data-color="{{ $template->primary_color ?? '#0d9488' }}" data-template-id="{{ $template->id }}">
+                        <div class="card template-card-selector h-100 {{ $isLocked ? 'locked opacity-75' : '' }} {{ ($selectedTemplateId == $template->id) ? 'selected' : '' }}" onclick="{{ $isLocked ? 'showPremiumAlert()' : 'selectTemplate(this, ' . $template->id . ')' }}">
                             <div class="position-absolute top-0 end-0 m-1 z-1">
                                 @if ($template->is_premium)
                                     <span class="premium-badge shadow-sm"><i class="bi bi-gem me-1"></i>PREMIUM</span>
@@ -412,12 +387,9 @@
                                 $thumb = $template->thumbnail ?? $template->preview;
                                 $thumbUrl = $thumb ? storage_url_with_fallback($thumb, 'https://placehold.co/300x400', $template->updated_at->timestamp) : 'https://placehold.co/300x400';
                             @endphp
-                            <img src="{{ $thumbUrl }}"
-                                class="card-img-top template-thumbnail {{ $isLocked ? 'grayscale' : '' }}"
-                                alt="{{ $template->name }}" onerror="this.src='https://placehold.co/300x400?text=No+Image'">
+                            <img src="{{ $thumbUrl }}" class="card-img-top template-thumbnail {{ $isLocked ? 'grayscale' : '' }}" alt="{{ $template->name }}" onerror="this.src='https://placehold.co/300x400?text=No+Image'">
                             <div class="card-body p-2 text-center">
-                                <span class="fw-bold text-truncate d-block"
-                                    style="font-size: 12px;">{{ $template->name }}</span>
+                                <span class="fw-bold text-truncate d-block" style="font-size: 12px;">{{ $template->name }}</span>
                             </div>
                         </div>
                     </div>
@@ -438,22 +410,16 @@
 
             <div class="mb-4">
                 <label class="form-label fw-semibold mb-2">Background Header (Sampul)</label>
-                <div class="upload-zone border rounded p-4 text-center {{ ($inv && $inv->gallery_cover) ? 'd-none' : '' }}"
-                    id="uploadBoxCoverContainer">
+                <div class="upload-zone border rounded p-4 text-center {{ ($inv && $inv->gallery_cover) ? 'd-none' : '' }}" id="uploadBoxCoverContainer">
                     <label for="gallery_cover" class="cursor-pointer mb-0 d-block">
                         <i class="bi bi-image fs-3 text-primary"></i>
                         <p class="text-muted mb-0 mt-2">Klik untuk upload Background Header</p>
-                        <input id="gallery_cover" type="file" name="gallery_cover" class="d-none"
-                            onchange="openCropModal(event, 'cover')">
+                        <input id="gallery_cover" type="file" name="gallery_cover" class="d-none" onchange="openCropModal(event, 'cover')">
                     </label>
                 </div>
-                <div id="previewContainerCover"
-                    class="mt-3 {{ ($inv && $inv->gallery_cover) ? '' : 'd-none' }} text-center position-relative">
-                    <img id="previewCover"
-                        src="{{ ($inv && $inv->gallery_cover) ? storage_url_with_fallback($inv->gallery_cover, asset('assets/fav.png'), ($inv->updated_at ?? now())->timestamp) : '' }}"
-                        class="img-fluid rounded border shadow-sm w-100" style="max-height: 250px; object-fit: cover;">
-                    <button type="button" onclick="removePreview('cover')"
-                        class="btn btn-danger btn-sm position-absolute top-0 end-0 m-2"><i class="bi bi-x"></i></button>
+                <div id="previewContainerCover" class="mt-3 {{ ($inv && $inv->gallery_cover) ? '' : 'd-none' }} text-center position-relative">
+                    <img id="previewCover" src="{{ ($inv && $inv->gallery_cover) ? storage_url_with_fallback($inv->gallery_cover, asset('assets/fav.png'), ($inv->updated_at ?? now())->timestamp) : '' }}" class="img-fluid rounded border shadow-sm w-100" style="max-height: 250px; object-fit: cover;">
+                    <button type="button" onclick="removePreview('cover')" class="btn btn-danger btn-sm position-absolute top-0 end-0 m-2"><i class="bi bi-x"></i></button>
                 </div>
                 <small class="text-muted mt-1 d-block">Foto sampul akan ditampilkan di bagian atas undangan.</small>
             </div>
@@ -461,8 +427,8 @@
             <div class="mb-3">
                 <label for="primary_color" class="form-label fw-semibold mb-2">Warna Utama</label>
                 <div class="d-flex gap-3 align-items-center">
-                    <input type="color" name="primary_color" id="primary_color" class="form-control form-control-color"
-                        value="{{ $inv?->primary_color ?? '#0d9488' }}" style="width: 60px; height: 40px;">
+                    <input type="color" name="primary_color" id="primary_color" class="form-control form-control-color" value="{{ $inv?->primary_color ?? '#0d9488' }}" style="width: 60px; height: 40px;">
+                    <input type="text" id="primary_color_text" class="form-control" style="max-width: 150px;" value="{{ $inv?->primary_color ?? '#0d9488' }}">
                     <span class="text-muted">Warna untuk teks, tombol, dan aksen pada undangan.</span>
                 </div>
             </div>
@@ -475,29 +441,41 @@
     @if(auth()->user()->hasFeature('gallery'))
         <div id="tab-3" class="tab-content d-none">
             <div class="mb-3">
-                <div
-                    class="card-header bg-transparent border-0 p-0 pb-3 d-flex justify-content-between align-items-center mb-3">
-                    <h6 class="fw-bold mb-0">Galeri Foto</h6>
+                <div class="form-check form-switch mb-3">
+                    <input class="form-check-input" type="checkbox" id="enable_gallery" name="enable_gallery" value="1" {{ ($inv && $inv->enable_gallery) ? 'checked' : '' }} onchange="toggleSettings('galleryContent', this.checked)">
+                    <label class="form-check-label fw-bold" for="enable_gallery">Aktifkan Galeri Foto</label>
                 </div>
-                <div class="card-body p-0">
-                    <div id="gallery-dropzone" class="border border-dashed p-5 text-center rounded cursor-pointer">
-                        <i class="bi bi-images fs-3 text-muted"></i>
-                        <p class="mb-0 mt-2">Klik atau drag & drop foto di sini</p>
-                        <input type="file" id="gallery-input" name="gallery[]" multiple accept="image/*" class="d-none">
+                <div id="galleryContent" class="{{ ($inv && $inv->enable_gallery) ? '' : 'd-none' }}">
+                    <div class="card-header bg-transparent border-0 p-0 pb-3 d-flex justify-content-between align-items-center mb-3">
+                        <h6 class="fw-bold mb-0">Galeri Foto</h6>
                     </div>
-                    <div id="gallery-preview" class="d-flex gap-2 flex-wrap mt-3">
-                        @if($inv && $inv->galleries)
-                            @foreach($inv->galleries as $image)
-                                <div class="position-relative border rounded overflow-hidden" style="width: 80px; height: 80px;">
-                                    <img src="{{ storage_url_with_fallback($image->image, 'https://placehold.co/80x80?text=No+Image', ($inv->updated_at ?? now())->timestamp) }}" class="w-100 h-100 object-fit-cover">
-                                    <button type="button" class="btn btn-danger btn-sm position-absolute top-0 end-0 p-0"
-                                        style="width:20px;height:20px; line-height: 1;"
-                                        onclick="deleteGallery({{ $image->id }}, this)">&times;</button>
-                                </div>
-                            @endforeach
-                        @endif
+                    <div class="card-body p-0">
+                        <div id="gallery-dropzone" class="border border-dashed p-5 text-center rounded cursor-pointer">
+                            <i class="bi bi-images fs-3 text-muted"></i>
+                            <p class="mb-0 mt-2">Klik atau drag & drop foto di sini</p>
+                            <input type="file" id="gallery-input" name="gallery[]" multiple accept="image/*" class="d-none">
+                        </div>
+                        <div id="gallery-preview" class="d-flex gap-2 flex-wrap mt-3">
+                            @if($inv && $inv->galleries)
+                                @foreach($inv->galleries as $image)
+                                    <div class="position-relative border rounded overflow-hidden" style="width: 80px; height: 80px;">
+                                        <img src="{{ storage_url_with_fallback($image->image, 'https://placehold.co/80x80?text=No+Image', ($inv->updated_at ?? now())->timestamp) }}" class="w-100 h-100 object-fit-cover">
+                                        <button type="button" class="btn btn-danger btn-sm position-absolute top-0 end-0 p-0" style="width:20px;height:20px; line-height: 1;" onclick="deleteGallery({{ $image->id }}, this)">&times;</button>
+                                    </div>
+                                @endforeach
+                            @endif
+                        </div>
+                        <small class="text-muted mt-2 d-block">
+                            @php
+                                $galleryLimit = data_get(auth()->user()->subscription->plan->features ?? [], 'gallery_limit');
+                                if (is_null($galleryLimit)) {
+                                    echo 'Unlimited foto. Format: JPG, PNG, atau WebP.';
+                                } else {
+                                    echo "Maksimal {$galleryLimit} foto. Format: JPG, PNG, atau WebP.";
+                                }
+                            @endphp
+                        </small>
                     </div>
-                    <small class="text-muted mt-2 d-block">Maksimal 10 foto. Format: JPG, PNG, atau WebP.</small>
                 </div>
             </div>
         </div>
@@ -509,88 +487,89 @@
     @if(auth()->user()->hasFeature('background_music') || auth()->user()->hasFeature('custom_music'))
         <div id="tab-4" class="tab-content d-none">
             <div class="mb-3">
-                <div class="card-header bg-transparent border-0 p-3 mb-3">
-                    <h6 class="fw-bold mb-0">Lagu Latar</h6>
+                <div class="form-check form-switch mb-3">
+                    <input class="form-check-input" type="checkbox" id="enable_music" name="enable_music" value="1" {{ ($inv && $inv->enable_music) ? 'checked' : '' }} onchange="toggleSettings('musicContent', this.checked)">
+                    <label class="form-check-label fw-bold" for="enable_music">Aktifkan Musik Latar</label>
                 </div>
-                <div class="card-body p-0">
-                    @php $musicSource = $inv?->music_source ?? 'library'; @endphp
-                    <input type="hidden" id="music_id" name="music_id" value="{{ $inv?->music ?? '' }}">
-
-                    <div class="music-source-tabs">
-                        <input type="radio" class="btn-check" name="music_source" id="srcLibrary" value="library" {{ $musicSource == 'library' ? 'checked' : '' }} onchange="switchMusicSource('library')">
-                        <label for="srcLibrary"><i class="bi bi-music-note-list"></i> Library</label>
-
-                        <input type="radio" class="btn-check" name="music_source" id="srcYoutube" value="youtube" {{ $musicSource == 'youtube' ? 'checked' : '' }} onchange="switchMusicSource('youtube')">
-                        <label for="srcYoutube"><i class="bi bi-youtube"></i> YouTube</label>
-
-                        <input type="radio" class="btn-check" name="music_source" id="srcUpload" value="upload" {{ $musicSource == 'upload' ? 'checked' : '' }} onchange="switchMusicSource('upload')">
-                        <label for="srcUpload"><i class="bi bi-cloud-upload"></i> Upload</label>
+                <div id="musicContent" class="{{ ($inv && $inv->enable_music) ? '' : 'd-none' }}">
+                    <div class="card-header bg-transparent border-0 p-3 mb-3">
+                        <h6 class="fw-bold mb-0">Lagu Latar</h6>
                     </div>
+                    <div class="card-body p-0">
+                        @php $musicSource = $inv?->music_source ?? 'library'; @endphp
+                        <input type="hidden" id="music_id" name="music_id" value="{{ $inv?->music ?? '' }}">
 
-                    <div class="music-content-box">
-                        <div id="source-library" class="music-source-div {{ $musicSource != 'library' ? 'd-none' : '' }}">
-                            <label class="form-label fw-semibold mb-2">Pilih Lagu dari Library</label>
-                            <div id="musicListContainer" class="d-flex flex-column gap-2"
-                                style="max-height: 250px; overflow-y: auto; padding-right: 5px;">
-                                @foreach ($music as $m)
-                                    <div class="music-list-item border rounded {{ ($inv && $inv->music == $m->id) ? 'selected' : '' }}"
-                                        data-id="{{ $m->id }}" data-url="{{ $m->full_audio_url }}"
-                                        data-cover="{{ $m->full_cover_url ?? asset('tempelate/no_sound.webp') }}"
-                                        data-artist="{{ $m->artist }}" data-title="{{ $m->title }}"
-                                        onclick="handleMusicClick(this)">
-                                        <div class="music-icon-box">
-                                            <i class="bi bi-music-note-beamed"></i>
+                        <div class="music-source-tabs">
+                            <input type="radio" class="btn-check" name="music_source" id="srcLibrary" value="library" {{ $musicSource == 'library' ? 'checked' : '' }} onchange="switchMusicSource('library')">
+                            <label for="srcLibrary"><i class="bi bi-music-note-list"></i> Library</label>
+
+                            <input type="radio" class="btn-check" name="music_source" id="srcYoutube" value="youtube" {{ $musicSource == 'youtube' ? 'checked' : '' }} onchange="switchMusicSource('youtube')">
+                            <label for="srcYoutube"><i class="bi bi-youtube"></i> YouTube</label>
+
+                            <input type="radio" class="btn-check" name="music_source" id="srcUpload" value="upload" {{ $musicSource == 'upload' ? 'checked' : '' }} onchange="switchMusicSource('upload')">
+                            <label for="srcUpload"><i class="bi bi-cloud-upload"></i> Upload</label>
+                        </div>
+
+                        <div class="music-content-box">
+                            <div id="source-library" class="music-source-div {{ $musicSource != 'library' ? 'd-none' : '' }}">
+                                <label class="form-label fw-semibold mb-2">Pilih Lagu dari Library</label>
+                                <div id="musicListContainer" class="d-flex flex-column gap-2" style="max-height: 250px; overflow-y: auto; padding-right: 5px;">
+                                    @foreach ($music as $m)
+                                        <div class="music-list-item border rounded {{ ($inv && $inv->music == $m->id) ? 'selected' : '' }}" data-id="{{ $m->id }}" data-url="{{ $m->full_audio_url }}" data-cover="{{ $m->full_cover_url ?? asset('tempelate/no_sound.webp') }}" data-artist="{{ $m->artist }}" data-title="{{ $m->title }}" onclick="handleMusicClick(this)">
+                                            <div class="music-icon-box">
+                                                <i class="bi bi-music-note-beamed"></i>
+                                            </div>
+                                            <div class="flex-grow-1 overflow-hidden">
+                                                <p class="mb-0 fw-bold music-title-clamp">{{ $m->title }}</p>
+                                                <p class="mb-0 text-muted" style="font-size: 11px;">{{ $m->artist }}</p>
+                                            </div>
+                                            <div class="music-play-btn" onclick="event.stopPropagation(); previewAudio('{{ $m->full_audio_url }}')">
+                                                <i class="bi bi-play-circle-fill fs-4"></i>
+                                            </div>
                                         </div>
-                                        <div class="flex-grow-1 overflow-hidden">
-                                            <p class="mb-0 fw-bold music-title-clamp">{{ $m->title }}</p>
-                                            <p class="mb-0 text-muted" style="font-size: 11px;">{{ $m->artist }}</p>
-                                        </div>
-                                        <div class="music-play-btn"
-                                            onclick="event.stopPropagation(); previewAudio('{{ $m->full_audio_url }}')">
-                                            <i class="bi bi-play-circle-fill fs-4"></i>
-                                        </div>
+                                    @endforeach
+                                </div>
+                                <small class="text-muted d-block mt-2">Pilih lagu latar yang akan ditampilkan di undangan.</small>
+                            </div>
+
+                            <div id="source-youtube" class="music-source-div {{ $musicSource != 'youtube' ? 'd-none' : '' }}">
+                                <label class="form-label fw-semibold mb-2">Link YouTube (Musik)</label>
+                                <div class="input-group mb-2">
+                                    <span class="input-group-text bg-danger text-white border-0"><i class="bi bi-youtube"></i></span>
+                                    <input type="text" name="music_youtube_url" class="form-control" placeholder="https://www.youtube.com/watch?v=..." value="{{ $inv?->music_youtube_url ?? '' }}" oninput="updateLivePreview()">
+                                </div>
+                                <small class="text-muted d-block">Masukkan link YouTube untuk musik latar undangan.</small>
+                            </div>
+
+                            <div id="source-upload" class="music-source-div {{ $musicSource != 'upload' ? 'd-none' : '' }}">
+                                @if(auth()->user()->hasFeature('custom_music'))
+                                    <label class="form-label fw-semibold mb-2">Upload File Audio</label>
+                                    <div class="upload-box-custom" onclick="document.getElementById('custom_music_input').click()">
+                                        <input type="file" id="custom_music_input" name="custom_music" accept="audio/*" class="d-none" onchange="updateLivePreview(); document.getElementById('upload_file_name').innerText = this.files[0] ? this.files[0].name : 'Belum ada file terpilih';">
+                                        <i class="bi bi-cloud-arrow-up fs-2 text-primary d-block mb-2"></i>
+                                        <p class="mb-1 fw-bold">Klik untuk memilih file</p>
+                                        <small class="text-muted" id="upload_file_name">
+                                            @if(!empty($inv->custom_music))
+                                                {{ basename($inv->custom_music) }}
+                                            @else
+                                                Belum ada file terpilih
+                                            @endif
+                                        </small>
                                     </div>
-                                @endforeach
+                                    <small class="text-muted d-block mt-2">Format: MP3, WAV, OGG (Maks 5MB).</small>
+                                @else
+                                    <div class="border border-dashed p-5 text-center rounded bg-light">
+                                        <i class="bi bi-lock fs-3 text-muted"></i>
+                                        <p class="mb-0 mt-2 text-muted">Fitur Custom Music tersedia untuk paket berbayar.</p>
+                                    </div>
+                                @endif
                             </div>
-                            <small class="text-muted d-block mt-2">Pilih lagu latar yang akan ditampilkan di undangan.</small>
                         </div>
 
-                        <div id="source-youtube" class="music-source-div {{ $musicSource != 'youtube' ? 'd-none' : '' }}">
-                            <label class="form-label fw-semibold mb-2">Link YouTube (Musik)</label>
-                            <div class="input-group mb-2">
-                                <span class="input-group-text bg-danger text-white border-0"><i
-                                        class="bi bi-youtube"></i></span>
-                                <input type="text" name="music_youtube_url" class="form-control"
-                                    placeholder="https://www.youtube.com/watch?v=..."
-                                    value="{{ $inv?->music_youtube_url ?? '' }}" oninput="updateLivePreview()">
-                            </div>
-                            <small class="text-muted d-block">Masukkan link YouTube untuk musik latar undangan.</small>
+                        <div class="audio-player-wrapper">
+                            <i class="bi bi-headphones fs-4 text-muted"></i>
+                            <audio id="audioPlayer" controls></audio>
                         </div>
-
-                        <div id="source-upload" class="music-source-div {{ $musicSource != 'upload' ? 'd-none' : '' }}">
-                            @if(auth()->user()->hasFeature('custom_music'))
-                                <label class="form-label fw-semibold mb-2">Upload File Audio</label>
-                                <div class="upload-box-custom" onclick="document.getElementById('custom_music_input').click()">
-                                    <input type="file" id="custom_music_input" name="custom_music" accept="audio/*" class="d-none"
-                                        onchange="updateLivePreview(); document.getElementById('upload_file_name').innerText = this.files[0] ? this.files[0].name : 'Belum ada file terpilih';">
-                                    <i class="bi bi-cloud-arrow-up fs-2 text-primary d-block mb-2"></i>
-                                    <p class="mb-1 fw-bold">Klik untuk memilih file</p>
-                                    <small class="text-muted" id="upload_file_name">@if(!empty($inv->custom_music))
-                                    {{ basename($inv->custom_music) }} @else Belum ada file terpilih @endif</small>
-                                </div>
-                                <small class="text-muted d-block mt-2">Format: MP3, WAV, OGG (Maks 5MB).</small>
-                            @else
-                                <div class="border border-dashed p-5 text-center rounded bg-light">
-                                    <i class="bi bi-lock fs-3 text-muted"></i>
-                                    <p class="mb-0 mt-2 text-muted">Fitur Custom Music tersedia untuk paket berbayar.</p>
-                                </div>
-                            @endif
-                        </div>
-                    </div>
-
-                    <div class="audio-player-wrapper">
-                        <i class="bi bi-headphones fs-4 text-muted"></i>
-                        <audio id="audioPlayer" controls></audio>
                     </div>
                 </div>
             </div>
@@ -627,43 +606,22 @@
                         <option value="+44">🇬🇧 +44</option>
                         <option value="+91">🇮🇳 +91</option>
                     </select>
-                    <button type="button"
-                        class="btn btn-outline-secondary dropdown-toggle country-dropdown-btn flex-shrink-0"
-                        id="countryDropdownBtn" data-bs-toggle="dropdown" aria-expanded="false">
+                    <button type="button" class="btn btn-outline-secondary dropdown-toggle country-dropdown-btn flex-shrink-0" id="countryDropdownBtn" data-bs-toggle="dropdown" aria-expanded="false">
                         <span id="selectedFlagCountry" class="flag-emoji">🇮🇩</span>
                         <span class="ms-1" id="selectedCodeCountry">+62</span>
                     </button>
                     <ul class="dropdown-menu country-dropdown-menu" aria-labelledby="countryDropdownBtn">
-                        <li><a class="dropdown-item country-option d-flex align-items-center gap-2" href="#"
-                                data-code="+62" data-flag="🇮🇩"><span class="flag-emoji">🇮🇩</span> <span
-                                    class="fw-medium">+62</span> <span class="text-muted ms-2">Indonesia</span></a></li>
-                        <li><a class="dropdown-item country-option d-flex align-items-center gap-2" href="#"
-                                data-code="+60" data-flag="🇲🇾"><span class="flag-emoji">🇲🇾</span> <span
-                                    class="fw-medium">+60</span> <span class="text-muted ms-2">Malaysia</span></a></li>
-                        <li><a class="dropdown-item country-option d-flex align-items-center gap-2" href="#"
-                                data-code="+65" data-flag="🇸🇬"><span class="flag-emoji">🇸🇬</span> <span
-                                    class="fw-medium">+65</span> <span class="text-muted ms-2">Singapura</span></a></li>
-                        <li><a class="dropdown-item country-option d-flex align-items-center gap-2" href="#"
-                                data-code="+66" data-flag="🇹🇭"><span class="flag-emoji">🇹🇭</span> <span
-                                    class="fw-medium">+66</span> <span class="text-muted ms-2">Thailand</span></a></li>
-                        <li><a class="dropdown-item country-option d-flex align-items-center gap-2" href="#"
-                                data-code="+1" data-flag="🇺🇸"><span class="flag-emoji">🇺🇸</span> <span
-                                    class="fw-medium">+1</span> <span class="text-muted ms-2">USA/Canada</span></a></li>
-                        <li><a class="dropdown-item country-option d-flex align-items-center gap-2" href="#"
-                                data-code="+81" data-flag="🇯🇵"><span class="flag-emoji">🇯🇵</span> <span
-                                    class="fw-medium">+81</span> <span class="text-muted ms-2">Jepang</span></a></li>
-                        <li><a class="dropdown-item country-option d-flex align-items-center gap-2" href="#"
-                                data-code="+82" data-flag="🇰🇷"><span class="flag-emoji">🇰🇷</span> <span
-                                    class="fw-medium">+82</span> <span class="text-muted ms-2">Korea</span></a></li>
-                        <li><a class="dropdown-item country-option d-flex align-items-center gap-2" href="#"
-                                data-code="+44" data-flag="🇬🇧"><span class="flag-emoji">🇬🇧</span> <span
-                                    class="fw-medium">+44</span> <span class="text-muted ms-2">Inggris</span></a></li>
-                        <li><a class="dropdown-item country-option d-flex align-items-center gap-2" href="#"
-                                data-code="+91" data-flag="🇮🇳"><span class="flag-emoji">🇮🇳</span> <span
-                                    class="fw-medium">+91</span> <span class="text-muted ms-2">India</span></a></li>
+                        <li><a class="dropdown-item country-option d-flex align-items-center gap-2" href="#" data-code="+62" data-flag="🇮🇩"><span class="flag-emoji">🇮🇩</span> <span class="fw-medium">+62</span> <span class="text-muted ms-2">Indonesia</span></a></li>
+                        <li><a class="dropdown-item country-option d-flex align-items-center gap-2" href="#" data-code="+60" data-flag="🇲🇾"><span class="flag-emoji">🇲🇾</span> <span class="fw-medium">+60</span> <span class="text-muted ms-2">Malaysia</span></a></li>
+                        <li><a class="dropdown-item country-option d-flex align-items-center gap-2" href="#" data-code="+65" data-flag="🇸🇬"><span class="flag-emoji">🇸🇬</span> <span class="fw-medium">+65</span> <span class="text-muted ms-2">Singapura</span></a></li>
+                        <li><a class="dropdown-item country-option d-flex align-items-center gap-2" href="#" data-code="+66" data-flag="🇹🇭"><span class="flag-emoji">🇹🇭</span> <span class="fw-medium">+66</span> <span class="text-muted ms-2">Thailand</span></a></li>
+                        <li><a class="dropdown-item country-option d-flex align-items-center gap-2" href="#" data-code="+1" data-flag="🇺🇸"><span class="flag-emoji">🇺🇸</span> <span class="fw-medium">+1</span> <span class="text-muted ms-2">USA/Canada</span></a></li>
+                        <li><a class="dropdown-item country-option d-flex align-items-center gap-2" href="#" data-code="+81" data-flag="🇯🇵"><span class="flag-emoji">🇯🇵</span> <span class="fw-medium">+81</span> <span class="text-muted ms-2">Jepang</span></a></li>
+                        <li><a class="dropdown-item country-option d-flex align-items-center gap-2" href="#" data-code="+82" data-flag="🇰🇷"><span class="flag-emoji">🇰🇷</span> <span class="fw-medium">+82</span> <span class="text-muted ms-2">Korea</span></a></li>
+                        <li><a class="dropdown-item country-option d-flex align-items-center gap-2" href="#" data-code="+44" data-flag="🇬🇧"><span class="flag-emoji">🇬🇧</span> <span class="fw-medium">+44</span> <span class="text-muted ms-2">Inggris</span></a></li>
+                        <li><a class="dropdown-item country-option d-flex align-items-center gap-2" href="#" data-code="+91" data-flag="🇮🇳"><span class="flag-emoji">🇮🇳</span> <span class="fw-medium">+91</span> <span class="text-muted ms-2">India</span></a></li>
                     </ul>
-                    <input type="tel" id="phoneNumber" class="form-control" placeholder="81234567890"
-                        autocomplete="off">
+                    <input type="tel" id="phoneNumber" class="form-control" placeholder="81234567890" autocomplete="off">
                 </div>
                 <input type="hidden" name="rsvp_whatsapp" id="fullPhone" value="{{ $inv?->rsvp_whatsapp ?? '' }}">
                 <small class="text-muted">Nomor HP untuk menerima notifikasi RSVP dari tamu.</small>
@@ -686,19 +644,16 @@
         <div class="card-body p-0">
             <div class="mb-4">
                 <label class="form-label fw-semibold mb-2">Tanggal Pernikahan</label>
-                <input type="date" id="wedding_date" name="wedding_date" value="{{ $inv?->wedding_date ?? '' }}"
-                    class="form-control">
+                <input type="date" id="wedding_date" name="wedding_date" value="{{ $inv?->wedding_date ?? '' }}" class="form-control">
                 <small class="text-muted">Tanggal pelaksanaan acara pernikahan.</small>
             </div>
 
             <hr class="my-4">
             <div class="mb-4">
                 <label class="form-label fw-bold text-primary mb-3">Akad Nikah</label>
-                <input type="text" name="akad_location" value="{{ $inv?->akad_location ?? '' }}"
-                    placeholder="Contoh: Gedung Merdeka" class="form-control mb-2">
+                <input type="text" name="akad_location" value="{{ $inv?->akad_location ?? '' }}" placeholder="Contoh: Gedung Merdeka" class="form-control mb-2">
                 <small class="text-muted">Nama tempat pelaksanaan akad nikah.</small>
-                <input type="text" name="akad_address" value="{{ $inv?->akad_address ?? '' }}"
-                    placeholder="Alamat lengkap" class="form-control mt-3 mb-2">
+                <input type="text" name="akad_address" value="{{ $inv?->akad_address ?? '' }}" placeholder="Alamat lengkap" class="form-control mt-3 mb-2">
                 <div class="row g-2 mt-1">
                     <div class="col-6">
                         <small class="text-muted d-block mb-1">Waktu Mulai</small>
@@ -706,52 +661,41 @@
                     </div>
                     <div class="col-6">
                         <small class="text-muted d-block mb-1">Waktu Selesai</small>
-                        <input type="time" name="akad_time_end" value="{{ $inv?->akad_time_end ?? '' }}"
-                            class="form-control time-end">
+                        <input type="time" name="akad_time_end" value="{{ $inv?->akad_time_end ?? '' }}" class="form-control time-end">
                         <div class="form-check mt-2">
                             <input class="form-check-input sampai-selesai" type="checkbox" id="akad_time_end_done">
                             <label class="form-check-label" for="akad_time_end_done">Selesai</label>
                         </div>
                     </div>
                 </div>
-                <input type="text" name="akad_maps" value="{{ $inv?->akad_maps ?? '' }}" placeholder="Link Google Maps"
-                    class="form-control mt-3" oninput="updateMapEmbed('akad_maps', 'akad_map_embed')">
+                <input type="text" name="akad_maps" value="{{ $inv?->akad_maps ?? '' }}" placeholder="Link Google Maps" class="form-control mt-3" oninput="updateMapEmbed('akad_maps', 'akad_map_embed')">
                 <small class="text-muted">Link peta lokasi akad nikah.</small>
-                <div id="akad_map_embed" class="mt-2 rounded overflow-hidden border"
-                    style="height: 0; transition: height 0.3s;"></div>
+                <div id="akad_map_embed" class="mt-2 rounded overflow-hidden border" style="height: 0; transition: height 0.3s;"></div>
             </div>
 
             <hr class="my-4">
             <div class="mb-3">
                 <label class="form-label fw-bold text-primary mb-3">Resepsi</label>
-                <input type="text" name="resepsi_location" value="{{ $inv?->resepsi_location ?? '' }}"
-                    placeholder="Contoh: Hotel Mulia" class="form-control mb-2">
+                <input type="text" name="resepsi_location" value="{{ $inv?->resepsi_location ?? '' }}" placeholder="Contoh: Hotel Mulia" class="form-control mb-2">
                 <small class="text-muted">Nama tempat pelaksanaan resepsi.</small>
-                <input type="text" name="resepsi_address" value="{{ $inv?->resepsi_address ?? '' }}"
-                    placeholder="Alamat lengkap" class="form-control mt-3 mb-2">
+                <input type="text" name="resepsi_address" value="{{ $inv?->resepsi_address ?? '' }}" placeholder="Alamat lengkap" class="form-control mt-3 mb-2">
                 <div class="row g-2 mt-1">
                     <div class="col-6">
                         <small class="text-muted d-block mb-1">Waktu Mulai</small>
-                        <input type="time" name="resepsi_time" value="{{ $inv?->resepsi_time ?? '' }}"
-                            class="form-control">
+                        <input type="time" name="resepsi_time" value="{{ $inv?->resepsi_time ?? '' }}" class="form-control">
                     </div>
                     <div class="col-6">
                         <small class="text-muted d-block mb-1">Waktu Selesai</small>
-                        <input type="time" name="resepsi_time_end" value="{{ $inv?->resepsi_time_end ?? '' }}"
-                            class="form-control time-end">
+                        <input type="time" name="resepsi_time_end" value="{{ $inv?->resepsi_time_end ?? '' }}" class="form-control time-end">
                         <div class="form-check mt-2">
-                            <input class="form-check-input sampai-selesai" type="checkbox" id="sampai_selesai"
-                                name="sampai_selesai" value="1">
+                            <input class="form-check-input sampai-selesai" type="checkbox" id="sampai_selesai" name="sampai_selesai" value="1">
                             <label class="form-check-label" for="sampai_selesai">Selesai</label>
                         </div>
                     </div>
                 </div>
-                <input type="text" name="resepsi_maps" value="{{ $inv?->resepsi_maps ?? '' }}"
-                    placeholder="Link Google Maps" class="form-control mt-3"
-                    oninput="updateMapEmbed('resepsi_maps', 'resepsi_map_embed')">
+                <input type="text" name="resepsi_maps" value="{{ $inv?->resepsi_maps ?? '' }}" placeholder="Link Google Maps" class="form-control mt-3" oninput="updateMapEmbed('resepsi_maps', 'resepsi_map_embed')">
                 <small class="text-muted">Link peta lokasi resepsi.</small>
-                <div id="resepsi_map_embed" class="mt-2 rounded overflow-hidden border"
-                    style="height: 0; transition: height 0.3s;"></div>
+                <div id="resepsi_map_embed" class="mt-2 rounded overflow-hidden border" style="height: 0; transition: height 0.3s;"></div>
             </div>
         </div>
     </div>
@@ -768,33 +712,26 @@
             <div class="row g-3">
                 <div class="col-12">
                     <label for="bride_name" class="form-label fw-semibold mb-2">Nama Lengkap</label>
-                    <input type="text" id="bride_name" name="bride_name"
-                        value="{{ old('bride_name', $inv?->bride_name ?? '') }}" placeholder="Contoh: Siti Rahayu"
-                        class="form-control">
+                    <input type="text" id="bride_name" name="bride_name" value="{{ old('bride_name', $inv?->bride_name ?? '') }}" placeholder="Contoh: Siti Rahayu" class="form-control">
                     <small class="text-muted">Nama lengkap sesuai KTP.</small>
                 </div>
                 <div class="col-12">
                     <label for="bride_nickname" class="form-label fw-semibold mb-2">Nama Panggilan</label>
-                    <input type="text" id="bride_nickname" name="bride_nickname"
-                        value="{{ old('bride_nickname', $inv?->bride_nickname ?? '') }}" placeholder="Contoh: Rahayu"
-                        class="form-control">
+                    <input type="text" id="bride_nickname" name="bride_nickname" value="{{ old('bride_nickname', $inv?->bride_nickname ?? '') }}" placeholder="Contoh: Rahayu" class="form-control">
                     <small class="text-muted">Nama panggilan yang akan ditampilkan di undangan.</small>
                 </div>
                 <div class="col-md-6">
                     <label for="bride_father_name" class="form-label fw-semibold mb-2">Nama Ayah</label>
-                    <input type="text" id="bride_father_name" name="bride_father_name"
-                        value="{{ old('bride_father_name', $inv?->bride_father_name ?? '') }}" class="form-control">
+                    <input type="text" id="bride_father_name" name="bride_father_name" value="{{ old('bride_father_name', $inv?->bride_father_name ?? '') }}" class="form-control">
                 </div>
                 <div class="col-md-6">
                     <label for="bride_mother_name" class="form-label fw-semibold mb-2">Nama Ibu</label>
-                    <input type="text" id="bride_mother_name" name="bride_mother_name"
-                        value="{{ old('bride_mother_name', $inv?->bride_mother_name ?? '') }}" class="form-control">
+                    <input type="text" id="bride_mother_name" name="bride_mother_name" value="{{ old('bride_mother_name', $inv?->bride_mother_name ?? '') }}" class="form-control">
                 </div>
                 <div class="col-12">
                     <label class="form-label fw-semibold mb-2">Anak ke-...</label>
                     <div class="d-flex gap-2 align-items-center">
-                        <select id="bride_child_order_select" class="form-select"
-                            onchange="handleChildOrderChange('bride', this.value)">
+                        <select id="bride_child_order_select" class="form-select" onchange="handleChildOrderChange('bride', this.value)">
                             <option value="">-- Pilih --</option>
                             <option value="Anak pertama">Anak pertama</option>
                             <option value="Anak ke-2">Anak ke-2</option>
@@ -803,11 +740,8 @@
                             <option value="Anak ke-5">Anak ke-5</option>
                             <option value="__other__">Lebih dari 5...</option>
                         </select>
-                        <input type="number" id="bride_child_order_number" class="form-control"
-                            style="display: none; max-width: 120px;" placeholder="Nomor" min="6"
-                            oninput="formatChildOrderNumber('bride', this.value)">
-                        <input type="hidden" id="bride_child_order" name="bride_child_order"
-                            value="{{ old('bride_child_order', $inv?->bride_child_order ?? '') }}">
+                        <input type="number" id="bride_child_order_number" class="form-control" style="display: none; max-width: 120px;" placeholder="Nomor" min="6" oninput="formatChildOrderNumber('bride', this.value)">
+                        <input type="hidden" id="bride_child_order" name="bride_child_order" value="{{ old('bride_child_order', $inv?->bride_child_order ?? '') }}">
                     </div>
                     <small class="text-muted">Tulis urutan anak mempelai wanita dalam keluarganya.</small>
                 </div>
@@ -815,31 +749,22 @@
                     <label for="bride_username_instagram" class="form-label fw-semibold mb-2">Instagram Username</label>
                     <div class="input-group">
                         <span class="input-group-text bg-light">@</span>
-                        <input type="text" id="bride_username_instagram" name="bride_username_instagram"
-                            value="{{ old('bride_username_instagram', $inv?->bride_username_instagram ?? '') }}"
-                            class="form-control insta-username" placeholder="siti_rahayu">
+                        <input type="text" id="bride_username_instagram" name="bride_username_instagram" value="{{ old('bride_username_instagram', $inv?->bride_username_instagram ?? '') }}" class="form-control insta-username" placeholder="siti_rahayu">
                     </div>
                     <small class="text-muted">Username Instagram tanpa tanda @.</small>
                 </div>
                 <div class="col-12">
                     <label class="form-label fw-semibold mb-2">Foto Mempelai Wanita</label>
-                    <div class="upload-zone border rounded p-4 text-center bg-light {{ ($inv && $inv->foto_wanita) ? 'd-none' : '' }}"
-                        id="uploadBoxBrideContainer">
+                    <div class="upload-zone border rounded p-4 text-center bg-light {{ ($inv && $inv->foto_wanita) ? 'd-none' : '' }}" id="uploadBoxBrideContainer">
                         <label for="foto_wanita" class="cursor-pointer mb-0 d-block">
                             <i class="bi bi-cloud-upload fs-3 text-primary"></i>
                             <p class="text-muted mb-0 mt-2">Klik untuk upload foto</p>
-                            <input id="foto_wanita" type="file" name="foto_wanita" class="d-none"
-                                onchange="openCropModal(event, 'bride')">
+                            <input id="foto_wanita" type="file" name="foto_wanita" class="d-none" onchange="openCropModal(event, 'bride')">
                         </label>
                     </div>
-                    <div id="previewContainerBride"
-                        class="mt-3 {{ ($inv && $inv->foto_wanita) ? '' : 'd-none' }} text-center position-relative">
-                        <img id="previewBride"
-                            src="{{ ($inv && $inv->foto_wanita) ? storage_url_with_fallback($inv->foto_wanita, asset('assets/fav.png'), ($inv->updated_at ?? now())->timestamp) : '' }}"
-                            class="img-fluid rounded border shadow-sm" style="max-height: 200px; object-fit: cover;">
-                        <button type="button" onclick="removePreview('bride')"
-                            class="btn btn-danger btn-sm position-absolute top-0 end-0 m-2"><i
-                                class="bi bi-x"></i></button>
+                    <div id="previewContainerBride" class="mt-3 {{ ($inv && $inv->foto_wanita) ? '' : 'd-none' }} text-center position-relative">
+                        <img id="previewBride" src="{{ ($inv && $inv->foto_wanita) ? storage_url_with_fallback($inv->foto_wanita, asset('assets/fav.png'), ($inv->updated_at ?? now())->timestamp) : '' }}" class="img-fluid rounded border shadow-sm" style="max-height: 200px; object-fit: cover;">
+                        <button type="button" onclick="removePreview('bride')" class="btn btn-danger btn-sm position-absolute top-0 end-0 m-2"><i class="bi bi-x"></i></button>
                     </div>
                 </div>
             </div>
@@ -856,73 +781,71 @@
                     <h6 class="fw-bold mb-0">Video & Kisah Cinta</h6>
                 </div>
                 <div class="card-body p-0">
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold mb-2">Link YouTube Video</label>
-                        <input type="text" name="video_link" value="{{ $inv?->video_link ?? '' }}"
-                            placeholder="https://youtube.com/..." class="form-control" {{ auth()->user()->hasFeature('streaming_video') ? '' : 'disabled' }}>
-                        @if(!auth()->user()->hasFeature('streaming_video'))
-                            <small class="text-muted">Fitur Link Video tersedia untuk paket berbayar.</small>
-                        @else
-                            <small class="text-muted">Link video YouTube untuk ditampilkan di undangan (opsional).</small>
-                        @endif
+                    <div class="form-check form-switch mb-3">
+                        <input class="form-check-input" type="checkbox" id="enable_video" name="enable_video" value="1" {{ ($inv && $inv->enable_video) ? 'checked' : '' }} onchange="toggleSettings('videoContent', this.checked)">
+                        <label class="form-check-label fw-bold" for="enable_video">Aktifkan Video</label>
+                    </div>
+                    <div id="videoContent" class="{{ ($inv && $inv->enable_video) ? '' : 'd-none' }}">
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold mb-2">Link YouTube Video</label>
+                            <input type="text" name="video_link" value="{{ $inv?->video_link ?? '' }}" placeholder="https://youtube.com/..." class="form-control" {{ auth()->user()->hasFeature('streaming_video') ? '' : 'disabled' }}>
+                            @if(!auth()->user()->hasFeature('streaming_video'))
+                                <small class="text-muted">Fitur Link Video tersedia untuk paket berbayar.</small>
+                            @else
+                                <small class="text-muted">Link video YouTube untuk ditampilkan di undangan (opsional).</small>
+                            @endif
+                        </div>
                     </div>
                     <hr class="my-4">
                     <div class="mb-3">
                         <label class="form-label fw-semibold mb-2">Kutipan Pernikahan</label>
                         <select name="quote_id" class="form-select mb-2" onchange="showQuote()">
                             <option value="">-- Pilih Kutipan --</option>
-                            <option value="rum21" {{ ($inv && $inv->quote_id == 'rum21') ? 'selected' : '' }}>QS. Ar-Rum : 21
-                            </option>
-                            <option value="nisa1" {{ ($inv && $inv->quote_id == 'nisa1') ? 'selected' : '' }}>QS. An-Nisa : 1
-                            </option>
-                            <option value="furqan74" {{ ($inv && $inv->quote_id == 'furqan74') ? 'selected' : '' }}>QS. Al-Furqan
-                                : 74</option>
+                            <option value="rum21" {{ ($inv && $inv->quote_id == 'rum21') ? 'selected' : '' }}>QS. Ar-Rum : 21</option>
+                            <option value="nisa1" {{ ($inv && $inv->quote_id == 'nisa1') ? 'selected' : '' }}>QS. An-Nisa : 1</option>
+                            <option value="furqan74" {{ ($inv && $inv->quote_id == 'furqan74') ? 'selected' : '' }}>QS. Al-Furqan : 74</option>
                         </select>
                         <small class="text-muted">Pilih ayat Al-Qur'an yang akan ditampilkan sebagai kutipan.</small>
-                        <textarea name="wedding_quote" id="wedding_quote" rows="3"
-                            class="form-control mt-3">{{ $inv?->wedding_quote ?? '' }}</textarea>
+                        <textarea name="wedding_quote" id="wedding_quote" rows="3" class="form-control mt-3">{{ $inv?->wedding_quote ?? '' }}</textarea>
                     </div>
                     <hr class="my-4">
-                    @if(auth()->user()->hasFeature('love_story'))
-                        <div id="loveStoryWrapper">
-                            <label class="form-label fw-semibold mb-2">Kisah Cinta</label>
-                            <small class="text-muted d-block mb-3">Ceritakan perjalanan cinta kalian agar tamu merasa lebih
-                                dekat.</small>
-                            @forelse($inv?->love_story ?? [] as $index => $story)
-                                <div class="love-story-item border rounded p-3 mb-3 bg-light">
-                                    <input type="text" name="story_title[]" value="{{ $story['title'] ?? '' }}"
-                                        class="form-control mb-2" placeholder="Judul kisah">
-                                    <textarea name="love_story[]" rows="2"
-                                        class="form-control mb-2">{{ $story['story'] ?? '' }}</textarea>
-                                    <div class="mb-2">
-                                        <label class="form-label fw-semibold mb-1" style="font-size: 12px;">Foto Kisah</label>
-                                        @if(!empty($story['photo']))
-                                            <div class="position-relative d-inline-block">
-                                                 <img src="{{ storage_url_with_fallback($story['photo'], 'https://placehold.co/300x200?text=No+Image', ($inv->updated_at ?? now())->timestamp) }}" class="img-fluid rounded border"
-                                                    style="max-height: 120px; object-fit: cover;">
-                                                <button type="button" class="btn btn-danger btn-sm position-absolute top-0 end-0 m-1"
-                                                    style="width:20px;height:20px;line-height:1;padding:0;"
-                                                    onclick="this.closest('.position-relative').remove(); this.closest('.love-story-item').querySelector('input[name=\'story_photo[]\']').value = '';">&times;</button>
-                                            </div>
-                                        @endif
-                                        <input type="file" name="story_photo[]" accept="image/*"
-                                            class="form-control form-control-sm mt-1">
+                    <div class="form-check form-switch mb-3">
+                        <input class="form-check-input" type="checkbox" id="enable_love_story" name="enable_love_story" value="1" {{ ($inv && $inv->enable_love_story) ? 'checked' : '' }} onchange="toggleSettings('loveStoryContent', this.checked)">
+                        <label class="form-check-label fw-bold" for="enable_love_story">Aktifkan Kisah Cinta</label>
+                    </div>
+                    <div id="loveStoryContent" class="{{ ($inv && $inv->enable_love_story) ? '' : 'd-none' }}">
+                        @if(auth()->user()->hasFeature('love_story'))
+                            <div id="loveStoryWrapper">
+                                <label class="form-label fw-semibold mb-2">Kisah Cinta</label>
+                                <small class="text-muted d-block mb-3">Ceritakan perjalanan cinta kalian agar tamu merasa lebih dekat.</small>
+                                @forelse($inv?->love_story ?? [] as $index => $story)
+                                    <div class="love-story-item border rounded p-3 mb-3 bg-light">
+                                        <input type="text" name="story_title[]" value="{{ $story['title'] ?? '' }}" class="form-control mb-2" placeholder="Judul kisah">
+                                        <textarea name="love_story[]" rows="2" class="form-control mb-2">{{ $story['story'] ?? '' }}</textarea>
+                                        <div class="mb-2">
+                                            <label class="form-label fw-semibold mb-1" style="font-size: 12px;">Foto Kisah</label>
+                                            @if(!empty($story['photo']))
+                                                <div class="position-relative d-inline-block">
+                                                    <img src="{{ storage_url_with_fallback($story['photo'], 'https://placehold.co/300x200?text=No+Image', ($inv->updated_at ?? now())->timestamp) }}" class="img-fluid rounded border" style="max-height: 120px; object-fit: cover;">
+                                                    <button type="button" class="btn btn-danger btn-sm position-absolute top-0 end-0 m-1" style="width:20px;height:20px;line-height:1;padding:0;" onclick="var f = this.closest('.love-story-item').querySelector('input[type=file]'); if(f) f.value=''; this.closest('.position-relative').remove();">&times;</button>
+                                                </div>
+                                            @endif
+                                            <input type="file" name="story_photo[]" accept="image/*" class="form-control form-control-sm mt-1">
+                                        </div>
+                                        <button type="button" class="btn btn-sm btn-link text-danger p-0" onclick="this.closest('.love-story-item').remove()">Hapus</button>
                                     </div>
-                                    <button type="button" class="btn btn-sm btn-link text-danger p-0"
-                                        onclick="this.closest('.love-story-item').remove()">Hapus</button>
-                                </div>
-                            @empty
-                                <p class="text-muted">Belum ada kisah cinta.</p>
-                            @endforelse
-                        </div>
-                        <button type="button" class="btn btn-sm btn-outline-primary" onclick="addLoveStory()">+ Tambah
-                            Kisah</button>
-                    @else
-                        <div class="border border-dashed p-5 text-center rounded bg-light">
-                            <i class="bi bi-lock fs-3 text-muted"></i>
-                            <p class="mb-0 mt-2 text-muted">Fitur Kisah Cinta tersedia untuk paket berbayar.</p>
-                        </div>
-                    @endif
+                                @empty
+                                    <p class="text-muted">Belum ada kisah cinta.</p>
+                                @endforelse
+                            </div>
+                            <button type="button" class="btn btn-sm btn-outline-primary" onclick="addLoveStory()">+ Tambah Kisah</button>
+                        @else
+                            <div class="border border-dashed p-5 text-center rounded bg-light">
+                                <i class="bi bi-lock fs-3 text-muted"></i>
+                                <p class="mb-0 mt-2 text-muted">Fitur Kisah Cinta tersedia untuk paket berbayar.</p>
+                            </div>
+                        @endif
+                    </div>
                 </div>
             </div>
         </div>
@@ -949,8 +872,7 @@
                             @if($inv && $inv->gifts)
                                 @foreach($inv->gifts as $g)
                                     <div class="gift-item border rounded p-3 mb-3 position-relative shadow-sm">
-                                        <button type="button" class="btn-close position-absolute top-0 end-0 m-2"
-                                            onclick="this.closest('.gift-item').remove(); updateLivePreview();"></button>
+                                        <button type="button" class="btn-close position-absolute top-0 end-0 m-2" onclick="this.closest('.gift-item').remove(); updateLivePreview();"></button>
                                         <div class="row g-3">
                                             <div class="col-12">
                                                 <label class="fw-bold text-muted mb-1">Bank / E-Wallet</label>
@@ -966,13 +888,11 @@
                                             </div>
                                             <div class="col-12">
                                                 <label class="fw-bold text-muted mb-1">No. Rekening / HP</label>
-                                                <input type="text" name="number[]" value="{{ $g->number ?? '' }}"
-                                                    placeholder="Contoh: 12345678" class="form-control">
+                                                <input type="text" name="number[]" value="{{ $g->number ?? '' }}" placeholder="Contoh: 12345678" class="form-control">
                                             </div>
                                             <div class="col-12">
                                                 <label class="fw-bold text-muted mb-1">Atas Nama</label>
-                                                <input type="text" name="name[]" value="{{ $g->name ?? '' }}"
-                                                    placeholder="Nama pemilik rekening" class="form-control">
+                                                <input type="text" name="name[]" value="{{ $g->name ?? '' }}" placeholder="Nama pemilik rekening" class="form-control">
                                             </div>
                                         </div>
                                     </div>
@@ -992,11 +912,10 @@
         </div>
     @endif
 @endauth
+
 @push('scripts')
     <script>
         (function initPartnerTab() {
-            // DOMContentLoaded may have already fired when @stack('scripts') renders,
-            // so we attach directly — DOM elements are already in the page.
             const inviteForm = document.getElementById('invitePartnerForm');
             const inviteBtn = document.getElementById('invitePartnerBtn');
             const partnerMessage = document.getElementById('partnerFormMessage');
@@ -1267,6 +1186,35 @@
                 hiddenInput.value = '';
             }
             if (typeof updateLivePreview === 'function') updateLivePreview();
+        }
+
+        const primaryColorPicker = document.getElementById('primary_color');
+        const primaryColorText = document.getElementById('primary_color_text');
+        if (primaryColorPicker && primaryColorText) {
+            primaryColorPicker.addEventListener('input', function() {
+                primaryColorText.value = this.value;
+            });
+            primaryColorText.addEventListener('input', function() {
+                let val = this.value;
+                if (/^#[0-9A-Fa-f]{6}$/.test(val)) {
+                    primaryColorPicker.value = val;
+                } else if (/^#[0-9A-Fa-f]{3}$/.test(val)) {
+                    const expanded = '#' + val[1] + val[1] + val[2] + val[2] + val[3] + val[3];
+                    primaryColorPicker.value = expanded;
+                }
+            });
+            primaryColorText.addEventListener('blur', function() {
+                let val = this.value;
+                if (/^#[0-9A-Fa-f]{6}$/.test(val)) {
+                    primaryColorPicker.value = val;
+                } else if (/^#[0-9A-Fa-f]{3}$/.test(val)) {
+                    const expanded = '#' + val[1] + val[1] + val[2] + val[2] + val[3] + val[3];
+                    primaryColorPicker.value = expanded;
+                    this.value = expanded;
+                } else {
+                    this.value = primaryColorPicker.value;
+                }
+            });
         }
     </script>
 @endpush

@@ -10,14 +10,14 @@
     <meta property="og:url" content="{{ url()->current() }}">
     <meta property="og:title" content="{{ $invitation->groom_nickname }} & {{ $invitation->bride_nickname }} Wedding Invitation">
     <meta property="og:description" content="You are invited to the wedding of {{ $invitation->groom_nickname }} & {{ $invitation->bride_nickname }}. Click to see the details.">
-    <meta property="og:image" content="{{ asset('storage/' . $invitation->gallery_cover) }}">
+    <meta property="og:image" content="{{ storage_url($invitation->gallery_cover) }}">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="{{ url()->current() }}">
     <meta property="twitter:title" content="{{ $invitation->groom_nickname }} & {{ $invitation->bride_nickname }} Wedding Invitation">
     <meta property="twitter:description" content="You are invited to the wedding of {{ $invitation->groom_nickname }} & {{ $invitation->bride_nickname }}. Click to see the details.">
-    <meta property="twitter:image" content="{{ asset('storage/' . $invitation->gallery_cover) }}">
+    <meta property="twitter:image" content="{{ storage_url($invitation->gallery_cover) }}">
 
     <!-- Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -66,7 +66,7 @@
         
         <!-- Hero Section -->
         <header class="relative h-screen flex items-center justify-center text-center px-8">
-            <div id="preview-hero-bg" class="absolute inset-0 bg-cover bg-center opacity-30" style="background-image: url('{{ asset('storage/' . $invitation->gallery_cover) }}');"></div>
+            <div id="preview-hero-bg" class="absolute inset-0 bg-cover bg-center opacity-30" style="background-image: url('{{ storage_url($invitation->gallery_cover) }}');"></div>
             <div class="relative z-10 space-y-6">
                 <p class="text-xs tracking-[0.4em] uppercase font-light text-primary">Wedding Invitation</p>
                 <h1 class="font-serif text-5xl tracking-widest text-primary">{{ $invitation->groom_nickname }} & {{ $invitation->bride_nickname }}</h1>
@@ -101,14 +101,14 @@
                 <div class="space-y-24">
                     <!-- Groom -->
                     <div class="fade-in">
-                        <img loading="lazy" id="preview-foto-pria" src="{{ asset('storage/' . $invitation->foto_pria) }}" alt="Groom" class="w-full h-80 object-cover grayscale border border-primary/30 p-2">
+                        <img loading="lazy" id="preview-foto-pria" src="{{ storage_url($invitation->foto_pria) }}" alt="Groom" class="w-full h-80 object-cover grayscale border border-primary/30 p-2">
                         <h4 class="font-serif text-2xl mt-8">{{ $invitation->groom_name }}</h4>
                         <p class="text-xs uppercase tracking-widest opacity-60">{{ $invitation->groom_child_order_text ? 'Putra ' . $invitation->groom_child_order_text . ' dari' : 'Putra dari' }} Bpk. {{ $invitation->groom_father_name }} & Ibu {{ $invitation->groom_mother_name }}</p>
                     </div>
 
                     <!-- Bride -->
                     <div class="fade-in">
-                        <img loading="lazy" id="preview-foto-wanita" src="{{ asset('storage/' . $invitation->foto_wanita) }}" alt="Bride" class="w-full h-80 object-cover grayscale border border-primary/30 p-2">
+                        <img loading="lazy" id="preview-foto-wanita" src="{{ storage_url($invitation->foto_wanita) }}" alt="Bride" class="w-full h-80 object-cover grayscale border border-primary/30 p-2">
                         <h4 class="font-serif text-2xl mt-8">{{ $invitation->bride_name }}</h4>
                         <p class="text-xs uppercase tracking-widest opacity-60">{{ $invitation->bride_child_order_text ? 'Putri ' . $invitation->bride_child_order_text . ' dari' : 'Putri dari' }} Bpk. {{ $invitation->bride_father_name }} & Ibu {{ $invitation->bride_mother_name }}</p>
                     </div>
@@ -152,16 +152,18 @@
             </section>
 
             <!-- Galeri -->
+            @if(($invitation->enable_gallery ?? true) && $invitation->galleries->count())
             <section class="py-24 px-6 text-center space-y-12">
                 <h3 class="font-serif text-3xl">Galeri</h3>
                 <div class="grid grid-cols-2 gap-4 fade-in" id="gallery-container">
                     @foreach($invitation->galleries as $photo)
-                    <a href="{{ asset('storage/' . $photo->image) }}" data-fancybox="gallery">
-                        <img loading="lazy" src="{{ asset('storage/' . $photo->image) }}" alt="Gallery" class="w-full border border-primary/20 p-1 grayscale hover:grayscale-0 transition duration-500">
+                    <a href="{{ storage_url($photo->image) }}" data-fancybox="gallery">
+                        <img loading="lazy" src="{{ storage_url($photo->image) }}" alt="Gallery" class="w-full border border-primary/20 p-1 grayscale hover:grayscale-0 transition duration-500">
                     </a>
                     @endforeach
                 </div>
             </section>
+            @endif
 
             <!-- Gift -->
             @if($invitation->enable_gift == 1 && $invitation->gifts->count())
@@ -295,5 +297,57 @@
             textarea.focus();
         }
     </script>
+
+    @if(($invitation->enable_love_story ?? true) && !empty($invitation->love_story))
+    @php
+        $loveStories = is_array($invitation->love_story) ? $invitation->love_story : json_decode($invitation->love_story, true);
+    @endphp
+    @if(!empty($loveStories[0]['title']) || !empty($loveStories[0]['story']))
+    <section class="py-16 px-6 text-center fade-in" id="love-story">
+        <h2 class="text-4xl font-serif text-primary italic mb-4">Love Story</h2>
+        <div class="max-w-2xl mx-auto space-y-8">
+            @foreach($loveStories as $index => $story)
+            <div class="{{ $index < count($loveStories) - 1 ? 'pb-8 border-b border-gray-200' : '' }}">
+                <h3 class="text-xl font-semibold text-gray-800 mb-2">{{ $story['title'] ?? '' }}</h3>
+                <p class="text-gray-600 leading-relaxed">{{ $story['story'] ?? '' }}</p>
+                @if(!empty($story['photo']))
+                <img src="{{ storage_url($story['photo']) }}" alt="{{ $story['title'] ?? 'Story Photo' }}" loading="lazy" class="mt-3 max-h-[200px] object-cover rounded-lg mx-auto">
+                @endif
+            </div>
+            @endforeach
+        </div>
+    </section>
+    @endif
+    @endif
+
+    @if(($invitation->enable_video ?? true) && !empty($invitation->video_link))
+    @php
+        preg_match('/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|v\/|u\/\w\/|shorts\/)(?<id>[A-Za-z0-9_-]{11}))/i', $invitation->video_link, $ytVideoMatches);
+        $youtubeVideoId = $ytVideoMatches['id'] ?? '';
+    @endphp
+    @if($youtubeVideoId)
+    <section class="py-16 px-6 text-center fade-in" id="video">
+        <h2 class="text-4xl font-serif text-primary italic mb-4">Video Pernikahan</h2>
+        <div class="max-w-2xl mx-auto">
+            <div class="relative aspect-video rounded-xl overflow-hidden bg-black/10 cursor-pointer" data-fancybox="video" data-src="https://www.youtube.com/embed/{{ $youtubeVideoId }}?enablejsapi=1&autoplay=1&loop=1&playlist={{ $youtubeVideoId }}&controls=1&modestbranding=1&rel=0">
+                <img src="https://img.youtube.com/vi/{{ $youtubeVideoId }}/hqdefault.jpg" alt="Video Pernikahan" class="w-full h-full object-cover">
+                <div class="absolute inset-0 flex items-center justify-center bg-primary/30">
+                    <span class="material-symbols-outlined text-white text-5xl">play_circle</span>
+                </div>
+            </div>
+        </div>
+    </section>
+    @else
+    <section class="py-16 px-6 text-center fade-in" id="video">
+        <h2 class="text-4xl font-serif text-primary italic mb-4">Video Pernikahan</h2>
+        <div class="max-w-2xl mx-auto">
+            <video controls class="w-full rounded-xl">
+                <source src="{{ storage_url($invitation->video_link) }}" type="video/mp4">
+            </video>
+        </div>
+    </section>
+    @endif
+    @endif
 </body>
+
 </html>

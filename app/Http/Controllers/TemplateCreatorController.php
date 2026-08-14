@@ -345,7 +345,11 @@ PROMPT;
             'akad_location' => 'Masjid Raya',
             'resepsi_location' => 'Gedung Serbaguna',
             'enable_rsvp' => true,
-            'enable_gift' => false,
+            'enable_gift' => true,
+            'enable_gallery' => true,
+            'enable_music' => true,
+            'enable_video' => true,
+            'enable_love_story' => true,
         ]);
         $invitation->id = 0;
         $invitation->setRelation('template', $template);
@@ -408,6 +412,10 @@ PROMPT;
             'resepsi_maps' => 'https://maps.google.com',
             'enable_rsvp' => true,
             'enable_gift' => true,
+            'enable_gallery' => true,
+            'enable_music' => true,
+            'enable_video' => true,
+            'enable_love_story' => true,
             'gallery_cover' => 'default/cover.jpg',
             'wedding_quote' => 'Dan di antara tanda-tanda (kebesaran)-Nya ialah Dia menciptakan pasangan-pasangan untukmu dari jenismu sendiri, agar kamu cenderung dan merasa tenteram kepadanya, dan Dia menjadikan di antaramu rasa kasih dan sayang.',
             'quote_id' => 'QS. Ar-Rum: 21',

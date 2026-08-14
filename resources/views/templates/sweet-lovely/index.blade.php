@@ -306,7 +306,7 @@
 
         <!-- Hero Section -->
         <section class="h-screen flex flex-col items-center text-center relative overflow-hidden text-on-primary px-margin-mobile" id="home">
-            <div class="absolute inset-0 z-[-1] bg-[url('{{ '/storage/' . ($invitation->gallery_cover ?? 'default/cover.jpg') }}')] bg-cover bg-center">
+            <div class="absolute inset-0 z-[-1] bg-[url('{{ storage_url_with_fallback($invitation->gallery_cover, asset('default/cover.jpg')) }}')] bg-cover bg-center">
                 <div class="absolute inset-0 bg-primary/40 backdrop-blur-sm"></div>
             </div>
             <div class="flex-1 flex flex-col items-center justify-center mt-20">
@@ -352,7 +352,7 @@
                     <!-- Groom -->
                     <div class="text-center flex flex-col items-center">
                         <div class="w-48 h-64 md:w-64 md:h-80 border-4 border-outline-variant/30 p-2 mb-6 hover-zoom overflow-hidden">
-                            <img alt="{{ $invitation->groom_name }}" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110" src="{{ '/storage/' . ($invitation->foto_pria ?? 'default/groom.jpg') }}" loading="lazy" />
+                            <img alt="{{ $invitation->groom_name }}" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110" src="{{ storage_url_with_fallback($invitation->foto_pria, asset('default/groom.jpg')) }}" loading="lazy" />
                         </div>
                         <h3 class="font-headline-md text-headline-md text-primary mb-2">{{ $invitation->groom_name }}</h3>
                         <p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-4 max-w-[200px]">{{ $invitation->groom_child_order_text ? 'Putra ' . $invitation->groom_child_order_text . ' dari' : 'Putra dari' }} Bpk. {{ $invitation->groom_father_name }} &amp; Ibu {{ $invitation->groom_mother_name }}</p>
@@ -370,7 +370,7 @@
                     <!-- Bride -->
                     <div class="text-center flex flex-col items-center">
                         <div class="w-48 h-64 md:w-64 md:h-80 border-4 border-outline-variant/30 p-2 mb-6 hover-zoom overflow-hidden">
-                            <img alt="{{ $invitation->bride_name }}" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110" src="{{ '/storage/' . ($invitation->foto_wanita ?? 'default/bride.jpg') }}" loading="lazy" />
+                            <img alt="{{ $invitation->bride_name }}" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110" src="{{ storage_url_with_fallback($invitation->foto_wanita, asset('default/bride.jpg')) }}" loading="lazy" />
                         </div>
                         <h3 class="font-headline-md text-headline-md text-primary mb-2">{{ $invitation->bride_name }}</h3>
                         <p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-4 max-w-[200px]">{{ $invitation->bride_child_order_text ? 'Putri ' . $invitation->bride_child_order_text . ' dari' : 'Putri dari' }} Bpk. {{ $invitation->bride_father_name }} &amp; Ibu {{ $invitation->bride_mother_name }}</p>
@@ -452,7 +452,7 @@
                 ? $invitation->love_story
                 : json_decode($invitation->love_story, true);
         @endphp
-        @if(!empty($loveStories[0]['title']) || !empty($loveStories[0]['story']))
+        @if(($invitation->enable_love_story ?? true) && (!empty($loveStories[0]['title']) || !empty($loveStories[0]['story'])))
         <section class="py-stack-lg px-margin-mobile" id="story2">
             <div class="max-w-2xl mx-auto">
                 <div class="text-center mb-12 fade-in">
@@ -468,7 +468,7 @@
                         <h3 class="font-body-lg text-body-lg font-semibold text-primary mb-2">{{ $story['title'] }}</h3>
                         <p class="font-body-md text-body-md text-on-surface-variant">{{ $story['story'] }}</p>
                         @if($story['photo'])
-                        <img src="{{ '/storage/' . $story['photo'] }}" alt="{{ $story['title'] }}" loading="lazy" class="mt-3 rounded-lg max-h-[200px] object-cover w-full" />
+                        <img src="{{ storage_url($story['photo']) }}" alt="{{ $story['title'] }}" loading="lazy" class="mt-3 rounded-lg max-h-[200px] object-cover w-full" />
                         @endif
                     </div>
                     @endforeach
@@ -488,8 +488,8 @@
                     @forelse($invitation->galleries as $index => $photo)
                     <div class="gallery-item {{ $index >= 6 ? 'hidden' : '' }} hover-zoom" data-gallery-index="{{ $index }}">
                         <div class="{{ $index === 2 ? 'aspect-[4/3] rounded-lg overflow-hidden md:col-span-2' : ($index % 2 === 0 ? 'aspect-[3/4] rounded-lg overflow-hidden' : 'aspect-square rounded-lg overflow-hidden') }}">
-                            <a href="{{ '/storage/' . $photo->image }}" data-fancybox="gallery" data-caption="Wedding Moment">
-                                <img alt="Wedding Moment" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110" src="{{ '/storage/' . $photo->image }}" loading="lazy" />
+                            <a href="{{ storage_url($photo->image) }}" data-fancybox="gallery" data-caption="Wedding Moment">
+                                <img alt="Wedding Moment" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110" src="{{ storage_url($photo->image) }}" loading="lazy" />
                             </a>
                         </div>
                     </div>
@@ -609,7 +609,7 @@
         @endif
 
         <!-- Video Section -->
-        @if(!empty($invitation->video_link))
+        @if(($invitation->enable_video ?? true) && !empty($invitation->video_link))
         @php
             preg_match('/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|v\/|u\/\w\/|shorts\/)(?<id>[A-Za-z0-9_-]{11}))/i', $invitation->video_link, $ytVideoMatches);
             $youtubeVideoId = $ytVideoMatches['id'] ?? '';

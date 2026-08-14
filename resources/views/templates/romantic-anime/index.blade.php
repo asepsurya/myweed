@@ -588,9 +588,9 @@
                 <div class="cover-divider"></div>
 
                 <div class="couple-preview">
-                    <img loading="lazy" src="{{ asset('storage/' . ($invitation->foto_pria ?? 'default/groom.jpg')) }}" alt="Pengantin Pria">
+                    <img loading="lazy" src="{{ storage_url_with_fallback($invitation->foto_pria, asset('default/groom.jpg')) }}" alt="Pengantin Pria">
                     <span>&</span>
-                    <img loading="lazy" src="{{ asset('storage/' . ($invitation->foto_wanita ?? 'default/bride.jpg')) }}" alt="Pengantin Wanita">
+                    <img loading="lazy" src="{{ storage_url_with_fallback($invitation->foto_wanita, asset('default/bride.jpg')) }}" alt="Pengantin Wanita">
                 </div>
 
                 <p style="margin: 2px 0; font-size: 0.7em; letter-spacing: 1px; text-transform: uppercase;">Kepada Yth.</p>
@@ -610,9 +610,9 @@
                 <div class="cover-divider"></div>
 
                 <div class="couple-preview">
-                    <img loading="lazy" src="{{ asset('storage/' . ($invitation->foto_pria ?? 'default/groom.jpg')) }}" alt="Pengantin Pria">
+                    <img loading="lazy" src="{{ storage_url_with_fallback($invitation->foto_pria, asset('default/groom.jpg')) }}" alt="Pengantin Pria">
                     <span>&</span>
-                    <img loading="lazy" src="{{ asset('storage/' . ($invitation->foto_wanita ?? 'default/bride.jpg')) }}" alt="Pengantin Wanita">
+                    <img loading="lazy" src="{{ storage_url_with_fallback($invitation->foto_wanita, asset('default/bride.jpg')) }}" alt="Pengantin Wanita">
                 </div>
 
                 <p style="margin: 8px 0; line-height: 1.5; font-size: 0.8em;">
@@ -648,7 +648,7 @@
                 <h4 style="margin-top: 0; color: var(--color-primary); font-size: 0.9em;">Galeri Foto Momen</h4>
                 <div class="gallery-grid">
                     @forelse($invitation->galleries as $photo)
-                        <img loading="lazy" src="{{ asset('storage/' . $photo->image) }}" alt="Wedding Moment">
+                        <img loading="lazy" src="{{ storage_url($photo->image) }}" alt="Wedding Moment">
                     @empty
                         <p class="text-center text-gray-500">Belum ada foto galeri.</p>
                     @endforelse
@@ -661,7 +661,7 @@
             <div class="modal-card">
                 <h4 style="margin-top: 0; color: var(--color-primary); font-size: 0.9em;">Video Prewedding</h4>
                 <div class="video-container">
-                    @if(!empty($invitation->video_link))
+                    @if(($invitation->enable_video ?? true) && !empty($invitation->video_link))
                         @php
                             preg_match('/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|v\/|u\/\w\/|shorts\/)(?<id>[A-Za-z0-9_-]{11}))/i', $invitation->video_link, $ytVideoMatches);
                             $youtubeVideoId = $ytVideoMatches['id'] ?? '';
@@ -669,8 +669,8 @@
                         @if($youtubeVideoId)
                             <iframe width="100%" height="160" src="https://www.youtube.com/embed/{{ $youtubeVideoId }}?enablejsapi=1&loop=1&playlist={{ $youtubeVideoId }}&controls=1&modestbranding=1&rel=0" frameborder="0" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>
                         @else
-                            <video controls poster="{{ asset('storage/' . ($invitation->gallery_cover ?? 'default/cover.jpg')) }}">
-                                <source src="{{ asset('storage/' . $invitation->video_link) }}" type="video/mp4">
+                            <video controls poster="{{ storage_url_with_fallback($invitation->gallery_cover, asset('default/cover.jpg')) }}">
+                                <source src="{{ storage_url($invitation->video_link) }}" type="video/mp4">
                             </video>
                         @endif
                     @else
@@ -1223,6 +1223,46 @@ END:VCALENDAR`;
             window.addEventListener('resize', adjustCharacterHeight);
         };
     </script>
+
+    @if($invitation->enable_gift == 1 && $invitation->gifts->count())
+    <section class="py-20 px-6 text-center" id="gift">
+        <div class="max-w-2xl mx-auto">
+            <h2 class="text-3xl font-bold text-gray-800 mb-8">Wedding Gift</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                @foreach($invitation->gifts as $gift)
+                <div class="bg-white p-6 rounded-xl shadow-lg border-2 border-gray-100">
+                    <h3 class="font-bold text-lg text-gray-800 mb-2">{{ $gift->bank }}</h3>
+                    <p class="text-xl font-bold text-blue-600 mb-1">{{ $gift->number }}</p>
+                    <p class="text-sm text-gray-500 mb-3">A/N: {{ $gift->name }}</p>
+                    <button onclick="navigator.clipboard.writeText('{{ $gift->number }}').then(()=>alert('Nomor disalin!'))" class="bg-blue-600 text-white px-4 py-2 rounded-full text-xs font-bold">Salin</button>
+                </div>
+                @endforeach
+            </div>
+        </div>
+    </section>
+    @endif
+
+    @if(($invitation->enable_love_story ?? true) && !empty($invitation->love_story))
+    @php
+        $loveStories = is_array($invitation->love_story) ? $invitation->love_story : json_decode($invitation->love_story, true);
+    @endphp
+    @if(!empty($loveStories[0]['title']) || !empty($loveStories[0]['story']))
+    <section class="py-20 px-6 text-center" id="love-story">
+        <h2 class="text-3xl font-bold text-gray-800 mb-8">Love Story</h2>
+        <div class="max-w-2xl mx-auto space-y-8">
+            @foreach($loveStories as $index => $story)
+            <div class="{{ $index < count($loveStories) - 1 ? 'pb-8 border-b border-gray-200' : '' }}">
+                <h3 class="text-xl font-semibold text-gray-800 mb-2">{{ $story['title'] ?? '' }}</h3>
+                <p class="text-gray-600 leading-relaxed">{{ $story['story'] ?? '' }}</p>
+                @if(!empty($story['photo']))
+                <img src="{{ storage_url($story['photo']) }}" alt="{{ $story['title'] ?? 'Story Photo' }}" loading="lazy" class="mt-3 max-h-[200px] object-cover rounded-lg mx-auto">
+                @endif
+            </div>
+            @endforeach
+        </div>
+    </section>
+    @endif
+    @endif
 </body>
 
 </html>

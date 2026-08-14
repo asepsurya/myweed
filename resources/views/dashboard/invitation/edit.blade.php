@@ -386,6 +386,9 @@
             }
 
             .sidebar-content {
+                flex: 1;
+                overflow-y: auto;
+                min-height: 0;
                 padding: 1.25rem 1rem !important;
                 background: rgba(var(--bs-tertiary-bg-rgb), 0.3);
             }
@@ -582,7 +585,7 @@
         }
     </style>
 
-    <div class="builder-wrapper">
+    <div class="builder-wrapper mb-5">
         <!-- 1. SIDEBAR (KIRI) -->
         <div class="builder-sidebar shadow-sm">
             <div class="sidebar-nav-vertical no-scrollbar hide">
@@ -672,10 +675,10 @@
                     <button type="button" id="mobileNextBtn" class="btn btn-sm btn-builder-next">Selanjutnya</button>
                 </div>
             </div>
+            <!-- 2. CANVAS PREVIEW (KANAN) -->
+       
         </div>
-
-        <!-- 2. CANVAS PREVIEW (KANAN) -->
-        <div class="builder-canvas">
+ <div class="builder-canvas">
             <div class="preview-device">
                 <div id="previewWindow" class="preview-window no-scrollbar">
                     <div class="preview-notch"></div>
@@ -693,6 +696,7 @@
                 <div id="previewFormInputs"></div>
             </form>
         </div>
+        
     </div>
 
     <!-- UPLOAD TOAST NOTIFICATION -->
@@ -914,7 +918,9 @@
             const templateItem = el.closest('.template-selector-item');
             if (templateItem && templateItem.dataset.color) {
                 const colorInput = document.getElementById('primary_color');
+                const colorText = document.getElementById('primary_color_text');
                 if (colorInput) colorInput.value = templateItem.dataset.color;
+                if (colorText) colorText.value = templateItem.dataset.color;
             }
             updateLivePreview();
         }

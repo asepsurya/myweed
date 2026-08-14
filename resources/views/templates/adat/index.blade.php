@@ -11,7 +11,7 @@
     <meta property="og:url" content="{{ url()->current() }}">
     <meta property="og:title" content="{{ $invitation->groom_nickname }} & {{ $invitation->bride_nickname }} Wedding Invitation">
     <meta property="og:description" content="You are invited to the wedding of {{ $invitation->groom_nickname }} & {{ $invitation->bride_nickname }}.">
-    <meta property="og:image" content="{{ asset('storage/' . $invitation->gallery_cover) }}">
+    <meta property="og:image" content="{{ storage_url($invitation->gallery_cover) }}">
 
     <!-- Google Fonts: Cinzel (Ukiran) & Cormorant (Elegan) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -110,7 +110,7 @@
         /* Hero Section */
         .hero {
             height: 100vh;
-            background: linear-gradient(rgba(74, 16, 24, 0.85), rgba(74, 16, 24, 0.6)), url('{{ asset('storage/' . $invitation->gallery_cover) }}');
+            background: linear-gradient(rgba(74, 16, 24, 0.85), rgba(74, 16, 24, 0.6)), url('{{ storage_url($invitation->gallery_cover) }}');
             background-size: cover;
             background-position: center;
             display: flex;
@@ -431,7 +431,7 @@
                 <div class="couple-wrapper fade-in">
                     <div class="couple-card">
                         <div class="photo-frame-javanese">
-                            <img loading="lazy" id="preview-foto-pria" src="{{ asset('storage/' . $invitation->foto_pria) }}" alt="{{ $invitation->groom_name }}" class="couple-img">
+                            <img loading="lazy" id="preview-foto-pria" src="{{ storage_url($invitation->foto_pria) }}" alt="{{ $invitation->groom_name }}" class="couple-img">
                         </div>
                         <h3 class="couple-name">{{ $invitation->groom_name }}</h3>
                         <p class="parent-name">{{ $invitation->groom_child_order_text ? 'Putra ' . $invitation->groom_child_order_text . ' dari' : 'Putra dari' }} Bpk. {{ $invitation->groom_father_name }}<br>& Ibu {{ $invitation->groom_mother_name }}</p>
@@ -441,7 +441,7 @@
 
                     <div class="couple-card">
                         <div class="photo-frame-javanese">
-                            <img loading="lazy" id="preview-foto-wanita" src="{{ asset('storage/' . $invitation->foto_wanita) }}" alt="{{ $invitation->bride_name }}" class="couple-img">
+                            <img loading="lazy" id="preview-foto-wanita" src="{{ storage_url($invitation->foto_wanita) }}" alt="{{ $invitation->bride_name }}" class="couple-img">
                         </div>
                         <h3 class="couple-name">{{ $invitation->bride_name }}</h3>
                         <p class="parent-name">{{ $invitation->bride_child_order_text ? 'Putri ' . $invitation->bride_child_order_text . ' dari' : 'Putri dari' }} Bpk. {{ $invitation->bride_father_name }}<br>& Ibu {{ $invitation->bride_mother_name }}</p>
@@ -496,8 +496,8 @@
                 </div>
                 <div class="masonry-gallery fade-in" id="gallery-container">
                     @forelse ($invitation->galleries as $photo)
-                        <a href="{{ asset('storage/' . $photo->image) }}" data-fancybox="gallery" class="masonry-item">
-                            <img src="{{ asset('storage/' . $photo->image) }}" alt="Gallery Photo" loading="lazy">
+                        <a href="{{ storage_url($photo->image) }}" data-fancybox="gallery" class="masonry-item">
+                            <img src="{{ storage_url($photo->image) }}" alt="Gallery Photo" loading="lazy">
                         </a>
                     @empty
                         <p class="text-center w-full text-muted">Belum ada foto galeri.</p>
@@ -578,6 +578,57 @@
     </div>
 
     <x-music-player :invitation="$invitation" />
+
+    @if(($invitation->enable_love_story ?? true) && !empty($invitation->love_story))
+    @php
+        $loveStories = is_array($invitation->love_story) ? $invitation->love_story : json_decode($invitation->love_story, true);
+    @endphp
+    @if(!empty($loveStories[0]['title']) || !empty($loveStories[0]['story']))
+    <section class="py-16 px-6 text-center fade-in" id="love-story">
+        <h2 class="text-3xl font-serif text-primary mb-6">Kisah Kami</h2>
+        <div class="max-w-2xl mx-auto">
+            @foreach($loveStories as $index => $story)
+            <div class="mb-8 {{ $index < count($loveStories) - 1 ? 'pb-8 border-b border-dashed border-gray-200' : '' }}">
+                <h3 class="text-lg font-semibold text-gray-700 mb-2">{{ $story['title'] ?? '' }}</h3>
+                <p class="text-gray-600 leading-relaxed">{{ $story['story'] ?? '' }}</p>
+                @if(!empty($story['photo']))
+                <img src="{{ storage_url($story['photo']) }}" alt="{{ $story['title'] ?? 'Story Photo' }}" loading="lazy" class="mt-3 max-h-[200px] object-cover rounded-lg mx-auto">
+                @endif
+            </div>
+            @endforeach
+        </div>
+    </section>
+    @endif
+    @endif
+
+    @if(($invitation->enable_video ?? true) && !empty($invitation->video_link))
+    @php
+        preg_match('/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|v\/|u\/\w\/|shorts\/)(?<id>[A-Za-z0-9_-]{11}))/i', $invitation->video_link, $ytVideoMatches);
+        $youtubeVideoId = $ytVideoMatches['id'] ?? '';
+    @endphp
+    @if($youtubeVideoId)
+    <section class="py-16 px-6 text-center fade-in" id="video">
+        <h2 class="text-3xl font-serif text-primary mb-6">Video Pernikahan</h2>
+        <div class="max-w-2xl mx-auto">
+            <div class="relative aspect-video rounded-xl overflow-hidden bg-black/10 cursor-pointer" data-fancybox="video" data-src="https://www.youtube.com/embed/{{ $youtubeVideoId }}?enablejsapi=1&autoplay=1&loop=1&playlist={{ $youtubeVideoId }}&controls=1&modestbranding=1&rel=0">
+                <img src="https://img.youtube.com/vi/{{ $youtubeVideoId }}/hqdefault.jpg" alt="Video Pernikahan" class="w-full h-full object-cover">
+                <div class="absolute inset-0 flex items-center justify-center bg-primary/30">
+                    <span class="material-symbols-outlined text-white text-5xl">play_circle</span>
+                </div>
+            </div>
+        </div>
+    </section>
+    @else
+    <section class="py-16 px-6 text-center fade-in" id="video">
+        <h2 class="text-3xl font-serif text-primary mb-6">Video Pernikahan</h2>
+        <div class="max-w-2xl mx-auto">
+            <video controls class="w-full rounded-xl">
+                <source src="{{ storage_url($invitation->video_link) }}" type="video/mp4">
+            </video>
+        </div>
+    </section>
+    @endif
+    @endif
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {

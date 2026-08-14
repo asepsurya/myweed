@@ -1648,7 +1648,7 @@ body.locked {
             <div id="cover" class="cover-1">
                <img loading="lazy"
     class="rectangle-1"
-    src="{{ $invitation->gallery_cover ? asset('storage/' . $invitation->gallery_cover) : asset('images/default-cover.jpg') }}"
+    src="{{ storage_url_with_fallback($invitation->gallery_cover, asset('images/default-cover.jpg')) }}"
     alt="Cover">
                 <div class="head">
                     <div class="the-wedding-of">The Wedding Of</div>
@@ -1688,7 +1688,7 @@ body.locked {
             <img loading="lazy" class="javanese-paperize-7-4" src="{{ url('template-assets/' . $invitation->template->slug . '/images/javanese-paperize-7-40.png') }}" />
             <img loading="lazy" class="janur-maroon-2" src="{{ url('template-assets/' . $invitation->template->slug . '/images/janur-maroon-20.png') }}" />
             <img loading="lazy" class="red-rose-1-1-2" src="{{ url('template-assets/' . $invitation->template->slug . '/images/red-rose-1-1-20.png') }}" />
-            <img loading="lazy" class="rectangle-7" src="{{ $invitation->foto_wanita ? asset('storage/' . $invitation->foto_wanita) : url('template-assets/' . $invitation->template->slug . '/images/rectangle-70.png') }}" />
+            <img loading="lazy" class="rectangle-7" src="{{ $invitation->foto_wanita ? storage_url($invitation->foto_wanita) : url('template-assets/' . $invitation->template->slug . '/images/rectangle-70.png') }}" />
             <img loading="lazy" class="rectangle-8" src="{{ url('template-assets/' . $invitation->template->slug . '/images/rectangle-80.svg') }}" />
             <div class="adinda-mawaria">{{ $invitation->groom_name }}</div>
             <div class="bapak-sanusi-s-m-ibu-jubaedah-dari-london-utara">
@@ -1696,7 +1696,7 @@ body.locked {
                 <br />
                 {{ $invitation->groom_username_instagram ? 'dari ' . $invitation->groom_username_instagram : '' }}
             </div>
-            <img loading="lazy" class="rectangle-72" src="{{ $invitation->foto_pria ? asset('storage/' . $invitation->foto_pria) : url('template-assets/' . $invitation->template->slug . '/images/rectangle-71.png') }}" />
+            <img loading="lazy" class="rectangle-72" src="{{ $invitation->foto_pria ? storage_url($invitation->foto_pria) : url('template-assets/' . $invitation->template->slug . '/images/rectangle-71.png') }}" />
             <img loading="lazy" class="rectangle-82" src="{{ url('template-assets/' . $invitation->template->slug . '/images/rectangle-81.svg') }}" />
             <div class="adinda-mawaria2">{{ $invitation->bride_name }}</div>
             <div class="bapak-sanusi-s-m-ibu-jubaedah-dari-london-utara2">
@@ -1730,8 +1730,8 @@ body.locked {
 
                 <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; padding: 0 8px; margin-bottom:30px;">
                     @forelse ($paginatedGalleries as $photo)
-                        <a href="{{ asset("storage/" . $photo->image) }}" data-fancybox="gallery" style="display: block; border-radius: 12px; overflow: hidden;">
-                            <img loading="lazy" src="{{ asset("storage/" . $photo->image) }}" 
+                        <a href="{{ storage_url($photo->image) }}" data-fancybox="gallery" style="display: block; border-radius: 12px; overflow: hidden;">
+                            <img loading="lazy" src="{{ storage_url($photo->image) }}" 
                                  style="width: 100%; height: 180px; object-fit: cover; display: block; border-radius: 12px;" 
                                  alt="Gallery">
                         </a>
@@ -2096,7 +2096,75 @@ body.locked {
         });
     }
 
-    </script>
+    @if(($invitation->enable_love_story ?? true) && !empty($invitation->love_story))
+    @php
+        $loveStories = is_array($invitation->love_story) ? $invitation->love_story : json_decode($invitation->love_story, true);
+    @endphp
+    @if(!empty($loveStories[0]['title']) || !empty($loveStories[0]['story']))
+    <section class="py-20 px-6 bg-white text-center" id="lovestory">
+        <h2 class="text-4xl font-serif text-gray-800 mb-4">Love Story</h2>
+        <div class="max-w-2xl mx-auto space-y-12">
+            @foreach($loveStories as $index => $story)
+            <div class="flex flex-col md:flex-row gap-6 items-center {{ $index < count($loveStories) - 1 ? 'pb-12 border-b border-gray-200' : '' }}">
+                @if(!empty($story['photo']))
+                <img src="{{ storage_url($story['photo']) }}" alt="{{ $story['title'] ?? 'Story Photo' }}" loading="lazy" class="w-full md:w-32 h-32 object-cover rounded-lg flex-shrink-0">
+                @endif
+                <div class="text-left flex-1">
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">{{ $story['title'] ?? '' }}</h3>
+                    <p class="text-gray-600 leading-relaxed">{{ $story['story'] ?? '' }}</p>
+                </div>
+            </div>
+            @endforeach
+        </div>
+    </section>
+    @endif
+    @endif
+
+    @if($invitation->enable_gift == 1 && $invitation->gifts->count())
+    <section class="py-20 px-6 bg-gray-50 text-center" id="gift">
+        <h2 class="text-4xl font-serif text-gray-800 mb-4">Wedding Gift</h2>
+        <div class="max-w-xl mx-auto space-y-6">
+            @foreach($invitation->gifts as $gift)
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+                <h3 class="font-bold text-lg text-gray-800 mb-2">{{ $gift->bank }}</h3>
+                <p class="text-2xl font-bold text-blue-800 mb-1">{{ $gift->number }}</p>
+                <p class="text-sm text-gray-500 mb-3">A/N: {{ $gift->name }}</p>
+                <button onclick="copyText('{{ $gift->number }}')" class="bg-blue-800 text-white px-4 py-2 rounded-full text-xs font-bold">Salin</button>
+            </div>
+            @endforeach
+        </div>
+    </section>
+    @endif
+
+    @if(($invitation->enable_video ?? true) && !empty($invitation->video_link))
+    @php
+        preg_match('/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|v\/|u\/\w\/|shorts\/)(?<id>[A-Za-z0-9_-]{11}))/i', $invitation->video_link, $ytVideoMatches);
+        $youtubeVideoId = $ytVideoMatches['id'] ?? '';
+    @endphp
+    @if($youtubeVideoId)
+    <section class="py-20 px-6 bg-white text-center" id="video">
+        <h2 class="text-4xl font-serif text-gray-800 mb-4">Video Pernikahan</h2>
+        <div class="max-w-2xl mx-auto">
+            <div class="relative aspect-video rounded-xl overflow-hidden bg-black/10 cursor-pointer" data-fancybox="video" data-src="https://www.youtube.com/embed/{{ $youtubeVideoId }}?enablejsapi=1&autoplay=1&loop=1&playlist={{ $youtubeVideoId }}&controls=1&modestbranding=1&rel=0">
+                <img src="https://img.youtube.com/vi/{{ $youtubeVideoId }}/hqdefault.jpg" alt="Video Pernikahan" class="w-full h-full object-cover">
+                <div class="absolute inset-0 flex items-center justify-center bg-black/30">
+                    <span class="material-symbols-outlined text-white text-5xl">play_circle</span>
+                </div>
+            </div>
+        </div>
+    </section>
+    @else
+    <section class="py-20 px-6 bg-white text-center" id="video">
+        <h2 class="text-4xl font-serif text-gray-800 mb-4">Video Pernikahan</h2>
+        <div class="max-w-2xl mx-auto">
+            <video controls class="w-full rounded-xl">
+                <source src="{{ storage_url($invitation->video_link) }}" type="video/mp4">
+            </video>
+        </div>
+    </section>
+    @endif
+    @endif
+</script>
 </body>
 
 </html>
