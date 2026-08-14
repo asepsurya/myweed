@@ -63,10 +63,7 @@
                             </div>
                         @endif
                         @php
-                            $thumb = $template->thumbnail;
-                            $webp = $thumb ? preg_replace('/\.(png|jpg|jpeg)$/i', '.webp', $thumb) : null;
-                            $webpExists = $webp && Storage::disk('public')->exists($webp);
-                            $thumbSrc = $webpExists ? asset('storage/' . $webp) : ($thumb ? asset('storage/' . $thumb) : '');
+                            $thumbSrc = template_thumbnail_url($template);
                         @endphp
                         <img src="{{ $thumbSrc ?: 'https://placehold.co/600x450?text=No+Thumbnail' }}" 
                              loading="lazy"

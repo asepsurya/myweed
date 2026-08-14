@@ -589,7 +589,10 @@
         <!-- 1. SIDEBAR (KIRI) -->
         <div class="builder-sidebar shadow-sm">
             <div class="sidebar-nav-vertical no-scrollbar hide">
-                <div class="nav-vertical-link active" data-tab="tab-2" title="Tema">
+                <div class="nav-vertical-link active" data-tab="tab-builder" title="Builder">
+                    <i class="bi bi-building"></i><span>Builder</span>
+                </div>
+                <div class="nav-vertical-link" data-tab="tab-2" title="Tema">
                     <i class="bi bi-palette"></i><span>Tema</span>
                 </div>
                 <div class="nav-vertical-link" data-tab="tab-1" title="Pria">
@@ -828,7 +831,7 @@
 
         const visibleTabs = Array.from(document.querySelectorAll('.nav-vertical-link')).map(link => link.getAttribute('data-tab'));
         const tabOrder = visibleTabs;
-        const tabLabels = { 'tab-1': 'Pria', 'tab-2': 'Tema', 'tab-3': 'Galeri', 'tab-4': 'Musik', 'tab-5': 'RSVP', 'tab-6': 'Acara', 'tab-7': 'Wanita', 'tab-8': 'Kisah', 'tab-9': 'Hadiah' };
+        const tabLabels = { 'tab-builder': 'Builder', 'tab-1': 'Pria', 'tab-2': 'Tema', 'tab-3': 'Galeri', 'tab-4': 'Musik', 'tab-5': 'RSVP', 'tab-6': 'Acara', 'tab-7': 'Wanita', 'tab-8': 'Kisah', 'tab-9': 'Hadiah' };
 
         function updateMobileTabLabel(tabId) {
             const label = document.getElementById('mobileTabLabel');

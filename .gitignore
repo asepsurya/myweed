@@ -18,6 +18,7 @@
 /public/storage
 /storage/*.key
 /storage/pail
+/storage/app/r2-templates
 /resources/views/templates
 /vendor
 Homestead.json

@@ -469,7 +469,7 @@
                 <!-- Remember & Forgot -->
                 <div class="form-meta">
                     <div class="form-check">
-                        <input class="form-check-input" type="checkbox" name="remember" id="remember">
+                        <input class="form-check-input" type="checkbox" name="remember" id="remember" value="1">
                         <label class="form-check-label" for="remember">Ingat saya</label>
                     </div>
                     <a href="{{ route('password.request') }}" class="forgot-link">Lupa password?</a>

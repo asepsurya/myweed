@@ -51,13 +51,18 @@
 
         html {
             height: 100%;
+            width: 100%;
+            max-width: 100%;
+            overflow-x: hidden;
         }
 
         body {
             font-family: var(--font);
             background: var(--bg);
             color: var(--text);
+            width: 100%;
             min-height: 100vh;
+            max-width: 100%;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -65,28 +70,32 @@
             -webkit-font-smoothing: antialiased;
             position: relative;
             overflow-x: hidden;
+            word-break: break-word;
         }
 
+        /* Ubah dari absolute ke fixed agar background tidak mempengaruhi lebar dokumen */
         body::before {
             content: '';
-            position: absolute;
+            position: fixed;
             top: -30%;
             right: -20%;
             width: 600px;
             height: 600px;
             background: radial-gradient(circle, rgba(198, 169, 98, 0.07) 0%, transparent 70%);
             pointer-events: none;
+            z-index: 0;
         }
 
         body::after {
             content: '';
-            position: absolute;
+            position: fixed;
             bottom: -25%;
             left: -15%;
             width: 500px;
             height: 500px;
             background: radial-gradient(circle, rgba(27, 42, 74, 0.04) 0%, transparent 70%);
             pointer-events: none;
+            z-index: 0;
         }
 
         /* ===== Card ===== */
@@ -128,7 +137,6 @@
 
         .card-logo img {
             width: 160px;
-            /* Ukuran logo diatur disini */
             height: auto;
         }
 
@@ -198,10 +206,12 @@
         .field {
             position: relative;
             margin-bottom: 1.15rem;
+            max-width: 100%;
         }
 
         .field-input {
             width: 100%;
+            max-width: 100%;
             height: 48px;
             padding: 0 3rem 0 1rem;
             border: 1.5px solid var(--border);
@@ -228,7 +238,6 @@
             position: absolute;
             left: 1rem;
             top: 24px;
-            /* Ubah dari 50% menjadi 24px (setengah dari tinggi input 48px) */
             transform: translateY(-50%);
             font-size: 0.88rem;
             color: var(--text-muted);
@@ -238,12 +247,15 @@
             padding: 0 0.35rem;
             border-radius: 4px;
             transform-origin: left center;
+            max-width: calc(100% - 4rem);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .field-input:focus+.field-label,
         .field-input:not(:placeholder-shown)+.field-label {
             top: 0;
-            /* Ubah dari 0 agar pas di batas atas kotak input */
             transform: translateY(-50%) scale(0.82);
             color: var(--gold-dark);
             background: var(--white);
@@ -310,7 +322,6 @@
             position: absolute;
             right: 1rem;
             top: 24px;
-            /* Samakan dengan posisi label */
             transform: translateY(-50%);
             height: 48px;
             width: 24px;
@@ -340,7 +351,6 @@
             position: absolute;
             right: 0.5rem;
             top: 24px;
-            /* Samakan dengan posisi label */
             transform: translateY(-50%);
             height: 48px;
             width: 40px;
@@ -382,6 +392,7 @@
             opacity: 0;
             overflow: hidden;
             transition: all var(--speed) ease;
+            max-width: 100%;
         }
 
         .field-error.show {
@@ -395,12 +406,18 @@
             flex-shrink: 0;
         }
 
+        .field-error span {
+            min-width: 0;
+            overflow-wrap: break-word;
+        }
+
         /* ===== Password Strength ===== */
         .pwd-strength {
             display: flex;
             gap: 4px;
             margin-top: 0.5rem;
             margin-bottom: 0.25rem;
+            max-width: 100%;
         }
 
         .pwd-strength-bar {
@@ -409,6 +426,7 @@
             border-radius: 3px;
             background: var(--border);
             transition: background var(--speed);
+            min-width: 0;
         }
 
         .pwd-strength-bar.active-weak {
@@ -430,6 +448,7 @@
             margin-bottom: 0.15rem;
             transition: color var(--speed);
             min-height: 1rem;
+            word-break: break-word;
         }
 
         .pwd-strength-text.weak {
@@ -447,6 +466,7 @@
         /* ===== Buttons ===== */
         .btn-submit {
             width: 100%;
+            max-width: 100%;
             height: 50px;
             border: none;
             border-radius: var(--radius);
@@ -506,6 +526,8 @@
             align-items: center;
             gap: 1rem;
             margin: 1.35rem 0;
+            max-width: 100%;
+            min-width: 0;
         }
 
         .divider::before,
@@ -514,17 +536,20 @@
             flex: 1;
             height: 1px;
             background: var(--border);
+            min-width: 0;
         }
 
         .divider span {
             font-size: 0.78rem;
             color: var(--text-muted);
             white-space: nowrap;
+            flex-shrink: 0;
         }
 
         /* ===== Google Button ===== */
         .btn-google {
             width: 100%;
+            max-width: 100%;
             height: 48px;
             display: flex;
             align-items: center;
@@ -560,6 +585,8 @@
             text-align: center;
             margin-top: 1rem;
             line-height: 1.55;
+            word-break: break-word;
+            overflow-wrap: break-word;
         }
 
         .terms-text a {
@@ -580,6 +607,7 @@
             text-align: center;
             font-size: 0.84rem;
             color: var(--text-secondary);
+            word-break: break-word;
         }
 
         .card-footer a {
@@ -603,6 +631,7 @@
             display: flex;
             flex-direction: column;
             gap: 0.5rem;
+            max-width: calc(100vw - 2.5rem);
         }
 
         .toast-item {
@@ -616,7 +645,8 @@
             color: var(--white);
             box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
             animation: toastIn 0.35s ease;
-            min-width: 260px;
+            min-width: 0;
+            max-width: 100%;
         }
 
         .toast-item.error {
@@ -679,7 +709,8 @@
 
             .field-input {
                 height: 46px;
-                font-size: 0.85rem;
+                font-size: 16px;
+                /* Ubah ke 16px agar iOS Safari tidak auto-zoom saat focus */
             }
 
             .field-label {

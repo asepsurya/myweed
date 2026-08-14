@@ -6,8 +6,10 @@ use App\Models\Category;
 use App\Models\Invitation;
 use App\Models\Music;
 use App\Models\Template;
+use App\View\TemplateViewFinder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Intervention\Image\Drivers\Gd\Driver;
 use Intervention\Image\ImageManager;
@@ -29,16 +31,15 @@ class TempelateController extends Controller
         $request->validate([
             'name' => 'required',
             'thumbnail' => 'required|image',
-            'preview' => 'required|image',
             'zip' => 'required|mimes:zip',
             'id_category' => 'required|exists:categories,id',
         ]);
 
         $folderName = Str::slug($request->name);
-        $extractPath = resource_path("views/templates/$folderName");
+        $tempPath = sys_get_temp_dir() . '/template_upload_' . uniqid();
 
-        if (! file_exists($extractPath)) {
-            mkdir($extractPath, 0755, true);
+        if (! file_exists($tempPath)) {
+            mkdir($tempPath, 0755, true);
         }
 
         $file = $request->file('zip');
@@ -47,14 +48,14 @@ class TempelateController extends Controller
         if (class_exists('ZipArchive')) {
             $zip = new ZipArchive;
             if ($zip->open($zipPath) === true) {
-                $zip->extractTo($extractPath);
+                $zip->extractTo($tempPath);
                 $zip->close();
             } else {
                 return back()->with('error', 'File ZIP tidak valid atau rusak.');
             }
         } elseif (function_exists('exec')) {
             $escapedZip = escapeshellarg($zipPath);
-            $escapedDest = escapeshellarg($extractPath);
+            $escapedDest = escapeshellarg($tempPath);
             exec("unzip $escapedZip -d $escapedDest 2>&1", $output, $returnVar);
             if ($returnVar !== 0) {
                 $powerShellCmd = "Expand-Archive -LiteralPath $escapedZip -DestinationPath $escapedDest -Force";
@@ -67,8 +68,20 @@ class TempelateController extends Controller
             return back()->with('error', 'Server tidak mendukung ekstraksi ZIP. Aktifkan ekstensi php-zip atau pastikan perintah unzip/Expand-Archive tersedia.');
         }
 
-        $thumb = $this->convertImageToWebp($request->file('thumbnail'), 'templates');
+        $this->uploadTemplateDirectoryToR2($tempPath, $folderName);
+
+        $thumbFromZip = $this->findThumbnailInDirectory($tempPath);
+        if ($thumbFromZip) {
+            $r2ThumbPath = 'templates/'.$folderName.'/thumb/'.basename($thumbFromZip);
+            Storage::disk('r2')->put($r2ThumbPath, file_get_contents($thumbFromZip));
+            $thumb = $r2ThumbPath;
+        } else {
+            $thumb = $this->convertImageToWebp($request->file('thumbnail'), 'templates');
+        }
+
         $preview = $this->convertImageToWebp($request->file('preview'), 'preview');
+
+        $this->deleteDirectoryRecursive($tempPath);
 
         Template::create([
             'name' => $request->name,
@@ -80,7 +93,7 @@ class TempelateController extends Controller
             'is_active' => true,
         ]);
 
-        return back()->with('success', 'Template berhasil diupload & diekstrak ke views/templates!');
+        return redirect()->route('tempelate.index')->with('success', 'Template berhasil diupload & disimpan ke R2!');
     }
 
     public function importCode(Request $request)
@@ -90,18 +103,23 @@ class TempelateController extends Controller
             'slug' => 'required|string|max:255|unique:templates,slug',
             'code' => 'required|string',
             'id_category' => 'required|exists:categories,id',
+            'thumbnail' => 'nullable|image|mimes:jpeg,jpg,png,webp|max:2048',
         ]);
 
         $slug = Str::slug($request->slug);
-        $folderPath = resource_path("views/templates/$slug");
+        $r2Path = "templates/{$slug}/index.blade.php";
 
-        if (! file_exists($folderPath)) {
-            mkdir($folderPath, 0755, true);
+        Storage::disk('r2')->put($r2Path, $request->code);
+
+        /** @var TemplateViewFinder $finder */
+        $finder = app('view.finder');
+        $finder->clearCache($slug);
+
+        if ($request->hasFile('thumbnail')) {
+            $thumb = $this->convertImageToWebp($request->file('thumbnail'), 'templates');
+        } else {
+            $thumb = $this->generatePlaceholderImage($slug, 'templates');
         }
-
-        file_put_contents($folderPath.'/index.blade.php', $request->code);
-
-        $thumb = $this->generatePlaceholderImage($slug, 'templates');
         $preview = $this->generatePlaceholderImage($slug, 'preview');
 
         Template::create([
@@ -114,7 +132,7 @@ class TempelateController extends Controller
             'is_active' => true,
         ]);
 
-        return back()->with('success', 'Template berhasil di-import dari code!');
+        return redirect()->route('tempelate.index')->with('success', 'Template berhasil di-import dari code!');
     }
 
     private function generatePlaceholderImage($slug, $folder)
@@ -164,19 +182,16 @@ class TempelateController extends Controller
 
     public function destroy(Template $template)
     {
-        // Hapus folder template di views/templates
-        $folderPath = resource_path("views/templates/{$template->slug}");
+        Storage::disk('r2')->deleteDirectory("templates/{$template->slug}");
 
-        if (File::exists($folderPath)) {
-            File::deleteDirectory($folderPath);
-        }
+        /** @var TemplateViewFinder $finder */
+        $finder = app('view.finder');
+        $finder->clearCache($template->slug);
 
-        // Hapus thumbnail
         if ($template->thumbnail && File::exists(public_path("storage/{$template->thumbnail}"))) {
             File::delete(public_path("storage/{$template->thumbnail}"));
         }
 
-        // Hapus data DB
         $template->delete();
 
         return back()->with('success', 'Template berhasil dihapus.');
@@ -230,7 +245,6 @@ class TempelateController extends Controller
             ]);
             $invitation->load('template');
         } else {
-            // Jika guest, kita "set" saja secara temporary di object agar bisa di-preview tanpa simpan ke DB
             $invitation->setRelation('template', $template);
         }
 
@@ -266,7 +280,6 @@ class TempelateController extends Controller
 
             $data = $request->only($updateableFields);
 
-            // Filter out empty strings to prevent overwriting existing demo data
             $data = array_filter($data, function ($value) {
                 return $value !== null && $value !== '';
             });
@@ -319,17 +332,13 @@ class TempelateController extends Controller
 
     public function demo($slug)
     {
-        // Ambil template berdasarkan slug
         $template = Template::where('slug', $slug)->firstOrFail();
 
-        // Increment view count
         $template->increment('views_count');
 
-        // Cari invitation contoh (paling baru)
         $invitation = Invitation::with(['template', 'galleries', 'rsvps'])->latest()->first();
 
         if (! $invitation) {
-            // Create a mock invitation in memory
             $invitation = new Invitation([
                 'slug' => 'demo-wedding',
                 'groom_name' => 'Romeo',
@@ -337,10 +346,9 @@ class TempelateController extends Controller
                 'event_date' => now()->addMonths(3),
                 'event_location' => 'Gedung Serbaguna, Jakarta',
             ]);
-            $invitation->id = 0; // Temporary ID
+            $invitation->id = 0;
         }
 
-        // Set template secara temporary untuk preview
         $invitation->setRelation('template', $template);
 
         $templateView = 'templates.'.$template->slug.'.index';
@@ -364,12 +372,10 @@ class TempelateController extends Controller
             return 'Pilih template terlebih dahulu';
         }
 
-        // Create a mock invitation object
         $invitation = new Invitation($request->all());
-        $invitation->id = $request->id ?? 0; // Use existing ID or dummy 0 for preview
+        $invitation->id = $request->id ?? 0;
         $invitation->setRelation('template', $template);
 
-        // Mock relationships
         $invitation->setRelation('galleries', collect([]));
         $invitation->setRelation('rsvps', collect([]));
 
@@ -390,16 +396,15 @@ class TempelateController extends Controller
             return '<div style="padding:40px;text-align:center;font-family:sans-serif;">
                 <h3 style="color:#dc3545;">Preview Error</h3>
                 <p>Gagal memuat preview template. Coba lagi atau pilih template lain.</p>
-                <pre style="background:#f8f9fa;padding:10px;border-radius:4px;text-align:left;font-size:12px;overflow:auto;">'.e($e->getMessage()).'</pre>
+                <pre style="background:#f8f9f5;padding:10px;border-radius:4px;text-align:left;font-size:12px;overflow:auto;">'.e($e->getMessage()).'</pre>
             </div>';
         }
 
-        // Inject script for live image synchronization
         $previewData = json_encode([
             'pria' => $request->preview_foto_pria,
             'wanita' => $request->preview_foto_wanita,
             'cover' => $request->preview_gallery_cover,
-            'gallery' => $request->preview_gallery, // This should be an array of base64/blob
+            'gallery' => $request->preview_gallery,
         ]);
 
         $syncScript = '
@@ -408,14 +413,12 @@ class TempelateController extends Controller
                 const images = '.$previewData.";
                 const sync = (data) => {
                     const imgs = data || images;
-                    // Groom & Bride
                     if (imgs.pria) {
                         document.querySelectorAll('img[src*=\"foto_pria\"], img[alt*=\"Groom\"], .groom-photo img, .couple-img[alt=\"Groom\"]').forEach(i => i.src = imgs.pria);
                     }
                     if (imgs.wanita) {
                         document.querySelectorAll('img[src*=\"foto_wanita\"], img[alt*=\"Bride\"], .bride-photo img, .couple-img[alt=\"Bride\"]').forEach(i => i.src = imgs.wanita);
                     }
-                    // Hero/Cover
                     if (imgs.cover) {
                          document.querySelectorAll('*').forEach(el => {
                             const style = window.getComputedStyle(el);
@@ -424,7 +427,6 @@ class TempelateController extends Controller
                             }
                          });
                     }
-                    // Gallery
                     if (imgs.gallery && imgs.gallery.length > 0) {
                         const galleryContainer = document.querySelector('.masonry-gallery');
                         if (galleryContainer) {
@@ -458,6 +460,195 @@ class TempelateController extends Controller
         return response()->json([
             'success' => true,
             'likes_count' => $template->likes_count,
+        ]);
+    }
+
+    private function uploadTemplateDirectoryToR2(string $sourceDir, string $r2Prefix): void
+    {
+        $r2 = Storage::disk('r2');
+        $iterator = new \RecursiveIteratorIterator(
+            new \RecursiveDirectoryIterator($sourceDir, \RecursiveDirectoryIterator::SKIP_DOTS),
+            \RecursiveIteratorIterator::LEAVES_ONLY
+        );
+
+        foreach ($iterator as $file) {
+            if ($file->isFile()) {
+                $relativePath = str_replace($sourceDir . DIRECTORY_SEPARATOR, '', $file->getPathname());
+                $r2Path = 'templates/' . $r2Prefix . '/' . str_replace(DIRECTORY_SEPARATOR, '/', $relativePath);
+                $content = file_get_contents($file->getPathname());
+                $r2->put($r2Path, $content);
+            }
+        }
+    }
+
+    private function deleteDirectoryRecursive(string $dir): void
+    {
+        if (! is_dir($dir)) {
+            return;
+        }
+        $files = array_diff(scandir($dir), ['.', '..']);
+        foreach ($files as $file) {
+            $path = $dir . DIRECTORY_SEPARATOR . $file;
+            is_dir($path) ? $this->deleteDirectoryRecursive($path) : unlink($path);
+        }
+        rmdir($dir);
+    }
+
+    private function findThumbnailInDirectory(string $dir): ?string
+    {
+        $thumbDir = $dir . DIRECTORY_SEPARATOR . 'thumb';
+
+        if (! is_dir($thumbDir)) {
+            return null;
+        }
+
+        $files = array_diff(scandir($thumbDir), ['.', '..']);
+
+        foreach ($files as $file) {
+            $path = $thumbDir . DIRECTORY_SEPARATOR . $file;
+            if (is_file($path)) {
+                return $path;
+            }
+        }
+
+        return null;
+    }
+
+    public function sync(Request $request)
+    {
+        $r2 = Storage::disk('r2');
+        $added = 0;
+        $updated = 0;
+        $errors = [];
+
+        try {
+            $items = $r2->listContents('templates', false);
+        } catch (\Throwable $e) {
+            return back()->with('error', 'Gagal membaca R2: '.$e->getMessage());
+        }
+
+        foreach ($items as $item) {
+            if ($item['type'] !== 'dir') {
+                continue;
+            }
+
+            $slug = $item['basename'] ?? basename($item['path']);
+            $slug = Str::slug($slug);
+
+            $template = Template::where('slug', $slug)->first();
+
+            if (! $template) {
+                $thumb = $this->syncThumbnailFromR2($r2, $slug);
+
+                $data = [
+                    'name' => Str::title(str_replace('-', ' ', $slug)),
+                    'slug' => $slug,
+                    'thumbnail' => $thumb,
+                    'preview' => $thumb,
+                    'sections' => ['hero', 'couple', 'event', 'gallery', 'rsvp', 'music'],
+                    'is_active' => true,
+                ];
+
+                $category = Category::inRandomOrder()->first();
+                if ($category) {
+                    $data['id_category'] = $category->id;
+                }
+
+                Template::create($data);
+
+                $added++;
+            } else {
+                if (! $template->thumbnail) {
+                    $thumb = $this->syncThumbnailFromR2($r2, $slug);
+                    if ($thumb) {
+                        $template->update(['thumbnail' => $thumb]);
+                        $updated++;
+                    }
+                }
+            }
+        }
+
+        $message = "Sinkronisasi selesai. {$added} template baru ditambahkan, {$updated} thumbnail diperbarui.";
+        if (! empty($errors)) {
+            $message .= ' ('.count($errors).' error)';
+        }
+
+        return back()->with('success', $message);
+    }
+
+    private function syncThumbnailFromR2($r2, string $slug): ?string
+    {
+        $thumbPath = "templates/{$slug}/thumb";
+
+        try {
+            $files = $r2->listContents($thumbPath, false);
+            foreach ($files as $file) {
+                if ($file['type'] === 'file') {
+                    $path = method_exists($file, 'path') ? $file->path() : $file['path'];
+                    $ext = pathinfo($path, PATHINFO_EXTENSION);
+                    $localPath = storage_path('app/public/templates/'.$slug.'-thumb.'.$ext);
+
+                    if (! file_exists($localPath)) {
+                        $content = $r2->get($path);
+                        file_put_contents($localPath, $content);
+                    }
+
+                    return 'templates/'.$slug.'-thumb.'.$ext;
+                }
+            }
+        } catch (\Throwable $e) {
+            // Ignore
+        }
+
+        return null;
+    }
+
+    public function editCode(Template $template)
+    {
+        $r2Path = "templates/{$template->slug}/index.blade.php";
+        $code = '';
+
+        try {
+            if (Storage::disk('r2')->exists($r2Path)) {
+                $code = Storage::disk('r2')->get($r2Path);
+            }
+        } catch (\Throwable $e) {
+            $code = '';
+        }
+
+        $categories = \App\Models\Category::orderBy('name')->get(['id', 'name']);
+
+        return response()->json([
+            'success' => true,
+            'template' => [
+                'id' => $template->id,
+                'name' => $template->name,
+                'slug' => $template->slug,
+                'category_id' => $template->id_category,
+                'category' => $template->category->name ?? 'N/A',
+            ],
+            'categories' => $categories,
+            'code' => $code,
+        ]);
+    }
+
+    public function saveCode(Request $request, Template $template)
+    {
+        $request->validate([
+            'code' => 'required|string',
+        ]);
+
+        $r2Path = "templates/{$template->slug}/index.blade.php";
+
+        Storage::disk('r2')->put($r2Path, $request->input('code'));
+
+        /** @var \App\View\TemplateViewFinder $finder */
+        $finder = app('view.finder');
+        $finder->clearCache($template->slug);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Template berhasil diperbarui di R2.',
         ]);
     }
 }

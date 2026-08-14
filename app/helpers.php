@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
+use App\Models\Template;
 
 if (! function_exists('get_breadcrumbs')) {
     function get_breadcrumbs(): array
@@ -186,7 +187,6 @@ if (! function_exists('storage_url_with_fallback')) {
             $publicUrl = rtrim(config('filesystems.disks.r2.public_url', ''), '/');
 
             if ($publicUrl) {
-                // Check R2 first
                 try {
                     if (Storage::disk('r2')->exists($path)) {
                         $url = $publicUrl.'/'.ltrim($path, '/');
@@ -199,7 +199,6 @@ if (! function_exists('storage_url_with_fallback')) {
                     // Fall through
                 }
 
-                // Fallback to local
                 $localPath = storage_path('app/public/'.ltrim($path, '/'));
                 if (file_exists($localPath) || Storage::disk('public')->exists($path)) {
                     $url = asset('storage/'.ltrim($path, '/'));
@@ -213,7 +212,6 @@ if (! function_exists('storage_url_with_fallback')) {
             }
         }
 
-        // Local/public disk
         $localPath = storage_path('app/'.($disk === 'local' ? 'private' : 'public').'/'.ltrim($path, '/'));
         if (file_exists($localPath) || Storage::disk($disk)->exists($path)) {
             $url = asset('storage/'.ltrim($path, '/'));
@@ -228,5 +226,49 @@ if (! function_exists('storage_url_with_fallback')) {
         }
 
         return $fallback;
+    }
+}
+
+if (! function_exists('template_thumbnail_url')) {
+    function template_thumbnail_url(?Template $template, $version = null): ?string
+    {
+        if (! $template) {
+            return 'https://placehold.co/600x450?text=No+Thumbnail';
+        }
+
+        $disk = config('image.disk', 'public');
+
+        if ($disk === 'r2') {
+            $publicUrl = rtrim(config('filesystems.disks.r2.public_url', ''), '/');
+
+            if ($publicUrl) {
+                $r2ThumbPath = 'templates/'.$template->slug.'/thumb';
+
+                try {
+                    $files = Storage::disk('r2')->listContents($r2ThumbPath, false);
+
+                    foreach ($files as $file) {
+                        if (method_exists($file, 'isFile') ? $file->isFile() : ($file['type'] ?? '' === 'file')) {
+                            $path = method_exists($file, 'path') ? $file->path() : $file['path'];
+                            $url = $publicUrl.'/'.ltrim($path, '/');
+
+                            if ($version !== null) {
+                                $url .= '?v='.$version;
+                            }
+
+                            return $url;
+                        }
+                    }
+                } catch (\Throwable $e) {
+                    // Fall through
+                }
+            }
+        }
+
+        if ($template->thumbnail) {
+            return storage_url($template->thumbnail, $version);
+        }
+
+        return 'https://placehold.co/600x450?text=No+Thumbnail';
     }
 }

@@ -78,16 +78,16 @@
                 <div class="col-6 col-md-4 col-lg-3">
                     <div class="card border-0 shadow-sm h-100">
                         @php
-                            $thumb = $template->thumbnail;
-                            $webp = $thumb ? preg_replace('/\.(png|jpg|jpeg)$/i', '.webp', $thumb) : null;
-                            $webpExists = $webp && \Illuminate\Support\Facades\Storage::disk('public')->exists($webp);
-                            $thumbSrc = $webpExists ? asset('storage/' . $webp) : ($thumb ? asset('storage/' . $thumb) : 'https://placehold.co/600x450?text=No+Thumbnail');
+                            $thumbSrc = template_thumbnail_url($template);
                         @endphp
                         <img src="{{ $thumbSrc }}" loading="lazy" class="card-img-top" style="height: 180px; object-fit: cover;" alt="{{ $template->name }}">
                         <div class="card-body d-flex flex-column">
                             <h6 class="fw-semibold mb-1 text-truncate">{{ $template->name }}</h6>
                             <p class="text-muted small mb-2 text-truncate">{{ $template->description ?: ($template->category->name ?? 'Template') }}</p>
                             <div class="mt-auto d-flex gap-2">
+                                <a href="{{ route('template-creator.editor', $template) }}" class="btn btn-outline-dark btn-sm" title="Code Editor">
+                                    <i class="bi bi-code-slash"></i>
+                                </a>
                                 <a href="{{ route('template-creator.preview', $template) }}" target="_blank" class="btn btn-outline-primary btn-sm flex-grow-1">
                                     <i class="bi bi-eye me-1"></i> Preview
                                 </a>

@@ -31,6 +31,7 @@ use App\Http\Controllers\VendorPaymentController;
 use App\Http\Controllers\WeddingController;
 use App\Http\Controllers\WeedingPlanController;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 
 Route::get('/', [LandingController::class, 'index'])->name('landing');
 
@@ -96,6 +97,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/templates/upload', [TempelateController::class, 'create']);
     Route::post('/templates/upload', [TempelateController::class, 'store']);
     Route::delete('/templates/{template}', [TempelateController::class, 'destroy'])->name('templates.destroy');
+    Route::post('/theme/sync', [TempelateController::class, 'sync'])->name('tempelate.sync');
+    Route::get('/theme/{template}/edit-code', [TempelateController::class, 'editCode'])->name('tempelate.edit-code');
+    Route::post('/theme/{template}/save-code', [TempelateController::class, 'saveCode'])->name('tempelate.save-code');
 
     Route::middleware(['role:admin'])->prefix('template-creator')->group(function () {
         Route::get('/', [TemplateCreatorController::class, 'index'])->name('template-creator.index');
@@ -111,6 +115,8 @@ Route::middleware(['auth'])->group(function () {
         Route::delete('/{template}', [TemplateCreatorController::class, 'destroy'])->name('template-creator.destroy');
         Route::get('/{template}/preview', [TemplateCreatorController::class, 'preview'])->name('template-creator.preview');
         Route::post('/preview-code', [TemplateCreatorController::class, 'previewCode'])->name('template-creator.preview-code');
+        Route::get('/{template}/editor', [TemplateCreatorController::class, 'editCode'])->name('template-creator.editor');
+        Route::post('/{template}/editor', [TemplateCreatorController::class, 'saveCode'])->name('template-creator.editor.save');
     });
 
     Route::get('/categories', [CategoryController::class, 'index'])->middleware('role:admin')->name('categories.index');
@@ -121,6 +127,19 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/templates/{slug}/{id}', [TempelateController::class, 'previewUpdate'])->name('template.preview.update');
 
     Route::get('/template-assets/{slug}/{path}', function ($slug, $path) {
+        $r2Path = 'templates/' . $slug . '/' . ltrim($path, '/');
+        $publicUrl = rtrim(config('filesystems.disks.r2.public_url', ''), '/');
+
+        if ($publicUrl) {
+            try {
+                if (Storage::disk('r2')->exists($r2Path)) {
+                    return redirect($publicUrl . '/' . $r2Path);
+                }
+            } catch (\Throwable $e) {
+                // Fall through to local check
+            }
+        }
+
         $basePath = resource_path("views/templates/$slug");
         $filePath = realpath($basePath.'/'.ltrim($path, '/'));
 

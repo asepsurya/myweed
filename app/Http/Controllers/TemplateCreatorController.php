@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use App\Models\Invitation;
 use App\Models\Template;
+use App\View\TemplateViewFinder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
@@ -228,13 +229,9 @@ PROMPT;
 
         $user = Auth::user();
         $slug = Str::slug($request->name).'-'.$user->id.'-'.uniqid();
-        $folderPath = resource_path("views/templates/{$slug}");
+        $r2Path = "templates/{$slug}/index.blade.php";
 
-        if (! file_exists($folderPath)) {
-            mkdir($folderPath, 0755, true);
-        }
-
-        file_put_contents($folderPath.'/index.blade.php', $request->input('code'));
+        Storage::disk('r2')->put($r2Path, $request->input('code'));
 
         $thumbnailPath = null;
         if ($request->hasFile('thumbnail')) {
@@ -265,10 +262,14 @@ PROMPT;
         $categories = Category::orderBy('name')->get();
         $baseTemplates = Template::where('is_user_template', false)->where('is_active', true)->get();
 
-        $folderPath = resource_path("views/templates/{$template->slug}");
+        $r2Path = "templates/{$template->slug}/index.blade.php";
         $code = '';
-        if (file_exists($folderPath.'/index.blade.php')) {
-            $code = file_get_contents($folderPath.'/index.blade.php');
+        try {
+            if (Storage::disk('r2')->exists($r2Path)) {
+                $code = Storage::disk('r2')->get($r2Path);
+            }
+        } catch (\Throwable $e) {
+            $code = '';
         }
 
         return view('dashboard.template-creator.create', array_merge(compact('template', 'categories', 'baseTemplates'), ['code' => $code]));
@@ -287,13 +288,13 @@ PROMPT;
         ]);
 
         $slug = $template->slug;
-        $folderPath = resource_path("views/templates/{$slug}");
+        $r2Path = "templates/{$slug}/index.blade.php";
 
-        if (! file_exists($folderPath)) {
-            mkdir($folderPath, 0755, true);
-        }
+        Storage::disk('r2')->put($r2Path, $request->input('code'));
 
-        file_put_contents($folderPath.'/index.blade.php', $request->input('code'));
+        /** @var TemplateViewFinder $finder */
+        $finder = app('view.finder');
+        $finder->clearCache($slug);
 
         if ($request->hasFile('thumbnail')) {
             $thumb = $this->storeThumbnail($request->file('thumbnail'));
@@ -314,11 +315,11 @@ PROMPT;
     {
         $this->authorizeTemplate($template);
 
-        $folderPath = resource_path("views/templates/{$template->slug}");
+        Storage::disk('r2')->deleteDirectory("templates/{$template->slug}");
 
-        if (file_exists($folderPath)) {
-            File::deleteDirectory($folderPath);
-        }
+        /** @var TemplateViewFinder $finder */
+        $finder = app('view.finder');
+        $finder->clearCache($template->slug);
 
         if ($template->thumbnail && Storage::disk('public')->exists($template->thumbnail)) {
             Storage::disk('public')->delete($template->thumbnail);
@@ -365,6 +366,43 @@ PROMPT;
         return view($templateView, compact('invitation'));
     }
 
+    public function editCode(Template $template)
+    {
+        $this->authorizeTemplate($template);
+
+        $r2Path = "templates/{$template->slug}/index.blade.php";
+        $code = '';
+
+        try {
+            if (Storage::disk('r2')->exists($r2Path)) {
+                $code = Storage::disk('r2')->get($r2Path);
+            }
+        } catch (\Throwable $e) {
+            $code = '';
+        }
+
+        return view('dashboard.template-creator.code-editor', compact('template', 'code'));
+    }
+
+    public function saveCode(Request $request, Template $template)
+    {
+        $this->authorizeTemplate($template);
+
+        $request->validate([
+            'code' => 'required|string',
+        ]);
+
+        $r2Path = "templates/{$template->slug}/index.blade.php";
+
+        Storage::disk('r2')->put($r2Path, $request->input('code'));
+
+        /** @var \App\View\TemplateViewFinder $finder */
+        $finder = app('view.finder');
+        $finder->clearCache($template->slug);
+
+        return back()->with('success', 'Template berhasil diperbarui!');
+    }
+
     public function previewCode(Request $request)
     {
         $request->validate([
@@ -373,13 +411,9 @@ PROMPT;
 
         $code = $request->input('code');
         $tempSlug = 'preview-code-'.uniqid();
-        $folderPath = resource_path("views/templates/{$tempSlug}");
+        $r2Path = "templates/{$tempSlug}/index.blade.php";
 
-        if (! file_exists($folderPath)) {
-            mkdir($folderPath, 0755, true);
-        }
-
-        file_put_contents($folderPath.'/index.blade.php', $code);
+        Storage::disk('r2')->put($r2Path, $code);
 
         $template = new Template([
             'slug' => $tempSlug,
@@ -543,10 +577,10 @@ STRUKTUR FLEXIBLE TEMPLATE (WAJIB DIIKUTI):
     - RSVP form action: action="{{ route('rsvp.store', \$invitation->id) }}"
     - Music: @if(\$invitation->music_youtube_url) <iframe src="{{ \$invitation->music_youtube_url }}"></iframe> @endif
 
- 8. ROUTE YANG SUDAH ADA (PAKAI NAMA ROUTE INI):
-    - RSVP store: route('rsvp.store', \$invitation->id)
-    - RSVP list: route('rsvp.list', \$invitation->id)
-    - JANGAN buat route baru seperti rsvp.submit, rsvp.send, dll.
+8. ROUTE YANG SUDAH ADA (PAKAI NAMA ROUTE INI):
+   - RSVP store: route('rsvp.store', \$invitation->id)
+   - RSVP list: route('rsvp.list', \$invitation->id)
+   - JANGAN buat route baru seperti rsvp.submit, rsvp.send, dll.
 
 9. CSS CLASS NAMING (konsisten dengan template lain):
    - .hero, .fade-in, .visible, .masonry-gallery, .masonry-item
@@ -611,7 +645,6 @@ PROMPT;
     private function normalizeGeneratedCode(string $code): string
     {
         $replacements = [
-            // Nama field yang salah → benar
             'nama_pria' => 'groom_name',
             'nama_wanita' => 'bride_name',
             'tanggal_akad' => 'wedding_date',
@@ -624,7 +657,6 @@ PROMPT;
             'instagram_wanita' => 'bride_instagram',
             'music_url' => 'music_youtube_url',
 
-            // Route yang salah → benar
             "route('rsvp.submit', \$invitation->id)" => "route('rsvp.store', \$invitation->id)",
             "route('rsvp.send', \$invitation->id)" => "route('rsvp.store', \$invitation->id)",
             "route('rsvp.post', \$invitation->id)" => "route('rsvp.store', \$invitation->id)",
@@ -634,7 +666,6 @@ PROMPT;
             $code = str_replace($wrong, $correct, $code);
         }
 
-        // Tambahkan fallback untuk gambar jika belum ada
         $code = preg_replace(
             "/asset\('storage\/' \. \$invitation->(gallery_cover|foto_pria|foto_wanita)\)/",
             "asset('storage/' . (\$invitation->$1 ?? 'default/placeholder.jpg'))",
