@@ -84,7 +84,7 @@
         /* LAYER COVER & THANK YOU SCREEN */
         #cover-screen, #thankyou-screen {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background-image: url('{{ url('template-assets/romantic-anime/image/bg1.jpg') }}');
+            background-image: url('{{ storage_url('templates/romantic-anime/image/bg1.jpg') }}');
             background-size: cover; background-position: bottom; display: flex;
             flex-direction: column; justify-content: center; align-items: center;
             z-index: 100; padding: 20px; text-align: center; transition: opacity 0.8s ease;
@@ -189,7 +189,7 @@
 
         /* AREA GAME */
         #game-container {
-            background-image: url('{{ url('template-assets/romantic-anime/image/bg1.jpg') }}');
+            background-image: url('{{ storage_url('templates/romantic-anime/image/bg1.jpg') }}');
             background-size: cover; background-position: bottom; width: 100%; height: 100%;
             position: relative; display: flex; justify-content: center; overflow: hidden; flex-shrink: 0;
         }
@@ -310,9 +310,9 @@
                 <div class="cover-title">{{ $invitation->groom_nickname ?? 'Pasangan' }} &amp; {{ $invitation->bride_nickname ?? 'Pasangan' }}</div>
                 <div class="cover-divider"></div>
                 <div class="couple-preview">
-                    <img loading="lazy" src="{{ storage_url_with_fallback($invitation->foto_pria, asset('default/groom.jpg')) }}" alt="Pengantin Pria">
+                    <img loading="lazy" src="{{ storage_url_with_fallback($invitation->foto_pria, storage_url('default/groom.jpg')) }}" alt="Pengantin Pria">
                     <span>&</span>
-                    <img loading="lazy" src="{{ storage_url_with_fallback($invitation->foto_wanita, asset('default/bride.jpg')) }}" alt="Pengantin Wanita">
+                    <img loading="lazy" src="{{ storage_url_with_fallback($invitation->foto_wanita, storage_url('default/bride.jpg')) }}" alt="Pengantin Wanita">
                 </div>
                 <p style="margin: 2px 0; font-size: 0.7em; letter-spacing: 1px; text-transform: uppercase;">Kepada Yth.</p>
                 <div class="guest-tag" id="display-guest-name">{{ request('penerima') ?? 'Keluarga Besar' }}</div>
@@ -328,9 +328,9 @@
                 <div class="cover-title" style="font-size: 2.2em;">Untuk Hadirmu ✨</div>
                 <div class="cover-divider"></div>
                 <div class="couple-preview">
-                    <img loading="lazy" src="{{ storage_url_with_fallback($invitation->foto_pria, asset('default/groom.jpg')) }}" alt="Pengantin Pria">
+                    <img loading="lazy" src="{{ storage_url_with_fallback($invitation->foto_pria, storage_url('default/groom.jpg')) }}" alt="Pengantin Pria">
                     <span>&</span>
-                    <img loading="lazy" src="{{ storage_url_with_fallback($invitation->foto_wanita, asset('default/bride.jpg')) }}" alt="Pengantin Wanita">
+                    <img loading="lazy" src="{{ storage_url_with_fallback($invitation->foto_wanita, storage_url('default/bride.jpg')) }}" alt="Pengantin Wanita">
                 </div>
                 <p style="margin: 8px 0; line-height: 1.5; font-size: 0.8em;">
                     Terima kasih banyak telah menyempatkan waktu untuk membuka undangan interaktif kami.<br>
@@ -377,12 +377,12 @@
                         @if($youtubeVideoId)
                             <iframe width="100%" height="180" src="https://www.youtube.com/embed/{{ $youtubeVideoId }}?enablejsapi=1&loop=1&playlist={{ $youtubeVideoId }}&controls=1&modestbranding=1&rel=0" frameborder="0" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>
                         @else
-                            <video controls poster="{{ storage_url_with_fallback($invitation->gallery_cover, asset('default/cover.jpg')) }}">
+                            <video controls poster="{{ storage_url_with_fallback($invitation->gallery_cover, storage_url('default/cover.jpg')) }}">
                                 <source src="{{ storage_url($invitation->video_link) }}" type="video/mp4">
                             </video>
                         @endif
                     @else
-                        <video controls poster="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=600&q=80">
+                        <video controls poster="{{ storage_url('default/cover.jpg') }}">
                             <source src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4" type="video/mp4">
                         </video>
                     @endif
@@ -483,8 +483,8 @@
             <img loading="lazy" id="reaction-gif" src="" alt="Reaction GIF">
 
             <div class="character-container">
-                <img loading="lazy" id="char-bride" class="character" src="{{ url('template-assets/romantic-anime/image/woman.png') }}" alt="Pengantin Wanita">
-                <img loading="lazy" id="char-groom" class="character" src="{{ url('template-assets/romantic-anime/image/man.png') }}" alt="Pengantin Pria">
+                <img loading="lazy" id="char-bride" class="character" src="{{ storage_url('templates/romantic-anime/image/woman.png') }}" alt="Pengantin Wanita">
+                <img loading="lazy" id="char-groom" class="character" src="{{ storage_url('templates/romantic-anime/image/man.png') }}" alt="Pengantin Pria">
             </div>
 
             <div id="options-container"></div>
@@ -499,7 +499,7 @@
 
     <script>
         // ================= KONFIGURASI & VARIABEL GLOBAL =================
-        const IMAGE_BASE = "{{ url('template-assets/romantic-anime/image') }}/";
+        const IMAGE_BASE = "{{ storage_url('templates/romantic-anime/image') }}/";
         
         // PERBAIKAN URL MAPS: Memastikan URL selalu diawali https://
         let rawMapsUrl = @json($invitation->resepsi_maps ? $invitation->resepsi_maps : 'https://maps.google.com');
