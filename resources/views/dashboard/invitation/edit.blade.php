@@ -589,10 +589,8 @@
         <!-- 1. SIDEBAR (KIRI) -->
         <div class="builder-sidebar shadow-sm">
             <div class="sidebar-nav-vertical no-scrollbar hide">
-                <div class="nav-vertical-link active" data-tab="tab-builder" title="Builder">
-                    <i class="bi bi-building"></i><span>Builder</span>
-                </div>
-                <div class="nav-vertical-link" data-tab="tab-2" title="Tema">
+               
+                <div class="nav-vertical-link active" data-tab="tab-2" title="Tema">
                     <i class="bi bi-palette"></i><span>Tema</span>
                 </div>
                 <div class="nav-vertical-link" data-tab="tab-1" title="Pria">

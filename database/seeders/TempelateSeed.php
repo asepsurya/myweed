@@ -28,12 +28,8 @@ class TempelateSeed extends Seeder
                 'thumb' => 'elegant-thumb.png',
                 'preview' => 'elegant_preview.webp',
             ],
-            [
-                'name' => 'Java dreams Maroon',
-                'slug' => 'java-dream-maroon',
-                'thumb' => 'java-dream-maroon.png',
-                'preview' => 'elegant_preview.webp',
-            ],
+        
+            
             [
                 'name' => 'Romantic Anime Dreams',
                 'slug' => 'romantic-anime',
@@ -47,19 +43,7 @@ class TempelateSeed extends Seeder
                 'preview' => 'elegant_preview.webp',
             ],
 
-            [
-                'name' => 'Adat Tempelate',
-                'slug' => 'adat',
-                'thumb' => 'elegant-thumb.png',
-                'preview' => 'simple_preview.png',
-            ],
-
-            [
-                'name' => 'Sample Tempelate',
-                'slug' => 'sample',
-                'thumb' => 'elegant-thumb.png',
-                'preview' => 'simple_preview.png',
-            ],
+       
         ];
 
         foreach ($templates as $tpl) {

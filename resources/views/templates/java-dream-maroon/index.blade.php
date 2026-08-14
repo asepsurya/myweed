@@ -7,6 +7,10 @@
     <title>{{ $invitation->groom_nickname ?? 'Pasangan' }} &amp; {{ $invitation->bride_nickname ?? 'Pasangan' }} | The Wedding</title>
     <meta name="description" content="Undangan Pernikahan {{ $invitation->groom_nickname ?? 'Pasangan' }} &amp; {{ $invitation->bride_nickname ?? 'Pasangan' }} - {{ \Carbon\Carbon::parse($invitation->wedding_date)->locale('id')->translatedFormat('d F Y') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" />
+    {{-- Add Tailwind CSS for the Love Story, Gift, and Video sections --}}
+    <script src="https://cdn.tailwindcss.com"></script>
+    {{-- Add Material Symbols font --}}
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Arimo:wght@400;700&family=Vujahday+Script&family=Annapurna+SIL:wght@400;700&display=swap');
 
@@ -325,7 +329,6 @@ body.locked {
     aspect-ratio: 307/132;
 }
 
-
 .group-5 {
     position: absolute;
     inset: 0;
@@ -347,7 +350,7 @@ body.locked {
     height: auto;
 }
 
-   .group-4 {
+.group-4 {
     position: absolute;
     left: 50%;
     top: 50%;
@@ -611,16 +614,6 @@ body.locked {
     aspect-ratio: 831.76/357.61;
 }
 
-.javanese-paperize-2-1-1 {
-    width: 360px;
-    height: 193px;
-    position: absolute;
-    left: -76px;
-    top: -15px;
-    object-fit: cover;
-    aspect-ratio: 360/193;
-}
-
 .house-java-m-2 {
     width: 308px;
     height: 256px;
@@ -629,30 +622,6 @@ body.locked {
     top: -33px;
     object-fit: cover;
     aspect-ratio: 308/256;
-}
-
-.menu {
-    position: absolute;
-    inset: 0;
-}
-
-.rectangle-4 {
-    background: #3d080a;
-    border-radius: 39px;
-    width: 368px;
-    height: 66px;
-    position: absolute;
-    left: 22px;
-    top: 782px;
-}
-
-.group-2 {
-    width: 305.95px;
-    height: 40.99px;
-    position: absolute;
-    left: 57.29px;
-    top: 795px;
-    overflow: visible;
 }
 
 .love-story {
@@ -771,6 +740,10 @@ body.locked {
     color: #ffffff;
     margin: 0 0 16px;
     line-height: 1.1;
+}
+
+.serif-font {
+    font-family: 'Annapurna SIL', serif;
 }
 
 .wedding-date-divider {
@@ -944,7 +917,6 @@ body.locked {
 }
 
 .rsvp-input {
-    
     padding: 14px 18px;
     border: 1px solid rgba(255, 255, 255, 0.25);
     border-radius: 12px;
@@ -1005,7 +977,6 @@ body.locked {
 }
 
 .rsvp-textarea {
-    
     padding: 14px 18px;
     border: 1px solid rgba(255, 255, 255, 0.25);
     border-radius: 12px;
@@ -1470,7 +1441,8 @@ body.locked {
    BOTTOM NAVIGATION
    ======================== */
 .bottom-nav {
-    display: none !important;
+    /* FIX: Removed !important so .active class can show the nav */
+    display: flex;
     position: fixed;
     bottom: 16px;
     left: 50%;
@@ -1559,57 +1531,48 @@ body.locked {
    DECORATIVE ANIMATIONS (CONTINUOUS)
    ======================== */
 
-/* Gentle float up and down */
 @keyframes floatY {
     0%, 100% { transform: translateY(0); }
     50%       { transform: translateY(-14px); }
 }
 
-/* Float down */
 @keyframes floatYdown {
     0%, 100% { transform: translateY(0); }
     50%       { transform: translateY(14px); }
 }
 
-/* Sway left-right */
 @keyframes swayX {
     0%, 100% { transform: rotate(11.72deg) scale(-1, 1) translateX(0); }
     50%       { transform: rotate(11.72deg) scale(-1, 1) translateX(-12px); }
 }
 
-/* Gentle pulse + rotate */
 @keyframes floatRotate1 {
     0%, 100% { transform: rotate(3.131deg) scale(1, 1) translateY(0); }
     50%       { transform: rotate(6deg) scale(1, 1) translateY(-10px); }
 }
 
-/* Rose bounce */
 @keyframes roseBounce {
     0%, 100% { transform: rotate(5.268deg) scale(1, 1) translateY(0); }
     40%       { transform: rotate(3deg) scale(1, 1) translateY(-16px); }
     60%       { transform: rotate(7deg) scale(1, 1) translateY(-8px); }
 }
 
-/* Red rose 2 – subtle sway */
 @keyframes roseSway2 {
     0%, 100% { transform: translateX(0) translateY(0); }
     33%       { transform: translateX(6px) translateY(-8px); }
     66%       { transform: translateX(-4px) translateY(-4px); }
 }
 
-/* Janur 2 drift */
 @keyframes janurFloat2 {
     0%, 100% { transform: rotate(4.9deg) scale(1, 1) translate(0, 0); }
     50%       { transform: rotate(6.5deg) scale(1, 1) translate(-8px, -12px); }
 }
 
-/* Head text breathing effect */
 @keyframes pulseOpacity {
     0%, 100% { opacity: 1; }
     50%       { opacity: 0.85; }
 }
 
-/* Apply animations continuously */
 .janur-maroon-1 {
     animation: swayX 5s ease-in-out infinite;
 }
@@ -1630,12 +1593,27 @@ body.locked {
     animation: floatRotate1 6s ease-in-out infinite;
 }
 
-/* Tambahkan animasi ke elemen lain agar hidup */
 .javanese-paperize-7-1 { animation: floatY 6s ease-in-out infinite; }
 .javanese-paperize-7-2 { animation: floatYdown 7s ease-in-out infinite; }
 .house-java-m-1 { animation: floatYdown 8s ease-in-out infinite; }
 .house-java-m-2 { animation: floatY 7s ease-in-out infinite; }
 .head { animation: pulseOpacity 4s ease-in-out infinite; }
+
+/* Fade-in animation */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in {
+    animation: fadeIn 0.8s ease-out;
+}
+
+/* Gallery grid in section-4 */
+.mvb {
+    position: relative;
+    z-index: 10;
+}
 
     </style>
 </head>
@@ -1674,17 +1652,15 @@ body.locked {
             <div class="assets-dreamy-javanese-1-1"></div>
             <img loading="lazy" class="janur-maroon-1" src="{{ url('template-assets/' . $invitation->template->slug . '/images/janur-maroon-10.png') }}" />
             <img loading="lazy" class="javanese-paperize-7-3" src="{{ url('template-assets/' . $invitation->template->slug . '/images/javanese-paperize-7-30.png') }}" />
-<img loading="lazy" class="group-4" src="{{ url('template-assets/' . $invitation->template->slug . '/images/group-40.svg') }}" />
+            <img loading="lazy" class="group-4" src="{{ url('template-assets/' . $invitation->template->slug . '/images/group-40.svg') }}" />
             <div
                 class="dan-di-antara-tanda-tanda-kebesaran-nya-ialah-dia-menciptakan-pasangan-untukmu-agar-kamu-merasa-tentram-qs-ar-rum-21">
                  {!! nl2br(e(str_replace('(', "\n(", $invitation->wedding_quote))) !!}
             </div>
-            
         </div>
         
         <div id="pengantin" class="section-3">
             <img loading="lazy" class="javanese-paperize-2-1-1" src="{{ url('template-assets/' . $invitation->template->slug . '/images/javanese-paperize-2-1-10.png') }}" />
-            
             <img loading="lazy" class="javanese-paperize-7-4" src="{{ url('template-assets/' . $invitation->template->slug . '/images/javanese-paperize-7-40.png') }}" />
             <img loading="lazy" class="janur-maroon-2" src="{{ url('template-assets/' . $invitation->template->slug . '/images/janur-maroon-20.png') }}" />
             <img loading="lazy" class="red-rose-1-1-2" src="{{ url('template-assets/' . $invitation->template->slug . '/images/red-rose-1-1-20.png') }}" />
@@ -1710,11 +1686,10 @@ body.locked {
                 src="{{ url('template-assets/' . $invitation->template->slug . '/images/afb-133-e-7-a-7-ec-4-a-6-d-b-886-ec-09-db-826-bcd-1-30.png') }}" />
         </div>
         
-        <div id="lovestory" class="section-4">
-           
+        {{-- FIX: Changed id from "lovestory" to "galeri" to avoid duplicate ID --}}
+        <div id="galeri" class="section-4">
              <div class="wedding-date-content mvb" style="z-index: 10;">
                 <div class="fade-in">
-                
                     <h2 class="wedding-date-title serif-font">Momen Bahagia</h2>
                     <div class="wedding-date-divider">
                         <span></span><span class="diamond">&#10022;</span><span></span>
@@ -1748,13 +1723,12 @@ body.locked {
                         @if ($i == $currentPage)
                             <span style="width: 32px; height: 32px; background: #ffffff; color: #8b1111; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'Arimo', sans-serif; font-size: 13px; font-weight: 700;">{{ $i }}</span>
                         @else
-                            <a href="?page={{ $i }}" style="width: 32px; height: 32px; background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.7); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'Arimo', sans-serif; font-size: 13px; text-decoration: none; transition: all 0.2s;">{{ $i }}</a>
+                            <a href="?page={{ $i }}#galeri" style="width: 32px; height: 32px; background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.7); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'Arimo', sans-serif; font-size: 13px; text-decoration: none; transition: all 0.2s;">{{ $i }}</a>
                         @endif
                     @endfor
                 </div>
                 @endif
             </div>
-            
         </div>
 
         <!-- SECTION 5 - WEDDING DATE -->
@@ -1870,6 +1844,78 @@ body.locked {
         </section>
         @endif
 
+        {{-- FIX: Moved Love Story, Gift, and Video sections OUTSIDE the <script> tag --}}
+        {{-- These were previously inside <script> which caused them to not render --}}
+
+        @if(($invitation->enable_love_story ?? true) && !empty($invitation->love_story))
+        @php
+            $loveStories = is_array($invitation->love_story) ? $invitation->love_story : json_decode($invitation->love_story, true);
+        @endphp
+        @if(!empty($loveStories[0]['title']) || !empty($loveStories[0]['story']))
+        <section class="py-20 px-6 bg-white text-center" id="lovestory">
+            <h2 class="text-4xl font-serif text-gray-800 mb-4">Love Story</h2>
+            <div class="max-w-2xl mx-auto space-y-12">
+                @foreach($loveStories as $index => $story)
+                <div class="flex flex-col md:flex-row gap-6 items-center {{ $index < count($loveStories) - 1 ? 'pb-12 border-b border-gray-200' : '' }}">
+                    @if(!empty($story['photo']))
+                    <img src="{{ storage_url($story['photo']) }}" alt="{{ $story['title'] ?? 'Story Photo' }}" loading="lazy" class="w-full md:w-32 h-32 object-cover rounded-lg flex-shrink-0">
+                    @endif
+                    <div class="text-left flex-1">
+                        <h3 class="text-xl font-bold text-gray-800 mb-2">{{ $story['title'] ?? '' }}</h3>
+                        <p class="text-gray-600 leading-relaxed">{{ $story['story'] ?? '' }}</p>
+                    </div>
+                </div>
+                @endforeach
+            </div>
+        </section>
+        @endif
+        @endif
+
+        @if($invitation->enable_gift == 1 && $invitation->gifts->count())
+        <section class="py-20 px-6 bg-gray-50 text-center" id="gift">
+            <h2 class="text-4xl font-serif text-gray-800 mb-4">Wedding Gift</h2>
+            <div class="max-w-xl mx-auto space-y-6">
+                @foreach($invitation->gifts as $gift)
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+                    <h3 class="font-bold text-lg text-gray-800 mb-2">{{ $gift->bank }}</h3>
+                    <p class="text-2xl font-bold text-blue-800 mb-1">{{ $gift->number }}</p>
+                    <p class="text-sm text-gray-500 mb-3">A/N: {{ $gift->name }}</p>
+                    <button onclick="copyText('{{ $gift->number }}')" class="bg-blue-800 text-white px-4 py-2 rounded-full text-xs font-bold">Salin</button>
+                </div>
+                @endforeach
+            </div>
+        </section>
+        @endif
+
+        @if(($invitation->enable_video ?? true) && !empty($invitation->video_link))
+        @php
+            preg_match('/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|v\/|u\/\w\/|shorts\/)(?<id>[A-Za-z0-9_-]{11}))/i', $invitation->video_link, $ytVideoMatches);
+            $youtubeVideoId = $ytVideoMatches['id'] ?? '';
+        @endphp
+        @if($youtubeVideoId)
+        <section class="py-20 px-6 bg-white text-center" id="video">
+            <h2 class="text-4xl font-serif text-gray-800 mb-4">Video Pernikahan</h2>
+            <div class="max-w-2xl mx-auto">
+                <div class="relative aspect-video rounded-xl overflow-hidden bg-black/10 cursor-pointer" data-fancybox="video" data-src="https://www.youtube.com/embed/{{ $youtubeVideoId }}?enablejsapi=1&autoplay=1&loop=1&playlist={{ $youtubeVideoId }}&controls=1&modestbranding=1&rel=0">
+                    <img src="https://img.youtube.com/vi/{{ $youtubeVideoId }}/hqdefault.jpg" alt="Video Pernikahan" class="w-full h-full object-cover">
+                    <div class="absolute inset-0 flex items-center justify-center bg-black/30">
+                        <span class="material-symbols-outlined text-white text-5xl">play_circle</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+        @else
+        <section class="py-20 px-6 bg-white text-center" id="video">
+            <h2 class="text-4xl font-serif text-gray-800 mb-4">Video Pernikahan</h2>
+            <div class="max-w-2xl mx-auto">
+                <video controls class="w-full rounded-xl">
+                    <source src="{{ storage_url($invitation->video_link) }}" type="video/mp4">
+                </video>
+            </div>
+        </section>
+        @endif
+        @endif
+
         <!-- FOOTER -->
         <footer class="site-footer">
             <div class="footer-content">
@@ -1879,14 +1925,14 @@ body.locked {
                 </div>
                 <p class="footer-tagline">Kami mengundang Bapak/Ibu/Saudara/i untuk hadir<br>dan memberikan doa restu.
                 </p>
-                <p class="footer-date">30 &middot; 06 &middot; 2026</p>
+                <p class="footer-date">{{ \Carbon\Carbon::parse($invitation->wedding_date)->format('d') }} &middot; {{ \Carbon\Carbon::parse($invitation->wedding_date)->format('m') }} &middot; {{ \Carbon\Carbon::parse($invitation->wedding_date)->format('Y') }}</p>
                 <p class="footer-copy">&copy; {{ date('Y') }} {{ $invitation->groom_nickname ?? 'Pasangan' }} &amp; {{ $invitation->bride_nickname ?? 'Pasangan' }} Wedding. Made with &#10084;&#65039;</p>
             </div>
         </footer>
 
-        <!-- BOTTOM NAVIGATION (TABLER ICONS) -->
+        <!-- BOTTOM NAVIGATION -->
+        {{-- FIX: Updated nav items to match new section IDs --}}
         <nav class="bottom-nav" id="bottom-nav">
-         
             <a href="#ayat" class="nav-item">
                 <svg viewBox="0 0 24 24"><path d="M12 3l1.9 5.8H20l-4.9 3.6L17 18l-5-3.8L7 18l1.9-5.6L4 8.8h6.1z"/></svg>
                 <span class="nav-label">Ayat</span>
@@ -1895,7 +1941,7 @@ body.locked {
                 <svg viewBox="0 0 24 24"><path d="M19.5 12.572L12 20l-7.5-7.428A5 5 0 1 1 12 5.572a5 5 0 1 1 7.5 7z"/></svg>
                 <span class="nav-label">Pengantin</span>
             </a>
-            <a href="#lovestory" class="nav-item">
+            <a href="#galeri" class="nav-item">
                 <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="12" cy="12" r="3"/></svg>
                 <span class="nav-label">Gallery</span>
             </a>
@@ -1912,6 +1958,10 @@ body.locked {
     </div>
 
     <x-music-player :invitation="$invitation" />
+
+    {{-- jQuery + Fancybox for gallery lightbox --}}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js"></script>
 
     <script>
         // Countdown Timer
@@ -1969,7 +2019,7 @@ body.locked {
         });
 
         // Auto sync active nav on scroll
-        var sections = document.querySelectorAll('#cover, #ayat, #pengantin, #lovestory, #tanggal, #rsvp');
+        var sections = document.querySelectorAll('#cover, #ayat, #pengantin, #galeri, #tanggal, #rsvp');
         var observer = new IntersectionObserver(function(entries){
             entries.forEach(function(entry){
                 if (entry.isIntersecting) {
@@ -1983,7 +2033,7 @@ body.locked {
                     });
                 }
             });
-        }, { threshold: 0.5 });
+        }, { threshold: 0.3 });
         
         sections.forEach(function(sec){ observer.observe(sec); });
 
@@ -2076,95 +2126,47 @@ body.locked {
             updateRsvpList();
         }
 
-    // Lazy load images (skip SVGs and cover images)
-    document.addEventListener('DOMContentLoaded', function() {
-        var images = document.querySelectorAll('img');
-        var coverImg = document.querySelector('.cover-1 img');
-        images.forEach(function(img) {
-            if ((img !== coverImg) && (img.src && !img.src.includes('.svg'))) {
-                img.loading = 'lazy';
-            }
+        // Lazy load images (skip SVGs and cover images)
+        document.addEventListener('DOMContentLoaded', function() {
+            var images = document.querySelectorAll('img');
+            var coverImg = document.querySelector('.cover-1 img');
+            images.forEach(function(img) {
+                if ((img !== coverImg) && (img.src && !img.src.includes('.svg'))) {
+                    img.loading = 'lazy';
+                }
+            });
         });
-    });
 
-    // Auto resize textarea
-    const rsvpTextarea = document.getElementById('rsvpMessageInput');
-    if (rsvpTextarea) {
-        rsvpTextarea.addEventListener('input', function() {
-            this.style.height = 'auto';
-            this.style.height = Math.min(this.scrollHeight, 300) + 'px';
-        });
-    }
+        // Auto resize textarea
+        const rsvpTextarea = document.getElementById('rsvpMessageInput');
+        if (rsvpTextarea) {
+            rsvpTextarea.addEventListener('input', function() {
+                this.style.height = 'auto';
+                this.style.height = Math.min(this.scrollHeight, 300) + 'px';
+            });
+        }
 
-    @if(($invitation->enable_love_story ?? true) && !empty($invitation->love_story))
-    @php
-        $loveStories = is_array($invitation->love_story) ? $invitation->love_story : json_decode($invitation->love_story, true);
-    @endphp
-    @if(!empty($loveStories[0]['title']) || !empty($loveStories[0]['story']))
-    <section class="py-20 px-6 bg-white text-center" id="lovestory">
-        <h2 class="text-4xl font-serif text-gray-800 mb-4">Love Story</h2>
-        <div class="max-w-2xl mx-auto space-y-12">
-            @foreach($loveStories as $index => $story)
-            <div class="flex flex-col md:flex-row gap-6 items-center {{ $index < count($loveStories) - 1 ? 'pb-12 border-b border-gray-200' : '' }}">
-                @if(!empty($story['photo']))
-                <img src="{{ storage_url($story['photo']) }}" alt="{{ $story['title'] ?? 'Story Photo' }}" loading="lazy" class="w-full md:w-32 h-32 object-cover rounded-lg flex-shrink-0">
-                @endif
-                <div class="text-left flex-1">
-                    <h3 class="text-xl font-bold text-gray-800 mb-2">{{ $story['title'] ?? '' }}</h3>
-                    <p class="text-gray-600 leading-relaxed">{{ $story['story'] ?? '' }}</p>
-                </div>
-            </div>
-            @endforeach
-        </div>
-    </section>
-    @endif
-    @endif
-
-    @if($invitation->enable_gift == 1 && $invitation->gifts->count())
-    <section class="py-20 px-6 bg-gray-50 text-center" id="gift">
-        <h2 class="text-4xl font-serif text-gray-800 mb-4">Wedding Gift</h2>
-        <div class="max-w-xl mx-auto space-y-6">
-            @foreach($invitation->gifts as $gift)
-            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-                <h3 class="font-bold text-lg text-gray-800 mb-2">{{ $gift->bank }}</h3>
-                <p class="text-2xl font-bold text-blue-800 mb-1">{{ $gift->number }}</p>
-                <p class="text-sm text-gray-500 mb-3">A/N: {{ $gift->name }}</p>
-                <button onclick="copyText('{{ $gift->number }}')" class="bg-blue-800 text-white px-4 py-2 rounded-full text-xs font-bold">Salin</button>
-            </div>
-            @endforeach
-        </div>
-    </section>
-    @endif
-
-    @if(($invitation->enable_video ?? true) && !empty($invitation->video_link))
-    @php
-        preg_match('/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|v\/|u\/\w\/|shorts\/)(?<id>[A-Za-z0-9_-]{11}))/i', $invitation->video_link, $ytVideoMatches);
-        $youtubeVideoId = $ytVideoMatches['id'] ?? '';
-    @endphp
-    @if($youtubeVideoId)
-    <section class="py-20 px-6 bg-white text-center" id="video">
-        <h2 class="text-4xl font-serif text-gray-800 mb-4">Video Pernikahan</h2>
-        <div class="max-w-2xl mx-auto">
-            <div class="relative aspect-video rounded-xl overflow-hidden bg-black/10 cursor-pointer" data-fancybox="video" data-src="https://www.youtube.com/embed/{{ $youtubeVideoId }}?enablejsapi=1&autoplay=1&loop=1&playlist={{ $youtubeVideoId }}&controls=1&modestbranding=1&rel=0">
-                <img src="https://img.youtube.com/vi/{{ $youtubeVideoId }}/hqdefault.jpg" alt="Video Pernikahan" class="w-full h-full object-cover">
-                <div class="absolute inset-0 flex items-center justify-center bg-black/30">
-                    <span class="material-symbols-outlined text-white text-5xl">play_circle</span>
-                </div>
-            </div>
-        </div>
-    </section>
-    @else
-    <section class="py-20 px-6 bg-white text-center" id="video">
-        <h2 class="text-4xl font-serif text-gray-800 mb-4">Video Pernikahan</h2>
-        <div class="max-w-2xl mx-auto">
-            <video controls class="w-full rounded-xl">
-                <source src="{{ storage_url($invitation->video_link) }}" type="video/mp4">
-            </video>
-        </div>
-    </section>
-    @endif
-    @endif
-</script>
+        // FIX: Added missing copyText function for Wedding Gift copy button
+        function copyText(text) {
+            navigator.clipboard.writeText(text).then(function() {
+                alert('Nomor rekening berhasil disalin: ' + text);
+            }).catch(function(err) {
+                console.error('Gagal menyalin: ', err);
+                // Fallback for older browsers
+                var textArea = document.createElement('textarea');
+                textArea.value = text;
+                document.body.appendChild(textArea);
+                textArea.select();
+                try {
+                    document.execCommand('copy');
+                    alert('Nomor rekening berhasil disalin: ' + text);
+                } catch (err) {
+                    alert('Gagal menyalin. Silakan salin manual: ' + text);
+                }
+                document.body.removeChild(textArea);
+            });
+        }
+    </script>
 </body>
 
 </html>
