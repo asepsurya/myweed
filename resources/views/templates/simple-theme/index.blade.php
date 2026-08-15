@@ -11,14 +11,14 @@
     <meta property="og:url" content="{{ url()->current() }}">
     <meta property="og:title" content="{{ $invitation->groom_nickname }} & {{ $invitation->bride_nickname }} Wedding Invitation">
     <meta property="og:description" content="You are invited to the wedding of {{ $invitation->groom_nickname }} & {{ $invitation->bride_nickname }}. Click to see the details.">
-    <meta property="og:image" content="{{ storage_url($invitation->gallery_cover) }}">
+    <meta property="og:image" content="{{ storage_url($invitation->gallery_cover, $invitation->updated_at->timestamp) }}">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="{{ url()->current() }}">
     <meta property="twitter:title" content="{{ $invitation->groom_nickname }} & {{ $invitation->bride_nickname }} Wedding Invitation">
     <meta property="twitter:description" content="You are invited to the wedding of {{ $invitation->groom_nickname }} & {{ $invitation->bride_nickname }}. Click to see the details.">
-    <meta property="twitter:image" content="{{ storage_url($invitation->gallery_cover) }}">
+    <meta property="twitter:image" content="{{ storage_url($invitation->gallery_cover, $invitation->updated_at->timestamp) }}">
 
     <!-- Tailwind & Elegant Fonts -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -138,7 +138,7 @@
 
         <!-- Hero Section -->
         <header class="relative h-screen flex items-center justify-center text-center">
-            <div id="preview-hero-bg" class="absolute inset-0 bg-cover bg-center" style="background-image: url('{{ storage_url($invitation->gallery_cover) }}')"></div>
+            <div id="preview-hero-bg" class="absolute inset-0 bg-cover bg-center" style="background-image: url('{{ storage_url($invitation->gallery_cover, $invitation->updated_at->timestamp) }}')"></div>
             <div class="absolute inset-0 bg-gradient-to-b from-black/30 via-black/40 to-black/70"></div>
             <div class="relative z-10 text-white px-6 space-y-5">
                 <p class="text-xs tracking-[0.3rem] uppercase font-sans font-light">The Wedding Of</p>

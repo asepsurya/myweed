@@ -106,6 +106,9 @@
                                 <label class="form-check-label small fw-bold" for="selectAll">Pilih Semua</label>
                             </div>
                         </div>
+                        <button type="submit" class="btn btn-danger btn-sm mt-2" onclick="return confirm('Hapus undangan yang dipilih?')">
+                            <i class="bi bi-trash me-1"></i> Hapus yang Dipilih
+                        </button>
                     @endif
 
                     <ul class="list-group">
@@ -117,7 +120,7 @@
                                 <!-- Cover -->
                                 <div class="flex-shrink-0">
                                     @if($inv->gallery_cover)
-                                        <img src="{{ storage_url($inv->gallery_cover, $inv->updated_at->timestamp) }}" class="rounded object-fit-cover" style="width: 48px; height: 48px;" alt="Cover">
+                                        <img src="{{ storage_url_with_fallback($inv->gallery_cover, null, $inv->updated_at->timestamp) }}" class="rounded object-fit-cover" style="width: 48px; height: 48px;" alt="Cover">
                                     @else
                                         <div class="rounded bg-light d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
                                             <i class="bi bi-image text-muted"></i>
@@ -147,7 +150,7 @@
                                             <i class="bi bi-pencil"></i>
                                         </a>
                                         @if(auth()->user()->isPaidSubscribed())
-                                            <button type="button" class="btn btn-outline-success btn-sm" data-bs-toggle="modal" data-bs-target="#shareModalDynamic" data-id="{{ $inv->id }}" title="Bagikan Undangan">
+                                             <button type="button" class="btn btn-outline-success btn-sm" data-bs-toggle="modal" data-bs-target="#shareModalDynamic" data-id="{{ $inv->public_id }}" title="Bagikan Undangan">
                                                 <i class="bi bi-share"></i>
                                             </button>
                                         @endif
@@ -181,7 +184,7 @@
         </li>
         <li>
             @if(auth()->user()->isPaidSubscribed())
-                <button type="button" class="dropdown-item text-success" data-bs-toggle="modal" data-bs-target="#shareModalDynamic" data-id="{{ $inv->id }}">
+                 <button type="button" class="dropdown-item text-success" data-bs-toggle="modal" data-bs-target="#shareModalDynamic" data-id="{{ $inv->public_id }}">
                     <i class="bi bi-share me-2"></i> Bagikan Undangan
                 </button>
             @endif
@@ -220,7 +223,7 @@
 
         <!-- Hidden Divs untuk Menyimpan Template Pesan WhatsApp (Mencegah DOM bloat) -->
         @foreach ($invitations as $inv)
-            <div id="wa-message-{{ $inv->id }}" class="d-none">
+             <div id="wa-message-{{ $inv->public_id }}" class="d-none">
                 @include('dashboard.invitation.pesan')
             </div>
         @endforeach

@@ -1626,7 +1626,7 @@ body.locked {
             <div id="cover" class="cover-1">
                <img loading="lazy"
     class="rectangle-1"
-    src="{{ storage_url_with_fallback($invitation->gallery_cover, asset('images/default-cover.jpg')) }}"
+     src="{{ storage_url_with_fallback($invitation->gallery_cover, asset('images/default-cover.jpg'), $invitation->updated_at->timestamp) }}"
     alt="Cover">
                 <div class="head">
                     <div class="the-wedding-of">The Wedding Of</div>

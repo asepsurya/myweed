@@ -45,7 +45,10 @@ class UserInvitationController extends Controller
 
     public function index()
     {
-        $invitations = Invitation::with('user')->get();
+        $invitations = Invitation::with('user')
+            ->where('user_id', auth()->id())
+            ->orderByDesc('id')
+            ->get();
 
         return view('dashboard.invitation.index', compact('invitations'));
     }
@@ -75,6 +78,7 @@ class UserInvitationController extends Controller
             'groom_child_order' => 'nullable|string|max:255',
             'bride_child_order' => 'nullable|string|max:255',
             'template_id' => 'nullable|exists:templates,id',
+            'theme_type' => 'nullable|string|in:basic,premium_exclusive,luxury',
         ], [
             'groom_name.required' => 'Nama mempelai pria wajib diisi.',
             'bride_name.required' => 'Nama mempelai wanita wajib diisi.',
@@ -118,6 +122,7 @@ class UserInvitationController extends Controller
             ],
             [
                 'template_id' => $templateId,
+                'theme_type' => $request->theme_type,
                 'groom_name' => $request->groom_name,
                 'groom_nickname' => $request->groom_nickname,
                 'groom_child_order' => $request->groom_child_order,
@@ -168,8 +173,9 @@ class UserInvitationController extends Controller
         $request->validate([
             'bride_name' => 'required|string|max:255',
             'groom_name' => 'required|string|max:255',
-            'wedding_date' => 'required|date',
+            'wedding_date' => 'nullable|date',
             'template_id' => 'required|exists:templates,id',
+            'theme_type' => 'nullable|string|in:basic,premium_exclusive,luxury',
             'theme_color' => 'nullable|string|max:255',
             'primary_color' => 'nullable|string|max:7',
             'groom_child_order' => 'nullable|string|max:255',
@@ -388,6 +394,7 @@ class UserInvitationController extends Controller
             $invitation = Invitation::create([
                 'user_id' => auth()->user()->id,
                 'template_id' => $request->template_id,
+                'theme_type' => $request->theme_type,
                 'status' => 'published',
                 'slug' => $slug,
 
@@ -592,9 +599,10 @@ class UserInvitationController extends Controller
         }
 
         $music = Music::where('is_active', true)->get();
-        $templates = Template::where('is_active', true)->with('category')->get();
+        $templates = Template::where('is_active', true)->with('category', 'templateType')->get();
+        $templateTypes = \App\Models\TemplateType::orderBy('name')->get();
 
-        return view('dashboard.invitation.edit', compact('invitation', 'music', 'templates'));
+        return view('dashboard.invitation.edit', compact('invitation', 'music', 'templates', 'templateTypes'));
     }
 
     public function update(Request $request, Invitation $invitation)
@@ -675,8 +683,9 @@ class UserInvitationController extends Controller
         $request->validate([
             'bride_name' => 'required|string|max:255',
             'groom_name' => 'required|string|max:255',
-            'wedding_date' => 'required|date',
+            'wedding_date' => 'nullable|date',
             'template_id' => 'required|exists:templates,id',
+            'theme_type' => 'nullable|string|in:basic,premium_exclusive,luxury',
             'theme_color' => 'nullable|string|max:255',
             'primary_color' => 'nullable|string|max:7',
             'gallery.*' => 'nullable|file|mimes:jpeg,jpg,png,gif,webp|max:10240',
@@ -728,6 +737,7 @@ class UserInvitationController extends Controller
 
             $updateData = [
                 'template_id' => $request->template_id,
+                'theme_type' => $request->theme_type,
                 'status' => 'published',
                 'primary_color' => $request->primary_color,
                 'slug' => $slug,

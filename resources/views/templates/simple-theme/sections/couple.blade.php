@@ -15,7 +15,7 @@
                 <h2 class="font-serif text-3xl text-primary mb-6">Mempelai</h2>
                 <div class="grid grid-cols-2 gap-6">
                     <div>
-                        <img loading="lazy" src="/storage/{{ $invitation->foto_pria }}" class="w-28 h-28 rounded-full mx-auto shadow">
+                        <img loading="lazy" src="{{ storage_url($invitation->foto_pria) }}" class="w-28 h-28 rounded-full mx-auto shadow">
                         <h3 class="font-serif mt-3">{{ $invitation->groom_name }} </h3>
                         <p class="text-xs text-gray-500">{{ $invitation->groom_child_order_text ? 'Putra ' . $invitation->groom_child_order_text . ' dari' : 'Putra dari' }} Bpk {{ $invitation->groom_father_name }} & Ibu {{ $invitation->groom_mother_name }}</p>
                         <a href="https://instagram.com" target="_blank" class="text-primary hover:text-primary/80">
@@ -23,7 +23,7 @@
                         </a>
                     </div>
                     <div>
-                        <img loading="lazy" src="/storage/{{ $invitation->foto_wanita }}" class="w-28 h-28 rounded-full mx-auto shadow">
+                        <img loading="lazy" src="{{ storage_url($invitation->foto_wanita) }}" class="w-28 h-28 rounded-full mx-auto shadow">
                         <h3 class="font-serif mt-3">{{ $invitation->bride_name }}</h3>
                         <p class="text-xs text-gray-500">{{ $invitation->bride_child_order_text ? 'Putri ' . $invitation->bride_child_order_text . ' dari' : 'Putri dari' }} Bpk {{ $invitation->bride_father_name }} & Ibu {{ $invitation->bride_mother_name }}</p>
                         <a href="https://instagram.com" target="_blank" class="text-primary hover:text-primary/80">

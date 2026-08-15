@@ -19,6 +19,7 @@ class Invitation extends Model
     protected $fillable = [
         'user_id',
         'template_id',
+        'public_id',
         'slug',
         'is_default',
         'status',
@@ -45,6 +46,7 @@ class Invitation extends Model
         'resepsi_time_end',
         'resepsi_maps',
         'theme_color',
+        'theme_type',
         'gallery_cover',
                 'wedding_quote',
                 'quote_id',
@@ -72,6 +74,30 @@ class Invitation extends Model
         'partner_accepted_at',
         'partner_can_edit',
     ];
+
+    protected static function booted()
+    {
+        static::creating(function ($invitation) {
+            if (empty($invitation->public_id)) {
+                $invitation->public_id = static::generatePublicId();
+            }
+        });
+    }
+
+    public static function generatePublicId(int $length = 21): string
+    {
+        return nanoid($length);
+    }
+
+    public function resolveRouteBinding($value, $field = null)
+    {
+        return static::where('public_id', $value)->orWhere('id', $value)->first();
+    }
+
+    public function getRouteKeyName(): string
+    {
+        return 'public_id';
+    }
 
     public function template()
     {
@@ -157,6 +183,7 @@ class Invitation extends Model
         return self::create([
             'user_id' => $userId,
             'template_id' => 1, // Simple Template
+            'public_id' => self::generatePublicId(),
             'slug' => 'basic-wedding-'.$userId.'-'.rand(100, 999),
             'groom_name' => 'Mempelai Pria',
             'bride_name' => 'Mempelai Wanita',

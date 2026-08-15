@@ -30,6 +30,7 @@ use App\Http\Controllers\UserInvitationController;
 use App\Http\Controllers\VendorPaymentController;
 use App\Http\Controllers\WeddingController;
 use App\Http\Controllers\WeedingPlanController;
+use App\Http\Controllers\TemplateTypeController;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 
@@ -100,6 +101,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/theme/sync', [TempelateController::class, 'sync'])->name('tempelate.sync');
     Route::get('/theme/{template}/edit-code', [TempelateController::class, 'editCode'])->name('tempelate.edit-code');
     Route::post('/theme/{template}/save-code', [TempelateController::class, 'saveCode'])->name('tempelate.save-code');
+    Route::post('/theme/{template}/update-info', [TempelateController::class, 'updateInfo'])->name('tempelate.update-info');
 
     Route::middleware(['role:admin'])->prefix('template-creator')->group(function () {
         Route::get('/', [TemplateCreatorController::class, 'index'])->name('template-creator.index');
@@ -123,7 +125,10 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/categories', [CategoryController::class, 'store'])->middleware('role:admin')->name('categories.store');
     Route::delete('/categories/{category}', [CategoryController::class, 'destroy'])->middleware('role:admin')->name('categories.destroy');
 
-    Route::get('/templates/{slug}/{id}', [TempelateController::class, 'preview'])->name('template.preview');
+    Route::get('/template-types', [TemplateTypeController::class, 'index'])->middleware('role:admin')->name('template-types.index');
+    Route::post('/template-types', [TemplateTypeController::class, 'store'])->middleware('role:admin')->name('template-types.store');
+    Route::delete('/template-types/{templateType}', [TemplateTypeController::class, 'destroy'])->middleware('role:admin')->name('template-types.destroy');
+
     Route::put('/templates/{slug}/{id}', [TempelateController::class, 'previewUpdate'])->name('template.preview.update');
 
     Route::get('/template-assets/{slug}/{path}', function ($slug, $path) {

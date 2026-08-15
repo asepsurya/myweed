@@ -7,9 +7,7 @@
        RESPONSIVE (MOBILE)
     ============================================= */
     @media (max-width: 991px) {
-        .adminuiux-content {
-            padding: 0 !important;
-        }
+        .adminuiux-content { padding: 0 !important; }
 
         .builder-wrapper {
             flex-direction: column;
@@ -64,17 +62,9 @@
             border: none !important;
         }
 
-        .nav-vertical-link span {
-            display: none !important;
-        }
-
-        .nav-vertical-link i {
-            font-size: 1.15rem !important;
-        }
-
-        .builder-canvas {
-            display: none !important;
-        }
+        .nav-vertical-link span { display: none !important; }
+        .nav-vertical-link i { font-size: 1.15rem !important; }
+        .builder-canvas { display: none !important; }
 
         .sidebar-header {
             padding: 0.75rem 1rem !important;
@@ -93,8 +83,7 @@
             background: rgba(var(--bs-tertiary-bg-rgb), 0.3);
         }
 
-        .form-control,
-        .form-select {
+        .form-control, .form-select {
             padding: 0.6rem 0.75rem !important;
             border-radius: 0.75rem !important;
         }
@@ -105,19 +94,38 @@
         }
 
         .mobile-next-prev {
-            display: none !important;
+            display: flex !important;
+            position: sticky;
+            bottom: 0;
+            z-index: 1042;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+            padding: 1rem;
+            background: var(--bs-card-bg);
+            border-top: 1px solid var(--bs-border-color);
         }
 
-        #cropModal {
-            z-index: 1070 !important;
+        .mobile-next-prev .btn {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            font-size: 1rem;
+            font-weight: 600;
+            min-height: 48px;
         }
 
-        .modal-backdrop {
-            z-index: 1060 !important;
-        }
+        #cropModal { z-index: 1070 !important; }
+        .modal-backdrop { z-index: 1060 !important; }
     }
 
-    /* === Music Source Tabs (Segmented Control) === */
+    /* =============================================
+       UI ELEMENTS (MUSIC, UPLOAD, TABS)
+    ============================================= */
+    .tab-content {
+        padding: 6px !important;
+    }
+
+    /* Music Source Tabs */
     .music-source-tabs {
         display: flex;
         background: var(--bs-tertiary-bg);
@@ -128,9 +136,7 @@
         margin-bottom: 1.2rem;
     }
 
-    .music-source-tabs input {
-        display: none;
-    }
+    .music-source-tabs input { display: none; }
 
     .music-source-tabs label {
         flex: 1;
@@ -168,18 +174,29 @@
         box-shadow: 0 4px 14px rgba(var(--bs-primary-rgb), 0.4);
     }
 
-    /* === Music Content Box === */
+    /* Music Content & List */
     .music-content-box {
         background: var(--bs-tertiary-bg);
         border: 1px solid var(--bs-border-color);
         border-radius: 14px;
         padding: 16px;
         margin-top: 12px;
+        height: calc(100vh - 250px);
+        overflow-y: auto;
     }
 
-    /* === Music List Items === */
+    #musicListContainer {
+        border: none !important;
+        max-height: none !important;
+        height: 100%;
+        overflow-y: auto;
+        padding-right: 5px;
+    }
+
     .music-list-item {
         background: var(--bs-body-bg) !important;
+        border: 1px solid rgba(0, 0, 0, 0.08);
+        border-radius: 8px;
         transition: all 0.25s ease;
     }
 
@@ -201,23 +218,12 @@
     }
 
     @keyframes pulse {
-        0% {
-            transform: scale(1);
-            box-shadow: 0 0 0 0 rgba(var(--bs-primary-rgb), 0.4);
-        }
-
-        70% {
-            transform: scale(1.05);
-            box-shadow: 0 0 0 8px rgba(var(--bs-primary-rgb), 0);
-        }
-
-        100% {
-            transform: scale(1);
-            box-shadow: 0 0 0 0 rgba(var(--bs-primary-rgb), 0);
-        }
+        0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(var(--bs-primary-rgb), 0.4); }
+        70% { transform: scale(1.05); box-shadow: 0 0 0 8px rgba(var(--bs-primary-rgb), 0); }
+        100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(var(--bs-primary-rgb), 0); }
     }
 
-    /* === Audio Player Wrapper === */
+    /* Audio Player & Upload */
     .audio-player-wrapper {
         background: var(--bs-body-bg);
         border: 1px solid var(--bs-border-color);
@@ -234,7 +240,6 @@
         height: 38px;
     }
 
-    /* === Custom Upload Box === */
     .upload-box-custom {
         border: 2px dashed var(--bs-border-color);
         border-radius: 12px;
@@ -251,7 +256,7 @@
         transform: translateY(-2px);
     }
 
-    /* === Country Code Dropdown === */
+    /* Country Code Dropdown */
     .country-dropdown-btn {
         min-width: 120px;
         border-radius: 0.5rem 0 0 0.5rem;
@@ -264,10 +269,6 @@
 
     .country-dropdown-menu .country-option:hover {
         background-color: var(--bs-primary-bg-subtle);
-    }
-    
-    .tab-content {
-        padding: 10px !important;
     }
 </style>
 
@@ -365,13 +366,25 @@
                 </select>
             </div>
 
+            <div class="mb-3">
+                <label class="form-label fw-semibold mb-2">Tipe Template</label>
+                <select id="typeSelect" class="form-select">
+                    <option value="all">Semua Tipe</option>
+                    @foreach($templateTypes as $type)
+                        <option value="{{ $type->id }}">{{ $type->name }}</option>
+                    @endforeach
+                </select>
+            </div>
+
             <div class="row g-3" id="templateGallery">
                 @foreach ($templates as $template)
                     @php $isLocked = !auth()->user()->hasFeature('all_themes') && $template->slug !== 'simple-theme'; @endphp
-                    <div class="col-6 template-selector-item" data-category="{{ $template->category->name ?? 'modern' }}" data-name="{{ strtolower($template->name) }}" data-color="{{ $template->primary_color ?? '#0d9488' }}" data-template-id="{{ $template->id }}">
+                    <div class="col-6 template-selector-item" data-category="{{ $template->category->name ?? 'modern' }}" data-name="{{ strtolower($template->name) }}" data-color="{{ $template->primary_color ?? '#0d9488' }}" data-template-id="{{ $template->id }}" data-supports-color="{{ template_supports_custom_color($template) ? '1' : '0' }}" data-type="{{ $template->templateType->id ?? 'all' }}">
                         <div class="card template-card-selector h-100 {{ $isLocked ? 'locked opacity-75' : '' }} {{ ($selectedTemplateId == $template->id) ? 'selected' : '' }}" onclick="{{ $isLocked ? 'showPremiumAlert()' : 'selectTemplate(this, ' . $template->id . ')' }}">
                             <div class="position-absolute top-0 end-0 m-1 z-1">
-                                @if ($template->is_premium)
+                                @if ($template->templateType)
+                                    <span class="shadow-sm" style="background-color: {{ $template->templateType->color }}; color: #fff; font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 4px;">{{ strtoupper($template->templateType->name) }}</span>
+                                @elseif ($template->is_premium)
                                     <span class="premium-badge shadow-sm"><i class="bi bi-gem me-1"></i>PREMIUM</span>
                                 @else
                                     <span class="basic-badge shadow-sm">BASIC</span>
@@ -383,11 +396,7 @@
                                 </div>
                             @endif
                             <div class="check-icon"><i class="bi bi-check-lg"></i></div>
-                            @php
-                                $thumb = $template->thumbnail ?? $template->preview;
-                                $thumbUrl = $thumb ? storage_url_with_fallback($thumb, 'https://placehold.co/300x400', $template->updated_at->timestamp) : 'https://placehold.co/300x400';
-                            @endphp
-                            <img src="{{ $thumbUrl }}" class="card-img-top template-thumbnail {{ $isLocked ? 'grayscale' : '' }}" alt="{{ $template->name }}" onerror="this.src='https://placehold.co/300x400?text=No+Image'">
+                            <img src="{{ template_thumbnail_url($template) }}" class="card-img-top template-thumbnail {{ $isLocked ? 'grayscale' : '' }}" alt="{{ $template->name }}" onerror="this.src='https://placehold.co/300x400?text=No+Image'">
                             <div class="card-body p-2 text-center">
                                 <span class="fw-bold text-truncate d-block" style="font-size: 12px;">{{ $template->name }}</span>
                             </div>
@@ -424,14 +433,31 @@
                 <small class="text-muted mt-1 d-block">Foto sampul akan ditampilkan di bagian atas undangan.</small>
             </div>
 
-            <div class="mb-3">
-                <label for="primary_color" class="form-label fw-semibold mb-2">Warna Utama</label>
-                <div class="d-flex gap-3 align-items-center">
-                    <input type="color" name="primary_color" id="primary_color" class="form-control form-control-color" value="{{ $inv?->primary_color ?? '#0d9488' }}" style="width: 60px; height: 40px;">
-                    <input type="text" id="primary_color_text" class="form-control" style="max-width: 150px;" value="{{ $inv?->primary_color ?? '#0d9488' }}">
-                    <span class="text-muted">Warna untuk teks, tombol, dan aksen pada undangan.</span>
+            @php
+                $userCanUseColor = auth()->user()->isPaidSubscribed();
+            @endphp
+            @if($userCanUseColor)
+                <div class="mb-3">
+                    <label for="primary_color" class="form-label fw-semibold mb-2">Warna Utama</label>
+                    @php
+                        $selectedTemplateForColor = $templates->find($selectedTemplateId);
+                        $supportsColor = $selectedTemplateForColor ? template_supports_custom_color($selectedTemplateForColor) : false;
+                    @endphp
+                    <div class="d-flex gap-3 align-items-center">
+                        <input type="color" name="primary_color" id="primary_color" class="form-control form-control-color" value="{{ $inv?->primary_color ?? '#0d9488' }}" style="width: 60px; height: 40px;" {{ $supportsColor ? '' : 'disabled' }}>
+                        <input type="text" id="primary_color_text" class="form-control" style="max-width: 150px;" value="{{ $inv?->primary_color ?? '#0d9488' }}" {{ $supportsColor ? '' : 'disabled' }}>
+                    </div>
+                    <div class="mt-2 {{ $supportsColor ? 'd-none' : '' }}" id="colorNotSupportedMsg">
+                        <div class="d-flex align-items-center gap-2 px-3 py-2 rounded-3" style="background: rgba(255,193,7,.08); border: 1px dashed rgba(255,193,7,.35);">
+                            <i class="bi bi-palette text-warning"></i>
+                            <span class="text-muted small">
+                                <strong class="text-dark">Warna dikunci.</strong>
+                                Template ini menggunakan warna bawaan.
+                            </span>
+                        </div>
+                    </div>
                 </div>
-            </div>
+            @endif
         </div>
     </div>
 </div>
@@ -509,7 +535,12 @@
                             <input type="radio" class="btn-check" name="music_source" id="srcUpload" value="upload" {{ $musicSource == 'upload' ? 'checked' : '' }} onchange="switchMusicSource('upload')">
                             <label for="srcUpload"><i class="bi bi-cloud-upload"></i> Upload</label>
                         </div>
-
+                        
+                        <div class="audio-player-wrapper">
+                            <i class="bi bi-headphones fs-4 text-muted"></i>
+                            <audio id="audioPlayer" controls></audio>
+                        </div>
+                        
                         <div class="music-content-box">
                             <div id="source-library" class="music-source-div {{ $musicSource != 'library' ? 'd-none' : '' }}">
                                 <label class="form-label fw-semibold mb-2">Pilih Lagu dari Library</label>
@@ -564,11 +595,6 @@
                                     </div>
                                 @endif
                             </div>
-                        </div>
-
-                        <div class="audio-player-wrapper">
-                            <i class="bi bi-headphones fs-4 text-muted"></i>
-                            <audio id="audioPlayer" controls></audio>
                         </div>
                     </div>
                 </div>
@@ -945,24 +971,24 @@
                         },
                         body: JSON.stringify({ email: email, can_edit: canEdit })
                     })
-                        .then(res => res.json().then(data => ({ status: res.status, body: data })))
-                        .then(({ status, body }) => {
-                            if (status >= 200 && status < 300 && body.success) {
-                                if (partnerMessage) partnerMessage.innerHTML = '<div class="alert alert-success">' + body.message + '</div>';
-                                inviteForm.reset();
-                                setTimeout(() => location.reload(), 1500);
-                            } else {
-                                if (partnerMessage) partnerMessage.innerHTML = '<div class="alert alert-danger">' + (body.message || 'Gagal mengirim undangan.') + '</div>';
-                            }
-                        })
-                        .catch(err => {
-                            console.error('Partner invite error:', err);
-                            if (partnerMessage) partnerMessage.innerHTML = '<div class="alert alert-danger">Terjadi kesalahan. Coba lagi.</div>';
-                        })
-                        .finally(() => {
-                            submitBtn.disabled = false;
-                            submitBtn.innerHTML = '<i class="bi bi-send me-1"></i> Kirim Undangan';
-                        });
+                    .then(res => res.json().then(data => ({ status: res.status, body: data })))
+                    .then(({ status, body }) => {
+                        if (status >= 200 && status < 300 && body.success) {
+                            if (partnerMessage) partnerMessage.innerHTML = '<div class="alert alert-success">' + body.message + '</div>';
+                            inviteForm.reset();
+                            setTimeout(() => location.reload(), 1500);
+                        } else {
+                            if (partnerMessage) partnerMessage.innerHTML = '<div class="alert alert-danger">' + (body.message || 'Gagal mengirim undangan.') + '</div>';
+                        }
+                    })
+                    .catch(err => {
+                        console.error('Partner invite error:', err);
+                        if (partnerMessage) partnerMessage.innerHTML = '<div class="alert alert-danger">Terjadi kesalahan. Coba lagi.</div>';
+                    })
+                    .finally(() => {
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = '<i class="bi bi-send me-1"></i> Kirim Undangan';
+                    });
                 });
             }
 
@@ -984,21 +1010,21 @@
                         },
                         body: new URLSearchParams(new FormData(removeForm))
                     })
-                        .then(res => res.json())
-                        .then(data => {
-                            if (data.success) {
-                                location.reload();
-                            } else {
-                                alert(data.message || 'Gagal menghapus pasangan.');
-                            }
-                        })
-                        .catch(err => {
-                            alert('Terjadi kesalahan. Coba lagi.');
-                        })
-                        .finally(() => {
-                            submitBtn.disabled = false;
-                            submitBtn.innerHTML = '<i class="bi bi-person-x me-1"></i> Hapus Pasangan';
-                        });
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.success) {
+                            location.reload();
+                        } else {
+                            alert(data.message || 'Gagal menghapus pasangan.');
+                        }
+                    })
+                    .catch(err => {
+                        alert('Terjadi kesalahan. Coba lagi.');
+                    })
+                    .finally(() => {
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = '<i class="bi bi-person-x me-1"></i> Hapus Pasangan';
+                    });
                 });
             }
 

@@ -377,7 +377,7 @@
                         @if($youtubeVideoId)
                             <iframe width="100%" height="180" src="https://www.youtube.com/embed/{{ $youtubeVideoId }}?enablejsapi=1&loop=1&playlist={{ $youtubeVideoId }}&controls=1&modestbranding=1&rel=0" frameborder="0" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>
                         @else
-                            <video controls poster="{{ storage_url_with_fallback($invitation->gallery_cover, storage_url('default/cover.jpg')) }}">
+                            <video controls poster="{{ storage_url_with_fallback($invitation->gallery_cover, storage_url('default/cover.jpg'), $invitation->updated_at->timestamp) }}">
                                 <source src="{{ storage_url($invitation->video_link) }}" type="video/mp4">
                             </video>
                         @endif

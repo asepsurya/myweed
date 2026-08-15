@@ -12,7 +12,7 @@
     <meta property="og:title" content="{{ $invitation->groom_nickname ?? 'Mempelai Pria' }} & {{ $invitation->bride_nickname ?? 'Mempelai Wanita' }} Wedding Invitation">
     <meta property="og:description" content="You are invited to the wedding of {{ $invitation->groom_nickname ?? 'Mempelai Pria' }} & {{ $invitation->bride_nickname ?? 'Mempelai Wanita' }}. Click to see the details.">
     @if(!empty($invitation->gallery_cover))
-        <meta property="og:image" content="{{ storage_url($invitation->gallery_cover) }}">
+        <meta property="og:image" content="{{ storage_url($invitation->gallery_cover, $invitation->updated_at->timestamp) }}">
     @endif
 
     <!-- Twitter -->
@@ -21,7 +21,7 @@
     <meta property="twitter:title" content="{{ $invitation->groom_nickname ?? 'Mempelai Pria' }} & {{ $invitation->bride_nickname ?? 'Mempelai Wanita' }} Wedding Invitation">
     <meta property="twitter:description" content="You are invited to the wedding of {{ $invitation->groom_nickname ?? 'Mempelai Pria' }} & {{ $invitation->bride_nickname ?? 'Mempelai Wanita' }}. Click to see the details.">
     @if(!empty($invitation->gallery_cover))
-        <meta property="twitter:image" content="{{ storage_url($invitation->gallery_cover) }}">
+        <meta property="twitter:image" content="{{ storage_url($invitation->gallery_cover, $invitation->updated_at->timestamp) }}">
     @endif
 
     <!-- Google Fonts -->
@@ -291,7 +291,7 @@
     <div class="mobile-container">
 
         <!-- Hero Section -->
-        <header id="preview-hero-bg" class="hero" style="background-image: linear-gradient(rgba(26, 60, 52, 0.4), rgba(26, 60, 52, 0.7)), url('{{ storage_url_with_fallback($invitation->gallery_cover, asset('default/cover.jpg')) }}');">
+        <header id="preview-hero-bg" class="hero" style="background-image: linear-gradient(rgba(26, 60, 52, 0.4), rgba(26, 60, 52, 0.7)), url('{{ storage_url_with_fallback($invitation->gallery_cover, asset('default/cover.jpg'), $invitation->updated_at->timestamp) }}');">
             <div class="fade-in">
                 <div class="hero-subtitle">The Wedding Of</div>
                 <h1>{{ $invitation->groom_nickname ?? 'Mempelai Pria' }} & {{ $invitation->bride_nickname ?? 'Mempelai Wanita' }}</h1>
@@ -494,7 +494,7 @@
                                 <h2 class="serif-font" style="font-size: 2.5rem;">Video Pernikahan</h2>
                             </div>
                             <div class="fade-in">
-                                <video controls style="width: 100%; border-radius: 0.75rem;" poster="{{ storage_url_with_fallback($invitation->gallery_cover, asset('default/cover.jpg')) }}">
+                                <video controls style="width: 100%; border-radius: 0.75rem;" poster="{{ storage_url_with_fallback($invitation->gallery_cover, asset('default/cover.jpg'), $invitation->updated_at->timestamp) }}">
                                     <source src="{{ storage_url($invitation->video_link) }}" type="video/mp4">
                                 </video>
                             </div>
@@ -515,19 +515,28 @@
                         @foreach($invitation->gifts as $gift)
                             <div class="gift-card">
                                 @php
-                                    $bankLogos = [
-                                        'BCA' => 'https://upload.wikimedia.org/wikipedia/commons/5/5c/Bank_Central_Asia.svg',
-                                        'BNI' => 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f0/Bank_Negara_Indonesia_logo_%282004%29.svg/640px-Bank_Negara_Indonesia_logo_%282004%29.svg.png',
-                                        'BRI' => 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/BANK_BRI_logo.svg/640px-BANK_BRI_logo.svg.png',
-                                        'Mandiri' => 'https://upload.wikimedia.org/wikipedia/commons/a/ad/Bank_Mandiri_logo_2016.svg',
-                                        'CIMB' => 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8f/CIMB_Group_Logo.svg/640px-CIMB_Group_Logo.svg.png',
-                                        'OVO' => 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/Logo_ovo_purple.svg/640px-Logo_ovo_purple.svg.png',
-                                        'GoPay' => 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/86/Gopay_logo.svg/640px-Gopay_logo.svg.png',
-                                        'Dana' => 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/Logo_dana_blue.svg/960px-Logo_dana_blue.svg.png',
-                                        'LinkAja' => 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/Link_logo_%282019%29.svg/3840px-Link_logo_%282019%29.svg.png',
-                                        'ShopeePay' => 'https://images.seeklogo.com/logo-png/40/2/shopee-pay-logo-png_seeklogo-406839.png',
-                                    ];
-                                @endphp
+    $bankLogos = [
+        'BCA' => 'https://upload.wikimedia.org/wikipedia/commons/5/5c/Bank_Central_Asia.svg',
+
+        'BNI' => 'https://upload.wikimedia.org/wikipedia/commons/f/f0/Bank_Negara_Indonesia_logo_%282004%29.svg',
+
+        'BRI' => 'https://upload.wikimedia.org/wikipedia/commons/6/68/BANK_BRI_logo.svg',
+
+        'Mandiri' => 'https://upload.wikimedia.org/wikipedia/commons/a/ad/Bank_Mandiri_logo_2016.svg',
+
+        'CIMB' => 'https://upload.wikimedia.org/wikipedia/commons/8/8f/CIMB_Group_Logo.svg',
+
+        'OVO' => 'https://upload.wikimedia.org/wikipedia/commons/e/eb/Logo_ovo_purple.svg',
+
+        'GoPay' => 'https://upload.wikimedia.org/wikipedia/commons/8/86/Gopay_logo.svg',
+
+        'Dana' => 'https://upload.wikimedia.org/wikipedia/commons/7/72/Logo_dana_blue.svg',
+
+        'LinkAja' => 'https://upload.wikimedia.org/wikipedia/commons/c/ca/Link_logo_%282019%29.svg',
+
+        'ShopeePay' => 'https://upload.wikimedia.org/wikipedia/commons/1/1d/ShopeePay_logo.svg',
+    ];
+@endphp
 
                                 <div class="gift-logo">
                                     @if(!empty($bankLogos[$gift->bank]))

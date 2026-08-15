@@ -26,8 +26,8 @@
             @forelse($invitation->galleries as $index => $photo)
             <div class="gallery-item {{ $index >= 6 ? 'hidden' : '' }}" data-gallery-index="{{ $index }}">
                 <div class="{{ $index === 2 ? 'aspect-[4/3] rounded-lg overflow-hidden md:col-span-2' : ($index % 2 === 0 ? 'aspect-[3/4] rounded-lg overflow-hidden' : 'aspect-square rounded-lg overflow-hidden') }}">
-                    <a href="{{ asset('storage/' . $photo->image) }}" data-fancybox="gallery" data-caption="Wedding Moment">
-                        <img loading="lazy"alt="Wedding Moment" class="w-full h-full object-cover hover:scale-105 transition-transform duration-500" src="{{ asset('storage/' . $photo->image) }}" loading="lazy"/>
+                    <a href="{{ storage_url($photo->image) }}" data-fancybox="gallery" data-caption="Wedding Moment">
+                        <img loading="lazy"alt="Wedding Moment" class="w-full h-full object-cover hover:scale-105 transition-transform duration-500" src="{{ storage_url($photo->image) }}" loading="lazy"/>
                     </a>
                 </div>
             </div>

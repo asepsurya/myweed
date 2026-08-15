@@ -1,5 +1,3 @@
-@props(['invitation'])
-
 @php
     $musicId = $invitation->music ?? null;
     $youtubeUrl = $invitation->music_youtube_url ?? $invitation->youtube_url ?? null;
@@ -110,7 +108,7 @@
 </div>
 @endif
 
-<audio id="bgMusic" loop style="display:none;"></audio>
+<audio id="bgMusic" loop style="display:none;" preload="auto"></audio>
 
 <script>
 (function() {
@@ -119,6 +117,7 @@
     const customAudioUrl = "{{ $customAudioUrl }}";
     const isYoutube = youtubeId.length > 0;
     const isCustom = "{{ $isCustomUpload ? 'true' : 'false' }}" === 'true';
+    const isPreviewMode = "{{ request('muted') ? '1' : '0' }}" === '1';
     const bgMusic = document.getElementById('bgMusic');
     const musicToggle = document.getElementById('musicToggle');
     const musicIcon = document.getElementById('musicIcon');
@@ -131,9 +130,6 @@
     const musicVolume = document.getElementById('musicVolume');
     const waveformContainer = document.getElementById('musicWaveformContainer');
     const waveformCanvas = document.getElementById('musicWaveformCanvas');
-    let musicData = null;
-    let isPlaying = false;
-    let hasInteracted = false;
     let ytIframe = null;
     let ytMuted = true;
     let waveformAudioCtx = null;
@@ -141,6 +137,9 @@
     let waveformSource = null;
     let waveformDataArray = null;
     let waveformAnimationId = null;
+    let waveformSourceCreated = false;
+    let currentAudioSrc = '';
+    let audioReady = false;
 
     function formatTime(seconds) {
         if (!seconds || isNaN(seconds)) return '0:00';
@@ -158,15 +157,11 @@
     }
 
     function showWaveform() {
-        if (waveformContainer) {
-            waveformContainer.classList.add('active');
-        }
+        if (waveformContainer) waveformContainer.classList.add('active');
     }
 
     function hideWaveform() {
-        if (waveformContainer) {
-            waveformContainer.classList.remove('active');
-        }
+        if (waveformContainer) waveformContainer.classList.remove('active');
         stopWaveformAnimation();
     }
 
@@ -175,16 +170,32 @@
             cancelAnimationFrame(waveformAnimationId);
             waveformAnimationId = null;
         }
-        if (waveformAnalyser) {
-            waveformAnalyser.disconnect();
-            waveformAnalyser = null;
+        // FIX: Jangan disconnect atau set null untuk waveformAnalyser dan waveformSource
+        // karena akan memutus aliran suara ke speaker secara permanen!
+    }
+
+    function ensureAudioContext() {
+        if (waveformSourceCreated) {
+            if (waveformAudioCtx && waveformAudioCtx.state === 'suspended') {
+                waveformAudioCtx.resume();
+            }
+            return true;
         }
-        if (waveformAudioCtx && waveformAudioCtx.state !== 'closed') {
-            waveformAudioCtx.close().catch(() => {});
-            waveformAudioCtx = null;
+
+        try {
+            waveformAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            waveformSource = waveformAudioCtx.createMediaElementSource(bgMusic);
+            waveformAnalyser = waveformAudioCtx.createAnalyser();
+            waveformAnalyser.fftSize = 128;
+            waveformSource.connect(waveformAnalyser);
+            waveformAnalyser.connect(waveformAudioCtx.destination);
+            waveformDataArray = new Uint8Array(waveformAnalyser.frequencyBinCount);
+            waveformSourceCreated = true;
+            return true;
+        } catch (e) {
+            console.error('Waveform init failed:', e);
+            return false;
         }
-        waveformSource = null;
-        waveformDataArray = null;
     }
 
     function drawWaveform() {
@@ -241,49 +252,60 @@
     function startWaveformAnimation() {
         if (!waveformCanvas) return;
 
-        if (!waveformAudioCtx) {
-            try {
-                waveformAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                waveformSource = waveformAudioCtx.createMediaElementSource(bgMusic);
-                waveformAnalyser = waveformAudioCtx.createAnalyser();
-                waveformAnalyser.fftSize = 128;
-                waveformSource.connect(waveformAnalyser);
-                waveformAnalyser.connect(waveformAudioCtx.destination);
-                waveformDataArray = new Uint8Array(waveformAnalyser.frequencyBinCount);
-            } catch (e) {
-                console.error('Waveform init failed (CORS?):', e);
-                return;
-            }
-        }
-
-        if (waveformAudioCtx.state === 'suspended') {
-            waveformAudioCtx.resume();
+        if (!ensureAudioContext()) {
+            return;
         }
 
         showWaveform();
         drawWaveform();
     }
 
-    function playAudio() {
+    function isAudioPlaying() {
+        if (isYoutube) {
+            return !ytMuted;
+        }
+        if (!bgMusic || !bgMusic.src) return false;
+        return !bgMusic.paused;
+    }
+
+    async function playAudio() {
         if (!bgMusic || !bgMusic.src) {
             console.log('playAudio: bgMusic or src missing');
             return;
         }
-        console.log('playAudio: src=', bgMusic.src, 'volume=', bgMusic.volume);
+
+        if (isAudioPlaying()) {
+            return;
+        }
+
         bgMusic.volume = (musicVolume ? musicVolume.value / 100 : 0.4);
-        bgMusic.play().then(() => {
-            console.log('playAudio: success');
-            hasInteracted = true;
-            isPlaying = true;
-            setPauseIcon();
-            startWaveformAnimation();
-        }).catch(e => console.log('playAudio failed:', e));
+
+        // FIX: Tambahkan await agar AudioContext benar-benar aktif sebelum audio diputar
+        if (waveformAudioCtx && waveformAudioCtx.state === 'suspended') {
+            await waveformAudioCtx.resume();
+        }
+
+        const playPromise = bgMusic.play();
+
+        if (playPromise !== undefined) {
+            playPromise.then(() => {
+                setPauseIcon();
+                startWaveformAnimation();
+            }).catch((e) => {
+                console.log('playAudio failed:', e);
+                setPlayIcon();
+            });
+        }
     }
 
     function pauseAudio() {
         if (!bgMusic) return;
+        
+        if (bgMusic.paused) {
+            return;
+        }
+
         bgMusic.pause();
-        isPlaying = false;
         setPlayIcon();
         stopWaveformAnimation();
     }
@@ -301,64 +323,65 @@
         }
     }
 
-    function pauseYoutube() { sendYtCommand('pauseVideo'); sendYtCommand('pause'); setPlayIcon(); stopWaveformAnimation(); }
+    function pauseYoutube() { sendYtCommand('pauseVideo'); sendYtCommand('pause'); setPlayIcon(); stopWaveformAnimation(); ytMuted = true; }
     function playYoutube() {
-        if (ytMuted) { sendYtCommand('unMute'); ytMuted = false; }
+        sendYtCommand('unMute'); ytMuted = false;
         sendYtCommand('playVideo');
         setTimeout(() => sendYtCommand('setVolume', [100]), 500);
         setPauseIcon();
     }
 
     function toggleMusic() {
-        console.log('toggleMusic: isYoutube=', isYoutube, 'paused=', bgMusic ? bgMusic.paused : 'no-bgMusic');
-        if (isYoutube) {
-            if (ytMuted || !hasInteracted) { playYoutube(); hasInteracted = true; }
-            else { pauseYoutube(); }
+        if (isAudioPlaying()) {
+            if (isYoutube) pauseYoutube();
+            else pauseAudio();
         } else {
-            if (bgMusic.paused) { playAudio(); }
-            else { pauseAudio(); }
+            if (isYoutube) playYoutube();
+            else playAudio();
         }
     }
 
     async function loadMusicData() {
         if (isYoutube || isCustom) return;
 
+        if (!musicId) {
+            musicTitle.textContent = 'Pilih musik terlebih dahulu';
+            return;
+        }
+
         try {
             const response = await fetch('/api/music/' + musicId);
             if (!response.ok) throw new Error('Failed to fetch music');
-            musicData = await response.json();
+            // FIX: Tambahkan deklarasi const agar tidak error ReferenceError
+            const musicData = await response.json(); 
 
             if (musicData.title) musicTitle.textContent = musicData.title;
             if (musicData.artist) musicArtist.textContent = musicData.artist;
             if (musicData.cover) musicCover.src = musicData.cover;
             if (musicData.audio) {
-                bgMusic.src = musicData.audio;
-                bgMusic.load();
-                const tryPlayWhenReady = () => {
-                    if (!hasInteracted) playAudio();
-                    bgMusic.removeEventListener('canplay', tryPlayWhenReady);
-                };
-                bgMusic.addEventListener('canplay', tryPlayWhenReady);
-                if (!hasInteracted) {
-                    setTimeout(() => {
-                        if (!hasInteracted && bgMusic.src) playAudio();
-                    }, 300);
+                const newSrc = musicData.audio;
+                if (currentAudioSrc !== newSrc) {
+                    currentAudioSrc = newSrc;
+                    bgMusic.src = newSrc;
+                    bgMusic.load();
+                    audioReady = false;
                 }
             }
         } catch (e) {
             console.error('Failed to load music data:', e);
-            musicTitle.textContent = 'Memuat lagu...';
+            musicTitle.textContent = 'Gagal memuat lagu';
         }
     }
 
     function loadCustomAudio() {
         if (!isCustom || !customAudioUrl) return;
-        console.log('loadCustomAudio:', customAudioUrl);
+        currentAudioSrc = customAudioUrl;
         bgMusic.src = customAudioUrl;
         bgMusic.load();
         musicTitle.textContent = 'Custom Upload';
         musicArtist.textContent = '';
         musicCover.src = "{{ asset('tempelate/no_sound.webp') }}";
+        audioReady = false;
     }
 
     if (musicToggle) {
@@ -385,10 +408,17 @@
 
         bgMusic.addEventListener('loadedmetadata', () => {
             musicDuration.textContent = formatTime(bgMusic.duration);
+            audioReady = true;
         });
 
         bgMusic.addEventListener('ended', () => {
             bgMusic.currentTime = 0;
+            hideWaveform();
+            setPlayIcon();
+        });
+
+        bgMusic.addEventListener('pause', () => {
+            setPlayIcon();
             hideWaveform();
         });
 
@@ -403,56 +433,36 @@
         });
     }
 
-    document.addEventListener('visibilitychange', () => {
-        if (document.hidden) {
-            if (isYoutube) pauseYoutube();
-            else pauseAudio();
-        } else {
-            if (hasInteracted) {
-                if (isYoutube) playYoutube();
-                else playAudio();
-            }
-        }
-    });
-
-    window.addEventListener('scroll', () => {
-        if (!hasInteracted) {
-            hasInteracted = true;
-            if (isYoutube) playYoutube();
-            else if (bgMusic && bgMusic.src) playAudio();
-        }
-    }, { once: true });
-
-    document.addEventListener('click', () => {
-        if (!hasInteracted) {
-            hasInteracted = true;
-            if (isYoutube) playYoutube();
-            else if (bgMusic && bgMusic.src) playAudio();
-        }
-    }, { once: true });
-
-    function tryAutoplay() {
-        if (hasInteracted) return;
-        if (isYoutube) {
-            hasInteracted = true;
-            playYoutube();
-        } else if (bgMusic && bgMusic.src) {
-            playAudio();
-        }
-    }
-
     if (isYoutube) {
         ytIframe = document.getElementById('youtubeIframe');
-        setTimeout(tryAutoplay, 500);
+        if (!isPreviewMode) {
+            setTimeout(() => {
+                if (!isAudioPlaying()) playYoutube();
+            }, 500);
+        }
     } else if (isCustom) {
-        loadCustomAudio();
-        setTimeout(tryAutoplay, 800);
+        setTimeout(() => loadCustomAudio(), 0);
+        if (!isPreviewMode) {
+            setTimeout(() => {
+                if (!isAudioPlaying()) playAudio();
+            }, 800);
+        }
     } else {
-        loadMusicData().then(() => {
-            setTimeout(tryAutoplay, 800);
-        }).catch(() => {
-            setTimeout(tryAutoplay, 800);
-        });
+        setTimeout(() => {
+            loadMusicData().then(() => {
+                if (!isPreviewMode) {
+                    setTimeout(() => {
+                        if (!isAudioPlaying()) playAudio();
+                    }, 800);
+                }
+            }).catch(() => {
+                if (!isPreviewMode) {
+                    setTimeout(() => {
+                        if (!isAudioPlaying()) playAudio();
+                    }, 800);
+                }
+            });
+        }, 0);
     }
 })();
 </script>

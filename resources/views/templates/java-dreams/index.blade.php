@@ -209,7 +209,7 @@
                 <div class="absolute inset-0 bg-surface-container rounded-t-full rounded-b-3xl border-2 border-secondary/30 transform -rotate-2 animate-float"></div>
                 <div class="absolute inset-0 bg-surface-variant rounded-t-full rounded-b-3xl transform rotate-1 overflow-hidden shadow-2xl">
                     <img class="w-full h-full object-cover opacity-90 mix-blend-luminosity"
-                        src="{{ storage_url_with_fallback($invitation->gallery_cover, asset('default/cover.jpg')) }}" 
+                         src="{{ storage_url_with_fallback($invitation->gallery_cover, asset('default/cover.jpg'), $invitation->updated_at->timestamp) }}" 
                         alt="Wedding Cover" loading="lazy">
                     <div class="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent opacity-80"></div>
                 </div>
@@ -800,7 +800,7 @@
                 <h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary">Video Pernikahan</h2>
             </div>
             <div class="fade-in">
-                <video controls class="w-full rounded-xl" poster="{{ storage_url_with_fallback($invitation->gallery_cover, asset('default/cover.jpg')) }}">
+                 <video controls class="w-full rounded-xl" poster="{{ storage_url_with_fallback($invitation->gallery_cover, asset('default/cover.jpg'), $invitation->updated_at->timestamp) }}">
                     <source src="{{ storage_url($invitation->video_link) }}" type="video/mp4">
                 </video>
             </div>

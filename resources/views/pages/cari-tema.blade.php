@@ -588,6 +588,20 @@
             font-weight: 800;
         }
 
+        .type-badge-card {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 10;
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 4px;
+            color: #fff;
+            pointer-events: none;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+        }
+
         .info-box {
             background: linear-gradient(135deg, rgba(198, 169, 98, 0.1), rgba(198, 169, 98, 0.05));
             border: 1px solid var(--gold-light);
@@ -804,10 +818,15 @@
                 @foreach($templates as $template)
                     <div class="template-card reveal">
                         <div class="template-img-container">
-                            <img src="{{ $template->thumbnail ? asset('storage/' . $template->thumbnail) : 'https://placehold.co/600x450?text=No+Thumbnail' }}"
+                            <img src="{{ template_thumbnail_url($template, $template->updated_at->timestamp) }}"
                                 alt="{{ $template->name }}" loading="lazy">
+                            @if($template->templateType)
+                                <div class="type-badge-card" style="background-color: {{ $template->templateType->color }};">
+                                    {{ $template->templateType->name }}
+                                </div>
+                            @endif
                             <div class="template-overlay">
-                                <a href="{{ route('template.preview', ['slug' => 'romeo-juliet', 'id' => $template->id]) }}"
+                                <a href="{{ route('template.frame', ['slug' => 'romeo-juliet', 'id' => $template->id]) }}"
                                     target="_blank" class="btn btn-light rounded-pill px-4 fw-bold shadow-sm">Pratinjau</a>
                                 <a href="{{ route('dashboard.user') }}?template_id={{ $template->id }}"
                                     class="btn btn-gold rounded-pill px-4 fw-bold shadow-sm">Gunakan</a>
@@ -818,9 +837,7 @@
                                 <img src="https://ui-avatars.com/api/?name={{urlencode($template->name)}}&background=random"
                                     class="user-avatar" alt="">
                                 <span class="user-name">{{ $template->name }}</span>
-                                @if($loop->index % 4 == 0)
-                                    <span class="badge-pro">PREMIUM</span>
-                                @endif
+                              
                             </div>
                             <div class="card-stats">
                                 <span title="Dilihat"><i class="bi bi-eye"></i>

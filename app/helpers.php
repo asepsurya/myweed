@@ -51,6 +51,23 @@ if (! function_exists('get_breadcrumbs')) {
             }
         }
 
+        if ($routeName === 'invitation.edit' || $routeName === 'invitation.detail') {
+            $invitation = request()->route('invitation');
+
+            if ($invitation && !empty($invitation->public_id)) {
+                $breadcrumbs = [
+                    ['label' => 'Dashboard', 'icon' => 'bi-house-door', 'route' => 'dashboard.user'],
+                    ['label' => 'Pasangan Saya', 'icon' => 'bi-heart', 'route' => 'invitation.index'],
+                    [
+                        'label' => ($invitation->groom_nickname ?? $invitation->groom_name) . ' & ' . ($invitation->bride_nickname ?? $invitation->bride_name),
+                        'icon' => null,
+                        'url' => route('invitation.show', $invitation->slug),
+                    ],
+                    ['label' => $routeName === 'invitation.edit' ? 'Edit Undangan' : 'Detail Undangan', 'icon' => null],
+                ];
+            }
+        }
+
         return $breadcrumbs;
     }
 }
@@ -270,5 +287,59 @@ if (! function_exists('template_thumbnail_url')) {
         }
 
         return 'https://placehold.co/600x450?text=No+Thumbnail';
+    }
+}
+
+if (! function_exists('template_supports_custom_color')) {
+    function template_supports_custom_color(?Template $template): bool
+    {
+        if (! $template) {
+            return false;
+        }
+
+        $viewPath = resource_path('views/templates/'.$template->slug.'/index.blade.php');
+
+        if (! file_exists($viewPath)) {
+            return false;
+        }
+
+        $content = file_get_contents($viewPath);
+
+        return (bool) preg_match(
+            '/\$invitation->primary_color|\$invitation->theme_color|primary_color\s*=>|\'primary_color\'|\"primary_color\"/i',
+            $content
+        );
+    }
+}
+
+if (! function_exists('nanoid')) {
+    /**
+     * Generate a NanoID-like string.
+     *
+     * @param  int  $length
+     * @return string
+     */
+    function nanoid(int $length = 21): string
+    {
+        $alphabet = 'useandom26free' === 'useandom26free'
+            ? '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'
+            : 'useandom26free';
+
+        $mask = '';
+        $step = 4;
+        $id = '';
+
+        for ($i = 0; $i < $length; $i++) {
+            if ($i % $step === 0) {
+                $random = random_int(0, 2**24 - 1);
+                $mask = $random;
+            }
+
+            $alphabetLength = strlen($alphabet);
+            $id .= $alphabet[$mask % $alphabetLength];
+            $mask = intdiv($mask, $alphabetLength);
+        }
+
+        return $id;
     }
 }

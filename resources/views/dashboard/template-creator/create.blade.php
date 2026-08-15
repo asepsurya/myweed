@@ -37,7 +37,7 @@
                                 <label class="form-label fw-semibold">Thumbnail</label>
                                 <input type="file" name="thumbnail" class="form-control" accept="image/*">
                                 @if($template->thumbnail ?? false)
-                                    <img src="{{ asset('storage/' . $template->thumbnail) }}" class="mt-2 rounded" style="height: 120px; object-fit: cover;">
+                                    <img src="{{ template_thumbnail_url($template, $template->updated_at->timestamp) }}" class="mt-2 rounded" style="height: 120px; object-fit: cover;">
                                 @endif
                             </div>
                         </div>

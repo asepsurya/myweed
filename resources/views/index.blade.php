@@ -840,6 +840,20 @@
             font-weight: 800;
         }
 
+        .type-badge-card {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 10;
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 4px;
+            color: #fff;
+            pointer-events: none;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+        }
+
         /* ===== CTA Section ===== */
         .cta-section {
             padding: 80px 0;
@@ -1547,9 +1561,9 @@
                 @foreach($invitations as $invitation)
                     <a href="{{ route('invitation.detail', ['slug' => $invitation->slug]) }}" class="wedding-item">
                         <div class="couple-avatar-group">
-                            <img src="{{ $invitation->foto_pria ? storage_url($invitation->foto_pria, $invitation->updated_at->timestamp) : 'https://ui-avatars.com/api/?name=' . urlencode($invitation->groom_name) . '&background=E8D5A3&color=fff' }}"
+                            <img src="{{ $invitation->foto_pria ? storage_url_with_fallback($invitation->foto_pria, 'https://ui-avatars.com/api/?name=' . urlencode($invitation->groom_name) . '&background=E8D5A3&color=fff', $invitation->updated_at->timestamp) : 'https://ui-avatars.com/api/?name=' . urlencode($invitation->groom_name) . '&background=E8D5A3&color=fff' }}"
                                 class="couple-avatar avatar-1" alt="Foto Mempelai Pria">
-                            <img src="{{ $invitation->foto_wanita ? storage_url($invitation->foto_wanita, $invitation->updated_at->timestamp) : 'https://ui-avatars.com/api/?name=' . urlencode($invitation->bride_name) . '&background=1B2A4A&color=fff' }}"
+                            <img src="{{ $invitation->foto_wanita ? storage_url_with_fallback($invitation->foto_wanita, 'https://ui-avatars.com/api/?name=' . urlencode($invitation->bride_name) . '&background=1B2A4A&color=fff', $invitation->updated_at->timestamp) : 'https://ui-avatars.com/api/?name=' . urlencode($invitation->bride_name) . '&background=1B2A4A&color=fff' }}"
                                 class="couple-avatar avatar-2" alt="Foto Mempelai Wanita">
                         </div>
 
@@ -1660,10 +1674,15 @@
                 @foreach($templates as $template)
                     <div class="template-card reveal">
                         <div class="template-img-container">
-                            <img src="{{ $template->thumbnail ? asset('storage/' . $template->thumbnail) : 'https://placehold.co/600x450?text=No+Thumbnail' }}"
+                            <img src="{{ template_thumbnail_url($template, $template->updated_at->timestamp) }}"
                                 alt="{{ $template->name }}" loading="lazy">
+                            @if($template->templateType)
+                                <div class="type-badge-card" style="background-color: {{ $template->templateType->color }};">
+                                    {{ $template->templateType->name }}
+                                </div>
+                            @endif
                             <div class="template-overlay">
-                                <a href="{{ route('template.preview', ['slug' => 'romeo-juliet', 'id' => $template->id]) }}"
+                                <a href="{{ route('template.frame', ['slug' => 'romeo-juliet', 'id' => $template->id]) }}"
                                     target="_blank" class="btn btn-light rounded-pill px-4 fw-bold shadow-sm">Pratinjau</a>
                                 <a href="{{ route('dashboard.user') }}?template_id={{ $template->id }}"
                                     class="btn btn-gold rounded-pill px-4 fw-bold shadow-sm">Gunakan</a>
@@ -1674,9 +1693,7 @@
                                 <img src="https://ui-avatars.com/api/?name={{urlencode($template->name)}}&background=random"
                                     class="user-avatar" alt="">
                                 <span class="user-name">{{ $template->name }}</span>
-                                @if($loop->index % 4 == 0)
-                                    <span class="badge-pro">PREMIUM</span>
-                                @endif
+                              
                             </div>
                             <div class="card-stats">
                                 <span title="Dilihat"><i class="bi bi-eye"></i>
@@ -2072,6 +2089,328 @@
                 }
             });
         })();
+    </script>
+
+  
+
+   @if($promotions->isNotEmpty())
+    <div class="modal fade"
+         id="promoModal"
+         tabindex="-1"
+         aria-hidden="true"
+         data-bs-backdrop="static">
+
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content border-0 shadow-lg promo-modal-content">
+
+                <div id="promoCarousel"
+                     class="carousel slide"
+                     data-bs-ride="carousel"
+                     data-bs-interval="5000">
+
+                    {{-- Banner --}}
+                    <div class="carousel-inner">
+
+                        @foreach($promotions as $index => $promotion)
+                            <div class="carousel-item {{ $index === 0 ? 'active' : '' }}">
+
+                                <div class="position-relative">
+
+                                    <img src="{{ asset('storage/' . $promotion->image) }}"
+                                         alt="{{ $promotion->title ?? 'Promosi' }}"
+                                         class="w-100 promo-image">
+
+                                    {{-- Tombol Close --}}
+                                    <button type="button"
+                                            class="promo-close"
+                                            data-bs-dismiss="modal"
+                                            aria-label="Tutup">
+                                        <span>×</span>
+                                    </button>
+
+                                </div>
+
+                            </div>
+                        @endforeach
+
+                    </div>
+
+                    {{-- Tombol Previous --}}
+                    @if($promotions->count() > 1)
+                        <button class="carousel-control-prev promo-control"
+                                type="button"
+                                data-bs-target="#promoCarousel"
+                                data-bs-slide="prev">
+
+                            <span class="promo-arrow">
+                                ‹
+                            </span>
+
+                            <span class="visually-hidden">
+                                Sebelumnya
+                            </span>
+                        </button>
+
+                        {{-- Tombol Next --}}
+                        <button class="carousel-control-next promo-control"
+                                type="button"
+                                data-bs-target="#promoCarousel"
+                                data-bs-slide="next">
+
+                            <span class="promo-arrow">
+                                ›
+                            </span>
+
+                            <span class="visually-hidden">
+                                Berikutnya
+                            </span>
+                        </button>
+                    @endif
+
+                    {{-- Indicator --}}
+                    @if($promotions->count() > 1)
+                        <div class="carousel-indicators promo-indicators">
+
+                            @foreach($promotions as $index => $promotion)
+                                <button type="button"
+                                        data-bs-target="#promoCarousel"
+                                        data-bs-slide-to="{{ $index }}"
+                                        class="{{ $index === 0 ? 'active' : '' }}"
+                                        aria-current="{{ $index === 0 ? 'true' : 'false' }}"
+                                        aria-label="Banner {{ $index + 1 }}">
+                                </button>
+                            @endforeach
+
+                        </div>
+                    @endif
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+@endif
+
+
+<style>
+    /* ================================
+       MODAL
+    ================================= */
+
+    .promo-modal-content {
+        border-radius: 16px;
+        overflow: hidden;
+        background: transparent;
+    }
+
+    .promo-image {
+        display: block;
+        width: 100%;
+        max-height: 500px;
+        object-fit: cover;
+    }
+
+
+    /* ================================
+       CLOSE BUTTON
+    ================================= */
+
+    .promo-close {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        z-index: 20;
+
+        width: 40px;
+        height: 40px;
+
+        border: 0;
+        border-radius: 50%;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        background: rgba(0, 0, 0, 0.55);
+        color: #fff;
+
+        font-size: 30px;
+        line-height: 1;
+
+        cursor: pointer;
+
+        box-shadow: 0 3px 12px rgba(0, 0, 0, 0.4);
+
+        transition: all 0.2s ease;
+    }
+
+    .promo-close:hover {
+        background: rgba(0, 0, 0, 0.8);
+        transform: scale(1.08);
+    }
+
+    .promo-close span {
+        margin-top: -4px;
+    }
+
+
+    /* ================================
+       ARROW
+    ================================= */
+
+    .promo-control {
+        width: 55px;
+        opacity: 1;
+        z-index: 10;
+    }
+
+    .promo-arrow {
+        width: 38px;
+        height: 38px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        border-radius: 50%;
+
+        background: rgba(0, 0, 0, 0.55);
+        color: #fff;
+
+        font-size: 32px;
+        line-height: 1;
+
+        transition: all 0.2s ease;
+    }
+
+    .promo-control:hover .promo-arrow {
+        background: rgba(0, 0, 0, 0.8);
+        transform: scale(1.08);
+    }
+
+
+    /* ================================
+       INDICATORS
+    ================================= */
+
+    .promo-indicators {
+        margin-bottom: 12px;
+        z-index: 15;
+    }
+
+    .promo-indicators button {
+        width: 8px;
+        height: 8px;
+
+        border: 0;
+        border-radius: 50%;
+
+        margin: 0 4px;
+
+        background-color: rgba(255, 255, 255, 0.65);
+
+        opacity: 1;
+
+        transition: all 0.2s ease;
+    }
+
+    .promo-indicators button.active {
+        width: 24px;
+        border-radius: 10px;
+        background-color: #fff;
+    }
+
+
+    /* ================================
+       BACKDROP BLUR
+    ================================= */
+
+    .modal-backdrop.show {
+        opacity: 1 !important;
+        background: rgba(0, 0, 0, 0.35) !important;
+
+        backdrop-filter: blur(15px) saturate(120%) !important;
+        -webkit-backdrop-filter: blur(15px) saturate(120%) !important;
+    }
+
+    .modal {
+        z-index: 1060 !important;
+    }
+
+    .modal-backdrop {
+        z-index: 1050 !important;
+    }
+
+
+    /* ================================
+       MODAL ANIMATION
+    ================================= */
+
+    #promoModal .modal-dialog {
+        animation: promoModalIn 0.35s ease-out;
+    }
+
+    @keyframes promoModalIn {
+        from {
+            opacity: 0;
+            transform: scale(0.92) translateY(10px);
+        }
+
+        to {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+        }
+    }
+
+
+    /* ================================
+       MOBILE
+    ================================= */
+
+    @media (max-width: 576px) {
+
+        #promoModal .modal-dialog {
+            margin: 15px;
+        }
+
+        .promo-image {
+            max-height: 75vh;
+            object-fit: contain;
+            background: #111;
+        }
+
+        .promo-close {
+            top: 10px;
+            right: 10px;
+
+            width: 36px;
+            height: 36px;
+
+            font-size: 27px;
+        }
+
+        .promo-arrow {
+            width: 34px;
+            height: 34px;
+
+            font-size: 28px;
+        }
+
+        .promo-control {
+            width: 45px;
+        }
+    }
+</style>
+
+    <script>
+        @if($promotions->isNotEmpty())
+            document.addEventListener('DOMContentLoaded', function() {
+                setTimeout(function() {
+                    const promoModal = new bootstrap.Modal(document.getElementById('promoModal'));
+                    promoModal.show();
+                }, 1500);
+            });
+        @endif
     </script>
 </body>
 

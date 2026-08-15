@@ -508,6 +508,12 @@
         .breadcrumb .breadcrumb-item.active {
             color: #C6A962;
         }
+        @media (max-width: 1400px) {
+            .readcrumb-card {
+                display: none !important;
+            }
+        }
+}
     </style>
 </head>
 
@@ -536,7 +542,7 @@
                 @endphp
 
                 @if(!empty($breadcrumbs) && count($breadcrumbs) > 1)
-                    <div class="card border-1 mb-4"
+                    <div class="card border-1 mb-4 readcrumb-card"
                         style="background-color: rgba(198, 169, 98, 0.1); border-color: rgba(198, 169, 98, 0.2) !important;">
                         <div class="card-body py-2 px-3">
                             <nav aria-label="breadcrumb" class="mb-0">
@@ -554,7 +560,9 @@
                                                 @if(!empty($crumb['icon']))
                                                     <i class="bi {{ $crumb['icon'] }} me-1 fs-14"></i>
                                                 @endif
-                                                @if(!empty($crumb['route']))
+                                                @if(!empty($crumb['url']))
+                                                    <a href="{{ $crumb['url'] }}">{{ $crumb['label'] }}</a>
+                                                @elseif(!empty($crumb['route']))
                                                     <a href="{{ route($crumb['route']) }}">{{ $crumb['label'] }}</a>
                                                 @else
                                                     {{ $crumb['label'] }}
@@ -734,6 +742,7 @@
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="{{ asset('assets/js/component/component-toasts.js') }}"></script>
         @yield('js')
+
 </body>
 
 </html>

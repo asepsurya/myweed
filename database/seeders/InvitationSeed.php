@@ -17,6 +17,7 @@ class InvitationSeed extends Seeder
             [
                 'user_id' => 1,
                 'template_id' => 2,
+                'public_id' => Invitation::generatePublicId(),
                 'is_default' => true,
                 'status' => 'published',
                 'primary_color' => '#0d9488',

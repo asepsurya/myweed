@@ -196,7 +196,7 @@
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" href="{{ route('invitation.edit', $invitation->id) }}">
+                                     <a class="nav-link" href="{{ route('invitation.edit', $invitation) }}">
                                         <div class="avatar avatar-28 icon"><i class="bi bi-pencil-square fs-4"></i>
                                         </div>
                                         <div class="col">
@@ -242,7 +242,7 @@
                                         class="text-center position-relative">
                                         <i
                                             class="bi bi-gender-male position-absolute top-0 end-0 m-3 text-white fs-4 opacity-50"></i>
-                                        <img src="{{ $invitation->foto_pria ? (storage_url($invitation->foto_pria, $invitation->updated_at->timestamp) ?? 'https://picsum.photos/seed/groom/200/200') : 'https://picsum.photos/seed/groom/200/200' }}"
+                                        <img src="{{ $invitation->foto_pria ? storage_url_with_fallback($invitation->foto_pria, 'https://picsum.photos/seed/groom/200/200', $invitation->updated_at->timestamp) : 'https://picsum.photos/seed/groom/200/200' }}"
                                             class="rounded-circle mb-3 shadow-lg" width="120" height="120"
                                             style="object-fit:cover; border:4px solid #fff;">
                                         <h5 class="fw-bold text-dark">{{ $invitation->groom_name ?? 'Nama Pria' }}
@@ -266,7 +266,7 @@
                                         class="text-center position-relative">
                                         <i
                                             class="bi bi-gender-female position-absolute top-0 end-0 m-3 text-white fs-4 opacity-50"></i>
-                                        <img src="{{ $invitation->foto_wanita ? (storage_url($invitation->foto_wanita, $invitation->updated_at->timestamp) ?? 'https://picsum.photos/seed/bride/200/200') : 'https://picsum.photos/seed/bride/200/200' }}"
+                                        <img src="{{ $invitation->foto_wanita ? storage_url_with_fallback($invitation->foto_wanita, 'https://picsum.photos/seed/bride/200/200', $invitation->updated_at->timestamp) : 'https://picsum.photos/seed/bride/200/200' }}"
                                             class="rounded-circle mb-3 shadow-lg" width="120" height="120"
                                             style="object-fit:cover; border:4px solid #fff;">
                                         <h5 class="fw-bold text-white">{{ $invitation->bride_name ?? 'Nama Wanita' }}

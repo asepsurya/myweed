@@ -306,7 +306,7 @@
 
         <!-- Hero Section -->
         <section class="h-screen flex flex-col items-center text-center relative overflow-hidden text-on-primary px-margin-mobile" id="home">
-            <div class="absolute inset-0 z-[-1] bg-[url('{{ storage_url_with_fallback($invitation->gallery_cover, asset('default/cover.jpg')) }}')] bg-cover bg-center">
+            <div class="absolute inset-0 z-[-1] bg-[url('{{ storage_url_with_fallback($invitation->gallery_cover, asset('default/cover.jpg'), $invitation->updated_at->timestamp) }}')] bg-cover bg-center">
                 <div class="absolute inset-0 bg-primary/40 backdrop-blur-sm"></div>
             </div>
             <div class="flex-1 flex flex-col items-center justify-center mt-20">

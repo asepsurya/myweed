@@ -876,12 +876,14 @@
         function filterTemplates() {
             const query = document.getElementById('searchTemplate').value.toLowerCase();
             const cat = document.getElementById('categorySelect').value;
+            const type = document.getElementById('typeSelect').value;
             const items = Array.from(document.querySelectorAll('.template-selector-item'));
 
             items.forEach(item => {
                 const matchesQuery = item.dataset.name.includes(query);
                 const matchesCat = (cat === 'all' || item.dataset.category === cat);
-                item.classList.toggle('d-none', !(matchesQuery && matchesCat));
+                const matchesType = (type === 'all' || item.dataset.type === type);
+                item.classList.toggle('d-none', !(matchesQuery && matchesCat && matchesType));
             });
             currentPage = 1;
             renderPagination();
@@ -1233,6 +1235,7 @@
                                     // Update preview with real image
                                     div.innerHTML = `<img src="${data.url}" class="w-100 h-100 object-fit-cover"><button type="button" class="btn btn-danger btn-xs position-absolute top-0 end-0 p-0 m-1 shadow-sm" style="width:18px;height:18px;" onclick="deleteGallery(${data.gallery.id}, this)">&times;</button>`;
                                     hideUploadToast(toastId, true);
+                                    updateLivePreview();
                                 } else {
                                     div.remove();
                                     hideUploadToast(toastId, false);
@@ -1284,7 +1287,7 @@
 
             const toastId = window.showUploadToast({ name: 'Menghapus foto...' }, 'delete');
 
-            fetch(`/invitation/{{ $invitation->id }}/gallery/${id}`, {
+            fetch(`/invitation/{{ $invitation->public_id }}/gallery/${id}`, {
                 method: 'DELETE',
                 headers: {
                     'X-CSRF-TOKEN': '{{ csrf_token() }}',
@@ -1428,6 +1431,7 @@
                                 const input = document.getElementById(config.inputId);
                                 if (input) input.value = '';
                                 hideUploadToast(toastId, true);
+                                updateLivePreview();
                             } else {
                                 hideUploadToast(toastId, false);
                             }
@@ -1448,8 +1452,10 @@
             initTabs();
 
             const categorySelect = document.getElementById('categorySelect');
+            const typeSelect = document.getElementById('typeSelect');
             const searchTemplate = document.getElementById('searchTemplate');
             if (categorySelect) categorySelect.onchange = filterTemplates;
+            if (typeSelect) typeSelect.onchange = filterTemplates;
             if (searchTemplate) searchTemplate.oninput = filterTemplates;
 
             // Pagination

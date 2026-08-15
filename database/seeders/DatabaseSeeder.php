@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
         $this->call([WeddingDefaultUserSeeder::class]);
         $this->call([MusicSeeder::class]);
         $this->call([CategorySeeder::class]);
+        $this->call([TemplateTypeSeeder::class]);
         $this->call([TempelateSeed::class]);
         $this->call([InvitationSeed::class]);
         $this->call([GiftSeeder::class]);

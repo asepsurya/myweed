@@ -37,28 +37,68 @@
             right: 10px;
             z-index: 2;
         }
+
+        .lock-overlay {
+            position: absolute;
+            inset: 0;
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.25);
+            border-radius: 16px 16px 0 0;
+        }
+
+        .lock-overlay i {
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+        }
+
+        @media (max-width: 575.98px) {
+            .tema-card .card-img-top {
+                height: 150px;
+            }
+
+            .tema-card .card-body {
+                padding: 0.75rem;
+            }
+
+            .tema-card .btn-gunakan {
+                font-size: 0.8rem;
+                padding: 0.4rem 1rem;
+            }
+
+            .premium-badge {
+                top: 8px;
+                right: 8px;
+                font-size: 0.7rem;
+            }
+
+            .lock-overlay i {
+                font-size: 1.8rem;
+            }
+        }
     </style>
 
-    <div class="container-fluid py-4" style="padding-bottom: 100px">
-        <div class="row mb-4">
+    <div class="container-fluid py-3 py-md-4" style="padding-bottom: 100px;">
+        <div class="row mb-3 mb-md-4">
             <div class="col-12">
-                <h4 class="fw-bold mb-1">Pilih Tema Undangan</h4>
-                <p class="text-muted mb-0">Pilih template yang sesuai dengan momen spesial Anda</p>
+                <h4 class="fw-bold mb-1 fs-5 fs-md-4">Pilih Tema Undangan</h4>
+                <p class="text-muted mb-0 small">Pilih template yang sesuai dengan momen spesial Anda</p>
             </div>
         </div>
 
-        <div class="row g-3 g-md-4">
+        <div class="row g-2 g-sm-3 g-md-4">
             @forelse ($templates as $template)
                 @php
                     $canAccess = auth()->user()->hasFeature('all_themes') || $template->slug === 'simple-theme';
                 @endphp
-                <div class="col-6 col-md-4 col-lg-3">
+                <div class="col-12 col-sm-6 col-md-4 col-lg-3">
                     <div class="card tema-card h-100 shadow-sm {{ !$canAccess ? 'opacity-75' : '' }}">
                         @if($template->is_premium)
                             <span class="badge bg-warning premium-badge">Premium</span>
                         @endif
                         @if(!$canAccess)
-                            <div class="position-absolute top-50 start-50 translate-middle" style="z-index: 2;">
+                            <div class="lock-overlay">
                                 <i class="bi bi-lock-fill fs-2 text-white shadow-lg"></i>
                             </div>
                         @endif
@@ -113,6 +153,15 @@
                 <form id="quickCreateForm" action="{{ route('invitation.quick-create') }}" method="POST">
                     @csrf
                     <input type="hidden" name="template_id" id="modal_template_id" value="">
+                    
+                    <div class="mb-4">
+                        <label for="modalThemeType" class="form-label small fw-semibold text-muted">Jenis Tema</label>
+                        <select name="theme_type" id="modalThemeType" class="form-select form-select-sm">
+                            <option value="basic">Basic</option>
+                            <option value="premium_exclusive">Premium Exclusive</option>
+                            <option value="luxury">Luxury</option>
+                        </select>
+                    </div>
                     
                     <div class="modal-header text-center" style="background-color: #053B2D; color: #D4AF37; border-bottom: 3px solid #D4AF37; padding: 20px;">
                         <h5 class="modal-title w-100 fw-bold" style="font-family: 'Cinzel', serif; letter-spacing: 1px;">

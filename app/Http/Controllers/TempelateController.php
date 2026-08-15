@@ -19,11 +19,12 @@ class TempelateController extends Controller
 {
     public function index(Request $request)
     {
-        $tempelate = Template::with('category')->get();
+        $tempelate = Template::with(['category', 'templateType'])->get();
         $musics = Music::where('is_active', true)->get();
         $categories = Category::orderBy('name')->get();
+        $templateTypes = \App\Models\TemplateType::orderBy('name')->get();
 
-        return view('dashboard.tempelate.index', compact('tempelate', 'musics', 'categories'));
+        return view('dashboard.tempelate.index', compact('tempelate', 'musics', 'categories', 'templateTypes'));
     }
 
     public function store(Request $request)
@@ -33,6 +34,7 @@ class TempelateController extends Controller
             'thumbnail' => 'required|image',
             'zip' => 'required|mimes:zip',
             'id_category' => 'required|exists:categories,id',
+            'template_type_id' => 'nullable|exists:template_types,id',
         ]);
 
         $folderName = Str::slug($request->name);
@@ -89,6 +91,7 @@ class TempelateController extends Controller
             'thumbnail' => $thumb,
             'preview' => $preview,
             'id_category' => $request->id_category,
+            'template_type_id' => $request->template_type_id,
             'sections' => ['hero', 'couple', 'event', 'gallery', 'rsvp', 'music'],
             'is_active' => true,
         ]);
@@ -103,6 +106,7 @@ class TempelateController extends Controller
             'slug' => 'required|string|max:255|unique:templates,slug',
             'code' => 'required|string',
             'id_category' => 'required|exists:categories,id',
+            'template_type_id' => 'nullable|exists:template_types,id',
             'thumbnail' => 'nullable|image|mimes:jpeg,jpg,png,webp|max:2048',
         ]);
 
@@ -128,6 +132,7 @@ class TempelateController extends Controller
             'thumbnail' => $thumb,
             'preview' => $preview,
             'id_category' => $request->id_category,
+            'template_type_id' => $request->template_type_id,
             'sections' => ['hero', 'couple', 'event', 'gallery', 'rsvp', 'music'],
             'is_active' => true,
         ]);
@@ -617,6 +622,7 @@ class TempelateController extends Controller
         }
 
         $categories = \App\Models\Category::orderBy('name')->get(['id', 'name']);
+        $templateTypes = \App\Models\TemplateType::orderBy('name')->get(['id', 'name', 'color', 'slug']);
 
         return response()->json([
             'success' => true,
@@ -626,8 +632,10 @@ class TempelateController extends Controller
                 'slug' => $template->slug,
                 'category_id' => $template->id_category,
                 'category' => $template->category->name ?? 'N/A',
+                'template_type_id' => $template->template_type_id,
             ],
             'categories' => $categories,
+            'template_types' => $templateTypes,
             'code' => $code,
         ]);
     }
@@ -649,6 +657,33 @@ class TempelateController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Template berhasil diperbarui di R2.',
+        ]);
+    }
+
+    public function updateInfo(Request $request, Template $template)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'template_type_id' => 'nullable|exists:template_types,id',
+        ]);
+
+        $template->update([
+            'name' => $request->name,
+            'template_type_id' => $request->template_type_id,
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Informasi template berhasil diperbarui.',
+            'template' => [
+                'id' => $template->id,
+                'name' => $template->name,
+                'slug' => $template->slug,
+                'category_id' => $template->id_category,
+                'category' => $template->category->name ?? 'N/A',
+                'template_type_id' => $template->template_type_id,
+                'template_type' => $template->templateType ? $template->templateType->name : null,
+            ],
         ]);
     }
 }

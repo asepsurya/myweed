@@ -813,6 +813,16 @@ function selectTemplateCard(card) {
                         </div>
                                      </div>
 
+                            <div class="mb-4">
+                                <label for="theme_type" class="form-label fw-semibold">Jenis Tema</label>
+                                <select name="theme_type" id="theme_type" class="form-select">
+                                    <option value="basic">Basic</option>
+                                    <option value="premium_exclusive">Premium Exclusive</option>
+                                    <option value="luxury">Luxury</option>
+                                </select>
+                            </div>
+
+                            @if(auth()->user()->isPaidSubscribed())
                                     <div class="mb-4">
                                         <label class="form-label fw-semibold">Tone Warna Tema</label>
                                         <div class="d-flex align-items-center gap-3">
@@ -822,6 +832,7 @@ function selectTemplateCard(card) {
                                             <span class="text-muted small">Warna tema akan diterapkan ke template undangan.</span>
                                         </div>
                                     </div>
+                                    @endif
 
                                     <div class="mb-4">
                                         <label for="gallery_cover" class="form-label">Cover Galeri</label>

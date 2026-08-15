@@ -143,6 +143,9 @@
                                 <label class="form-check-label small fw-bold" for="selectAll">Pilih Semua</label>
                             </div>
                         </div>
+                        <button type="submit" class="btn btn-danger btn-sm mt-2" onclick="return confirm('Hapus undangan yang dipilih?')">
+                            <i class="bi bi-trash me-1"></i> Hapus yang Dipilih
+                        </button>
                     @endif
 
                     <ul class="list-group">
@@ -153,13 +156,13 @@
 
                                 <!-- Cover -->
                                 <div class="flex-shrink-0">
-                                    @if($inv->gallery_cover)
-                                        <img src="{{ storage_url($inv->gallery_cover, $inv->updated_at->timestamp) }}" class="rounded object-fit-cover" style="width: 48px; height: 48px;" alt="Cover">
-                                    @else
-                                        <div class="rounded d-flex align-items-center justify-content-center" style="width: 48px; height: 48px; background-color: rgba(198, 169, 98, 0.1); color: var(--adminuiux-theme-1);">
-                                            <i class="bi bi-image"></i>
-                                        </div>
-                                    @endif
+                                @if($inv->gallery_cover)
+                                    <img src="{{ storage_url_with_fallback($inv->gallery_cover, null, $inv->updated_at->timestamp) }}" class="rounded object-fit-cover" style="width: 48px; height: 48px;" alt="Cover">
+                                @else
+                                    <div class="rounded d-flex align-items-center justify-content-center" style="width: 48px; height: 48px; background-color: rgba(198, 169, 98, 0.1); color: var(--adminuiux-theme-1);">
+                                        <i class="bi bi-image"></i>
+                                    </div>
+                                @endif
                                 </div>
 
                                 <!-- Info -->
@@ -207,7 +210,7 @@
                                             </button>
                                         @endif
                                         @if(auth()->user()->isPaidSubscribed())
-                                            <button type="button" class="btn btn-outline-success btn-sm" data-bs-toggle="modal" data-bs-target="#shareModalDynamic" data-id="{{ $inv->id }}" title="Bagikan Undangan">
+                                             <button type="button" class="btn btn-outline-success btn-sm" data-bs-toggle="modal" data-bs-target="#shareModalDynamic" data-id="{{ $inv->public_id }}" title="Bagikan Undangan">
                                                 <i class="bi bi-share"></i>
                                             </button>
                                         @endif
@@ -250,7 +253,7 @@
                                             @endif
                                             <li>
                                                 @if(auth()->user()->isPaidSubscribed())
-                                                    <button type="button" class="dropdown-item text-success" data-bs-toggle="modal" data-bs-target="#shareModalDynamic" data-id="{{ $inv->id }}">
+                                                     <button type="button" class="dropdown-item text-success" data-bs-toggle="modal" data-bs-target="#shareModalDynamic" data-id="{{ $inv->public_id }}">
                                                         <i class="bi bi-share me-2"></i> Bagikan Undangan
                                                     </button>
                                                 @endif
@@ -289,7 +292,7 @@
 
         <!-- Hidden Divs untuk Menyimpan Template Pesan WhatsApp (Mencegah DOM bloat) -->
         @foreach ($invitations as $inv)
-            <div id="wa-message-{{ $inv->id }}" class="d-none">
+            <div id="wa-message-{{ $inv->public_id }}" class="d-none">
                 @include('dashboard.invitation.pesan')
             </div>
         @endforeach
@@ -356,6 +359,15 @@
 
                             <div class="mb-3">
                                 <input type="hidden" name="template_id" id="modalTemplateId" value="">
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="modalThemeType" class="form-label small fw-semibold text-muted">Jenis Tema</label>
+                                <select name="theme_type" id="modalThemeType" class="form-select form-select-sm">
+                                    <option value="basic">Basic</option>
+                                    <option value="premium_exclusive">Premium Exclusive</option>
+                                    <option value="luxury">Luxury</option>
+                                </select>
                             </div>
 
                             <div id="modal_error" class="alert alert-danger d-none mt-3" style="border-radius: 10px;"></div>

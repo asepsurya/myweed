@@ -23,6 +23,7 @@ class Template extends Model
         'views_count',
         'likes_count',
         'id_category',
+        'template_type_id',
         'is_premium',
         'primary_color',
         'user_id',
@@ -35,6 +36,11 @@ class Template extends Model
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class, 'id_category');
+    }
+
+    public function templateType(): BelongsTo
+    {
+        return $this->belongsTo(TemplateType::class);
     }
 
     public function user()

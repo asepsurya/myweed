@@ -1,5 +1,5 @@
 <x-app-layout>
-    <x-slot name="header">
+   
         <div class="d-flex justify-content-between align-items-center">
             <h2 class="fw-bold m-0" style="font-family: 'Plus Jakarta Sans', sans-serif; color: var(--bs-body-color);">
                 <i class="bi bi-megaphone me-2" style="color: var(--adminuiux-theme-1);"></i> Manajemen Promosi
@@ -9,7 +9,7 @@
                 <i class="bi bi-plus-lg me-1"></i> Tambah Promosi
             </a>
         </div>
-    </x-slot>
+  
 
     <style>
         .promo-card {
