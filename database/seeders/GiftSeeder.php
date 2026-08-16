@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Gift;
+use App\Models\Invitation;
 use Illuminate\Database\Seeder;
 
 class GiftSeeder extends Seeder
@@ -12,20 +13,24 @@ class GiftSeeder extends Seeder
      */
     public function run(): void
     {
-        $invitationId = 1; // pastikan invitation ini ada
+        $invitation = Invitation::find(1);
+        if (!$invitation) {
+            return;
+        }
 
+        $publicId = $invitation->public_id;
         $gifts = [
             [
                 'bank' => 'BCA',
                 'number' => '1234567890',
                 'name' => 'Agung Hermawan',
-                'qr' => 'invitations/1/gift/bca.webp',
+                'qr' => "invitations/{$publicId}/gift/bca.webp",
             ],
             [
                 'bank' => 'Mandiri',
                 'number' => '9876543210',
                 'name' => 'Siti Maimunah',
-                'qr' => 'invitations/1/gift/mandiri.webp',
+                'qr' => "invitations/{$publicId}/gift/mandiri.webp",
             ],
             [
                 'bank' => 'OVO',
@@ -43,7 +48,7 @@ class GiftSeeder extends Seeder
 
         foreach ($gifts as $gift) {
             Gift::create([
-                'invitation_id' => $invitationId,
+                'invitation_id' => $invitation->id,
                 'bank' => $gift['bank'],
                 'number' => $gift['number'],
                 'name' => $gift['name'],

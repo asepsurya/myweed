@@ -406,6 +406,12 @@
                 <p class="text-muted mb-2">
                     Terima kasih! Paket <strong style="color: var(--navy);">{{ $subscription->plan->name }}</strong> Anda saat ini sedang aktif.
                 </p>
+                @php $partnerOwner = $user->getPartnerSubscriptionOwner(); @endphp
+                @if($partnerOwner)
+                    <p class="text-info mb-2">
+                        <i class="bi bi-people me-1"></i> Berlangganan bersama <strong>{{ $partnerOwner->name }}</strong>
+                    </p>
+                @endif
                 <p class="text-muted mb-3">Berlaku hingga:</p>
                 <div class="status-date">
                     <i class="bi bi-calendar-check me-2"></i>
@@ -452,6 +458,30 @@
 
     {{-- ================= FREE / EXPIRED / BELUM SUBSCRIBE ================= --}}
     @else
+        @php $partnerOwner = $user->getPartnerSubscriptionOwner(); @endphp
+        @if($partnerOwner)
+            <div class="container">
+                <div class="premium-card status-card">
+                    <div class="status-icon active">
+                        <i class="bi bi-people"></i>
+                    </div>
+                    <span class="section-subtitle">Status Membership</span>
+                    <h3 class="status-title">Berlangganan Bersama 👥</h3>
+                    <p class="text-muted mb-2">
+                        Anda sedang berlangganan bersama <strong style="color: var(--navy);">{{ $partnerOwner->name }}</strong>.
+                        Paket yang Anda gunakan adalah <strong style="color: var(--navy);">{{ $partnerOwner->subscription->plan->name ?? 'Premium' }}</strong>.
+                    </p>
+                    <p class="text-info mb-3">
+                        <i class="bi bi-info-circle me-1"></i> Fitur premium aktif karena Anda adalah pasangan dari pengguna berlangganan.
+                    </p>
+                    <div class="d-flex gap-3 justify-content-center flex-wrap">
+                        <a href="{{ route('dashboard') }}" class="btn-gold" style="width: auto;">
+                            <i class="bi bi-grid-1x2-fill me-2"></i> Ke Dashboard
+                        </a>
+                    </div>
+                </div>
+            </div>
+        @else
         <div class="container">
             <!-- Header -->
             <div class="section-header">
@@ -529,6 +559,7 @@
                 </p>
             </div>
         </div>
+        @endif
     @endif
 
 </div>

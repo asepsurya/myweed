@@ -633,6 +633,10 @@
                     </div>
                 @endif
 
+                <div class="nav-vertical-link" data-tab="tab-10" title="Sampul">
+                    <i class="bi bi-image"></i><span>Sampul</span>
+                </div>
+
                 <div class="nav-vertical-link" data-bs-toggle="modal" data-bs-target="#partnerModal" title="Pasangan">
                     <i class="bi bi-person-hearts"></i><span>Pasangan</span>
                 </div>
@@ -782,6 +786,13 @@
                                     <label class="form-check-label" for="can_edit_no">Hanya bisa melihat</label>
                                 </div>
                             </div>
+                            @php $userPlan = auth()->user()->subscription?->plan; @endphp
+                            @if($userPlan && !$userPlan->is_free)
+                            <div class="alert alert-info py-2 px-3 small mb-3">
+                                <i class="bi bi-info-circle me-1"></i>
+                                Pasangan akan mendapatkan akses ke paket <strong>{{ $userPlan->name }}</strong> yang sama dengan Anda selama menjadi pasangan undangan ini.
+                            </div>
+                            @endif
                             <button type="button" class="btn btn-primary" id="invitePartnerBtn">
                                 <i class="bi bi-send me-1"></i> Kirim Undangan
                             </button>
@@ -829,7 +840,7 @@
 
         const visibleTabs = Array.from(document.querySelectorAll('.nav-vertical-link')).map(link => link.getAttribute('data-tab'));
         const tabOrder = visibleTabs;
-        const tabLabels = { 'tab-builder': 'Builder', 'tab-1': 'Pria', 'tab-2': 'Tema', 'tab-3': 'Galeri', 'tab-4': 'Musik', 'tab-5': 'RSVP', 'tab-6': 'Acara', 'tab-7': 'Wanita', 'tab-8': 'Kisah', 'tab-9': 'Hadiah' };
+        const tabLabels = { 'tab-builder': 'Builder', 'tab-1': 'Pria', 'tab-2': 'Tema', 'tab-3': 'Galeri', 'tab-4': 'Musik', 'tab-5': 'RSVP', 'tab-6': 'Acara', 'tab-7': 'Wanita', 'tab-8': 'Kisah', 'tab-9': 'Hadiah', 'tab-10': 'Sampul' };
 
         function updateMobileTabLabel(tabId) {
             const label = document.getElementById('mobileTabLabel');

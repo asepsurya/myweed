@@ -284,7 +284,15 @@ class UserInvitationController extends Controller
             return redirect()->back()->with('error', 'Fitur Galeri hanya tersedia untuk paket berbayar.');
         }
 
-        $galleryLimit = data_get($user->subscription->plan->features ?? [], 'gallery_limit');
+        $galleryLimit = null;
+        if ($user->subscription) {
+            $galleryLimit = data_get($user->subscription->plan->features ?? [], 'gallery_limit');
+        } else {
+            $partnerOwner = $user->getPartnerSubscriptionOwner();
+            if ($partnerOwner && $partnerOwner->subscription) {
+                $galleryLimit = data_get($partnerOwner->subscription->plan->features ?? [], 'gallery_limit');
+            }
+        }
         if ($request->hasFile('gallery') && !is_null($galleryLimit) && count($request->file('gallery')) > $galleryLimit) {
             return redirect()->back()->with('error', "Maksimal {$galleryLimit} foto untuk paket ini.");
         }
@@ -457,7 +465,7 @@ class UserInvitationController extends Controller
             $invitation->update(['love_story' => $stories]);
             if ($request->hasFile('foto_pria')) {
                 try {
-                    $path = "invitations/{$invitation->id}/pria/pria.webp";
+                    $path = "invitations/{$invitation->public_id}/pria/pria.webp";
 
                     $this->uploadImageAsWebP(
                         $request->file('foto_pria'),
@@ -475,7 +483,7 @@ class UserInvitationController extends Controller
 
             if ($request->hasFile('foto_wanita')) {
                 try {
-                    $path = "invitations/{$invitation->id}/wanita/wanita.webp";
+                    $path = "invitations/{$invitation->public_id}/wanita/wanita.webp";
 
                     $this->uploadImageAsWebP(
                         $request->file('foto_wanita'),
@@ -493,7 +501,7 @@ class UserInvitationController extends Controller
 
             if ($request->hasFile('gallery_cover')) {
                 try {
-                    $path = "invitations/{$invitation->id}/cover/cover.webp";
+                    $path = "invitations/{$invitation->public_id}/cover/cover.webp";
 
                     $this->uploadImageAsWebP(
                         $request->file('gallery_cover'),
@@ -510,7 +518,7 @@ class UserInvitationController extends Controller
             if ($request->has('enable_music') && $request->enable_music) {
                 if ($request->hasFile('custom_music')) {
                     $musicPath = $request->file('custom_music')
-                        ->store("invitations/{$invitation->id}/music", 'public');
+                        ->store("invitations/{$invitation->public_id}/music", 'public');
 
                     $invitation->update(['music' => $musicPath]);
                 } else {
@@ -523,7 +531,7 @@ class UserInvitationController extends Controller
             if ($request->has('enable_gallery') && $request->enable_gallery && $request->hasFile('gallery')) {
                 foreach ($request->file('gallery') as $index => $imageFile) {
                     try {
-                        $folder = "invitations/{$invitation->id}/gallery";
+                        $folder = "invitations/{$invitation->public_id}/gallery";
 
                         if (!$this->imageDisk()->exists($folder)) {
                             $this->imageDisk()->ensureDirectory($folder);
@@ -653,7 +661,12 @@ class UserInvitationController extends Controller
             return redirect()->back()->with('error', 'Fitur Galeri hanya tersedia untuk paket berbayar.');
         }
 
-        $galleryLimit = data_get($user->subscription->plan->features ?? [], 'gallery_limit');
+        $galleryLimit = null;
+        if ($user->subscription) {
+            $galleryLimit = data_get($user->subscription->plan->features ?? [], 'gallery_limit');
+        } elseif (isset($invitation->user) && $invitation->user->subscription) {
+            $galleryLimit = data_get($invitation->user->subscription->plan->features ?? [], 'gallery_limit');
+        }
         $currentGalleryCount = $invitation->galleries()->count();
         $newGalleryCount = $request->hasFile('gallery') ? count($request->file('gallery')) : 0;
         if (!is_null($galleryLimit) && ($currentGalleryCount + $newGalleryCount) > $galleryLimit) {
@@ -825,7 +838,7 @@ class UserInvitationController extends Controller
         if ($request->hasFile('foto_pria')) {
             try {
                 $oldPath = $invitation->foto_pria;
-                $pathPria = "invitations/{$invitation->id}/pria/pria.webp";
+                $pathPria = "invitations/{$invitation->public_id}/pria/pria.webp";
                 $this->uploadImageAsWebP($request->file('foto_pria'), $pathPria, 1200);
 
                 if ($oldPath && $oldPath !== $pathPria) {
@@ -842,7 +855,7 @@ class UserInvitationController extends Controller
         if ($request->hasFile('foto_wanita')) {
             try {
                 $oldPath = $invitation->foto_wanita;
-                $pathWanita = "invitations/{$invitation->id}/wanita/wanita.webp";
+                $pathWanita = "invitations/{$invitation->public_id}/wanita/wanita.webp";
                 $this->uploadImageAsWebP($request->file('foto_wanita'), $pathWanita, 1200);
 
                 if ($oldPath && $oldPath !== $pathWanita) {
@@ -869,7 +882,7 @@ class UserInvitationController extends Controller
         if ($hasNewCover) {
             try {
                 $oldPath = $invitation->gallery_cover;
-                $path = "invitations/{$invitation->id}/cover/cover.webp";
+                $path = "invitations/{$invitation->public_id}/cover/cover.webp";
                 $this->uploadImageAsWebP($request->file('gallery_cover'), $path, 1600);
 
                 if ($oldPath && $oldPath !== $path) {
@@ -893,7 +906,7 @@ class UserInvitationController extends Controller
                 if ($invitation->music) {
                     Storage::disk('public')->delete($invitation->music);
                 }
-                $musicPath = $request->file('custom_music')->store("invitations/{$invitation->id}/music", 'public');
+                $musicPath = $request->file('custom_music')->store("invitations/{$invitation->public_id}/music", 'public');
                 $invitation->update([
                     'music' => $musicPath,
                     'music_youtube_url' => null,
@@ -947,7 +960,7 @@ class UserInvitationController extends Controller
         if ($request->has('enable_gallery') && $request->enable_gallery && $request->hasFile('gallery')) {
             foreach ($request->file('gallery') as $index => $imageFile) {
                 try {
-                    $folder = "invitations/{$invitation->id}/gallery";
+                    $folder = "invitations/{$invitation->public_id}/gallery";
 
                     if (!$this->imageDisk()->exists($folder)) {
                         $this->imageDisk()->ensureDirectory($folder);
@@ -1061,7 +1074,12 @@ class UserInvitationController extends Controller
             return response()->json(['success' => false, 'message' => 'Fitur Galeri hanya tersedia untuk paket berbayar.'], 403);
         }
 
-        $galleryLimit = data_get($user->subscription->plan->features ?? [], 'gallery_limit');
+        $galleryLimit = null;
+        if ($user->subscription) {
+            $galleryLimit = data_get($user->subscription->plan->features ?? [], 'gallery_limit');
+        } elseif (isset($invitation->user) && $invitation->user->subscription) {
+            $galleryLimit = data_get($invitation->user->subscription->plan->features ?? [], 'gallery_limit');
+        }
         if (!is_null($galleryLimit) && $invitation->galleries()->count() >= $galleryLimit) {
             return response()->json(['success' => false, 'message' => "Maksimal {$galleryLimit} foto untuk paket ini."], 403);
         }
@@ -1071,7 +1089,7 @@ class UserInvitationController extends Controller
         ]);
 
         try {
-            $folder = "invitations/{$invitation->id}/gallery";
+            $folder = "invitations/{$invitation->public_id}/gallery";
 
             if (!$this->imageDisk()->exists($folder)) {
                 $this->imageDisk()->ensureDirectory($folder);
@@ -1120,7 +1138,7 @@ class UserInvitationController extends Controller
 
         try {
             $oldPath = $invitation->gallery_cover;
-            $path = "invitations/{$invitation->id}/cover/cover.webp";
+            $path = "invitations/{$invitation->public_id}/cover/cover.webp";
 
             $this->uploadImageAsWebP($request->file('cover'), $path, 1600);
 
@@ -1163,7 +1181,7 @@ class UserInvitationController extends Controller
 
         try {
             $oldPath = $invitation->foto_pria;
-            $path = "invitations/{$invitation->id}/pria/pria.webp";
+            $path = "invitations/{$invitation->public_id}/pria/pria.webp";
 
             $this->uploadImageAsWebP($request->file('photo'), $path, 1200);
 
@@ -1206,7 +1224,7 @@ class UserInvitationController extends Controller
 
         try {
             $oldPath = $invitation->foto_wanita;
-            $path = "invitations/{$invitation->id}/wanita/wanita.webp";
+            $path = "invitations/{$invitation->public_id}/wanita/wanita.webp";
 
             $this->uploadImageAsWebP($request->file('photo'), $path, 1200);
 
@@ -1388,6 +1406,10 @@ class UserInvitationController extends Controller
                 $gallery->delete();
             }
 
+            // Hapus seluruh folder invitation di storage/R2
+            $folder = "invitations/{$invitation->public_id}";
+            Storage::disk(config('image.disk', 'public'))->deleteDirectory($folder);
+
             // Hapus RSVP & Gift
             $invitation->gifts()->delete();
             $invitation->rsvps()->delete();
@@ -1406,7 +1428,7 @@ class UserInvitationController extends Controller
         }
 
         DB::transaction(function () use ($ids) {
-            $invitations = Invitation::whereIn('id', $ids)->get();
+            $invitations = Invitation::whereIn('public_id', $ids)->get();
 
             foreach ($invitations as $invitation) {
                 // abort_if($invitation->user_id !== auth()->id() && !auth()->user()->hasRole('admin'), 403);
@@ -1430,6 +1452,10 @@ class UserInvitationController extends Controller
                     $this->imageDisk()->delete($gallery->image);
                     $gallery->delete();
                 }
+
+                // Hapus seluruh folder invitation di storage/R2
+                $folder = "invitations/{$invitation->public_id}";
+                Storage::disk(config('image.disk', 'public'))->deleteDirectory($folder);
 
                 $invitation->gifts()->delete();
                 $invitation->rsvps()->delete();
@@ -1535,7 +1561,9 @@ class UserInvitationController extends Controller
             ->whereNotNull('partner_user_id')
             ->firstOrFail();
 
-        abort_if($invitation->partner_accepted_at !== null, 400, 'Undangan ini sudah diterima sebelumnya.');
+        if ($invitation->partner_accepted_at !== null) {
+            return view('partner.already-accepted', compact('invitation'));
+        }
 
         $invitation->update([
             'partner_accepted_at' => now(),
@@ -1549,7 +1577,10 @@ class UserInvitationController extends Controller
         $user = $request->user();
 
         abort_if($invitation->partner_user_id !== $user->id, 403, 'Anda tidak diundang sebagai pasangan undangan ini.');
-        abort_if($invitation->partner_accepted_at !== null, 400, 'Undangan ini sudah diterima sebelumnya.');
+
+        if ($invitation->partner_accepted_at !== null) {
+            return view('partner.already-accepted', compact('invitation'));
+        }
 
         $invitation->update([
             'partner_accepted_at' => now(),

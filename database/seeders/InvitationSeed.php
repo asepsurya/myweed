@@ -84,7 +84,7 @@ class InvitationSeed extends Seeder
         $id = $invitation->id;
 
         // Folder
-        $base = "invitations/$id";
+        $base = "invitations/{$invitation->public_id}";
         Storage::disk('r2')->makeDirectory("$base/pria");
         Storage::disk('r2')->makeDirectory("$base/wanita");
         Storage::disk('r2')->makeDirectory("$base/cover");
@@ -125,7 +125,7 @@ class InvitationSeed extends Seeder
             GLOB_BRACE
         );
 
-        $base = "invitations/{$invitation->id}";
+        $base = "invitations/{$invitation->public_id}";
 
         if (! empty($files)) {
             foreach ($files as $file) {

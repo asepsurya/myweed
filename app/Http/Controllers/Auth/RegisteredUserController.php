@@ -49,9 +49,6 @@ class RegisteredUserController extends Controller
 
         $user->sendEmailVerificationNotification();
 
-        // 🔽 Otomatis buat undangan "Basic Wedding"
-        Invitation::createDefault($user->id);
-
         Auth::login($user);
 
         if ($user->hasRole('admin')) {

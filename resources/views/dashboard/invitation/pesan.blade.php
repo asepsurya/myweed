@@ -1,17 +1,21 @@
 Assalamu’alaikum Wr. Wb.
 
-Tanpa mengurangi rasa hormat, perkenankan kami mengundang Bapak/Ibu/Saudara/i [nama] untuk menghadiri acara pernikahan
-kami:
+*بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ*
 
-{{ $inv->bride_name }} & {{ $inv->groom_name }}
+Dengan memohon rahmat dan ridho Allah SWT, tanpa mengurangi rasa hormat, kami bermaksud mengundang Bapak/Ibu/Saudara/i *[nama]* untuk menghadiri acara pernikahan kami:
 
-Detail acara dan lokasi dapat dilihat melalui tautan undangan digital berikut:
+*{{ $inv->bride_name }} & {{ $inv->groom_name }}*
+
+*Detail Acara & Lokasi* dapat dilihat melalui tautan undangan digital berikut:
 
 {{ route('invitation.show', [$inv->slug]) }}?penerima=[nama]
 
-Merupakan suatu kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir dan memberikan doa restu.
+Merupakan suatu kebahagiaan dan kehormatan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir serta memberikan *doa restu* untuk pernikahan kami.
+
+Atas perhatian dan kehadirannya, kami ucapkan *terima kasih.*
 
 Hormat kami,
-{{ $inv->bride_name }} & {{ $inv->groom_name }}
+
+*{{ $inv->bride_name }} & {{ $inv->groom_name }}*
 
 Wassalamu’alaikum Wr. Wb.

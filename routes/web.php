@@ -80,6 +80,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('invitation/{invitation}/edit', [UserInvitationController::class, 'edit'])->name('invitation.edit');
     Route::put('invitation/{invitation}', [UserInvitationController::class, 'update'])->name('invitation.update');
     Route::delete('invitation/{invitation}', [UserInvitationController::class, 'destroy'])->name('invitation.destroy');
+    Route::get('invitation/{invitation}/delete', [UserInvitationController::class, 'destroy'])->name('invitation.destroy.get');
     Route::delete('invitation/{invitation}/gallery/{id}', [UserInvitationController::class, 'destroyGallery'])->name('gallery.delete');
     Route::post('invitation/{invitation}/gallery', [UserInvitationController::class, 'uploadGallery'])->name('gallery.upload');
     Route::post('invitation/{invitation}/cover', [UserInvitationController::class, 'uploadCover'])->name('cover.upload');

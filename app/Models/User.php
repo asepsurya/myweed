@@ -69,9 +69,34 @@ class User extends Authenticatable implements MustVerifyEmail
             return true;
         }
 
-        return $this->subscription &&
+        if ($this->subscription &&
             $this->subscription->is_active &&
-            $this->subscription->end_date->isFuture();
+            $this->subscription->end_date->isFuture()
+        ) {
+            return true;
+        }
+
+        $partnerInvitations = $this->partnerIn()
+            ->whereNotNull('partner_accepted_at')
+            ->with('user.subscription')
+            ->get();
+
+        foreach ($partnerInvitations as $invitation) {
+            $owner = $invitation->user;
+
+            if ($owner && $owner->isAdmin()) {
+                return true;
+            }
+
+            if ($owner && $owner->subscription &&
+                $owner->subscription->is_active &&
+                $owner->subscription->end_date->isFuture()
+            ) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public function isPaidSubscribed()
@@ -80,15 +105,28 @@ class User extends Authenticatable implements MustVerifyEmail
             return true;
         }
 
-        if (! $this->subscription || ! $this->subscription->is_active) {
-            return false;
+        if ($this->subscription && $this->subscription->is_active && $this->subscription->end_date && $this->subscription->end_date->isFuture() && !$this->subscription->plan->is_free) {
+            return true;
         }
 
-        if ($this->subscription->end_date && ! $this->subscription->end_date->isFuture()) {
-            return false;
+        $partnerInvitations = $this->partnerIn()
+            ->whereNotNull('partner_accepted_at')
+            ->with('user.subscription.plan')
+            ->get();
+
+        foreach ($partnerInvitations as $invitation) {
+            $owner = $invitation->user;
+
+            if ($owner && $owner->isAdmin()) {
+                return true;
+            }
+
+            if ($owner && $owner->subscription && $owner->subscription->is_active && $owner->subscription->end_date && $owner->subscription->end_date->isFuture() && !$owner->subscription->plan->is_free) {
+                return true;
+            }
         }
 
-        return ! $this->subscription->plan->is_free;
+        return false;
     }
 
     public function hasFeature(string $key): bool
@@ -97,13 +135,62 @@ class User extends Authenticatable implements MustVerifyEmail
             return true;
         }
 
-        if (! $this->isSubscribed()) {
-            return false;
+        if ($this->isSubscribed() && $this->subscription) {
+            $plan = $this->subscription->plan;
+
+            if ($plan && $plan->hasFeature($key)) {
+                return true;
+            }
         }
 
-        $plan = $this->subscription->plan;
+        $partnerInvitations = $this->partnerIn()
+            ->whereNotNull('partner_accepted_at')
+            ->with('user.subscription.plan')
+            ->get();
 
-        return $plan ? $plan->hasFeature($key) : false;
+        foreach ($partnerInvitations as $invitation) {
+            $owner = $invitation->user;
+
+            if ($owner && $owner->isAdmin()) {
+                return true;
+            }
+
+            if ($owner && !$owner->isAdmin() && $owner->isSubscribed() && $owner->subscription) {
+                $plan = $owner->subscription->plan;
+
+                if ($plan && $plan->hasFeature($key)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    public function getPartnerSubscriptionOwner(): ?User
+    {
+        if ($this->subscription && $this->subscription->is_active && $this->subscription->end_date && $this->subscription->end_date->isFuture() && !$this->subscription->plan->is_free) {
+            return null;
+        }
+
+        $partnerInvitations = $this->partnerIn()
+            ->whereNotNull('partner_accepted_at')
+            ->with('user.subscription.plan')
+            ->get();
+
+        foreach ($partnerInvitations as $invitation) {
+            $owner = $invitation->user;
+
+            if ($owner && $owner->isAdmin()) {
+                return $owner;
+            }
+
+            if ($owner && $owner->isSubscribed() && $owner->subscription && $owner->subscription->plan && !$owner->subscription->plan->is_free) {
+                return $owner;
+            }
+        }
+
+        return null;
     }
 
     public function invitations()
@@ -150,6 +237,10 @@ class User extends Authenticatable implements MustVerifyEmail
 
         // TIDAK ADA SUBSCRIPTION → FREE
         if (! $this->subscription) {
+            $partnerOwner = $this->getPartnerSubscriptionOwner();
+            if ($partnerOwner) {
+                return 'active';
+            }
             return 'free';
         }
 

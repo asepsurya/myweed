@@ -80,6 +80,9 @@
                 <strong style="color: #1B2A4A;">{{ $inviterName ?? 'Pasangan Anda' }}</strong> mengundang Anda sebagai pasangan untuk 
                 {{ $canEdit ? 'mengedit dan mengelola bersama' : 'melihat' }} undangan pernikahan 
                 <strong style="color: #1B2A4A;">{{ $invitationTitle ?? 'Pernikahan Kami' }}</strong>.
+                @if($inviterPlan && !$inviterPlan->is_free)
+                <br><span style="color: #0d6efd;"><i class="bi bi-star-fill me-1"></i>Sebagai pasangan, Anda akan mendapatkan akses ke paket <strong>{{ $inviterPlan->name }}</strong> yang sama dengan {{ $inviterName ?? 'pasangan Anda' }}!</span>
+                @endif
             </p>
 
             <!-- Details Card -->

@@ -39,18 +39,18 @@ class ImageProcessingService
         $this->defaultMaxWidth = config('image.default_max_width', 1920);
     }
 
-    /**
-     * Process an uploaded image: validate, resize, convert to WebP, save, delete original.
-     *
-     * @param  UploadedFile  $file
-     * @param  string  $folder  Storage folder (e.g. 'invitations/1/pria')
-     * @param  string|null  $filename  Optional filename without extension
-     * @param  int|null  $maxWidth  Override max width for this image
-     * @return array{path: string, url: string, size: int}
-     *
-     * @throws \InvalidArgumentException
-     * @throws \RuntimeException
-     */
+     /**
+      * Process an uploaded image: validate, resize, convert to WebP, save, delete original.
+      *
+      * @param  UploadedFile  $file
+      * @param  string  $folder  Storage folder (e.g. 'invitations/{public_id}/pria')
+      * @param  string|null  $filename  Optional filename without extension
+      * @param  int|null  $maxWidth  Override max width for this image
+      * @return array{path: string, url: string, size: int}
+      *
+      * @throws \InvalidArgumentException
+      * @throws \RuntimeException
+      */
     public function process(
         UploadedFile $file,
         string $folder = '',

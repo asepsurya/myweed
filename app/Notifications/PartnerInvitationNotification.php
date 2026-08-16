@@ -45,6 +45,7 @@ class PartnerInvitationNotification extends Notification
                 'inviterName' => $this->inviter->name,
                 'invitationTitle' => $title,
                 'canEdit' => $this->canEdit,
+                'inviterPlan' => $this->inviter->subscription?->plan,
             ]);
     }
 }

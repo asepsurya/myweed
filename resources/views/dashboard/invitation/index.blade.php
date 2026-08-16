@@ -53,6 +53,16 @@
                 height: 40px;
             }
         }
+        .btn-bulk-delete {
+    width: auto !important;
+    display: inline-flex !important;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.form-check {
+    margin-bottom: 0 !important;
+}
     </style>
 
     <!-- TAB 1: Aktivitas Undangan -->
@@ -73,8 +83,21 @@
                                     (Aktif s/d: {{ auth()->user()->subscription->end_date->format('d M Y') }})
                                 @endif
                             </span>
+                            @php $partnerOwner = auth()->user()->getPartnerSubscriptionOwner(); @endphp
+                            @if($partnerOwner)
+                                <span class="badge bg-info text-dark small ms-1">
+                                    <i class="bi bi-people me-1"></i> Aku bersama {{ $partnerOwner->name }}
+                                </span>
+                            @endif
                         @else
-                            <span class="badge bg-light text-dark border small">Free Plan (Limit 1 Undangan)</span>
+                            @php $partnerOwner = auth()->user()->getPartnerSubscriptionOwner(); @endphp
+                            @if($partnerOwner)
+                                <span class="badge bg-info text-dark small">
+                                    <i class="bi bi-people me-1"></i> Aku bersama {{ $partnerOwner->name }}
+                                </span>
+                            @else
+                                <span class="badge bg-light text-dark border small">Free Plan (Limit 1 Undangan)</span>
+                            @endif
                         @endif
                     </div>
 
@@ -99,23 +122,43 @@
                 <form id="bulkDeleteForm" action="{{ route('invitation.bulk-delete') }}" method="POST">
                     @csrf
 
-                    @if($invitations->isNotEmpty())
-                        <div class="mb-2 px-2 py-2 rounded d-flex align-items-center bg-light border">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="selectAll">
-                                <label class="form-check-label small fw-bold" for="selectAll">Pilih Semua</label>
-                            </div>
-                        </div>
-                        <button type="submit" class="btn btn-danger btn-sm mt-2" onclick="return confirm('Hapus undangan yang dipilih?')">
-                            <i class="bi bi-trash me-1"></i> Hapus yang Dipilih
-                        </button>
-                    @endif
+                   @if($invitations->isNotEmpty())
+    <div class="d-flex flex-nowrap align-items-center justify-content-between w-100 mb-2 px-2 py-2 rounded border" style="background-color: rgba(198, 169, 98, 0.1); border-color: rgba(198, 169, 98, 0.2) !important;">
+
+        {{-- Pilih Semua --}}
+        <div class="form-check mb-0 d-flex align-items-center">
+            <input
+                class="form-check-input mt-0 me-2"
+                type="checkbox"
+                id="selectAll"
+            >
+
+            <label
+                class="form-check-label small fw-bold text-nowrap"
+                for="selectAll"
+            >
+                Pilih Semua
+            </label>
+        </div>
+
+        {{-- Tombol Hapus --}}
+        <button
+            type="submit"
+            class="btn btn-danger btn-sm btn-bulk-delete ms-auto flex-shrink-0"
+            disabled
+        >
+            <i class="bi bi-trash me-1"></i>
+            Hapus yang Dipilih
+        </button>
+
+    </div>
+@endif
 
                     <ul class="list-group">
                         @forelse ($invitations as $inv)
                             <li class="list-group-item d-flex align-items-center gap-3">
                                 <!-- Checkbox -->
-                                <input type="checkbox" name="ids[]" value="{{ $inv->id }}" class="form-check-input flex-shrink-0 m-0 bulk-checkbox">
+                                <input type="checkbox" name="ids[]" value="{{ $inv->public_id }}" class="form-check-input flex-shrink-0 m-0 bulk-checkbox">
 
                                 <!-- Cover -->
                                 <div class="flex-shrink-0">
@@ -156,13 +199,9 @@
                                         @endif
 
                                         @if(!$inv->is_default)
-                                            <form action="{{ route('invitation.destroy', $inv) }}" method="POST" class="d-inline" onsubmit="return confirm('Hapus undangan ini? Data yang sudah dihapus tidak dapat dikembalikan.');">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="btn btn-outline-danger btn-sm" title="Hapus">
-                                                    <i class="bi bi-trash"></i>
-                                                </button>
-                                            </form>
+                                            <a href="{{ route('invitation.destroy.get', $inv) }}" class="btn btn-outline-danger btn-sm btn-delete-single" data-name="{{ $inv->groom_nickname ?? $inv->groom_name }} & {{ $inv->bride_nickname ?? $inv->bride_name }}" title="Hapus">
+                                                <i class="bi bi-trash"></i>
+                                            </a>
                                         @endif
                                     </div>
 
@@ -192,13 +231,9 @@
         @if(!$inv->is_default)
             <li><hr class="dropdown-divider"></li>
             <li>
-                <form action="{{ route('invitation.destroy', $inv) }}" method="POST" onsubmit="return confirm('Hapus undangan ini? Data yang sudah dihapus tidak dapat dikembalikan.');">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" class="dropdown-item text-danger w-100 text-start">
-                        <i class="bi bi-trash me-2"></i> Hapus
-                    </button>
-                </form>
+                <a href="{{ route('invitation.destroy.get', $inv) }}" class="dropdown-item text-danger w-100 text-start btn-delete-single" data-name="{{ $inv->groom_nickname ?? $inv->groom_name }} & {{ $inv->bride_nickname ?? $inv->bride_name }}">
+                    <i class="bi bi-trash me-2"></i> Hapus
+                </a>
             </li>
         @endif
     </ul>
@@ -337,7 +372,7 @@
                     </div>
                     <div class="modal-body">
                         <div class="form-floating mb-3">
-                            <input type="text" class="form-control" id="recipientNameDynamic" placeholder="Nama penerima">
+                            <input type="text" class="form-control" id="recipientNameDynamic" placeholder="Nama penerima" required>
                             <label for="recipientNameDynamic">Nama Penerima</label>
                         </div>
                         <div class="form-floating mb-3">
@@ -460,51 +495,93 @@
                         document.querySelectorAll('.bulk-checkbox').forEach(cb => {
                             cb.checked = this.checked;
                         });
+                        updateBulkDeleteButton();
                     });
                 }
+
+                function updateBulkDeleteButton() {
+                    const checked = document.querySelectorAll('.bulk-checkbox:checked').length;
+                    const bulkDeleteBtn = document.querySelector('.btn-bulk-delete');
+                    if (bulkDeleteBtn) {
+                        bulkDeleteBtn.disabled = checked === 0;
+                    }
+                }
+
+                document.querySelectorAll('.bulk-checkbox').forEach(cb => {
+                    cb.addEventListener('change', updateBulkDeleteButton);
+                });
             });
 
             function getShareData() {
-                const recipient = document.getElementById('recipientNameDynamic').value.trim();
+                const recipientInput = document.getElementById('recipientNameDynamic');
+                const recipient = recipientInput.value.trim();
+                if (!recipient) {
+                    recipientInput.focus();
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Penerima wajib diisi',
+                        text: 'Masukkan nama penerima terlebih dahulu sebelum membagikan undangan.',
+                        confirmButtonColor: '#FF6B81'
+                    });
+                    return null;
+                }
                 let message = document.getElementById('shareMessageDynamic').value;
-                message = message.replace(/\[nama\]/g, recipient || '');
+                message = message.replace(/\[nama\]/g, recipient);
+                message = message.replace(/(\?penerima=)([^&\n]+)/g, function(match, prefix, value) {
+                    return prefix + encodeURIComponent(value.trim());
+                });
                 return { recipient, message };
             }
 
             function getInvitationUrl() {
                 const invitation = @json($invitations->first());
+                const recipient = document.getElementById('recipientNameDynamic').value.trim();
                 if (invitation && invitation.slug) {
-                    return @json(url('/')) + '/' + invitation.slug;
+                    let url = @json(url('/')) + '/' + invitation.slug;
+                    if (recipient) {
+                        url += '?penerima=' + encodeURIComponent(recipient);
+                    }
+                    return url;
                 }
                 return window.location.href;
             }
 
             function shareToWhatsApp() {
-                const { message } = getShareData();
+                const data = getShareData();
+                if (!data) return;
+                const { message } = data;
                 const url = "https://wa.me/?text=" + encodeURIComponent(message);
                 window.open(url, '_blank');
             }
 
             function shareToFacebook() {
-                const { message } = getShareData();
+                const data = getShareData();
+                if (!data) return;
+                const { message } = data;
                 const url = "https://www.facebook.com/sharer/sharer.php?u=" + encodeURIComponent(getInvitationUrl());
                 window.open(url, '_blank');
             }
 
             function shareToTwitter() {
-                const { message } = getShareData();
+                const data = getShareData();
+                if (!data) return;
+                const { message } = data;
                 const url = "https://twitter.com/intent/tweet?text=" + encodeURIComponent(message) + "&url=" + encodeURIComponent(getInvitationUrl());
                 window.open(url, '_blank');
             }
 
             function shareToTelegram() {
-                const { message } = getShareData();
+                const data = getShareData();
+                if (!data) return;
+                const { message } = data;
                 const url = "https://t.me/share/url?url=" + encodeURIComponent(getInvitationUrl()) + "&text=" + encodeURIComponent(message);
                 window.open(url, '_blank');
             }
 
             function shareViaEmail() {
-                const { recipient, message } = getShareData();
+                const data = getShareData();
+                if (!data) return;
+                const { message } = data;
                 const subject = "Undangan Pernikahan";
                 const body = message;
                 const url = "mailto:?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(body);
@@ -512,12 +589,72 @@
             }
 
             function copyInvitationLink() {
+                const data = getShareData();
+                if (!data) return;
                 const url = getInvitationUrl();
                 navigator.clipboard.writeText(url).then(function () {
                     alert('Tautan undangan berhasil disalin!');
                 }).catch(function () {
                     alert('Gagal menyalin tautan.');
                 });
+            }
+
+            // SweetAlert confirm for single delete
+            document.querySelectorAll('.btn-delete-single').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const url = this.getAttribute('href');
+                    const name = this.getAttribute('data-name') || 'undangan ini';
+                    Swal.fire({
+                        title: 'Hapus undangan?',
+                        text: "Anda akan menghapus: " + name + ". Data yang sudah dihapus tidak dapat dikembalikan!",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#d33',
+                        cancelButtonColor: '#6c757d',
+                        confirmButtonText: 'Ya, hapus!',
+                        cancelButtonText: 'Batal'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.href = url;
+                        }
+                    });
+                });
+            });
+
+            // SweetAlert confirm for bulk delete
+            const bulkDeleteForm = document.getElementById('bulkDeleteForm');
+            if (bulkDeleteForm) {
+                const bulkDeleteBtn = bulkDeleteForm.querySelector('.btn-bulk-delete');
+                if (bulkDeleteBtn) {
+                    bulkDeleteBtn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        const checked = bulkDeleteForm.querySelectorAll('.bulk-checkbox:checked');
+                        if (checked.length === 0) {
+                            Swal.fire({
+                                icon: 'info',
+                                title: 'Tidak ada yang dipilih',
+                                text: 'Pilih minimal satu undangan untuk dihapus.',
+                                confirmButtonColor: '#C6A962'
+                            });
+                            return;
+                        }
+                        Swal.fire({
+                            title: 'Hapus undangan yang dipilih?',
+                            text: "Data yang sudah dihapus tidak dapat dikembalikan!",
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonColor: '#d33',
+                            cancelButtonColor: '#6c757d',
+                            confirmButtonText: 'Ya, hapus semua!',
+                            cancelButtonText: 'Batal'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                bulkDeleteForm.submit();
+                            }
+                        });
+                    });
+                }
             }
         </script>
     </div>

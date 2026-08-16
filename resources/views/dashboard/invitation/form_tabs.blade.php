@@ -275,10 +275,28 @@
 {{-- 1. MEMPELAI PRIA --}}
 <div id="tab-1" class="tab-content d-none">
     <div class="mb-3">
-        <div class="card-header bg-transparent border-0 p-0 pb-3 d-flex align-items-center gap-2 mb-3">
-            <div class="islami-icon"><i class="bi bi-person-fill fs-5"></i></div>
-            <h6 class="mb-0 fw-bold">Data Mempelai Pria</h6>
+        <div class="card-header bg-transparent border-0 p-0 pb-3 d-flex align-items-center gap-2 mt-3 mb-2">
+         
+        
+            <div class="d-flex align-items-center gap-3">
+
+                <span class="avatar avatar-40 rounded bg-theme-1-subtle text-theme-1">
+                    <i class="bi bi-person-heart fs-5"></i>
+                </span>
+
+                <div>
+                    <h6 class="mb-0 fw-bold">
+                        Data Mempelai Pria
+                    </h6>
+
+                    <small class="text-muted">
+                        Lengkapi nama, foto, dan informasi mempelai pria
+                    </small>
+                </div>
+
+            </div>
         </div>
+        
         <div class="card-body p-0">
             <div class="row g-3">
                 <div class="col-12">
@@ -417,22 +435,6 @@
 
             <hr class="my-4">
 
-            <div class="mb-4">
-                <label class="form-label fw-semibold mb-2">Background Header (Sampul)</label>
-                <div class="upload-zone border rounded p-4 text-center {{ ($inv && $inv->gallery_cover) ? 'd-none' : '' }}" id="uploadBoxCoverContainer">
-                    <label for="gallery_cover" class="cursor-pointer mb-0 d-block">
-                        <i class="bi bi-image fs-3 text-primary"></i>
-                        <p class="text-muted mb-0 mt-2">Klik untuk upload Background Header</p>
-                        <input id="gallery_cover" type="file" name="gallery_cover" class="d-none" onchange="openCropModal(event, 'cover')">
-                    </label>
-                </div>
-                <div id="previewContainerCover" class="mt-3 {{ ($inv && $inv->gallery_cover) ? '' : 'd-none' }} text-center position-relative">
-                    <img id="previewCover" src="{{ ($inv && $inv->gallery_cover) ? storage_url_with_fallback($inv->gallery_cover, asset('assets/fav.png'), ($inv->updated_at ?? now())->timestamp) : '' }}" class="img-fluid rounded border shadow-sm w-100" style="max-height: 250px; object-fit: cover;">
-                    <button type="button" onclick="removePreview('cover')" class="btn btn-danger btn-sm position-absolute top-0 end-0 m-2"><i class="bi bi-x"></i></button>
-                </div>
-                <small class="text-muted mt-1 d-block">Foto sampul akan ditampilkan di bagian atas undangan.</small>
-            </div>
-
             @php
                 $userCanUseColor = auth()->user()->isPaidSubscribed();
             @endphp
@@ -466,15 +468,29 @@
 @auth
     @if(auth()->user()->hasFeature('gallery'))
         <div id="tab-3" class="tab-content d-none">
+            <div class="card-header bg-transparent border-0 mb-3 mt-3">
+                <div class="d-flex align-items-center gap-3">
+                    <span class="avatar avatar-40 rounded bg-theme-1-subtle text-theme-1">
+                        <i class="bi bi-images fs-5"></i>
+                    </span>
+                    <div>
+                        <h6 class="mb-0 fw-bold">
+                            Gallery Foto
+                        </h6>
+
+                        <small class="text-muted">
+                            Tambahkan foto terbaik untuk mengabadikan momen spesial Anda
+                        </small>
+                    </div>
+                </div>
+            </div>
             <div class="mb-3">
                 <div class="form-check form-switch mb-3">
                     <input class="form-check-input" type="checkbox" id="enable_gallery" name="enable_gallery" value="1" {{ ($inv && $inv->enable_gallery) ? 'checked' : '' }} onchange="toggleSettings('galleryContent', this.checked)">
                     <label class="form-check-label fw-bold" for="enable_gallery">Aktifkan Galeri Foto</label>
                 </div>
                 <div id="galleryContent" class="{{ ($inv && $inv->enable_gallery) ? '' : 'd-none' }}">
-                    <div class="card-header bg-transparent border-0 p-0 pb-3 d-flex justify-content-between align-items-center mb-3">
-                        <h6 class="fw-bold mb-0">Galeri Foto</h6>
-                    </div>
+                  
                     <div class="card-body p-0">
                         <div id="gallery-dropzone" class="border border-dashed p-5 text-center rounded cursor-pointer">
                             <i class="bi bi-images fs-3 text-muted"></i>
@@ -513,14 +529,31 @@
     @if(auth()->user()->hasFeature('background_music') || auth()->user()->hasFeature('custom_music'))
         <div id="tab-4" class="tab-content d-none">
             <div class="mb-3">
+                <div class="card-header bg-transparent border-0 mt-3 mb-3">
+                    <div class="d-flex align-items-center gap-3">
+
+                        <span class="avatar avatar-40 rounded bg-theme-1-subtle text-theme-1">
+                            <i class="bi bi-music-note-beamed fs-5"></i>
+                        </span>
+
+                        <div>
+                            <h6 class="mb-0 fw-bold">
+                                Musik Undangan
+                            </h6>
+
+                            <small class="text-muted">
+                                Pilih lagu favorit untuk melengkapi momen bahagia Anda
+                            </small>
+                        </div>
+
+                    </div>
+                </div>
                 <div class="form-check form-switch mb-3">
                     <input class="form-check-input" type="checkbox" id="enable_music" name="enable_music" value="1" {{ ($inv && $inv->enable_music) ? 'checked' : '' }} onchange="toggleSettings('musicContent', this.checked)">
                     <label class="form-check-label fw-bold" for="enable_music">Aktifkan Musik Latar</label>
                 </div>
                 <div id="musicContent" class="{{ ($inv && $inv->enable_music) ? '' : 'd-none' }}">
-                    <div class="card-header bg-transparent border-0 p-3 mb-3">
-                        <h6 class="fw-bold mb-0">Lagu Latar</h6>
-                    </div>
+                    
                     <div class="card-body p-0">
                         @php $musicSource = $inv?->music_source ?? 'library'; @endphp
                         <input type="hidden" id="music_id" name="music_id" value="{{ $inv?->music ?? '' }}">
@@ -606,8 +639,27 @@
 {{-- 5. RSVP --}}
 <div id="tab-5" class="tab-content d-none">
     <div class="mb-3">
-        <div class="card-header bg-transparent border-0 p-3 mb-3">
-            <div class="form-check form-switch">
+        <div class="card-header bg-transparent border-0 mt-3 mb-3">
+             
+            <div class="d-flex align-items-center gap-3">
+
+                <span class="avatar avatar-40 rounded bg-theme-1-subtle text-theme-1">
+                    <i class="bi bi-person-check fs-5"></i>
+                </span>
+
+                <div>
+                    <h6 class="mb-0 fw-bold">
+                        Aktifkan RSVP
+                    </h6>
+
+                    <small class="text-muted">
+                        Izinkan tamu mengonfirmasi kehadiran di acara Anda
+                    </small>
+                </div>
+
+            </div>
+      
+            <div class="form-check form-switch mt-3">
                 <input class="form-check-input" type="checkbox" id="enable_rsvp" name="enable_rsvp" value="1" {{ ($inv && $inv->enable_rsvp) ? 'checked' : '' }} onchange="toggleSettings('rsvp_settings', this.checked)">
                 <label class="form-check-label fw-bold" for="enable_rsvp">Aktifkan RSVP</label>
             </div>
@@ -664,19 +716,45 @@
 {{-- 6. TEMPAT & TANGGAL --}}
 <div id="tab-6" class="tab-content d-none">
     <div class="mb-3">
-        <div class="card-header bg-transparent border-0 p-3 mb-3">
-            <h6 class="fw-bold mb-0">Jadwal Acara</h6>
-        </div>
-        <div class="card-body p-0">
+        <div class="card-body">
             <div class="mb-4">
-                <label class="form-label fw-semibold mb-2">Tanggal Pernikahan</label>
+                <div class="d-flex align-items-center gap-2 mb-2">
+                 
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                        <span class="avatar avatar-30 rounded bg-theme-1-subtle text-theme-1">
+                            <i class="bi bi-calendar-heart"></i>
+                        </span>
+
+                        <div>
+                            <label class="form-label fw-semibold mb-0">
+                                Tanggal Pernikahan
+                            </label>
+                            <small class="d-block text-muted">
+                                Tentukan tanggal hari bahagia Anda
+                            </small>
+                        </div>
+                    </div>
+                </div>
                 <input type="date" id="wedding_date" name="wedding_date" value="{{ $inv?->wedding_date ?? '' }}" class="form-control">
                 <small class="text-muted">Tanggal pelaksanaan acara pernikahan.</small>
             </div>
 
             <hr class="my-4">
             <div class="mb-4">
-                <label class="form-label fw-bold text-primary mb-3">Akad Nikah</label>
+                <div class="d-flex align-items-center gap-2 mb-3">
+                    <span class="avatar avatar-30 rounded bg-theme-1-subtle text-theme-1">
+                        <i class="bi bi-heart-fill"></i>
+                    </span>
+
+                    <div>
+                        <label class="form-label fw-bold text-theme-1 mb-0">
+                            Akad Nikah
+                        </label>
+                        <div class="text-muted small">
+                            Waktu dan lokasi akad pernikahan
+                        </div>
+                    </div>
+                </div>
                 <input type="text" name="akad_location" value="{{ $inv?->akad_location ?? '' }}" placeholder="Contoh: Gedung Merdeka" class="form-control mb-2">
                 <small class="text-muted">Nama tempat pelaksanaan akad nikah.</small>
                 <input type="text" name="akad_address" value="{{ $inv?->akad_address ?? '' }}" placeholder="Alamat lengkap" class="form-control mt-3 mb-2">
@@ -696,12 +774,19 @@
                 </div>
                 <input type="text" name="akad_maps" value="{{ $inv?->akad_maps ?? '' }}" placeholder="Link Google Maps" class="form-control mt-3" oninput="updateMapEmbed('akad_maps', 'akad_map_embed')">
                 <small class="text-muted">Link peta lokasi akad nikah.</small>
-                <div id="akad_map_embed" class="mt-2 rounded overflow-hidden border" style="height: 0; transition: height 0.3s;"></div>
             </div>
 
             <hr class="my-4">
-            <div class="mb-3">
-                <label class="form-label fw-bold text-primary mb-3">Resepsi</label>
+                <div class="mb-3">
+                    <div class="d-flex align-items-center gap-2 mb-3">
+                        <span class="avatar avatar-30 rounded bg-theme-1-subtle text-theme-1">
+                            <i class="bi bi-buildings"></i>
+                        </span>
+
+                        <label class="form-label fw-bold text-theme-1 mb-0">
+                            Resepsi
+                        </label>
+                    </div>
                 <input type="text" name="resepsi_location" value="{{ $inv?->resepsi_location ?? '' }}" placeholder="Contoh: Hotel Mulia" class="form-control mb-2">
                 <small class="text-muted">Nama tempat pelaksanaan resepsi.</small>
                 <input type="text" name="resepsi_address" value="{{ $inv?->resepsi_address ?? '' }}" placeholder="Alamat lengkap" class="form-control mt-3 mb-2">
@@ -721,7 +806,7 @@
                 </div>
                 <input type="text" name="resepsi_maps" value="{{ $inv?->resepsi_maps ?? '' }}" placeholder="Link Google Maps" class="form-control mt-3" oninput="updateMapEmbed('resepsi_maps', 'resepsi_map_embed')">
                 <small class="text-muted">Link peta lokasi resepsi.</small>
-                <div id="resepsi_map_embed" class="mt-2 rounded overflow-hidden border" style="height: 0; transition: height 0.3s;"></div>
+                
             </div>
         </div>
     </div>
@@ -730,9 +815,18 @@
 {{-- 7. MEMPELAI WANITA --}}
 <div id="tab-7" class="tab-content d-none">
     <div class="mb-3">
-        <div class="card-header bg-transparent border-0 p-3 d-flex align-items-center gap-2 mb-3">
-            <div class="islami-icon"><i class="bi bi-person-heart fs-5"></i></div>
-            <h6 class="mb-0 fw-bold">Data Mempelai Wanita</h6>
+        <div class="card-header bg-transparent border-0 mt-2 mb-3">
+            <div class="d-flex align-items-center gap-3">
+                <span class="avatar avatar-40 rounded bg-theme-1-subtle text-theme-1">
+                    <i class="bi bi-person-heart fs-5"></i>
+                </span>
+                <div>
+                    <h6 class="mb-0 fw-bold">Data Mempelai Wanita</h6>
+                    <small class="text-muted">
+                        Lengkapi informasi calon mempelai wanita
+                    </small>
+                </div>
+            </div>
         </div>
         <div class="card-body p-0">
             <div class="row g-3">
@@ -803,8 +897,24 @@
     @if(auth()->user()->hasFeature('love_story') || auth()->user()->hasFeature('streaming_video'))
         <div id="tab-8" class="tab-content d-none">
             <div class="mb-3">
-                <div class="card-header bg-transparent border-0 p-3 mb-3">
-                    <h6 class="fw-bold mb-0">Video & Kisah Cinta</h6>
+                <div class="card-header bg-transparent border-0 mt-3 mb-3">
+                    <div class="d-flex align-items-center gap-3">
+
+                        <span class="avatar avatar-40 rounded bg-theme-1-subtle text-theme-1">
+                            <i class="bi bi-camera-reels fs-5"></i>
+                        </span>
+
+                        <div>
+                            <h6 class="mb-0 fw-bold">
+                                Video & Kisah Cinta
+                            </h6>
+
+                            <small class="text-muted">
+                                Bagikan video dan cerita perjalanan cinta Anda
+                            </small>
+                        </div>
+
+                    </div>
                 </div>
                 <div class="card-body p-0">
                     <div class="form-check form-switch mb-3">
@@ -883,8 +993,27 @@
     @if(auth()->user()->hasFeature('virtual_gift'))
         <div id="tab-9" class="tab-content d-none">
             <div class="mb-3">
-                <div class="card-header bg-transparent border-0 p-3 mb-3">
-                    <div class="form-check form-switch">
+                <div class="card-header bg-transparent border-0 mt-3 mb-3">
+                   
+                    <div class="d-flex align-items-center gap-3">
+
+                        <span class="avatar avatar-40 rounded bg-theme-1-subtle text-theme-1">
+                            <i class="bi bi-gift fs-5"></i>
+                        </span>
+
+                        <div>
+                            <h6 class="mb-0 fw-bold">
+                                Hadiah Digital
+                            </h6>
+
+                            <small class="text-muted">
+                                Bagikan informasi rekening atau alamat untuk menerima hadiah dari tamu
+                            </small>
+                        </div>
+
+                    </div>
+
+                    <div class="form-check form-switch mt-3">
                         <input class="form-check-input" type="checkbox" id="enableGift" name="enable_gift" value="1" {{ ($inv && $inv->enable_gift) ? 'checked' : '' }} onchange="toggleSettings('giftTab', this.checked)" {{ auth()->user()->hasFeature('virtual_gift') ? '' : 'disabled' }}>
                         <label class="form-check-label fw-bold" for="enableGift">Aktifkan Hadiah Digital</label>
                         @if(!auth()->user()->hasFeature('virtual_gift'))
@@ -938,6 +1067,43 @@
         </div>
     @endif
 @endauth
+
+{{-- 10. SAMPUL / BACKGROUND HEADER --}}
+<div id="tab-10" class="tab-content d-none">
+    <div class="mb-3">
+ 
+        <div class="card-body p-3">
+            <div class="mb-4">
+                <div class="d-flex align-items-center gap-2 mb-2">
+                    <span class="avatar avatar-30 rounded bg-theme-1-subtle text-theme-1">
+                        <i class="bi bi-image"></i>
+                    </span>
+
+                    <div>
+                        <label class="form-label fw-semibold mb-0">
+                            Background Header
+                        </label>
+                        <div class="text-muted small">
+                            Gambar sampul utama undangan
+                        </div>
+                    </div>
+                </div>
+                <div class="upload-zone border rounded p-4 text-center {{ ($inv && $inv->gallery_cover) ? 'd-none' : '' }}" id="uploadBoxCoverContainer">
+                    <label for="gallery_cover" class="cursor-pointer mb-0 d-block">
+                        <i class="bi bi-image fs-3 text-primary"></i>
+                        <p class="text-muted mb-0 mt-2">Klik untuk upload Background Header</p>
+                        <input id="gallery_cover" type="file" name="gallery_cover" class="d-none" onchange="openCropModal(event, 'cover')">
+                    </label>
+                </div>
+                <div id="previewContainerCover" class="mt-3 {{ ($inv && $inv->gallery_cover) ? '' : 'd-none' }} text-center position-relative">
+                    <img id="previewCover" src="{{ ($inv && $inv->gallery_cover) ? storage_url_with_fallback($inv->gallery_cover, asset('assets/fav.png'), ($inv->updated_at ?? now())->timestamp) : '' }}" class="img-fluid rounded border shadow-sm w-100" style="max-height: 250px; object-fit: cover;">
+                    <button type="button" onclick="removePreview('cover')" class="btn btn-danger btn-sm position-absolute top-0 end-0 m-2"><i class="bi bi-x"></i></button>
+                </div>
+                <small class="text-muted mt-1 d-block">Foto sampul akan ditampilkan di bagian atas undangan.</small>
+            </div>
+        </div>
+    </div>
+</div>
 
 @push('scripts')
     <script>
@@ -1140,21 +1306,31 @@
             }
 
             let embedUrl = url;
-            if (url.includes('google.com/maps') && !url.includes('/embed')) {
+            const isGoogleMaps = url.includes('google.com/maps') || url.includes('maps.google.com');
+            if (isGoogleMaps && !url.includes('/embed')) {
                 if (url.includes('/maps/place/')) {
-                    const placeMatch = url.match(/\/place\/([^\/\?]+)/);
+                    const placeMatch = url.match(/\/place\/([^@\/\?]+)/);
                     if (placeMatch) {
-                        const placeName = decodeURIComponent(placeMatch[1]);
+                        let placeName = decodeURIComponent(placeMatch[1]);
+                        placeName = placeName.replace(/\+/g, ' ');
                         embedUrl = 'https://maps.google.com/maps?q=' + encodeURIComponent(placeName) + '&output=embed';
                     }
                 } else if (url.includes('/maps/')) {
                     embedUrl = url.replace('/maps/', '/maps/embed?');
+                } else if (url.includes('?q=')) {
+                    const qMatch = url.match(/[?&]q=([^&]+)/);
+                    if (qMatch) {
+                        const query = decodeURIComponent(qMatch[1]);
+                        embedUrl = 'https://maps.google.com/maps?q=' + encodeURIComponent(query) + '&output=embed';
+                    }
                 }
             }
 
             embed.innerHTML = '<iframe src="' + embedUrl + '" width="100%" height="200" style="border:0;" allowfullscreen="" loading="lazy"></iframe>';
             embed.style.height = '200px';
         }
+
+        window.updateMapEmbed = updateMapEmbed;
 
         function initChildOrder(type) {
             const select = document.getElementById(type + '_child_order_select');
