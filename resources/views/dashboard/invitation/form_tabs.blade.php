@@ -509,7 +509,13 @@
                         </div>
                         <small class="text-muted mt-2 d-block">
                             @php
-                                $galleryLimit = data_get(auth()->user()->subscription->plan->features ?? [], 'gallery_limit');
+                                $galleryLimit = null;
+                                $owner = auth()->user();
+                                if ($owner->subscription && $owner->subscription->plan) {
+                                    $galleryLimit = data_get($owner->subscription->plan->features ?? [], 'gallery_limit');
+                                } elseif (isset($inv->user) && $inv->user->subscription && $inv->user->subscription->plan) {
+                                    $galleryLimit = data_get($inv->user->subscription->plan->features ?? [], 'gallery_limit');
+                                }
                                 if (is_null($galleryLimit)) {
                                     echo 'Unlimited foto. Format: JPG, PNG, atau WebP.';
                                 } else {
