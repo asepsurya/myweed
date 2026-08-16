@@ -1073,17 +1073,13 @@ class UserInvitationController extends Controller
             abort(403, 'Anda hanya memiliki akses melihat undangan ini.');
         }
 
-        if (! $user->hasFeature('gallery') && ! ($invitation->user && $invitation->user->hasFeature('gallery'))) {
-            return response()->json(['success' => false, 'message' => 'Fitur Galeri hanya tersedia untuk paket berbayar.'], 403);
-        }
-
         $galleryLimit = null;
-        if ($user->subscription) {
-            $galleryLimit = data_get($user->subscription->plan->features ?? [], 'gallery_limit');
-        } elseif (isset($invitation->user) && $invitation->user->subscription) {
+        if ($invitation->user && $invitation->user->subscription) {
             $galleryLimit = data_get($invitation->user->subscription->plan->features ?? [], 'gallery_limit');
+        } elseif ($user->subscription) {
+            $galleryLimit = data_get($user->subscription->plan->features ?? [], 'gallery_limit');
         }
-        if (! is_null($galleryLimit) && $invitation->galleries()->count() >= $galleryLimit) {
+        if (! is_null($galleryLimit) && $galleryLimit > 0 && $invitation->galleries()->count() >= $galleryLimit) {
             return response()->json(['success' => false, 'message' => "Maksimal {$galleryLimit} foto untuk paket ini."], 403);
         }
 

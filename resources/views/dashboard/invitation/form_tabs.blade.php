@@ -466,7 +466,6 @@
 
 {{-- 3. GALERI FOTO --}}
 @auth
-    @if(auth()->user()->hasFeature('gallery') || ($inv->user && $inv->user->hasFeature('gallery')))
         <div id="tab-3" class="tab-content d-none">
             <div class="card-header bg-transparent border-0 mb-3 mt-3">
                 <div class="d-flex align-items-center gap-3">
