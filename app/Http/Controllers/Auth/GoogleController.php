@@ -39,10 +39,16 @@ class GoogleController extends Controller
                 'password' => Hash::make(Str::random(32)),
                 'google_id' => $googleUser->id,
                 'avatar' => $avatarPath,
+                'email_verified_at' => now(),
             ]
         );
 
         Auth::login($user);
+
+        // Ensure Google users have the 'user' role
+        if (!$user->hasRole('user')) {
+            $user->assignRole('user');
+        }
 
         // 🔽 redirect logic
         return redirect()->route('dashboard.user');
