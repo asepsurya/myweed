@@ -603,7 +603,7 @@
                     <i class="bi bi-calendar-event"></i><span>Acara</span>
                 </div>
 
-                @if(auth()->check() ? auth()->user()->hasFeature('gallery') : true)
+                @if(auth()->check() ? (auth()->user()->hasFeature('gallery') || ($invitation->user && $invitation->user->hasFeature('gallery'))) : true)
                     <div class="nav-vertical-link" data-tab="tab-3" title="Galeri">
                         <i class="bi bi-images"></i><span>Galeri</span>
                     </div>
