@@ -526,7 +526,7 @@
                 </div>
             </div>
         </div>
-    @endif
+</div>
 @endauth
 
 {{-- 4. MUSIK --}}

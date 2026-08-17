@@ -260,10 +260,7 @@ class UserInvitationController extends Controller
             return redirect()->back()->with('error', 'Fitur RSVP hanya tersedia untuk paket berbayar.');
         }
 
-        // Check Gallery toggle
-        if ($request->has('enable_gallery') && $request->enable_gallery && ! $user->hasFeature('gallery')) {
-            return redirect()->back()->with('error', 'Fitur Galeri hanya tersedia untuk paket berbayar.');
-        }
+        // Gallery toggle is now available to all authenticated users
 
         // Check Music toggle
         if ($request->has('enable_music') && $request->enable_music && ! $user->hasFeature('background_music') && ! $user->hasFeature('custom_music')) {
@@ -280,10 +277,7 @@ class UserInvitationController extends Controller
             return redirect()->back()->with('error', 'Fitur Kisah Cinta hanya tersedia untuk paket berbayar.');
         }
 
-        // Check Gallery feature
-        if ($request->hasFile('gallery') && ! $user->hasFeature('gallery')) {
-            return redirect()->back()->with('error', 'Fitur Galeri hanya tersedia untuk paket berbayar.');
-        }
+        // Gallery feature check removed - now available to all users with invitation access
 
         $galleryLimit = null;
         if ($user->subscription) {
@@ -294,7 +288,7 @@ class UserInvitationController extends Controller
                 $galleryLimit = data_get($partnerOwner->subscription->plan->features ?? [], 'gallery_limit');
             }
         }
-        if ($request->hasFile('gallery') && ! is_null($galleryLimit) && count($request->file('gallery')) > $galleryLimit) {
+        if ($request->hasFile('gallery') && ! is_null($galleryLimit) && $galleryLimit > 0 && count($request->file('gallery')) > $galleryLimit) {
             return redirect()->back()->with('error', "Maksimal {$galleryLimit} foto untuk paket ini.");
         }
 
@@ -639,10 +633,8 @@ class UserInvitationController extends Controller
             return redirect()->back()->with('error', 'Fitur RSVP hanya tersedia untuk paket berbayar.');
         }
 
-        // Check Gallery toggle
-        if ($request->has('enable_gallery') && $request->enable_gallery && ! $user->hasFeature('gallery') && ! ($invitation->user && $invitation->user->hasFeature('gallery'))) {
-            return redirect()->back()->with('error', 'Fitur Galeri hanya tersedia untuk paket berbayar.');
-        }
+        // Gallery toggle is now available to all authenticated users
+        // (previously gated by hasFeature('gallery') which blocked free-tier users)
 
         // Check Music toggle
         if ($request->has('enable_music') && $request->enable_music && ! $user->hasFeature('background_music') && ! $user->hasFeature('custom_music')) {
@@ -659,20 +651,16 @@ class UserInvitationController extends Controller
             return redirect()->back()->with('error', 'Fitur Kisah Cinta hanya tersedia untuk paket berbayar.');
         }
 
-        // Check Gallery feature
-        if ($request->hasFile('gallery') && ! $user->hasFeature('gallery') && ! ($invitation->user && $invitation->user->hasFeature('gallery'))) {
-            return redirect()->back()->with('error', 'Fitur Galeri hanya tersedia untuk paket berbayar.');
-        }
-
+        // Check Gallery feature (now available to all users with invitation access)
         $galleryLimit = null;
-        if ($user->subscription) {
-            $galleryLimit = data_get($user->subscription->plan->features ?? [], 'gallery_limit');
-        } elseif (isset($invitation->user) && $invitation->user->subscription) {
+        if ($invitation->user && $invitation->user->subscription) {
             $galleryLimit = data_get($invitation->user->subscription->plan->features ?? [], 'gallery_limit');
+        } elseif ($user->subscription) {
+            $galleryLimit = data_get($user->subscription->plan->features ?? [], 'gallery_limit');
         }
         $currentGalleryCount = $invitation->galleries()->count();
         $newGalleryCount = $request->hasFile('gallery') ? count($request->file('gallery')) : 0;
-        if (! is_null($galleryLimit) && ($currentGalleryCount + $newGalleryCount) > $galleryLimit) {
+        if (! is_null($galleryLimit) && $galleryLimit > 0 && ($currentGalleryCount + $newGalleryCount) > $galleryLimit) {
             return redirect()->back()->with('error', "Maksimal {$galleryLimit} foto untuk paket ini. Anda sudah memiliki {$currentGalleryCount} foto.");
         }
 
