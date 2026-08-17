@@ -17,7 +17,7 @@
                 <figure class="avatar avatar-100 rounded-circle coverimg my-3">
                     <img src="{{ asset('assets/fav.png') }}" alt="">
                 </figure>
-                <h5 class="mb-1 fw-medium">Loventa.id</h5>
+                <h5 class="mb-1 fw-medium">RuangUndang.id</h5>
                 <p class="small">Make your moment unforgettable</p>
             </div>
         </div>

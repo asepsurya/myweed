@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Verifikasi Email — WeddingInv</title>
+    <title>Verifikasi Email — RuangUndang</title>
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         body {
@@ -154,7 +154,7 @@
             <div class="email-brand">Wedding<span>Inv</span>.</div>
             <div class="email-icon">&#x2709;</div>
             <h1>Verifikasi Email Anda</h1>
-            <p>Terima kasih telah bergabung dengan WeddingInv. Silakan verifikasi alamat email Anda untuk mengakses semua fitur.</p>
+            <p>Terima kasih telah bergabung dengan RuangUndang. Silakan verifikasi alamat email Anda untuk mengakses semua fitur.</p>
         </div>
 
         <div class="email-body">
@@ -171,7 +171,7 @@
         </div>
 
         <div class="email-footer">
-            &copy; {{ date('Y') }} WeddingInv. Semua hak dilindungi.
+            &copy; {{ date('Y') }} RuangUndang. Semua hak dilindungi.
         </div>
     </div>
 </body>

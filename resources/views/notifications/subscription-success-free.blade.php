@@ -33,7 +33,7 @@
             
             <!-- Logo Header -->
             <div style="text-align: center; margin-bottom: 2rem;">
-                <img src="https://loventa.inopakinstitute.or.id/assets/logo.png" alt="Loventa Logo" style="max-width: 140px; height: auto; margin: 0 auto;">
+                <img src="https://ruangundang.inopakinstitute.or.id/assets/logo.png" alt="RuangUndang Logo" style="max-width: 140px; height: auto; margin: 0 auto;">
             </div>
 
             <!-- Invoice Info -->
@@ -80,7 +80,7 @@
         
         <!-- Footer -->
         <div style="padding: 1.5rem; background: #FAFAFA; border-top: 1px solid #E8E4DE; text-align: center; font-size: 0.8rem; color: #9CA3AF;">
-            &copy; {{ date('Y') }} Loventa. Seluruh hak cipta dilindungi.
+            &copy; {{ date('Y') }} RuangUndang. Seluruh hak cipta dilindungi.
         </div>
     </div>
 </body>

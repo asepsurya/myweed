@@ -27,7 +27,7 @@ class ResetPassword extends Notification
         ], false));
 
         return (new MailMessage)
-            ->subject('Reset Password — WeddingInv')
+            ->subject('Reset Password — RuangUndang')
             ->view('notifications.reset-password', [
                 'resetUrl' => $resetUrl,
                 'userName' => $notifiable->name,

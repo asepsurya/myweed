@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Loventa - Undangan Kelola Bersama Pasangan</title>
+    <title>RuangUndang - Undangan Kelola Bersama Pasangan</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -67,7 +67,7 @@
         
         <!-- Header -->
         <div class="email-header" style="padding: 2.5rem 2.25rem 0; text-align: center;">
-            <img src="https://loventa.inopakinstitute.or.id/assets/logo.png" alt="Loventa Logo" style="max-width: 160px; height: auto; margin: 0 auto;">
+            <img src="https://ruangundang.inopakinstitute.or.id/assets/logo.png" alt="RuangUndang Logo" style="max-width: 160px; height: auto; margin: 0 auto;">
         </div>
         
         <!-- Body -->
@@ -111,7 +111,7 @@
         
         <!-- Footer -->
         <div style="padding: 1.5rem; background: #FAFAFA; border-top: 1px solid #E8E4DE; text-align: center; font-size: 0.8rem; color: #9CA3AF;">
-            &copy; {{ date('Y') }} Loventa. Seluruh hak cipta dilindungi.
+            &copy; {{ date('Y') }} RuangUndang. Seluruh hak cipta dilindungi.
         </div>
     </div>
 </body>

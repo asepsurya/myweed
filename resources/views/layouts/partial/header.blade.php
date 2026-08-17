@@ -30,9 +30,9 @@
 
             <!-- logo -->
             <a class="navbar-brand d-flex align-items-center" href="/">
-                <img data-bs-img="light" src="{{ asset('assets/logo.png') }}" alt="Logo WeddingInv"
+                <img data-bs-img="light" src="{{ asset('assets/logo.png') }}" alt="Logo RuangUndang"
                     style="height: 30px; width: auto;">
-                <img data-bs-img="dark" src="{{ asset('assets/logo-white.png') }}" alt="Logo WeddingInv"
+                <img data-bs-img="dark" src="{{ asset('assets/logo-white.png') }}" alt="Logo RuangUndang"
                     style="height: 30px; width: auto;">
             </a>
 

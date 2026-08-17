@@ -485,7 +485,7 @@
         <div class="container">
             <!-- Header -->
             <div class="section-header">
-                <span class="section-subtitle">Paket WeddingInv</span>
+                <span class="section-subtitle">Paket RuangUndang</span>
                 <h2 class="section-title">Rencanakan Hari Bahagia Anda</h2>
                 <p class="section-desc">
                     Pilih paket yang paling sesuai dengan kebutuhan pernikahan impian Anda. Tanpa biaya tersembunyi.

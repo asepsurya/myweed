@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bantuan - WeddingInv</title>
+    <title>Bantuan - RuangUndang</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -536,9 +536,9 @@
         <div class="container">
             <a class="navbar-brand" href="{{ route('landing') }}">
                 <!-- Logo Light (Untuk background gelap) -->
-                <img src="{{ asset('assets/logo-white.png') }}" alt="Logo WeddingInv" class="logo-light">
+                <img src="{{ asset('assets/logo-white.png') }}" alt="Logo RuangUndang" class="logo-light">
                 <!-- Logo Dark (Untuk background putih) -->
-                <img src="{{ asset('assets/logo.png') }}" alt="Logo WeddingInv" class="logo-dark">
+                <img src="{{ asset('assets/logo.png') }}" alt="Logo RuangUndang" class="logo-dark">
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                 style="border-color: rgba(255,255,255,0.3);">
@@ -675,7 +675,7 @@
                         <div class="help-icon"><i class="bi bi-envelope"></i></div>
                         <h4>Email</h4>
                         <p>Kirim pertanyaan detail dan kami akan merespons dalam waktu kurang dari 1 jam.</p>
-                        <a href="#">support@weddinginv.id</a>
+                        <a href="#">support@ruangundang.id</a>
                     </div>
                 </div>
                 <div class="col-lg-4 col-md-6 reveal" style="transition-delay: 0.3s;">
@@ -696,11 +696,9 @@
             <div class="row gy-5">
                 <div class="col-lg-4 reveal">
                     <a href="#" class="footer-logo">
-                        <img src="{{ asset('assets/logo.png') }}" alt="Logo WeddingInv">
+                        <img src="{{ asset('assets/logo.png') }}" alt="Logo RuangUndang">
                     </a>
-                    <p class="text-secondary small" style="max-width: 350px;">Solusi undangan digital premium untuk
-                        pernikahan, khitanan, aqiqah, dan berbagai momen spesial lainnya. Praktis, elegan, dan hemat
-                        biaya.</p>
+                    <p class="text-secondary small" style="max-width: 350px;">Saat ini kami menyediakan undangan digital untuk pernikahan. Untuk khitanan, aqiqah, dan momen spesial lainnya akan segera hadir. Praktis, elegan, dan hemat biaya.</p>
                     <div class="footer-social">
                         <a href="#" class="social-btn"><i class="bi bi-instagram"></i></a>
                         <a href="#" class="social-btn"><i class="bi bi-facebook"></i></a>
@@ -737,7 +735,7 @@
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>&copy; 2024 WeddingInv Digital Invitation. Dibuat dengan <i class="bi bi-heart-fill text-danger"></i>
+                <p>&copy; 2024 RuangUndang Digital Invitation. Dibuat dengan <i class="bi bi-heart-fill text-danger"></i>
                     di Indonesia.</p>
             </div>
         </div>

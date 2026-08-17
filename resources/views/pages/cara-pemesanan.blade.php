@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cara Pemesanan - WeddingInv</title>
+    <title>Cara Pemesanan - RuangUndang</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -646,8 +646,8 @@
     <nav class="navbar navbar-expand-lg" id="mainNav">
         <div class="container">
             <a class="navbar-brand" href="{{ route('landing') }}">
-                <img src="{{ asset('assets/logo-white.png') }}" alt="Logo WeddingInv" class="logo-white">
-                <img src="{{ asset('assets/logo.png') }}" alt="Logo WeddingInv" class="logo-dark">
+                <img src="{{ asset('assets/logo-white.png') }}" alt="Logo RuangUndang" class="logo-white">
+                <img src="{{ asset('assets/logo.png') }}" alt="Logo RuangUndang" class="logo-dark">
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                 style="border-color: rgba(255,255,255,0.3);">
@@ -820,11 +820,9 @@
             <div class="row gy-5">
                 <div class="col-lg-4 reveal">
                     <a href="#" class="footer-logo">
-                        <img src="{{ asset('assets/logo.png') }}" alt="Logo WeddingInv">
+                        <img src="{{ asset('assets/logo.png') }}" alt="Logo RuangUndang">
                     </a>
-                    <p class="text-secondary small" style="max-width: 350px;">Solusi undangan digital premium untuk
-                        pernikahan, khitanan, aqiqah, dan berbagai momen spesial lainnya. Praktis, elegan, dan hemat
-                        biaya.</p>
+                    <p class="text-secondary small" style="max-width: 350px;">Saat ini kami menyediakan undangan digital untuk pernikahan. Untuk khitanan, aqiqah, dan momen spesial lainnya akan segera hadir. Praktis, elegan, dan hemat biaya.</p>
                     <div class="footer-social">
                         <a href="#" class="social-btn"><i class="bi bi-instagram"></i></a>
                         <a href="#" class="social-btn"><i class="bi bi-facebook"></i></a>
@@ -861,7 +859,7 @@
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>&copy; 2024 WeddingInv Digital Invitation. Dibuat dengan <i class="bi bi-heart-fill text-danger"></i>
+                <p>&copy; 2024 RuangUndang Digital Invitation. Dibuat dengan <i class="bi bi-heart-fill text-danger"></i>
                     di Indonesia.</p>
             </div>
         </div>

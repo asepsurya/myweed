@@ -6,7 +6,7 @@
 
 ## 1. Context & Architecture Alignment
 
-The existing platform (`myweed` / WeddingInv) is a Laravel 12 wedding-invitation SaaS. Each couple is represented by an
+The existing platform (`myweed` / RuangUndang) is a Laravel 12 wedding-invitation SaaS. Each couple is represented by an
 `Invitation` owned by a `User`. Users subscribe to **Free / Basic / Pro** plans gated by `User::hasFeature()` — a JSON
 feature matrix stored on `subscription_plans.features` (see `database/seeders/SubscriptionSeed.php`).
 

@@ -319,7 +319,7 @@
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label for="MAIL_FROM_NAME" class="form-label fw-semibold">Nama Pengirim (MAIL_FROM_NAME)</label>
-                                    <input type="text" name="MAIL_FROM_NAME" id="MAIL_FROM_NAME" class="form-control" value="{{ old('MAIL_FROM_NAME', $envData['MAIL_FROM_NAME'] ?? '') }}" placeholder="Loventa Invitation Official">
+                                    <input type="text" name="MAIL_FROM_NAME" id="MAIL_FROM_NAME" class="form-control" value="{{ old('MAIL_FROM_NAME', $envData['MAIL_FROM_NAME'] ?? '') }}" placeholder="RuangUndang Invitation Official">
                                 </div>
                             </div>
                         </div>
@@ -425,7 +425,7 @@
 
                             <div class="mb-3 col-md-8">
                                 <label for="R2_BUCKET" class="form-label fw-semibold">R2 Bucket Name (R2_BUCKET)</label>
-                                <input type="text" name="R2_BUCKET" id="R2_BUCKET" class="form-control" value="{{ old('R2_BUCKET', $envData['R2_BUCKET'] ?? 'loventa-storage') }}" placeholder="loventa-storage">
+                                <input type="text" name="R2_BUCKET" id="R2_BUCKET" class="form-control" value="{{ old('R2_BUCKET', $envData['R2_BUCKET'] ?? 'ruangundang-storage') }}" placeholder="ruangundang-storage">
                             </div>
 
                             <div class="mb-3 col-md-8">

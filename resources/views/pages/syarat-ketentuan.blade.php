@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Syarat & Ketentuan - WeddingInv</title>
+    <title>Syarat & Ketentuan - RuangUndang</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -521,8 +521,8 @@
     <nav class="navbar navbar-expand-lg" id="mainNav">
         <div class="container">
             <a class="navbar-brand" href="{{ route('landing') }}">
-                <img src="{{ asset('assets/logo-white.png') }}" alt="Logo WeddingInv" class="logo-white">
-                <img src="{{ asset('assets/logo.png') }}" alt="Logo WeddingInv" class="logo-dark">
+                <img src="{{ asset('assets/logo-white.png') }}" alt="Logo RuangUndang" class="logo-white">
+                <img src="{{ asset('assets/logo.png') }}" alt="Logo RuangUndang" class="logo-dark">
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                 style="border-color: rgba(255,255,255,0.3);">
@@ -569,7 +569,7 @@
             <div class="text-center mb-5 reveal">
                 <span class="section-subtitle">Ketentuan Layanan</span>
                 <h2 class="section-title">Syarat Penggunaan</h2>
-                <p class="section-desc">Dengan menggunakan layanan WeddingInv, Anda dianggap telah membaca dan
+                <p class="section-desc">Dengan menggunakan layanan RuangUndang, Anda dianggap telah membaca dan
                     menyetujui semua syarat berikut.</p>
             </div>
 
@@ -582,7 +582,7 @@
                 </li>
                 <li class="reveal" style="transition-delay: 0.15s;">
                     <h5>2. Layanan yang Disediakan</h5>
-                    <p>WeddingInv menyediakan platform untuk membuat undangan digital pernikahan dan acara lainnya. Kami
+                    <p>RuangUndang menyediakan platform untuk membuat undangan digital pernikahan dan acara lainnya. Kami
                         berhak mengubah, menambah, atau menghapus fitur sewaktu-waktu tanpa pemberitahuan terlebih
                         dahulu.</p>
                 </li>
@@ -590,7 +590,7 @@
                     <h5>3. Hak Kekayaan Intelektual</h5>
                     <p>Semua tema, desain, dan konten yang tersedia di platform ini dilindungi oleh hak cipta. Pengguna
                         dilarang menyalin, mendistribusikan, atau menggunakan konten tersebut untuk komersial tanpa izin
-                        tertulis dari WeddingInv.</p>
+                        tertulis dari RuangUndang.</p>
                 </li>
                 <li class="reveal" style="transition-delay: 0.25s;">
                     <h5>4. Konten Pengguna</h5>
@@ -606,7 +606,7 @@
                 </li>
                 <li class="reveal" style="transition-delay: 0.35s;">
                     <h5>6. Batas Tanggung Jawab</h5>
-                    <p>WeddingInv tidak bertanggung jawab atas kerugian akibat kegagalan sistem, force majeure, atau
+                    <p>RuangUndang tidak bertanggung jawab atas kerugian akibat kegagalan sistem, force majeure, atau
                         kesalahan penggunaan oleh pengguna. Kami berusaha menjaga ketersediaan layanan sebaik mungkin.
                     </p>
                 </li>
@@ -642,11 +642,9 @@
             <div class="row gy-5">
                 <div class="col-lg-4 reveal">
                     <a href="#" class="footer-logo">
-                        <img src="{{ asset('assets/logo.png') }}" alt="Logo WeddingInv">
+                        <img src="{{ asset('assets/logo.png') }}" alt="Logo RuangUndang">
                     </a>
-                    <p class="text-secondary small" style="max-width: 350px;">Solusi undangan digital premium untuk
-                        pernikahan, khitanan, aqiqah, dan berbagai momen spesial lainnya. Praktis, elegan, dan hemat
-                        biaya.</p>
+                    <p class="text-secondary small" style="max-width: 350px;">Saat ini kami menyediakan undangan digital untuk pernikahan. Untuk khitanan, aqiqah, dan momen spesial lainnya akan segera hadir. Praktis, elegan, dan hemat biaya.</p>
                     <div class="footer-social">
                         <a href="#" class="social-btn"><i class="bi bi-instagram"></i></a>
                         <a href="#" class="social-btn"><i class="bi bi-facebook"></i></a>
@@ -683,7 +681,7 @@
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>&copy; 2024 WeddingInv Digital Invitation. Dibuat dengan <i class="bi bi-heart-fill text-danger"></i>
+                <p>&copy; 2024 RuangUndang Digital Invitation. Dibuat dengan <i class="bi bi-heart-fill text-danger"></i>
                     di Indonesia.</p>
             </div>
         </div>

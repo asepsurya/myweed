@@ -8,7 +8,7 @@
     <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title id="dynamicTitle">{{ config('app.name', 'WeddingInv') }} — Dashboard</title>
+    <title id="dynamicTitle">{{ config('app.name', 'RuangUndang') }} — Dashboard</title>
     <link rel="icon" type="image/png" href="{{ asset('assets/fav.png') }}">
 
     <!-- Icons -->
@@ -35,7 +35,7 @@
     <script defer src="{{ asset('assets/js/app435e.js?1096aad991449c8654b2') }}"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
-    <!-- WeddingInv Theme Overrides -->
+    <!-- RuangUndang Theme Overrides -->
     <style>
         :root,
         [data-bs-theme=light] {
@@ -706,7 +706,7 @@
             if (pageTitle) pageTitle.textContent = pageName;
 
             document.getElementById('dynamicTitle').textContent =
-                '{{ config("app.name", "WeddingInv") }} — ' + pageName;
+                '{{ config("app.name", "RuangUndang") }} — ' + pageName;
 
             /* ── Toast Init ── */
             function initToasts() {

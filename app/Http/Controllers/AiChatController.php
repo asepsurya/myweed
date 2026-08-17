@@ -102,7 +102,7 @@ class AiChatController extends Controller
     private function buildSystemPrompt($user): string
     {
         $basePrompt = <<<'PROMPT'
-Kamu adalah asisten undangan pernikahan digital WeddingInv. Tugasmu adalah membantu pengguna membuat undangan pernikahan digital dengan mengumpulkan informasi berikut:
+Kamu adalah asisten undangan pernikahan digital RuangUndang. Tugasmu adalah membantu pengguna membuat undangan pernikahan digital dengan mengumpulkan informasi berikut:
 1. Nama mempelai pria dan panggilan (opsional)
 2. Nama mempelai wanita dan panggilan (opsional)
 3. Tanggal pernikahan

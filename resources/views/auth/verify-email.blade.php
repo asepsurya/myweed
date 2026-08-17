@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
-    <title>Verifikasi Email — WeddingInv</title>
+    <title>Verifikasi Email — RuangUndang</title>
     <link rel="icon" type="image/png" href="{{ asset('assets/fav.png') }}">
 
     <link rel="preconnect" href="https://fonts.googleapis.com/">
@@ -636,7 +636,7 @@
         <!-- Header -->
         <div class="card-header">
             <div class="card-logo">
-                <img src="{{ asset('assets/logo.png') }}" alt="Logo WeddingInv">
+                <img src="{{ asset('assets/logo.png') }}" alt="Logo RuangUndang">
             </div>
 
             <div class="header-icon">
