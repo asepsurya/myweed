@@ -679,9 +679,7 @@
                 </div>
             </div>
             <!-- 2. CANVAS PREVIEW (KANAN) -->
-       
-        </div>
- <div class="builder-canvas">
+        <div class="builder-canvas">
             <div class="preview-device">
                 <div id="previewWindow" class="preview-window no-scrollbar">
                     <div class="preview-notch"></div>
@@ -701,6 +699,8 @@
         </div>
         
     </div>
+
+        </div>
 
     <!-- UPLOAD TOAST NOTIFICATION -->
     <div class="upload-toast-container" id="uploadToastContainer"></div>
