@@ -209,6 +209,7 @@
 </style>
 
 {{-- Navbar Utama Dashboard/Umum --}}
+ @if(!request()->routeIs('invitation.edit*'))
 <nav class="mobile-bottom-nav">
     <a href="{{ route('dashboard') }}"
        class="nav-item {{ request()->routeIs('dashboard') ? 'active' : '' }}">
@@ -242,99 +243,16 @@
     </a>
     @endrole
 </nav>
+@endif
 
-{{-- Navbar Khusus Edit Undangan (Tabbed Menu & More Drawer) --}}
-@if(request()->routeIs('invitation.edit*'))
-<nav class="mobile-bottom-nav">
-    <a class="nav-item tab-btn active" data-tab="2">
-        <i class="bi bi-palette"></i>
-        <span>Tema</span>
-    </a>
-
-    <a class="nav-item tab-btn" data-tab="1">
-        <i class="bi bi-person-fill"></i>
-        <span>Pria</span>
-    </a>
-
-    <a class="nav-item tab-btn" data-tab="7">
-        <i class="bi bi-person-heart"></i>
-        <span>Wanita</span>
-    </a>
-
-    <a class="nav-item tab-btn" data-tab="6">
-        <i class="bi bi-geo-alt-fill"></i>
-        <span>Lokasi</span>
-    </a>
-
-    <a class="nav-item" id="openMore">
-        <i class="bi bi-list"></i>
-        <span>More</span>
-    </a>
-</nav>
-
-{{-- Overlay & Menu Drawer --}}
-<div id="moreOverlay" class="more-overlay"></div>
-
-<div id="moreMenu" class="more-menu">
-    <div class="more-menu-content">
-        <div class="handle"></div>
-
-        <a class="more-item tab-btn" data-tab="3"><i class="bi bi-images"></i> Galeri</a>
-        <a class="more-item tab-btn" data-tab="4"><i class="bi bi-music-note"></i> Musik</a>
-        <a class="more-item tab-btn" data-tab="8"><i class="bi bi-play"></i> Video & Kisah</a>
-        <a class="more-item tab-btn" data-tab="5"><i class="bi bi-chat-dots"></i> RSVP</a>
-        <a class="more-item tab-btn" data-tab="9"><i class="bi bi-gift"></i> Hadiah & Donasi</a>
-    </div>
-</div>
- <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const moreBtn = document.getElementById('openMore');
-        const moreMenu = document.getElementById('moreMenu');
-        const overlay = document.getElementById('moreOverlay');
-
-        if (moreBtn && moreMenu && overlay) {
-            moreBtn.addEventListener('click', () => {
-                moreMenu.classList.add('show');
-                overlay.classList.add('show');
-            });
-
-            const closeMore = () => {
-                moreMenu.classList.remove('show');
-                overlay.classList.remove('show');
-            };
-
-            overlay.addEventListener('click', closeMore);
-
-            document.addEventListener('keydown', (e) => {
-                if (e.key === 'Escape') closeMore();
-            });
-        }
-
-        const openTab = (tabId) => {
-            const tabEl = document.querySelector(`.tab-btn[data-tab="${tabId}"]`);
-            if (tabEl && typeof switchTab === 'function') {
-                switchTab(tabEl);
-            } else if (tabEl) {
-                tabEl.click();
-            }
-        };
-
-        document.querySelectorAll('.tab-btn').forEach(btn => {
-            btn.addEventListener('click', function () {
-                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-                this.classList.add('active');
-                openTab(this.dataset.tab);
-            });
-        });
-
-        document.querySelectorAll('.more-item').forEach(item => {
-            item.addEventListener('click', function () {
-                if (typeof closeMore === 'function') {
-                    moreMenu.classList.remove('show');
-                    overlay.classList.remove('show');
-                }
-            });
-        });
-    });
-</script>
+ @if(request()->routeIs('invitation.edit*'))
+ <div class="d-flex justify-content-center align-items-center gap-3 mt-4 mb-4">
+                <button type="button" id="prevPage" class="btn btn-sm btn-outline-secondary" disabled>
+                    <i class="bi bi-chevron-left"></i> Sebelumnya
+                </button>
+                <span id="pageInfo" class="small text-muted">Halaman 1 dari 1</span>
+                <button type="button" id="nextPage" class="btn btn-sm btn-outline-secondary" disabled>
+                    Selanjutnya <i class="bi bi-chevron-right"></i>
+                </button>
+            </div>
 @endif

@@ -414,15 +414,7 @@
                 @endforeach
             </div>
 
-            <div class="d-flex justify-content-center align-items-center gap-3 mt-4 mb-4">
-                <button type="button" id="prevPage" class="btn btn-sm btn-outline-secondary" disabled>
-                    <i class="bi bi-chevron-left"></i> Sebelumnya
-                </button>
-                <span id="pageInfo" class="small text-muted">Halaman 1 dari 1</span>
-                <button type="button" id="nextPage" class="btn btn-sm btn-outline-secondary" disabled>
-                    Selanjutnya <i class="bi bi-chevron-right"></i>
-                </button>
-            </div>
+           
 
             <hr class="my-4">
 
