@@ -678,7 +678,10 @@
                     <button type="button" id="mobileNextBtn" class="btn btn-sm btn-builder-next">Selanjutnya</button>
                 </div>
             </div>
-            <!-- 2. CANVAS PREVIEW (KANAN) -->
+        
+        
+    </div>
+    <!-- 2. CANVAS PREVIEW (KANAN) -->
         <div class="builder-canvas">
             <div class="preview-device">
                 <div id="previewWindow" class="preview-window no-scrollbar">
@@ -697,9 +700,6 @@
                 <div id="previewFormInputs"></div>
             </form>
         </div>
-        
-    </div>
-
         </div>
 
     <!-- UPLOAD TOAST NOTIFICATION -->
@@ -797,6 +797,38 @@
                             <div id="partnerFormMessage" class="mt-2"></div>
                         </form>
                     @endif
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PIXABAY MODAL -->
+    <div class="modal fade" id="pixabayModal" tabindex="-1">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg rounded-4">
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title fw-bold">
+                        <i class="bi bi-images me-2"></i>Cari Foto dari Pixabay
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="input-group mb-3">
+                        <input type="text" id="pixabayQuery" class="form-control" placeholder="Cari foto (contoh: wedding, couple, flower)...">
+                        <button type="button" class="btn btn-builder-next" id="pixabaySearchBtn">
+                            <i class="bi bi-search me-1"></i> Cari
+                        </button>
+                    </div>
+                    <div id="pixabayLoading" class="d-none text-center py-5">
+                        <div class="spinner-border mb-3" style="color: var(--adminuiux-theme-1);"></div>
+                        <p class="text-muted">Mencari foto...</p>
+                    </div>
+                    <div id="pixabayResults" class="row g-3" style="max-height: 60vh; overflow-y: auto;">
+                    </div>
+                    <div id="pixabayEmpty" class="text-center py-5 d-none">
+                        <i class="bi bi-image fs-1 text-muted"></i>
+                        <p class="text-muted mt-2">Masukkan kata kunci untuk mencari foto.</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1329,7 +1361,15 @@
             <textarea name="love_story[]" rows="2" class="form-control form-control-sm x-small mb-1"></textarea>
             <div class="mb-2">
                 <label class="form-label fw-semibold mb-1" style="font-size: 12px;">Foto Kisah</label>
-                <input type="file" name="story_photo[]" accept="image/*" class="form-control form-control-sm">
+                <input type="hidden" name="imported_love_story_photos[]" class="imported-love-story-photo" value="">
+                <div class="love-story-photo-preview d-none position-relative d-inline-block">
+                    <img src="" class="img-fluid rounded border" style="max-height: 120px; object-fit: cover;">
+                    <button type="button" class="btn btn-danger btn-sm position-absolute top-0 end-0 m-1" style="width:20px;height:20px;line-height:1;padding:0;" onclick="this.closest('.position-relative').remove(); this.closest('.love-story-item').querySelector('.imported-love-story-photo').value='';">&times;</button>
+                </div>
+                <input type="file" name="story_photo[]" accept="image/*" class="form-control form-control-sm mt-1">
+                <button type="button" class="btn btn-sm btn-outline-primary mt-2" onclick="openPixabayModal('love_story', this.closest('.love-story-item'))">
+                    <i class="bi bi-images me-1"></i> Atau cari dari Pixabay
+                </button>
             </div>
             <button type="button" class="btn btn-link text-danger btn-xs p-0" onclick="this.closest('.love-story-item').remove(); updateLivePreview();">Hapus</button>
         `;
@@ -1687,5 +1727,146 @@
             const statusEl = toast.querySelector('.upload-toast-status');
             if (statusEl) statusEl.textContent = message || status;
         };
+
+        // --- Pixabay Integration ---
+        window.pixabayType = null;
+        window.pixabayTargetElement = null;
+
+        window.openPixabayModal = function (type, targetElement) {
+            window.pixabayType = type;
+            window.pixabayTargetElement = targetElement || null;
+            const modal = new bootstrap.Modal(document.getElementById('pixabayModal'));
+            modal.show();
+            document.getElementById('pixabayQuery').value = 'wedding';
+            window.searchPixabay();
+        };
+
+        window.searchPixabay = function () {
+            const query = document.getElementById('pixabayQuery').value.trim();
+            if (!query) return;
+
+            const loading = document.getElementById('pixabayLoading');
+            const results = document.getElementById('pixabayResults');
+            const empty = document.getElementById('pixabayEmpty');
+
+            loading.classList.remove('d-none');
+            results.innerHTML = '';
+            empty.classList.add('d-none');
+
+            fetch(`{{ route('pixabay.search') }}?q=${encodeURIComponent(query)}`, {
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+                .then(res => res.json())
+                .then(data => {
+                    loading.classList.add('d-none');
+                    const hits = data.hits || [];
+                    if (hits.length === 0) {
+                        empty.classList.remove('d-none');
+                        empty.querySelector('p').textContent = 'Tidak ada hasil ditemukan.';
+                        return;
+                    }
+
+                    hits.forEach(hit => {
+                        const col = document.createElement('div');
+                        col.className = 'col-6 col-md-4';
+                        col.innerHTML = `
+                            <div class="card h-100 border shadow-sm overflow-hidden">
+                                <img src="${hit.webformatURL || hit.previewURL}" class="card-img-top" style="height: 180px; object-fit: cover;">
+                                <div class="card-body p-2">
+                                    <button type="button" class="btn btn-sm btn-builder-next w-100" onclick="importPixabayImage('${hit.largeImageURL}')">
+                                        <i class="bi bi-check-lg me-1"></i> Pilih
+                                    </button>
+                                </div>
+                            </div>
+                        `;
+                        results.appendChild(col);
+                    });
+                })
+                .catch(() => {
+                    loading.classList.add('d-none');
+                    empty.classList.remove('d-none');
+                    empty.querySelector('p').textContent = 'Gagal memuat hasil. Coba lagi.';
+                });
+        };
+
+        window.importPixabayImage = function (imageUrl) {
+            const type = window.pixabayType || 'gallery';
+            const target = window.pixabayTargetElement;
+            const toastId = showUploadToast({ name: 'Mengimpor dari Pixabay...' }, 'save');
+
+            const formData = new FormData();
+            formData.append('image_url', imageUrl);
+            formData.append('type', type);
+
+            fetch(`{{ route('pixabay.import', $invitation) }}`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: formData
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        hideUploadToast(toastId, true);
+                        bootstrap.Modal.getInstance(document.getElementById('pixabayModal')).hide();
+
+                        if (type === 'gallery') {
+                            const preview = document.getElementById('gallery-preview');
+                            const div = document.createElement('div');
+                            div.className = 'position-relative border rounded overflow-hidden';
+                            div.style.width = '80px';
+                            div.style.height = '80px';
+                            div.innerHTML = `<img src="${data.url}" class="w-100 h-100 object-fit-cover"><button type="button" class="btn btn-danger btn-sm position-absolute top-0 end-0 p-0" style="width:20px;height:20px;line-height:1;padding:0;" onclick="deleteGallery(${data.gallery.id}, this)">&times;</button>`;
+                            preview.appendChild(div);
+                            window.uploadedGalleryIds.add(data.gallery.id);
+                            updateUploadedGalleryInput();
+                        } else if (type === 'love_story' && target) {
+                            const container = target.querySelector('.love-story-photo-preview');
+                            const hiddenInput = target.querySelector('.imported-love-story-photo');
+                            const fileInput = target.querySelector('input[name="story_photo[]"]');
+
+                            if (container) {
+                                container.innerHTML = `<img src="${data.url}" class="img-fluid rounded border" style="max-height: 120px; object-fit: cover;"><button type="button" class="btn btn-danger btn-sm position-absolute top-0 end-0 m-1" style="width:20px;height:20px;line-height:1;padding:0;" onclick="this.closest('.position-relative').remove();">&times;</button>`;
+                                container.classList.remove('d-none');
+                            }
+                            if (hiddenInput) hiddenInput.value = data.path;
+                            if (fileInput) fileInput.value = '';
+                        } else if (type === 'cover') {
+                            document.getElementById('previewCover').src = data.url;
+                            document.getElementById('previewContainerCover').classList.remove('d-none');
+                            document.getElementById('uploadBoxCoverContainer').classList.add('d-none');
+                        } else if (type === 'groom') {
+                            document.getElementById('previewGroom').src = data.url;
+                            document.getElementById('previewContainerGroom').classList.remove('d-none');
+                            document.getElementById('uploadBoxGroomContainer').classList.add('d-none');
+                        } else if (type === 'bride') {
+                            document.getElementById('previewBride').src = data.url;
+                            document.getElementById('previewContainerBride').classList.remove('d-none');
+                            document.getElementById('uploadBoxBrideContainer').classList.add('d-none');
+                        }
+
+                        updateLivePreview();
+                    } else {
+                        hideUploadToast(toastId, false);
+                        alert(data.message || 'Gagal mengimpor gambar.');
+                    }
+                })
+                .catch(() => {
+                    hideUploadToast(toastId, false);
+                    alert('Terjadi kesalahan saat mengimpor gambar.');
+                });
+        };
+
+        document.getElementById('pixabaySearchBtn')?.addEventListener('click', window.searchPixabay);
+        document.getElementById('pixabayQuery')?.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') window.searchPixabay();
+        });
     </script>
 </x-app-layout>

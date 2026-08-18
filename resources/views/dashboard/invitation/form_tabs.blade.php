@@ -77,6 +77,7 @@
 
         .sidebar-content {
             flex: 1 !important;
+            height: 0 !important;
             overflow-y: auto !important;
             min-height: 0 !important;
             padding: 1.25rem 1rem !important;
@@ -115,6 +116,7 @@
         }
 
         #cropModal { z-index: 1070 !important; }
+        #pixabayMusicModal { z-index: 1070 !important; }
         .modal-backdrop { z-index: 1060 !important; }
     }
 
@@ -256,17 +258,112 @@
         transform: translateY(-2px);
     }
 
+    /* Pixabay Music Search */
+    .pixabay-search-wrapper {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 12px;
+    }
+    .pixabay-search-wrapper .form-control { border-radius: 8px; }
+    .pixabay-search-wrapper .btn { border-radius: 8px; min-width: 90px; }
+
+    #pixabayMusicList {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .pixabay-music-item {
+        background: var(--bs-body-bg);
+        border: 1px solid rgba(0, 0, 0, 0.08);
+        border-radius: 8px;
+        padding: 10px 12px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        transition: all 0.25s ease;
+        cursor: pointer;
+    }
+
+    .pixabay-music-item:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.07);
+        border-color: var(--bs-primary);
+    }
+
+    .pixabay-music-item.selected {
+        border-color: var(--bs-primary);
+        background: rgba(var(--bs-primary-rgb), 0.1);
+    }
+
+    .pixabay-music-item .pm-thumb {
+        width: 44px;
+        height: 44px;
+        border-radius: 8px;
+        background: var(--bs-tertiary-bg);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--bs-primary);
+        flex-shrink: 0;
+        overflow: hidden;
+        padding: 0;
+    }
+
+    .pixabay-music-item .pm-thumb img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+    }
+
+    .pixabay-music-item .pm-thumb i {
+        font-size: 1.2rem;
+    }
+
+    .pixabay-music-item.selected .pm-thumb {
+        background: var(--bs-primary);
+        color: #fff;
+    }
+
+    .pixabay-music-item.selected .pm-thumb img {
+        opacity: 0.9;
+    }
+
+    .pixabay-music-item .pm-info { flex: 1; overflow: hidden; }
+    .pixabay-music-item .pm-title {
+        font-weight: 600;
+        font-size: 0.85rem;
+        margin: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .pixabay-music-item .pm-artist {
+        font-size: 11px;
+        color: var(--bs-secondary-color);
+        margin: 0;
+    }
+
+    .pixabay-loading {
+        text-align: center;
+        padding: 30px;
+        color: var(--bs-secondary-color);
+    }
+    .pixabay-empty {
+        text-align: center;
+        padding: 30px;
+        color: var(--bs-secondary-color);
+        font-size: 0.85rem;
+    }
+
     /* Country Code Dropdown */
     .country-dropdown-btn {
         min-width: 120px;
         border-radius: 0.5rem 0 0 0.5rem;
     }
-
     .country-dropdown-btn .flag-emoji,
-    .country-dropdown-menu .flag-emoji {
-        font-size: 1.1rem;
-    }
-
+    .country-dropdown-menu .flag-emoji { font-size: 1.1rem; }
     .country-dropdown-menu .country-option:hover {
         background-color: var(--bs-primary-bg-subtle);
     }
@@ -276,27 +373,16 @@
 <div id="tab-1" class="tab-content d-none">
     <div class="mb-3">
         <div class="card-header bg-transparent border-0 p-0 pb-3 d-flex align-items-center gap-2 mt-3 mb-2">
-         
-        
             <div class="d-flex align-items-center gap-3">
-
                 <span class="avatar avatar-40 rounded bg-theme-1-subtle text-theme-1">
                     <i class="bi bi-person-heart fs-5"></i>
                 </span>
-
                 <div>
-                    <h6 class="mb-0 fw-bold">
-                        Data Mempelai Pria
-                    </h6>
-
-                    <small class="text-muted">
-                        Lengkapi nama, foto, dan informasi mempelai pria
-                    </small>
+                    <h6 class="mb-0 fw-bold">Data Mempelai Pria</h6>
+                    <small class="text-muted">Lengkapi nama, foto, dan informasi mempelai pria</small>
                 </div>
-
             </div>
         </div>
-        
         <div class="card-body p-0">
             <div class="row g-3">
                 <div class="col-12">
@@ -350,6 +436,9 @@
                             <p class="text-muted mb-0 mt-2">Klik untuk upload foto</p>
                             <input id="foto_pria" type="file" name="foto_pria" class="d-none" onchange="openCropModal(event, 'groom')">
                         </label>
+                        <button type="button" class="btn btn-sm btn-outline-primary mt-3" onclick="openPixabayModal('groom')">
+                            <i class="bi bi-images me-1"></i> Atau cari dari Pixabay
+                        </button>
                     </div>
                     <div id="previewContainerGroom" class="mt-3 {{ ($inv && $inv->foto_pria) ? '' : 'd-none' }} text-center position-relative">
                         <img id="previewGroom" src="{{ ($inv && $inv->foto_pria) ? storage_url_with_fallback($inv->foto_pria, asset('assets/fav.png'), ($inv->updated_at ?? now())->timestamp) : '' }}" class="img-fluid rounded border shadow-sm" style="max-height: 200px; object-fit: cover;">
@@ -466,66 +555,62 @@
 
 {{-- 3. GALERI FOTO --}}
 @auth
-        <div id="tab-3" class="tab-content d-none">
-            <div class="card-header bg-transparent border-0 mb-3 mt-3">
-                <div class="d-flex align-items-center gap-3">
-                    <span class="avatar avatar-40 rounded bg-theme-1-subtle text-theme-1">
-                        <i class="bi bi-images fs-5"></i>
-                    </span>
-                    <div>
-                        <h6 class="mb-0 fw-bold">
-                            Gallery Foto
-                        </h6>
-
-                        <small class="text-muted">
-                            Tambahkan foto terbaik untuk mengabadikan momen spesial Anda
-                        </small>
-                    </div>
-                </div>
-            </div>
-            <div class="mb-3">
-                <div class="form-check form-switch mb-3">
-                    <input class="form-check-input" type="checkbox" id="enable_gallery" name="enable_gallery" value="1" {{ ($inv && $inv->enable_gallery) ? 'checked' : '' }} onchange="toggleSettings('galleryContent', this.checked)">
-                    <label class="form-check-label fw-bold" for="enable_gallery">Aktifkan Galeri Foto</label>
-                </div>
-                <div id="galleryContent" class="{{ ($inv && $inv->enable_gallery) ? '' : 'd-none' }}">
-                  
-                    <div class="card-body p-0">
-                        <div id="gallery-dropzone" class="border border-dashed p-5 text-center rounded cursor-pointer">
-                            <i class="bi bi-images fs-3 text-muted"></i>
-                            <p class="mb-0 mt-2">Klik atau drag & drop foto di sini</p>
-                            <input type="file" id="gallery-input" name="gallery[]" multiple accept="image/*" class="d-none">
-                        </div>
-                        <div id="gallery-preview" class="d-flex gap-2 flex-wrap mt-3">
-                            @if($inv && $inv->galleries)
-                                @foreach($inv->galleries as $image)
-                                    <div class="position-relative border rounded overflow-hidden" style="width: 80px; height: 80px;">
-                                        <img src="{{ storage_url_with_fallback($image->image, 'https://placehold.co/80x80?text=No+Image', ($inv->updated_at ?? now())->timestamp) }}" class="w-100 h-100 object-fit-cover">
-                                        <button type="button" class="btn btn-danger btn-sm position-absolute top-0 end-0 p-0" style="width:20px;height:20px; line-height: 1;" onclick="deleteGallery({{ $image->id }}, this)">&times;</button>
-                                    </div>
-                                @endforeach
-                            @endif
-                        </div>
-                        <small class="text-muted mt-2 d-block">
-                            @php
-                                $galleryLimit = null;
-                                $owner = auth()->user();
-                                if ($owner->subscription && $owner->subscription->plan) {
-                                    $galleryLimit = data_get($owner->subscription->plan->features ?? [], 'gallery_limit');
-                                } elseif (isset($inv->user) && $inv->user->subscription && $inv->user->subscription->plan) {
-                                    $galleryLimit = data_get($inv->user->subscription->plan->features ?? [], 'gallery_limit');
-                                }
-                                if (is_null($galleryLimit)) {
-                                    echo 'Unlimited foto. Format: JPG, PNG, atau WebP.';
-                                } else {
-                                    echo "Maksimal {$galleryLimit} foto. Format: JPG, PNG, atau WebP.";
-                                }
-                            @endphp
-                        </small>
-                    </div>
-                </div>
+<div id="tab-3" class="tab-content d-none">
+    <div class="card-header bg-transparent border-0 mb-3 mt-3">
+        <div class="d-flex align-items-center gap-3">
+            <span class="avatar avatar-40 rounded bg-theme-1-subtle text-theme-1">
+                <i class="bi bi-images fs-5"></i>
+            </span>
+            <div>
+                <h6 class="mb-0 fw-bold">Gallery Foto</h6>
+                <small class="text-muted">Tambahkan foto terbaik untuk mengabadikan momen spesial Anda</small>
             </div>
         </div>
+    </div>
+    <div class="mb-3">
+        <div class="form-check form-switch mb-3">
+            <input class="form-check-input" type="checkbox" id="enable_gallery" name="enable_gallery" value="1" {{ ($inv && $inv->enable_gallery) ? 'checked' : '' }} onchange="toggleSettings('galleryContent', this.checked)">
+            <label class="form-check-label fw-bold" for="enable_gallery">Aktifkan Galeri Foto</label>
+        </div>
+        <div id="galleryContent" class="{{ ($inv && $inv->enable_gallery) ? '' : 'd-none' }}">
+            <div class="card-body p-0">
+                <div id="gallery-dropzone" class="border border-dashed p-5 text-center rounded cursor-pointer">
+                    <i class="bi bi-images fs-3 text-muted"></i>
+                    <p class="mb-0 mt-2">Klik atau drag & drop foto di sini</p>
+                    <input type="file" id="gallery-input" name="gallery[]" multiple accept="image/*" class="d-none">
+                </div>
+                <button type="button" class="btn btn-sm btn-outline-primary mt-2" onclick="openPixabayModal('gallery')">
+                    <i class="bi bi-images me-1"></i> Atau cari dari Pixabay
+                </button>
+                <div id="gallery-preview" class="d-flex gap-2 flex-wrap mt-3">
+                    @if($inv && $inv->galleries)
+                        @foreach($inv->galleries as $image)
+                            <div class="position-relative border rounded overflow-hidden" style="width: 80px; height: 80px;">
+                                <img src="{{ storage_url_with_fallback($image->image, 'https://placehold.co/80x80?text=No+Image', ($inv->updated_at ?? now())->timestamp) }}" class="w-100 h-100 object-fit-cover">
+                                <button type="button" class="btn btn-danger btn-sm position-absolute top-0 end-0 p-0" style="width:20px;height:20px; line-height: 1;" onclick="deleteGallery({{ $image->id }}, this)">&times;</button>
+                            </div>
+                        @endforeach
+                    @endif
+                </div>
+                <small class="text-muted mt-2 d-block">
+                    @php
+                        $galleryLimit = null;
+                        $owner = auth()->user();
+                        if ($owner->subscription && $owner->subscription->plan) {
+                            $galleryLimit = data_get($owner->subscription->plan->features ?? [], 'gallery_limit');
+                        } elseif (isset($inv->user) && $inv->user->subscription && $inv->user->subscription->plan) {
+                            $galleryLimit = data_get($inv->user->subscription->plan->features ?? [], 'gallery_limit');
+                        }
+                        if (is_null($galleryLimit)) {
+                            echo 'Unlimited foto. Format: JPG, PNG, atau WebP.';
+                        } else {
+                            echo "Maksimal {$galleryLimit} foto. Format: JPG, PNG, atau WebP.";
+                        }
+                    @endphp
+                </small>
+            </div>
+        </div>
+    </div>
 </div>
 @endauth
 
@@ -536,21 +621,13 @@
             <div class="mb-3">
                 <div class="card-header bg-transparent border-0 mt-3 mb-3">
                     <div class="d-flex align-items-center gap-3">
-
                         <span class="avatar avatar-40 rounded bg-theme-1-subtle text-theme-1">
                             <i class="bi bi-music-note-beamed fs-5"></i>
                         </span>
-
                         <div>
-                            <h6 class="mb-0 fw-bold">
-                                Musik Undangan
-                            </h6>
-
-                            <small class="text-muted">
-                                Pilih lagu favorit untuk melengkapi momen bahagia Anda
-                            </small>
+                            <h6 class="mb-0 fw-bold">Musik Undangan</h6>
+                            <small class="text-muted">Pilih lagu favorit untuk melengkapi momen bahagia Anda</small>
                         </div>
-
                     </div>
                 </div>
                 <div class="form-check form-switch mb-3">
@@ -558,14 +635,18 @@
                     <label class="form-check-label fw-bold" for="enable_music">Aktifkan Musik Latar</label>
                 </div>
                 <div id="musicContent" class="{{ ($inv && $inv->enable_music) ? '' : 'd-none' }}">
-                    
                     <div class="card-body p-0">
                         @php $musicSource = $inv?->music_source ?? 'library'; @endphp
                         <input type="hidden" id="music_id" name="music_id" value="{{ $inv?->music ?? '' }}">
+                        <input type="hidden" name="pixabay_music_url" id="pixabay_music_url" value="{{ $inv?->pixabay_music_url ?? '' }}">
+                        <input type="hidden" name="pixabay_music_title" id="pixabay_music_title" value="{{ $inv?->pixabay_music_title ?? '' }}">
 
                         <div class="music-source-tabs">
                             <input type="radio" class="btn-check" name="music_source" id="srcLibrary" value="library" {{ $musicSource == 'library' ? 'checked' : '' }} onchange="switchMusicSource('library')">
                             <label for="srcLibrary"><i class="bi bi-music-note-list"></i> Library</label>
+
+                            <input type="radio" class="btn-check" name="music_source" id="srcPixabay" value="pixabay" {{ $musicSource == 'pixabay' ? 'checked' : '' }} onchange="switchMusicSource('pixabay')">
+                            <label for="srcPixabay"><i class="bi bi-image-music"></i> Pixabay</label>
 
                             <input type="radio" class="btn-check" name="music_source" id="srcYoutube" value="youtube" {{ $musicSource == 'youtube' ? 'checked' : '' }} onchange="switchMusicSource('youtube')">
                             <label for="srcYoutube"><i class="bi bi-youtube"></i> YouTube</label>
@@ -573,13 +654,14 @@
                             <input type="radio" class="btn-check" name="music_source" id="srcUpload" value="upload" {{ $musicSource == 'upload' ? 'checked' : '' }} onchange="switchMusicSource('upload')">
                             <label for="srcUpload"><i class="bi bi-cloud-upload"></i> Upload</label>
                         </div>
-                        
+
                         <div class="audio-player-wrapper">
                             <i class="bi bi-headphones fs-4 text-muted"></i>
                             <audio id="audioPlayer" controls></audio>
                         </div>
-                        
+
                         <div class="music-content-box">
+                            {{-- LIBRARY --}}
                             <div id="source-library" class="music-source-div {{ $musicSource != 'library' ? 'd-none' : '' }}">
                                 <label class="form-label fw-semibold mb-2">Pilih Lagu dari Library</label>
                                 <div id="musicListContainer" class="d-flex flex-column gap-2" style="max-height: 250px; overflow-y: auto; padding-right: 5px;">
@@ -601,6 +683,36 @@
                                 <small class="text-muted d-block mt-2">Pilih lagu latar yang akan ditampilkan di undangan.</small>
                             </div>
 
+                            {{-- PIXABAY --}}
+                            <div id="source-pixabay" class="music-source-div {{ $musicSource != 'pixabay' ? 'd-none' : '' }}">
+                                <label class="form-label fw-semibold mb-2">Cari Musik dari Pixabay</label>
+                                <div class="pixabay-search-wrapper">
+                                    <input type="text" id="pixabayMusicSearch" class="form-control" placeholder="Cari lagu (contoh: romantic, wedding, piano)..." onkeypress="if(event.key==='Enter'){event.preventDefault(); searchPixabayMusic();}">
+                                    <button type="button" class="btn btn-primary" onclick="searchPixabayMusic()">
+                                        <i class="bi bi-search me-1"></i> Cari
+                                    </button>
+                                </div>
+                                <div id="pixabayMusicList" class="d-flex flex-column gap-2">
+                                    @if($musicSource == 'pixabay' && $inv?->pixabay_music_url)
+                                        <div class="pixabay-music-item selected" data-url="{{ $inv->pixabay_music_url }}" data-proxy="{{ route('pixabay.audio.proxy') }}?url={{ urlencode($inv->pixabay_music_url) }}" data-title="{{ $inv->pixabay_music_title }}" data-artist="Pixabay Music" onclick="selectPixabayMusic(this)">
+                                            <div class="pm-thumb"><i class="bi bi-music-note-beamed"></i></div>
+                                            <div class="pm-info">
+                                                <p class="pm-title">{{ $inv->pixabay_music_title }}</p>
+                                                <p class="pm-artist">Pixabay Music</p>
+                                            </div>
+                                            <i class="bi bi-check-circle-fill text-primary"></i>
+                                        </div>
+                                    @else
+                                        <div class="pixabay-empty">
+                                            <i class="bi bi-search fs-3 d-block mb-2"></i>
+                                            Ketik kata kunci lalu klik "Cari" untuk menemukan musik dari Pixabay.
+                                        </div>
+                                    @endif
+                                </div>
+                                <small class="text-muted d-block mt-2">Musik dari Pixabay bebas royalti dan dapat digunakan tanpa batasan.</small>
+                            </div>
+
+                            {{-- YOUTUBE --}}
                             <div id="source-youtube" class="music-source-div {{ $musicSource != 'youtube' ? 'd-none' : '' }}">
                                 <label class="form-label fw-semibold mb-2">Link YouTube (Musik)</label>
                                 <div class="input-group mb-2">
@@ -610,6 +722,7 @@
                                 <small class="text-muted d-block">Masukkan link YouTube untuk musik latar undangan.</small>
                             </div>
 
+                            {{-- UPLOAD --}}
                             <div id="source-upload" class="music-source-div {{ $musicSource != 'upload' ? 'd-none' : '' }}">
                                 @if(auth()->user()->hasFeature('custom_music'))
                                     <label class="form-label fw-semibold mb-2">Upload File Audio</label>
@@ -645,25 +758,15 @@
 <div id="tab-5" class="tab-content d-none">
     <div class="mb-3">
         <div class="card-header bg-transparent border-0 mt-3 mb-3">
-             
             <div class="d-flex align-items-center gap-3">
-
                 <span class="avatar avatar-40 rounded bg-theme-1-subtle text-theme-1">
                     <i class="bi bi-person-check fs-5"></i>
                 </span>
-
                 <div>
-                    <h6 class="mb-0 fw-bold">
-                        Aktifkan RSVP
-                    </h6>
-
-                    <small class="text-muted">
-                        Izinkan tamu mengonfirmasi kehadiran di acara Anda
-                    </small>
+                    <h6 class="mb-0 fw-bold">Aktifkan RSVP</h6>
+                    <small class="text-muted">Izinkan tamu mengonfirmasi kehadiran di acara Anda</small>
                 </div>
-
             </div>
-      
             <div class="form-check form-switch mt-3">
                 <input class="form-check-input" type="checkbox" id="enable_rsvp" name="enable_rsvp" value="1" {{ ($inv && $inv->enable_rsvp) ? 'checked' : '' }} onchange="toggleSettings('rsvp_settings', this.checked)">
                 <label class="form-check-label fw-bold" for="enable_rsvp">Aktifkan RSVP</label>
@@ -724,20 +827,12 @@
         <div class="card-body">
             <div class="mb-4">
                 <div class="d-flex align-items-center gap-2 mb-2">
-                 
-                    <div class="d-flex align-items-center gap-2 mb-2">
-                        <span class="avatar avatar-30 rounded bg-theme-1-subtle text-theme-1">
-                            <i class="bi bi-calendar-heart"></i>
-                        </span>
-
-                        <div>
-                            <label class="form-label fw-semibold mb-0">
-                                Tanggal Pernikahan
-                            </label>
-                            <small class="d-block text-muted">
-                                Tentukan tanggal hari bahagia Anda
-                            </small>
-                        </div>
+                    <span class="avatar avatar-30 rounded bg-theme-1-subtle text-theme-1">
+                        <i class="bi bi-calendar-heart"></i>
+                    </span>
+                    <div>
+                        <label class="form-label fw-semibold mb-0">Tanggal Pernikahan</label>
+                        <small class="d-block text-muted">Tentukan tanggal hari bahagia Anda</small>
                     </div>
                 </div>
                 <input type="date" id="wedding_date" name="wedding_date" value="{{ $inv?->wedding_date ?? '' }}" class="form-control">
@@ -750,14 +845,9 @@
                     <span class="avatar avatar-30 rounded bg-theme-1-subtle text-theme-1">
                         <i class="bi bi-heart-fill"></i>
                     </span>
-
                     <div>
-                        <label class="form-label fw-bold text-theme-1 mb-0">
-                            Akad Nikah
-                        </label>
-                        <div class="text-muted small">
-                            Waktu dan lokasi akad pernikahan
-                        </div>
+                        <label class="form-label fw-bold text-theme-1 mb-0">Akad Nikah</label>
+                        <div class="text-muted small">Waktu dan lokasi akad pernikahan</div>
                     </div>
                 </div>
                 <input type="text" name="akad_location" value="{{ $inv?->akad_location ?? '' }}" placeholder="Contoh: Gedung Merdeka" class="form-control mb-2">
@@ -782,16 +872,13 @@
             </div>
 
             <hr class="my-4">
-                <div class="mb-3">
-                    <div class="d-flex align-items-center gap-2 mb-3">
-                        <span class="avatar avatar-30 rounded bg-theme-1-subtle text-theme-1">
-                            <i class="bi bi-buildings"></i>
-                        </span>
-
-                        <label class="form-label fw-bold text-theme-1 mb-0">
-                            Resepsi
-                        </label>
-                    </div>
+            <div class="mb-3">
+                <div class="d-flex align-items-center gap-2 mb-3">
+                    <span class="avatar avatar-30 rounded bg-theme-1-subtle text-theme-1">
+                        <i class="bi bi-buildings"></i>
+                    </span>
+                    <label class="form-label fw-bold text-theme-1 mb-0">Resepsi</label>
+                </div>
                 <input type="text" name="resepsi_location" value="{{ $inv?->resepsi_location ?? '' }}" placeholder="Contoh: Hotel Mulia" class="form-control mb-2">
                 <small class="text-muted">Nama tempat pelaksanaan resepsi.</small>
                 <input type="text" name="resepsi_address" value="{{ $inv?->resepsi_address ?? '' }}" placeholder="Alamat lengkap" class="form-control mt-3 mb-2">
@@ -811,7 +898,6 @@
                 </div>
                 <input type="text" name="resepsi_maps" value="{{ $inv?->resepsi_maps ?? '' }}" placeholder="Link Google Maps" class="form-control mt-3" oninput="updateMapEmbed('resepsi_maps', 'resepsi_map_embed')">
                 <small class="text-muted">Link peta lokasi resepsi.</small>
-                
             </div>
         </div>
     </div>
@@ -827,9 +913,7 @@
                 </span>
                 <div>
                     <h6 class="mb-0 fw-bold">Data Mempelai Wanita</h6>
-                    <small class="text-muted">
-                        Lengkapi informasi calon mempelai wanita
-                    </small>
+                    <small class="text-muted">Lengkapi informasi calon mempelai wanita</small>
                 </div>
             </div>
         </div>
@@ -886,6 +970,9 @@
                             <p class="text-muted mb-0 mt-2">Klik untuk upload foto</p>
                             <input id="foto_wanita" type="file" name="foto_wanita" class="d-none" onchange="openCropModal(event, 'bride')">
                         </label>
+                        <button type="button" class="btn btn-sm btn-outline-primary mt-3" onclick="openPixabayModal('bride')">
+                            <i class="bi bi-images me-1"></i> Atau cari dari Pixabay
+                        </button>
                     </div>
                     <div id="previewContainerBride" class="mt-3 {{ ($inv && $inv->foto_wanita) ? '' : 'd-none' }} text-center position-relative">
                         <img id="previewBride" src="{{ ($inv && $inv->foto_wanita) ? storage_url_with_fallback($inv->foto_wanita, asset('assets/fav.png'), ($inv->updated_at ?? now())->timestamp) : '' }}" class="img-fluid rounded border shadow-sm" style="max-height: 200px; object-fit: cover;">
@@ -904,21 +991,13 @@
             <div class="mb-3">
                 <div class="card-header bg-transparent border-0 mt-3 mb-3">
                     <div class="d-flex align-items-center gap-3">
-
                         <span class="avatar avatar-40 rounded bg-theme-1-subtle text-theme-1">
                             <i class="bi bi-camera-reels fs-5"></i>
                         </span>
-
                         <div>
-                            <h6 class="mb-0 fw-bold">
-                                Video & Kisah Cinta
-                            </h6>
-
-                            <small class="text-muted">
-                                Bagikan video dan cerita perjalanan cinta Anda
-                            </small>
+                            <h6 class="mb-0 fw-bold">Video & Kisah Cinta</h6>
+                            <small class="text-muted">Bagikan video dan cerita perjalanan cinta Anda</small>
                         </div>
-
                     </div>
                 </div>
                 <div class="card-body p-0">
@@ -959,25 +1038,29 @@
                             <div id="loveStoryWrapper">
                                 <label class="form-label fw-semibold mb-2">Kisah Cinta</label>
                                 <small class="text-muted d-block mb-3">Ceritakan perjalanan cinta kalian agar tamu merasa lebih dekat.</small>
-                                @forelse($inv?->love_story ?? [] as $index => $story)
-                                    <div class="love-story-item border rounded p-3 mb-3 bg-light">
-                                        <input type="text" name="story_title[]" value="{{ $story['title'] ?? '' }}" class="form-control mb-2" placeholder="Judul kisah">
-                                        <textarea name="love_story[]" rows="2" class="form-control mb-2">{{ $story['story'] ?? '' }}</textarea>
-                                        <div class="mb-2">
-                                            <label class="form-label fw-semibold mb-1" style="font-size: 12px;">Foto Kisah</label>
-                                            @if(!empty($story['photo']))
-                                                <div class="position-relative d-inline-block">
-                                                    <img src="{{ storage_url_with_fallback($story['photo'], 'https://placehold.co/300x200?text=No+Image', ($inv->updated_at ?? now())->timestamp) }}" class="img-fluid rounded border" style="max-height: 120px; object-fit: cover;">
-                                                    <button type="button" class="btn btn-danger btn-sm position-absolute top-0 end-0 m-1" style="width:20px;height:20px;line-height:1;padding:0;" onclick="var f = this.closest('.love-story-item').querySelector('input[type=file]'); if(f) f.value=''; this.closest('.position-relative').remove();">&times;</button>
-                                                </div>
-                                            @endif
-                                            <input type="file" name="story_photo[]" accept="image/*" class="form-control form-control-sm mt-1">
+                                @if($inv && $inv->love_story && count($inv->love_story) > 0)
+                                    @foreach($inv->love_story as $index => $story)
+                                        <div class="love-story-item border rounded p-3 mb-3 bg-light">
+                                            <input type="text" name="story_title[]" value="{{ $story['title'] ?? '' }}" class="form-control mb-2" placeholder="Judul kisah">
+                                            <textarea name="love_story[]" rows="2" class="form-control mb-2">{{ $story['story'] ?? '' }}</textarea>
+                                            <div class="mb-2">
+                                                <label class="form-label fw-semibold mb-1" style="font-size: 12px;">Foto Kisah</label>
+                                                <input type="hidden" name="imported_love_story_photos[]" class="imported-love-story-photo" value="{{ $story['photo'] ?? '' }}">
+                                                @if(!empty($story['photo']))
+                                                    <div class="position-relative d-inline-block love-story-photo-preview">
+                                                        <img src="{{ storage_url_with_fallback($story['photo'], 'https://placehold.co/300x200?text=No+Image', ($inv->updated_at ?? now())->timestamp) }}" class="img-fluid rounded border" style="max-height: 120px; object-fit: cover;">
+                                                        <button type="button" class="btn btn-danger btn-sm position-absolute top-0 end-0 m-1" style="width:20px;height:20px;line-height:1;padding:0;" onclick="var f = this.closest('.love-story-item').querySelector('input[type=file]'); if(f) f.value=''; this.closest('.position-relative').remove(); var h = this.closest('.love-story-item').querySelector('.imported-love-story-photo'); if(h) h.value='';">&times;</button>
+                                                    </div>
+                                                @endif
+                                                <input type="file" name="story_photo[]" accept="image/*" class="form-control form-control-sm mt-1">
+                                                <button type="button" class="btn btn-sm btn-outline-primary mt-2" onclick="openPixabayModal('love_story', this.closest('.love-story-item'))">
+                                                    <i class="bi bi-images me-1"></i> Atau cari dari Pixabay
+                                                </button>
+                                            </div>
+                                            <button type="button" class="btn btn-sm btn-link text-danger p-0" onclick="this.closest('.love-story-item').remove()">Hapus</button>
                                         </div>
-                                        <button type="button" class="btn btn-sm btn-link text-danger p-0" onclick="this.closest('.love-story-item').remove()">Hapus</button>
-                                    </div>
-                                @empty
-                                    <p class="text-muted">Belum ada kisah cinta.</p>
-                                @endforelse
+                                    @endforeach
+                                @endif
                             </div>
                             <button type="button" class="btn btn-sm btn-outline-primary" onclick="addLoveStory()">+ Tambah Kisah</button>
                         @else
@@ -999,25 +1082,15 @@
         <div id="tab-9" class="tab-content d-none">
             <div class="mb-3">
                 <div class="card-header bg-transparent border-0 mt-3 mb-3">
-                   
                     <div class="d-flex align-items-center gap-3">
-
                         <span class="avatar avatar-40 rounded bg-theme-1-subtle text-theme-1">
                             <i class="bi bi-gift fs-5"></i>
                         </span>
-
                         <div>
-                            <h6 class="mb-0 fw-bold">
-                                Hadiah Digital
-                            </h6>
-
-                            <small class="text-muted">
-                                Bagikan informasi rekening atau alamat untuk menerima hadiah dari tamu
-                            </small>
+                            <h6 class="mb-0 fw-bold">Hadiah Digital</h6>
+                            <small class="text-muted">Bagikan informasi rekening atau alamat untuk menerima hadiah dari tamu</small>
                         </div>
-
                     </div>
-
                     <div class="form-check form-switch mt-3">
                         <input class="form-check-input" type="checkbox" id="enableGift" name="enable_gift" value="1" {{ ($inv && $inv->enable_gift) ? 'checked' : '' }} onchange="toggleSettings('giftTab', this.checked)" {{ auth()->user()->hasFeature('virtual_gift') ? '' : 'disabled' }}>
                         <label class="form-check-label fw-bold" for="enableGift">Aktifkan Hadiah Digital</label>
@@ -1076,21 +1149,15 @@
 {{-- 10. SAMPUL / BACKGROUND HEADER --}}
 <div id="tab-10" class="tab-content d-none">
     <div class="mb-3">
- 
         <div class="card-body p-3">
             <div class="mb-4">
                 <div class="d-flex align-items-center gap-2 mb-2">
                     <span class="avatar avatar-30 rounded bg-theme-1-subtle text-theme-1">
                         <i class="bi bi-image"></i>
                     </span>
-
                     <div>
-                        <label class="form-label fw-semibold mb-0">
-                            Background Header
-                        </label>
-                        <div class="text-muted small">
-                            Gambar sampul utama undangan
-                        </div>
+                        <label class="form-label fw-semibold mb-0">Background Header</label>
+                        <div class="text-muted small">Gambar sampul utama undangan</div>
                     </div>
                 </div>
                 <div class="upload-zone border rounded p-4 text-center {{ ($inv && $inv->gallery_cover) ? 'd-none' : '' }}" id="uploadBoxCoverContainer">
@@ -1099,6 +1166,9 @@
                         <p class="text-muted mb-0 mt-2">Klik untuk upload Background Header</p>
                         <input id="gallery_cover" type="file" name="gallery_cover" class="d-none" onchange="openCropModal(event, 'cover')">
                     </label>
+                    <button type="button" class="btn btn-sm btn-outline-primary mt-3" onclick="openPixabayModal('cover')">
+                        <i class="bi bi-images me-1"></i> Atau cari dari Pixabay
+                    </button>
                 </div>
                 <div id="previewContainerCover" class="mt-3 {{ ($inv && $inv->gallery_cover) ? '' : 'd-none' }} text-center position-relative">
                     <img id="previewCover" src="{{ ($inv && $inv->gallery_cover) ? storage_url_with_fallback($inv->gallery_cover, asset('assets/fav.png'), ($inv->updated_at ?? now())->timestamp) : '' }}" class="img-fluid rounded border shadow-sm w-100" style="max-height: 250px; object-fit: cover;">
@@ -1110,7 +1180,7 @@
     </div>
 </div>
 
-@push('scripts')
+
     <script>
         (function initPartnerTab() {
             const inviteForm = document.getElementById('invitePartnerForm');
@@ -1296,6 +1366,14 @@
             if (typeof updateLivePreview === 'function') {
                 updateLivePreview();
             }
+
+            if (source === 'pixabay') {
+                const searchInput = document.getElementById('pixabayMusicSearch');
+                if (searchInput && !searchInput.value.trim()) {
+                    searchInput.value = 'wedding';
+                }
+                setTimeout(() => window.searchPixabayMusic(), 300);
+            }
         }
 
         function updateMapEmbed(inputId, embedId) {
@@ -1395,6 +1473,141 @@
             if (typeof updateLivePreview === 'function') updateLivePreview();
         }
 
+        // =============================================
+        // PIXABAY MUSIC SEARCH
+        // =============================================
+        let pixabayMusicPage = 1;
+        let pixabayMusicCurrentQuery = '';
+
+        async function searchPixabayMusic(reset = true) {
+            const searchInput = document.getElementById('pixabayMusicSearch');
+            const listContainer = document.getElementById('pixabayMusicList');
+            if (!searchInput || !listContainer) return;
+
+            const query = searchInput.value.trim();
+            if (!query) {
+                listContainer.innerHTML = '<div class="pixabay-empty"><i class="bi bi-exclamation-circle fs-3 d-block mb-2"></i>Masukkan kata kunci pencarian.</div>';
+                return;
+            }
+
+            if (reset) {
+                pixabayMusicPage = 1;
+                pixabayMusicCurrentQuery = query;
+                listContainer.innerHTML = '<div class="pixabay-loading"><div class="spinner-border spinner-border-sm me-2"></div>Mencari musik...</div>';
+            }
+
+            try {
+                const response = await fetch("{{ route('pixabay.music.search') }}", {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                    },
+                    body: JSON.stringify({ q: query, page: pixabayMusicPage })
+                });
+
+                const data = await response.json();
+                if (!data.success) {
+                    listContainer.innerHTML = '<div class="pixabay-empty">Gagal memuat musik: ' + (data.message || 'Unknown error') + '</div>';
+                    return;
+                }
+
+                const tracks = data.hits || [];
+                if (tracks.length === 0) {
+                    listContainer.innerHTML = '<div class="pixabay-empty"><i class="bi bi-emoji-frown fs-3 d-block mb-2"></i>Tidak ada musik ditemukan untuk "' + escapeHtml(query) + '".</div>';
+                    return;
+                }
+
+                const currentSelected = document.getElementById('pixabay_music_url').value;
+                let html = tracks.map(track => {
+                    const isSelected = track.audio === currentSelected;
+                    const proxyUrl = "{{ route('pixabay.audio.proxy') }}?url=" + encodeURIComponent(track.audio);
+                    const coverUrl = track.cover || "{{ asset('tempelate/no_sound.webp') }}";
+                    return `
+                        <div class="pixabay-music-item ${isSelected ? 'selected' : ''}" data-url="${escapeAttr(track.audio)}" data-proxy="${escapeAttr(proxyUrl)}" data-title="${escapeAttr(track.title)}" data-artist="${escapeAttr(track.user)}" onclick="selectPixabayMusic(this)">
+                            <div class="pm-thumb"><img src="${escapeAttr(coverUrl)}" alt="cover"></div>
+                            <div class="pm-info">
+                                <p class="pm-title">${escapeHtml(track.title)}</p>
+                                <p class="pm-artist">${escapeHtml(track.user)} • ${formatDuration(track.duration)}</p>
+                            </div>
+                            <div class="d-flex align-items-center gap-2">
+                                <button type="button" class="btn btn-sm btn-link p-0" onclick="event.stopPropagation(); previewAudio('${escapeAttr(proxyUrl)}')">
+                                    <i class="bi bi-play-circle-fill fs-4 text-primary"></i>
+                                </button>
+                                ${isSelected ? '<i class="bi bi-check-circle-fill text-primary ms-2"></i>' : ''}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+                if (tracks.length >= 20) {
+                    html += `
+                        <div class="text-center mt-2">
+                            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="loadMorePixabayMusic()">
+                                <i class="bi bi-arrow-down-circle me-1"></i> Muat Lebih Banyak
+                            </button>
+                        </div>
+                    `;
+                }
+                listContainer.innerHTML = html;
+            } catch (err) {
+                console.error('Pixabay music error:', err);
+                listContainer.innerHTML = '<div class="pixabay-empty">Terjadi kesalahan. Coba lagi.</div>';
+            }
+        }
+
+        function loadMorePixabayMusic() {
+            pixabayMusicPage++;
+            searchPixabayMusic(false);
+        }
+
+        function selectPixabayMusic(element) {
+            document.querySelectorAll('#pixabayMusicList .pixabay-music-item').forEach(item => {
+                item.classList.remove('selected');
+                const check = item.querySelector('.bi-check-circle-fill');
+                if (check) check.remove();
+            });
+
+            element.classList.add('selected');
+            const url = element.getAttribute('data-url');
+            const proxyUrl = element.getAttribute('data-proxy') || url;
+            const title = element.getAttribute('data-title');
+            const artist = element.getAttribute('data-artist');
+
+            document.getElementById('pixabay_music_url').value = url;
+            document.getElementById('pixabay_music_title').value = title;
+            document.getElementById('music_id').value = '';
+
+            const actionDiv = element.querySelector('.d-flex.align-items-center');
+            if (actionDiv && !actionDiv.querySelector('.bi-check-circle-fill')) {
+                actionDiv.insertAdjacentHTML('beforeend', '<i class="bi bi-check-circle-fill text-primary ms-2"></i>');
+            }
+
+            previewAudio(proxyUrl);
+            if (typeof updateLivePreview === 'function') updateLivePreview();
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str).replace(/[&<>"']/g, function(c) {
+                return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+            });
+        }
+
+        function escapeAttr(str) {
+            if (!str) return '';
+            return String(str).replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+        }
+
+        function formatDuration(seconds) {
+            if (!seconds) return '';
+            const m = Math.floor(seconds / 60);
+            const s = seconds % 60;
+            return m + ':' + (s < 10 ? '0' : '') + s;
+        }
+
+        // Primary Color Picker Sync
         const primaryColorPicker = document.getElementById('primary_color');
         const primaryColorText = document.getElementById('primary_color_text');
         if (primaryColorPicker && primaryColorText) {
@@ -1424,4 +1637,3 @@
             });
         }
     </script>
-@endpush

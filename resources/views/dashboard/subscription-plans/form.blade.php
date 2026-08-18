@@ -112,6 +112,13 @@
                         </div>
                         <div class="col-md-4">
                             <div class="mb-3">
+                                <label for="invitation_limit" class="form-label fw-semibold">Batas Undangan</label>
+                                <input type="number" name="invitation_limit" id="invitation_limit" class="form-control" value="{{ old('invitation_limit', $subscriptionPlan->invitation_limit ?? 1) }}" min="1" required>
+                                <div class="form-text">Jumlah maksimal undangan yang bisa dibuat pengguna dalam paket ini.</div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
                                 <label class="form-label fw-semibold">Paket Gratis</label>
                                 <div class="form-check form-switch mt-2">
                                     <input class="form-check-input" type="checkbox" name="is_free" id="is_free" value="1" {{ old('is_free', isset($subscriptionPlan) && $subscriptionPlan->is_free ? 'checked' : '') ? 'checked' : '' }}>

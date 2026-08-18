@@ -15,6 +15,7 @@ use App\Services\ImageProcessingService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
@@ -44,6 +45,19 @@ class UserInvitationController extends Controller
         return app(ImageProcessingService::class);
     }
 
+    private function getInvitationLimit(User $user): ?int
+    {
+        if ($user->isAdmin()) {
+            return null;
+        }
+
+        if ($user->subscription && $user->subscription->is_active && $user->subscription->end_date->isFuture()) {
+            return (int) ($user->subscription->plan->invitation_limit ?? 1);
+        }
+
+        return 1;
+    }
+
     public function index()
     {
         $invitations = Invitation::with('user')
@@ -57,9 +71,13 @@ class UserInvitationController extends Controller
     public function create(Request $request)
     {
         $user = auth()->user();
-        // Check Limit for Non-Subscribed Users
-        if (! $user->isSubscribed() && Invitation::where('user_id', $user->id)->count() >= 1) {
-            return redirect()->route('dashboard.user')->with('error', 'Versi gratis hanya diperbolehkan membuat 1 undangan. Silakan aktifkan Paket Subscription untuk membuat lebih banyak! ✨');
+        $limit = $this->getInvitationLimit($user);
+
+        if ($limit !== null && Invitation::where('user_id', $user->id)->count() >= $limit) {
+            $message = $limit === 1
+                ? 'Versi gratis hanya diperbolehkan membuat 1 undangan. Silakan aktifkan Paket Subscription untuk membuat lebih banyak! ✨'
+                : "Paket Anda hanya diperbolehkan membuat {$limit} undangan. Silakan upgrade paket untuk membuat lebih banyak! ✨";
+            return redirect()->route('dashboard.user')->with('error', $message);
         }
 
         $music = Music::where('is_active', true)->get();
@@ -97,21 +115,22 @@ class UserInvitationController extends Controller
         }
 
         $user = $request->user();
+        $limit = $this->getInvitationLimit($user);
 
-        if (! $user->isAdmin() && ! $user->isSubscribed()) {
-            $existing = Invitation::where('user_id', $user->id)->first();
-            if ($existing && $existing->slug !== $slug) {
-                if ($request->wantsJson() || $request->ajax()) {
-                    return response()->json([
-                        'success' => false,
-                        'message' => 'Anda hanya dapat membuat satu undangan. Upgrade ke berlangganan untuk membuat undangan tanpa batas.',
-                    ], 403);
-                }
-
-                return redirect()
-                    ->back()
-                    ->with('error', 'Anda hanya dapat membuat satu undangan. Upgrade ke berlangganan untuk membuat undangan tanpa batas.');
+        if ($limit !== null && Invitation::where('user_id', $user->id)->count() >= $limit) {
+            $message = $limit === 1
+                ? 'Anda hanya dapat membuat satu undangan. Upgrade ke berlangganan untuk membuat undangan tanpa batas.'
+                : "Paket Anda hanya diperbolehkan membuat {$limit} undangan. Upgrade paket untuk membuat lebih banyak.";
+            if ($request->wantsJson() || $request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => $message,
+                ], 403);
             }
+
+            return redirect()
+                ->back()
+                ->with('error', $message);
         }
 
         $templateId = $request->template_id ?? 2;
@@ -892,6 +911,15 @@ class UserInvitationController extends Controller
                 $invitation->update([
                     'music_youtube_url' => $request->music_youtube_url,
                     'music' => 0,
+                    'pixabay_music_url' => null,
+                    'pixabay_music_title' => null,
+                ]);
+            } elseif ($request->input('music_source') === 'pixabay') {
+                $invitation->update([
+                    'music' => 0,
+                    'music_youtube_url' => null,
+                    'pixabay_music_url' => $request->pixabay_music_url,
+                    'pixabay_music_title' => $request->pixabay_music_title,
                 ]);
             } elseif ($request->hasFile('custom_music')) {
                 if ($invitation->music) {
@@ -901,11 +929,15 @@ class UserInvitationController extends Controller
                 $invitation->update([
                     'music' => $musicPath,
                     'music_youtube_url' => null,
+                    'pixabay_music_url' => null,
+                    'pixabay_music_title' => null,
                 ]);
             } else {
                 $invitation->update([
                     'music' => $request->music_id,
                     'music_youtube_url' => null,
+                    'pixabay_music_url' => null,
+                    'pixabay_music_title' => null,
                 ]);
             }
         }
@@ -917,6 +949,8 @@ class UserInvitationController extends Controller
                 : $invitation->love_story;
             $oldStories = $oldStories ?? [];
             $stories = [];
+
+            $importedLoveStoryPhotos = $request->input('imported_love_story_photos', []);
 
             foreach ($request->love_story as $index => $storyText) {
                 $photoPath = $oldStories[$index]['photo'] ?? null;
@@ -935,6 +969,8 @@ class UserInvitationController extends Controller
                         \Log::error('Love story photo upload failed: '.$e->getMessage());
                         $uploadErrors[] = 'Foto kisah #'.($index + 1).': '.$e->getMessage();
                     }
+                } elseif (isset($importedLoveStoryPhotos[$index]) && !empty($importedLoveStoryPhotos[$index])) {
+                    $photoPath = $importedLoveStoryPhotos[$index];
                 }
 
                 $stories[] = [
@@ -1291,9 +1327,35 @@ class UserInvitationController extends Controller
         }
 
         // Data yang akan disimpan (hanya teks/json, bukan file agar ringan)
-        $data = $request->except(['foto_pria', 'foto_wanita', 'gallery_cover', 'gallery', 'custom_music', 'qr', 'story_photo', 'love_story', 'story_title']);
+        $data = $request->except(['foto_pria', 'foto_wanita', 'gallery_cover', 'gallery', 'custom_music', 'qr', 'story_photo', 'love_story', 'story_title', 'music_source', 'searchTemplate', 'categorySelect', 'typeSelect', 'uploaded_gallery_ids']);
         $data['user_id'] = auth()->id();
         $data['status'] = 'draft';
+
+        // --- MUSIC SOURCE HANDLING (AUTOSAVE) ---
+        if ($request->has('enable_music') && $request->enable_music) {
+            $musicSource = $request->input('music_source', 'library');
+            if ($musicSource === 'youtube') {
+                $data['music'] = 0;
+                $data['music_youtube_url'] = $request->input('music_youtube_url');
+                $data['pixabay_music_url'] = null;
+                $data['pixabay_music_title'] = null;
+            } elseif ($musicSource === 'pixabay') {
+                $data['music'] = 0;
+                $data['music_youtube_url'] = null;
+                $data['pixabay_music_url'] = $request->input('pixabay_music_url');
+                $data['pixabay_music_title'] = $request->input('pixabay_music_title');
+            } elseif ($musicSource === 'upload') {
+                $data['music'] = $request->input('music_id');
+                $data['music_youtube_url'] = null;
+                $data['pixabay_music_url'] = null;
+                $data['pixabay_music_title'] = null;
+            } else {
+                $data['music'] = $request->input('music_id');
+                $data['music_youtube_url'] = null;
+                $data['pixabay_music_url'] = null;
+                $data['pixabay_music_title'] = null;
+            }
+        }
 
         // Proses love_story agar tersimpan dalam format yang benar
         if ($request->has('enable_love_story') && $request->enable_love_story) {
@@ -1307,11 +1369,32 @@ class UserInvitationController extends Controller
 
             $stories = [];
             if ($request->has('love_story')) {
+                $importedLoveStoryPhotos = $request->input('imported_love_story_photos', []);
                 foreach ($request->love_story as $index => $storyText) {
+                    $photoPath = $oldStories[$index]['photo'] ?? null;
+
+                    if ($request->hasFile('story_photo.'.$index)) {
+                        try {
+                            if ($photoPath && $this->imageDisk()->exists($photoPath)) {
+                                $this->imageDisk()->delete($photoPath);
+                            }
+
+                            $photoPath = $this->uploadImageAsWebP(
+                                $request->file('story_photo.'.$index),
+                                "love_story/{$index}_".uniqid().'.webp'
+                            );
+                        } catch (\Throwable $e) {
+                            \Log::error('Love story photo upload failed: '.$e->getMessage());
+                            $uploadErrors[] = 'Foto kisah #'.($index + 1).': '.$e->getMessage();
+                        }
+                    } elseif (isset($importedLoveStoryPhotos[$index]) && !empty($importedLoveStoryPhotos[$index])) {
+                        $photoPath = $importedLoveStoryPhotos[$index];
+                    }
+
                     $stories[] = [
                         'title' => $request->story_title[$index] ?? null,
                         'story' => $storyText,
-                        'photo' => $oldStories[$index]['photo'] ?? null,
+                        'photo' => $photoPath,
                     ];
                 }
             }
@@ -1607,5 +1690,281 @@ class UserInvitationController extends Controller
         }
 
         return redirect()->back()->with('success', 'Pasangan berhasil dihapus dari undangan.');
+    }
+
+    public function searchPixabay(Request $request)
+    {
+        $query = $request->get('q', 'wedding');
+        $apiKey = '57177868-0d7825d200dece2c90f5973b4';
+
+        $url = 'https://pixabay.com/api/?key=' . $apiKey . '&q=' . urlencode($query) . '&image_type=photo&orientation=all&safesearch=true&per_page=200';
+
+        try {
+            $response = Http::timeout(15)->get($url);
+
+            if ($response->successful()) {
+                return response()->json($response->json());
+            }
+        } catch (\Throwable $e) {
+            \Log::error('Pixabay search failed: '.$e->getMessage());
+        }
+
+        return response()->json(['hits' => []], 500);
+    }
+
+    public function searchPixabayMusic(Request $request)
+    {
+        $request->validate([
+            'q' => 'required|string|max:255',
+            'page' => 'nullable|integer|min:1',
+        ]);
+
+        $query = $request->input('q', 'wedding');
+        $page = (int) ($request->input('page', 1));
+
+        $apiKey = '57177868-0d7825d200dece2c90f5973b4';
+        $url = 'https://pixabay.com/api/?key=' . $apiKey . '&q=' . urlencode($query) . '&audio_type=all&per_page=20&page=' . $page;
+
+        try {
+            $response = Http::timeout(15)->get($url);
+
+            if ($response->successful()) {
+                $data = $response->json();
+                $hits = array_map(function ($hit) {
+                    $audioUrl = $hit['audio_url'] ?? ($hit['url'] ?? '');
+                    $title = $hit['title'] ?? '';
+                    $user = $hit['user'] ?? 'Pixabay';
+
+                    if (empty($title) || strlen($title) < 3) {
+                        $tags = $hit['tags'] ?? '';
+                        $title = $tags ? explode(',', $tags)[0] : 'Lagu Pixabay';
+                    }
+
+                    return [
+                        'audio' => $audioUrl,
+                        'title' => $title,
+                        'user' => $user,
+                        'duration' => $hit['duration'] ?? 0,
+                        'cover' => $hit['picture'] ?? $hit['image'] ?? $hit['cover'] ?? $hit['thumbnail'] ?? null,
+                    ];
+                }, $data['hits'] ?? []);
+
+                return response()->json([
+                    'success' => true,
+                    'hits' => $hits,
+                ]);
+            }
+        } catch (\Throwable $e) {
+            \Log::error('Pixabay music search failed: '.$e->getMessage());
+        }
+
+        return response()->json([
+            'success' => false,
+            'message' => 'Gagal memuat musik dari Pixabay.',
+        ], 500);
+    }
+
+    public function proxyPixabayAudio(Request $request)
+    {
+        $request->validate([
+            'url' => 'required|url',
+        ]);
+
+        $audioUrl = $request->input('url');
+
+        try {
+            $response = Http::timeout(30)
+                ->withHeaders([
+                    'User-Agent' => 'Mozilla/5.0 (compatible; MyWeed/1.0)',
+                ])
+                ->get($audioUrl);
+
+            if ($response->successful()) {
+                $contentType = $response->header('Content-Type');
+                if (! $contentType) {
+                    $contentType = 'audio/mpeg';
+                }
+
+                return response($response->body(), 200, [
+                    'Content-Type' => $contentType,
+                    'Cache-Control' => 'no-cache, no-store, must-revalidate',
+                    'Pragma' => 'no-cache',
+                    'Expires' => '0',
+                    'Access-Control-Allow-Origin' => '*',
+                ]);
+            }
+        } catch (\Throwable $e) {
+            \Log::error('Pixabay audio proxy failed: '.$e->getMessage());
+        }
+
+        return response('Gagal memuat audio.', 500);
+    }
+
+    public function importPixabayImage(Request $request, Invitation $invitation)
+    {
+        $request->validate([
+            'image_url' => 'required|url',
+            'type' => 'required|in:gallery,cover,groom,bride,love_story',
+        ]);
+
+        $user = auth()->user();
+
+        if (! $user->canAccessInvitation($invitation)) {
+            abort(403, 'Anda tidak memiliki akses ke undangan ini.');
+        }
+
+        if ($user->id === $invitation->partner_user_id && ! $invitation->partner_can_edit) {
+            abort(403, 'Anda hanya memiliki akses melihat undangan ini.');
+        }
+
+        $type = $request->input('type');
+
+        try {
+            $imageResponse = Http::timeout(30)->get($request->input('image_url'));
+
+            if (! $imageResponse->successful()) {
+                return response()->json(['success' => false, 'message' => 'Gagal mengunduh gambar dari Pixabay.'], 500);
+            }
+
+            $tempPath = tempnam(sys_get_temp_dir(), 'pixabay_') . '.jpg';
+            file_put_contents($tempPath, $imageResponse->body());
+
+            $file = new \Illuminate\Http\UploadedFile(
+                $tempPath,
+                'pixabay_image.jpg',
+                $imageResponse->header('Content-Type', 'image/jpeg'),
+                null,
+                true
+            );
+
+            if ($type === 'gallery') {
+                $galleryLimit = null;
+                if ($invitation->user && $invitation->user->subscription) {
+                    $galleryLimit = data_get($invitation->user->subscription->plan->features ?? [], 'gallery_limit');
+                } elseif ($user->subscription) {
+                    $galleryLimit = data_get($user->subscription->plan->features ?? [], 'gallery_limit');
+                }
+                if (! is_null($galleryLimit) && $galleryLimit > 0 && $invitation->galleries()->count() >= $galleryLimit) {
+                    @unlink($tempPath);
+                    return response()->json(['success' => false, 'message' => "Maksimal {$galleryLimit} foto untuk paket ini."], 403);
+                }
+
+                $folder = "invitations/{$invitation->public_id}/gallery";
+
+                if (! $this->imageDisk()->exists($folder)) {
+                    $this->imageDisk()->ensureDirectory($folder);
+                }
+
+                $path = $this->uploadImageAsWebP($file, $folder.'/'.uniqid().'.webp');
+
+                $gallery = Gallery::create([
+                    'invitation_id' => $invitation->id,
+                    'image' => $path,
+                ]);
+
+                @unlink($tempPath);
+
+                return response()->json([
+                    'success' => true,
+                    'gallery' => $gallery,
+                    'url' => storage_url($path, $invitation->updated_at->timestamp),
+                ]);
+            }
+
+            if ($type === 'love_story') {
+                $folder = "invitations/{$invitation->public_id}/love_story";
+
+                if (! $this->imageDisk()->exists($folder)) {
+                    $this->imageDisk()->ensureDirectory($folder);
+                }
+
+                $path = $this->uploadImageAsWebP($file, $folder.'/'.uniqid().'.webp');
+
+                @unlink($tempPath);
+
+                return response()->json([
+                    'success' => true,
+                    'url' => storage_url($path, $invitation->updated_at->timestamp),
+                    'path' => $path,
+                ]);
+            }
+
+            if ($type === 'cover') {
+                $oldPath = $invitation->gallery_cover;
+                $path = "invitations/{$invitation->public_id}/cover/cover.webp";
+
+                $this->uploadImageAsWebP($file, $path, 1600);
+
+                if ($oldPath && $oldPath !== $path) {
+                    $this->imageDisk()->delete($oldPath);
+                }
+
+                $invitation->update(['gallery_cover' => $path]);
+
+                @unlink($tempPath);
+
+                return response()->json([
+                    'success' => true,
+                    'url' => storage_url($path, $invitation->updated_at->timestamp),
+                    'path' => $path,
+                ]);
+            }
+
+            if ($type === 'groom') {
+                $oldPath = $invitation->foto_pria;
+                $path = "invitations/{$invitation->public_id}/pria/pria.webp";
+
+                $this->uploadImageAsWebP($file, $path, 1200);
+
+                if ($oldPath && $oldPath !== $path) {
+                    $this->imageDisk()->delete($oldPath);
+                }
+
+                $invitation->update(['foto_pria' => $path]);
+
+                @unlink($tempPath);
+
+                return response()->json([
+                    'success' => true,
+                    'url' => storage_url($path, $invitation->updated_at->timestamp),
+                    'path' => $path,
+                ]);
+            }
+
+            if ($type === 'bride') {
+                $oldPath = $invitation->foto_wanita;
+                $path = "invitations/{$invitation->public_id}/wanita/wanita.webp";
+
+                $this->uploadImageAsWebP($file, $path, 1200);
+
+                if ($oldPath && $oldPath !== $path) {
+                    $this->imageDisk()->delete($oldPath);
+                }
+
+                $invitation->update(['foto_wanita' => $path]);
+
+                @unlink($tempPath);
+
+                return response()->json([
+                    'success' => true,
+                    'url' => storage_url($path, $invitation->updated_at->timestamp),
+                    'path' => $path,
+                ]);
+            }
+
+            @unlink($tempPath);
+            return response()->json(['success' => false, 'message' => 'Tipe tidak valid.'], 400);
+
+        } catch (\Throwable $e) {
+            if (isset($tempPath) && file_exists($tempPath)) {
+                @unlink($tempPath);
+            }
+            \Log::error('Pixabay import failed: '.$e->getMessage());
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal mengimpor gambar: '.$e->getMessage(),
+            ], 500);
+        }
     }
 }

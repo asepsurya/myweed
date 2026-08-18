@@ -16,6 +16,17 @@
         margin-inline-start: -45px;
     }
 }
+.logo-dark {
+    display: none;
+}
+
+[data-bs-theme="dark"] .logo-light {
+    display: none;
+}
+
+[data-bs-theme="dark"] .logo-dark {
+    display: block;
+}
 </style>
 <!-- standard header -->
 <header class="adminuiux-header">
@@ -30,11 +41,16 @@
 
             <!-- logo -->
             <a class="navbar-brand d-flex align-items-center" href="/">
-                <img data-bs-img="light" src="{{ asset('assets/logo.png') }}" alt="Logo RuangUndang"
-                    style="height: 30px; width: auto;">
-                <img data-bs-img="dark" src="{{ asset('assets/logo-white.png') }}" alt="Logo RuangUndang"
-                    style="height: 30px; width: auto;">
-            </a>
+    <img class="logo-light"
+         src="{{ asset('assets/logo-new.png') }}"
+         alt="Logo RuangUndang"
+         style="height: 30px; width: auto;">
+
+    <img class="logo-dark"
+         src="{{ asset('assets/logo-white-new.png') }}"
+         alt="Logo RuangUndang"
+         style="height: 30px; width: auto;">
+</a>
 
             @role('admin')
             <!-- navigation inline -->

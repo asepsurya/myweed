@@ -9,6 +9,9 @@
     $isCustomUpload = $musicId && !is_numeric($musicId);
     $apiMusicId = $isCustomUpload ? '' : $musicId;
     $customAudioUrl = $isCustomUpload ? ($musicId ? Storage::disk('public')->url($musicId) : '') : '';
+    $pixabayMusicUrl = $invitation->pixabay_music_url ?? null;
+    $pixabayMusicTitle = $invitation->pixabay_music_title ?? null;
+    $isPixabay = !empty($pixabayMusicUrl);
 @endphp
 
 <style>
@@ -67,14 +70,14 @@
 }
 </style>
 
-@if(($invitation->enable_music ?? true) && ($musicId || $youtubeId))
+@if(($invitation->enable_music ?? true) && ($musicId || $youtubeId || $isCustomUpload || $isPixabay))
 <button type="button" id="musicToggle" class="music-toggle-btn" aria-label="Play/Pause Music">
     <svg id="musicIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
         <path d="M8 5v14l11-7z"/>
     </svg>
 </button>
 
-<div id="wedding-music-player" class="wedding-music-player" style="display:none;" data-music-id="{{ $apiMusicId }}" data-youtube-id="{{ $youtubeId }}" data-custom-audio="{{ $customAudioUrl }}">
+<div id="wedding-music-player" class="wedding-music-player" style="display:none;" data-music-id="{{ $apiMusicId }}" data-youtube-id="{{ $youtubeId }}" data-custom-audio="{{ $customAudioUrl }}" data-pixabay-audio="{{ $pixabayMusicUrl }}" data-pixabay-title="{{ $pixabayMusicTitle }}">
     <div class="music-player-inner">
         <div class="music-player-info">
             <img id="musicCover" src="" alt="Cover" class="music-cover rounded-circle border">
@@ -117,6 +120,9 @@
     const customAudioUrl = "{{ $customAudioUrl }}";
     const isYoutube = youtubeId.length > 0;
     const isCustom = "{{ $isCustomUpload ? 'true' : 'false' }}" === 'true';
+    const isPixabay = "{{ $isPixabay ? 'true' : 'false' }}" === 'true';
+    const pixabayAudioUrl = "{{ $pixabayMusicUrl ?? '' }}";
+    const pixabayTitle = "{{ $pixabayMusicTitle ?? '' }}";
     const isPreviewMode = "{{ request('muted') ? '1' : '0' }}" === '1';
     const bgMusic = document.getElementById('bgMusic');
     const musicToggle = document.getElementById('musicToggle');
@@ -384,6 +390,30 @@
         audioReady = false;
     }
 
+    function loadPixabayAudio() {
+        if (!isPixabay || !pixabayAudioUrl) return Promise.resolve();
+        const proxyUrl = "{{ route('pixabay.audio.proxy') }}?url=" + encodeURIComponent(pixabayAudioUrl);
+        currentAudioSrc = proxyUrl;
+        bgMusic.src = proxyUrl;
+        musicTitle.textContent = pixabayTitle || 'Lagu Pixabay';
+        musicArtist.textContent = 'Pixabay Music';
+        musicCover.src = "{{ asset('tempelate/no_sound.webp') }}";
+        audioReady = false;
+
+        return new Promise((resolve) => {
+            const onReady = () => {
+                bgMusic.removeEventListener('canplay', onReady);
+                bgMusic.removeEventListener('loadedmetadata', onReady);
+                audioReady = true;
+                resolve();
+            };
+            bgMusic.addEventListener('canplay', onReady, { once: true });
+            bgMusic.addEventListener('loadedmetadata', onReady, { once: true });
+            bgMusic.load();
+            setTimeout(() => resolve(), 3000);
+        });
+    }
+
     if (musicToggle) {
         musicToggle.addEventListener('click', () => {
             toggleMusic();
@@ -440,6 +470,22 @@
                 if (!isAudioPlaying()) playYoutube();
             }, 500);
         }
+    } else if (isPixabay) {
+        setTimeout(() => {
+            loadPixabayAudio().then(() => {
+                if (!isPreviewMode) {
+                    setTimeout(() => {
+                        if (!isAudioPlaying()) playAudio();
+                    }, 800);
+                }
+            }).catch(() => {
+                if (!isPreviewMode) {
+                    setTimeout(() => {
+                        if (!isAudioPlaying()) playAudio();
+                    }, 800);
+                }
+            });
+        }, 0);
     } else if (isCustom) {
         setTimeout(() => loadCustomAudio(), 0);
         if (!isPreviewMode) {

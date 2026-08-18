@@ -86,6 +86,10 @@ Route::middleware(['auth'])->group(function () {
     Route::post('invitation/{invitation}/cover', [UserInvitationController::class, 'uploadCover'])->name('cover.upload');
     Route::post('invitation/{invitation}/groom-photo', [UserInvitationController::class, 'uploadGroomPhoto'])->name('groom-photo.upload');
     Route::post('invitation/{invitation}/bride-photo', [UserInvitationController::class, 'uploadBridePhoto'])->name('bride-photo.upload');
+    Route::get('invitation/pixabay/search', [UserInvitationController::class, 'searchPixabay'])->name('pixabay.search');
+    Route::post('invitation/{invitation}/pixabay-import', [UserInvitationController::class, 'importPixabayImage'])->name('pixabay.import');
+    Route::post('invitation/pixabay/music-search', [UserInvitationController::class, 'searchPixabayMusic'])->name('pixabay.music.search');
+    Route::get('invitation/pixabay/audio-proxy', [UserInvitationController::class, 'proxyPixabayAudio'])->name('pixabay.audio.proxy');
     Route::post('premium/upgrade', [UserInvitationController::class, 'upgradeToPremium'])->name('premium.upgrade');
 
     Route::post('invitation/{invitation}/invite-partner', [UserInvitationController::class, 'invitePartner'])->name('invitation.invite-partner');
@@ -168,6 +172,11 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/gifts', [GiftController::class, 'store'])->name('gift.store')->middleware('subscription');
     Route::delete('/gifts/{id}', [GiftController::class, 'destroy'])->name('gift.destroy')->middleware('subscription');
 
+    Route::get('/users/create', [UserController::class, 'create'])->middleware('role:admin')->name('user.create');
+    Route::post('/users/store', [UserController::class, 'store'])->middleware('role:admin')->name('user.store');
+    Route::get('/users/{user}/edit', [UserController::class, 'edit'])->middleware('role:admin')->name('user.edit');
+    Route::put('/users/{user}', [UserController::class, 'update'])->middleware('role:admin')->name('user.update');
+    Route::post('/users/{user}/magic-link', [UserController::class, 'generateMagicLink'])->middleware('role:admin')->name('user.magic-link');
     Route::get('/users', [UserController::class, 'index'])->name('user.index')->middleware('role:admin');
     Route::get('/rsvps', [RsvpController::class, 'index'])->name('rsvp.index')->middleware('subscription');
     Route::delete('/rsvp/{rsvp}', [RsvpController::class, 'destroy'])->name('rsvp.destroy')->middleware('subscription');
@@ -287,6 +296,7 @@ Route::get('/invitation/{invitation}/rsvps', [RsvpController::class, 'getRsvps']
 
 Route::get('/auth/google', [GoogleController::class, 'redirect']);
 Route::get('/auth/google/callback', [GoogleController::class, 'callback']);
+Route::get('/auth/magic-login/{token}', [UserController::class, 'magicLogin'])->name('auth.magic-login');
 
 Route::get('/cara-pemesanan', [LandingController::class, 'caraPemesanan'])->name('pages.cara-pemesanan');
 Route::get('/faq', [LandingController::class, 'faq'])->name('pages.faq');

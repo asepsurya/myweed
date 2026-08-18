@@ -41,6 +41,7 @@ class SubscriptionPlanController extends Controller
             'slug' => 'required|string|max:255|unique:subscription_plans,slug',
             'price' => 'required|integer|min:0',
             'duration' => 'required|integer|min:1',
+            'invitation_limit' => 'required|integer|min:1',
             'description' => 'nullable|string',
             'is_free' => 'nullable|boolean',
         ]);
@@ -75,6 +76,7 @@ class SubscriptionPlanController extends Controller
             'slug' => 'required|string|max:255|unique:subscription_plans,slug,'.$subscriptionPlan->id,
             'price' => 'required|integer|min:0',
             'duration' => 'required|integer|min:1',
+            'invitation_limit' => 'required|integer|min:1',
             'description' => 'nullable|string',
             'is_free' => 'nullable|boolean',
         ]);
@@ -413,7 +415,7 @@ class SubscriptionPlanController extends Controller
         ]);
 
         $plan = SubscriptionPlan::findOrFail($request->subscription_plan_id);
-        $duration = $request->duration ?? $plan->duration;
+        $duration = (int) ($request->duration ?? $plan->duration);
 
         $subscription = $user->subscription;
         if ($subscription && $subscription->end_date && $subscription->end_date->isFuture()) {

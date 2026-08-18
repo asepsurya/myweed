@@ -69,6 +69,8 @@ class Invitation extends Model
         'rsvp_whatsapp',
         'music',
         'music_youtube_url',
+        'pixabay_music_url',
+        'pixabay_music_title',
         'partner_user_id',
         'partner_invite_token',
         'partner_accepted_at',
