@@ -364,58 +364,86 @@ class SubscriptionPlanController extends Controller
     {
         Log::info('MIDTRANS CALLBACK HIT', $request->all());
 
-        $notification = new Notification;
+        try {
+            $notification = (new \Midtrans\Notification())->getResponse();
 
-        $orderId = $notification->order_id;
-        $status = $notification->transaction_status;
+            $orderId = $notification->order_id;
+            $status = $notification->transaction_status;
+            $paymentType = $notification->payment_type ?? null;
+            $transactionId = $notification->transaction_id ?? null;
 
-        $payment = Payment::where('order_id', $orderId)->first();
+            $payment = Payment::where('order_id', $orderId)->first();
 
-        if (!$payment) {
-            return response()->json(['message' => 'Payment not found'], 404);
-        }
-
-        if (in_array($status, ['settlement', 'capture'])) {
-
-            $plan = SubscriptionPlan::find($payment->subscription_plan_id);
-
-            if (!$plan) {
-                return response()->json(['message' => 'Plan not found'], 404);
+            if (!$payment) {
+                return response()->json(['message' => 'Payment not found'], 404);
             }
 
-            $subscription = Subscription::where('user_id', $payment->user_id)->first();
+            if (in_array($status, ['settlement', 'capture'])) {
 
-            if ($subscription && $subscription->end_date && $subscription->end_date->isFuture()) {
-                $startDate = $subscription->start_date;
-                $endDate = $subscription->end_date->addDays($plan->duration);
-            } else {
-                $startDate = now();
-                $endDate = now()->addDays($plan->duration);
+                $plan = SubscriptionPlan::find($payment->subscription_plan_id);
+
+                if (!$plan) {
+                    return response()->json(['message' => 'Plan not found'], 404);
+                }
+
+                $subscription = Subscription::where('user_id', $payment->user_id)->first();
+
+                if ($subscription && $subscription->end_date && $subscription->end_date->isFuture()) {
+                    $startDate = $subscription->start_date;
+                    $endDate = $subscription->end_date->addDays($plan->duration);
+                } else {
+                    $startDate = now();
+                    $endDate = now()->addDays($plan->duration);
+                }
+
+                Subscription::updateOrCreate(
+                    ['user_id' => $payment->user_id],
+                    [
+                        'subscription_plan_id' => $plan->id,
+                        'start_date' => $startDate,
+                        'end_date' => $endDate,
+                        'is_active' => true,
+                    ]
+                );
+
+                $payment->update([
+                    'status' => 'paid',
+                    'transaction_status' => $status,
+                    'payment_type' => $paymentType,
+                    'gateway_transaction_id' => $transactionId,
+                    'payload' => $request->all(),
+                ]);
+
+                $user = User::find($payment->user_id);
+                $user->notify(new SubscriptionSuccessNotification($plan, $payment, 'paid'));
+            } elseif (in_array($status, ['deny', 'expire', 'cancel'])) {
+                $payment->update([
+                    'status' => 'failed',
+                    'transaction_status' => $status,
+                    'payment_type' => $paymentType,
+                    'gateway_transaction_id' => $transactionId,
+                    'payload' => $request->all(),
+                ]);
+            } elseif ($status === 'pending') {
+                $payment->update([
+                    'status' => 'pending',
+                    'transaction_status' => $status,
+                    'payment_type' => $paymentType,
+                    'gateway_transaction_id' => $transactionId,
+                    'payload' => $request->all(),
+                ]);
             }
 
-            Subscription::updateOrCreate(
-                ['user_id' => $payment->user_id],
-                [
-                    'subscription_plan_id' => $plan->id,
-                    'start_date' => $startDate,
-                    'end_date' => $endDate,
-                    'is_active' => true,
-                ]
-            );
-
-            $payment->update([
-                'status' => 'paid',
-                'transaction_status' => $status,
-                'payment_type' => $notification->payment_type,
-                'gateway_transaction_id' => $notification->transaction_id,
-                'payload' => $request->all(),
+            return response()->json(['success' => true], 200);
+        } catch (\Throwable $e) {
+            Log::error('MIDTRANS CALLBACK ERROR', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'request' => $request->all(),
             ]);
 
-            $user = User::find($payment->user_id);
-            $user->notify(new SubscriptionSuccessNotification($plan, $payment, 'paid'));
+            return response()->json(['message' => 'Internal Server Error', 'error' => $e->getMessage()], 500);
         }
-
-        return response()->json(['success' => true], 200);
     }
 
     public function success(Request $request)
