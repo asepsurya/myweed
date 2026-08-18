@@ -97,7 +97,7 @@
         border-radius: 20px 20px 0 0;
         transition: bottom 0.3s ease;
         z-index: 9999;
-        box-shadow: 0 -4px 20px rgba(0,0,0,.1);
+        box-shadow: 0 -4px 20px rgba(0, 0, 0, .1);
     }
 
     .more-menu.show {
@@ -151,7 +151,7 @@
        ================================---------- */
     [data-bs-theme="dark"] .mobile-bottom-nav {
         background: rgba(28, 28, 30, .95);
-        border-top-color: rgba(255,255,255,.08);
+        border-top-color: rgba(255, 255, 255, .08);
         box-shadow: none;
     }
 
@@ -200,6 +200,7 @@
 
     /* Sembunyikan navigasi bawah full width pada layar desktop */
     @media (min-width: 768px) {
+
         .mobile-bottom-nav,
         .more-overlay,
         .more-menu {
@@ -209,50 +210,33 @@
 </style>
 
 {{-- Navbar Utama Dashboard/Umum --}}
- @if(!request()->routeIs('invitation.edit*'))
-<nav class="mobile-bottom-nav">
-    <a href="{{ route('dashboard') }}"
-       class="nav-item {{ request()->routeIs('dashboard') ? 'active' : '' }}">
-        <i class="bi bi-columns-gap"></i>
-        <span>Dashboard</span>
-    </a>
+@if(!request()->routeIs('invitation.edit*'))
+    <nav class="mobile-bottom-nav">
+        <a href="{{ route('dashboard') }}" class="nav-item {{ request()->routeIs('dashboard') ? 'active' : '' }}">
+            <i class="bi bi-columns-gap"></i>
+            <span>Dashboard</span>
+        </a>
 
-    <a href="{{ route('dashboard.user') }}"
-       class="nav-item {{ request()->routeIs('dashboard.user') ? 'active' : '' }}">
-        <i class="bi bi-heart"></i>
-        <span>Pasangan</span>
-    </a>
+        <a href="{{ route('dashboard.user') }}" class="nav-item {{ request()->routeIs('dashboard.user') ? 'active' : '' }}">
+            <i class="bi bi-heart"></i>
+            <span>Pasangan</span>
+        </a>
 
-    <a href="{{ route('rsvp.index') }}"
-       class="nav-item {{ request()->routeIs('rsvp.*') ? 'active' : '' }}">
-        <i class="bi bi-clipboard-check"></i>
-        <span>Ucapan</span>
-    </a>
+        <a href="{{ route('rsvp.index') }}" class="nav-item {{ request()->routeIs('rsvp.*') ? 'active' : '' }}">
+            <i class="bi bi-clipboard-check"></i>
+            <span>Ucapan</span>
+        </a>
 
-    <a href="{{ route('tema.index') }}"
-       class="nav-item {{ request()->routeIs('tema.*') ? 'active' : '' }}">
-        <i class="bi bi-palette"></i>
-        <span>Tema</span>
-    </a>
+        <a href="{{ route('tema.index') }}" class="nav-item {{ request()->routeIs('tema.*') ? 'active' : '' }}">
+            <i class="bi bi-palette"></i>
+            <span>Tema</span>
+        </a>
 
-    @role('admin')
-    <a href="{{ route('user.index') }}"
-       class="nav-item {{ request()->routeIs('user.*') ? 'active' : '' }}">
-        <i class="bi bi-people"></i>
-        <span>User</span>
-    </a>
-    @endrole
-</nav>
-@endif
-
- @if(request()->routeIs('invitation.edit*'))
- <div class="d-flex justify-content-center align-items-center gap-3 mt-4 mb-4">
-                <button type="button" id="prevPage" class="btn btn-sm btn-outline-secondary" disabled>
-                    <i class="bi bi-chevron-left"></i> Sebelumnya
-                </button>
-                <span id="pageInfo" class="small text-muted">Halaman 1 dari 1</span>
-                <button type="button" id="nextPage" class="btn btn-sm btn-outline-secondary" disabled>
-                    Selanjutnya <i class="bi bi-chevron-right"></i>
-                </button>
-            </div>
+        @role('admin')
+        <a href="{{ route('user.index') }}" class="nav-item {{ request()->routeIs('user.*') ? 'active' : '' }}">
+            <i class="bi bi-people"></i>
+            <span>User</span>
+        </a>
+        @endrole
+    </nav>
 @endif

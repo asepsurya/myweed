@@ -34,6 +34,8 @@ class VerifyEmailNotification extends Notification
             ->view('notifications.email-verification', [
                 'verificationUrl' => $verificationUrl,
                 'userName' => $notifiable->name,
+                'logoUrl' => 'https://ruangundang.my.id/assets/logo-new.png',
+                'brandName' => 'RuangUndang',
             ]);
     }
 

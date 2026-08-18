@@ -13,7 +13,7 @@
                 Maaf, pembayaran kamu gagal. Silakan coba lagi atau gunakan metode pembayaran lain.
             </p>
 
-            <a href="{{ route('pricing') }}" class="btn btn-danger btn-lg me-2">
+            <a href="{{ route('subscribe.page') }}" class="btn btn-danger btn-lg me-2">
                 Coba Lagi
             </a>
 

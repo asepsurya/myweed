@@ -1,3 +1,4 @@
+@auth
 <div class="adminuiux-sidebar">
     <div class="adminuiux-sidebar-inner">
         <!-- Profile -->
@@ -99,6 +100,34 @@
             </li>
             @endif
 
+            @php
+                $isPaymentActive = request()->routeIs(['payments.status', 'payments.index']);
+            @endphp
+            <li class="nav-item">
+                <a class="nav-link " data-bs-toggle="collapse" data-bs-target="#paymentMenu"
+                    aria-expanded="{{ $isPaymentActive ? 'true' : 'false' }}" aria-controls="paymentMenu"
+                    role="button">
+                    <i class="menu-icon bi bi-credit-card me-2"></i>
+                    <span class="menu-name">Pembayaran</span>
+                    @if(isset($pendingPaymentCount) && $pendingPaymentCount > 0)
+                        <span class="badge bg-warning text-dark ms-auto">{{ $pendingPaymentCount }}</span>
+                    @endif
+                    <i class="bi bi-chevron-down ms-auto"></i>
+                </a>
+                <div class="collapse ps-3 {{ $isPaymentActive ? 'show' : '' }}" id="paymentMenu">
+                    <a href="{{ route('payments.status') }}"
+                        class="nav-link ps-4 {{ request()->routeIs('payments.status') ? 'active' : '' }}">
+                        <i class="menu-icon bi bi-check-circle me-2"></i>
+                        <span class="menu-name">Status Pembayaran</span>
+                    </a>
+                    <a href="{{ route('payments.index') }}"
+                        class="nav-link ps-4 {{ request()->routeIs('payments.index') ? 'active' : '' }}">
+                        <i class="menu-icon bi bi-list-ul me-2"></i>
+                        <span class="menu-name">Riwayat Transaksi</span>
+                    </a>
+                </div>
+            </li>
+
             <li class="nav-item">
                 <a class="nav-link {{ request()->routeIs('rsvp.index') ? 'active' : '' }}"
                     href="{{ route('rsvp.index') }}" data-bs-toggle="tooltip" data-bs-placement="right"
@@ -166,6 +195,7 @@
         </ul>
     </div>
 </div>
+@endauth
 
 @push('scripts')
     <script>

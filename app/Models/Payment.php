@@ -71,4 +71,29 @@ class Payment extends Model
     {
         return $this->belongsTo(Coupon::class);
     }
+
+    public function paymentMethodLabel(): string
+    {
+        return match($this->payment_type) {
+            'credit_card' => 'Kartu Kredit',
+            'bank_transfer' => 'Transfer Bank',
+            'echannel' => 'E-Channel / Mandiri Bill',
+            'gopay' => 'GoPay',
+            'shopeepay' => 'ShopeePay',
+            'qris' => 'QRIS',
+            'cimb_clicks' => 'CIMB Clicks',
+            'bca_klikpay' => 'BCA KlikPay',
+            'bca_va' => 'BCA Virtual Account',
+            'bni_va' => 'BNI Virtual Account',
+            'bri_va' => 'BRI Virtual Account',
+            'permata_va' => 'Permata Virtual Account',
+            'other_va' => 'Virtual Account',
+            'indomaret' => 'Indomaret',
+            'alfamart' => 'Alfamart',
+            'akulaku' => 'Akulaku',
+            'keluarga_sehat' => 'Keluarga Sehat',
+            'mitra_bca' => 'Mitra BCA',
+            default => ucfirst(str_replace('_', ' ', $this->payment_type ?? $this->payment_gateway ?? 'Midtrans'))
+        };
+    }
 }

@@ -2,10 +2,12 @@
 
 namespace App\Providers;
 
+use App\Models\Payment;
 use App\View\TemplateViewFinder;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\View;
 use Midtrans\Config as MidtransConfig;
 
 class AppServiceProvider extends ServiceProvider
@@ -43,5 +45,16 @@ class AppServiceProvider extends ServiceProvider
         if ($this->app->resolved('view')) {
             $this->app['view']->setFinder($finder);
         }
+
+        View::composer('layouts.partial.user_sidebar', function ($view) {
+            if (auth()->check()) {
+                $pendingCount = Payment::where('user_id', auth()->id())
+                    ->whereIn('status', ['pending', 'failed'])
+                    ->count();
+                $view->with('pendingPaymentCount', $pendingCount);
+            } else {
+                $view->with('pendingPaymentCount', 0);
+            }
+        });
     }
 }

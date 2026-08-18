@@ -103,6 +103,7 @@
 
         
 
+                @auth
                 <!-- profile dropdown -->
                 <div class="dropdown d-inline-block">
                     <a class="dropdown-toggle btn btn-link btn-square btn-link-header style-none no-caret px-0"
@@ -110,7 +111,7 @@
                         <div class="row gx-0 d-inline-flex">
                             <div class="col-auto align-self-center">
                                 <figure class="avatar avatar-28 rounded-circle">
-                                    <img src="{{ Auth::user()->avatar ? asset('storage/' . Auth::user()->avatar) : asset('tempelate/user_default.jpg') }}"
+                                    <img src="{{ auth()->user()->avatar ? asset('storage/' . auth()->user()->avatar) : asset('tempelate/user_default.jpg') }}"
                                         alt="User Avatar" id="userphotoonboarding2" class="rounded-circle"
                                         referrerpolicy="no-referrer"
                                         onerror="this.onerror=null;this.src='{{ asset('tempelate/user_default.jpg') }}';">
@@ -185,6 +186,7 @@
                         </div>
                     </div>
                 </div>
+                @endauth
 
                 @role('admin')
                 <!-- navigation inline toggler for small screen-->
