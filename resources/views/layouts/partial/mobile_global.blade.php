@@ -21,7 +21,7 @@
         border-right: none;
         border-radius: 0;
         box-shadow: 0 -4px 18px rgba(0, 0, 0, 0.05);
-        z-index: 1050;
+        z-index: 10050;
     }
 
     .mobile-bottom-nav .nav-item {
@@ -209,7 +209,6 @@
 </style>
 
 {{-- Navbar Utama Dashboard/Umum --}}
-@if(!Request::is('invitation/create') && !request()->routeIs('invitation.edit*'))
 <nav class="mobile-bottom-nav">
     <a href="{{ route('dashboard') }}"
        class="nav-item {{ request()->routeIs('dashboard') ? 'active' : '' }}">
@@ -243,10 +242,9 @@
     </a>
     @endrole
 </nav>
-@endif
 
 {{-- Navbar Khusus Edit Undangan (Tabbed Menu & More Drawer) --}}
-<!-- @if(request()->routeIs('invitation.edit*'))
+@if(request()->routeIs('invitation.edit*'))
 <nav class="mobile-bottom-nav">
     <a class="nav-item tab-btn active" data-tab="2">
         <i class="bi bi-palette"></i>
@@ -287,9 +285,8 @@
         <a class="more-item tab-btn" data-tab="5"><i class="bi bi-chat-dots"></i> RSVP</a>
         <a class="more-item tab-btn" data-tab="9"><i class="bi bi-gift"></i> Hadiah & Donasi</a>
     </div>
-</div> -->
-
-<!-- <script>
+</div>
+ <script>
     document.addEventListener('DOMContentLoaded', () => {
         const moreBtn = document.getElementById('openMore');
         const moreMenu = document.getElementById('moreMenu');
@@ -339,5 +336,5 @@
             });
         });
     });
-</script> -->
+</script>
 @endif

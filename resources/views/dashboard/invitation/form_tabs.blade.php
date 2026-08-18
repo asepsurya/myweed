@@ -115,10 +115,10 @@
             min-height: 48px;
         }
 
-        #cropModal { z-index: 1070 !important; }
-        #pixabayModal { z-index: 1050 !important; }
-        #pixabayModal .modal-backdrop { z-index: 1045 !important; }
-        .modal-backdrop { z-index: 1060 !important; }
+        #cropModal { z-index: 10050 !important; }
+        #pixabayModal { z-index: 10060 !important; }
+        #pixabayModal .modal-backdrop { z-index: -10055 !important; }
+        .modal-backdrop { z-index: 10040 !important; }
     }
 
     /* =============================================
