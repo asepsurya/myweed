@@ -67,7 +67,7 @@
         
         <!-- Header -->
         <div class="email-header" style="padding: 2.5rem 2.25rem 0; text-align: center;">
-            <img src="https://ruangundang.inopakinstitute.or.id/assets/logo.png" alt="RuangUndang Logo" style="max-width: 160px; height: auto; margin: 0 auto;">
+             <img src="https://ruangundang.inopakinstitute.or.id/assets/logo-new.png" alt="RuangUndang Logo" style="max-width: 160px; height: auto; margin: 0 auto;">
         </div>
         
         <!-- Body -->

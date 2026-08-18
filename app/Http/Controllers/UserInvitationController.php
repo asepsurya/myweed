@@ -911,15 +911,6 @@ class UserInvitationController extends Controller
                 $invitation->update([
                     'music_youtube_url' => $request->music_youtube_url,
                     'music' => 0,
-                    'pixabay_music_url' => null,
-                    'pixabay_music_title' => null,
-                ]);
-            } elseif ($request->input('music_source') === 'pixabay') {
-                $invitation->update([
-                    'music' => 0,
-                    'music_youtube_url' => null,
-                    'pixabay_music_url' => $request->pixabay_music_url,
-                    'pixabay_music_title' => $request->pixabay_music_title,
                 ]);
             } elseif ($request->hasFile('custom_music')) {
                 if ($invitation->music) {
@@ -929,15 +920,11 @@ class UserInvitationController extends Controller
                 $invitation->update([
                     'music' => $musicPath,
                     'music_youtube_url' => null,
-                    'pixabay_music_url' => null,
-                    'pixabay_music_title' => null,
                 ]);
             } else {
                 $invitation->update([
                     'music' => $request->music_id,
                     'music_youtube_url' => null,
-                    'pixabay_music_url' => null,
-                    'pixabay_music_title' => null,
                 ]);
             }
         }
@@ -1337,23 +1324,12 @@ class UserInvitationController extends Controller
             if ($musicSource === 'youtube') {
                 $data['music'] = 0;
                 $data['music_youtube_url'] = $request->input('music_youtube_url');
-                $data['pixabay_music_url'] = null;
-                $data['pixabay_music_title'] = null;
-            } elseif ($musicSource === 'pixabay') {
-                $data['music'] = 0;
-                $data['music_youtube_url'] = null;
-                $data['pixabay_music_url'] = $request->input('pixabay_music_url');
-                $data['pixabay_music_title'] = $request->input('pixabay_music_title');
             } elseif ($musicSource === 'upload') {
                 $data['music'] = $request->input('music_id');
                 $data['music_youtube_url'] = null;
-                $data['pixabay_music_url'] = null;
-                $data['pixabay_music_title'] = null;
             } else {
                 $data['music'] = $request->input('music_id');
                 $data['music_youtube_url'] = null;
-                $data['pixabay_music_url'] = null;
-                $data['pixabay_music_title'] = null;
             }
         }
 
@@ -1695,9 +1671,10 @@ class UserInvitationController extends Controller
     public function searchPixabay(Request $request)
     {
         $query = $request->get('q', 'wedding');
+        $page = (int) $request->get('page', 1);
         $apiKey = '57177868-0d7825d200dece2c90f5973b4';
 
-        $url = 'https://pixabay.com/api/?key=' . $apiKey . '&q=' . urlencode($query) . '&image_type=photo&orientation=all&safesearch=true&per_page=200';
+        $url = 'https://pixabay.com/api/?key=' . $apiKey . '&q=' . urlencode($query) . '&image_type=photo&orientation=all&safesearch=true&per_page=20&page=' . $page;
 
         try {
             $response = Http::timeout(15)->get($url);
@@ -1710,94 +1687,6 @@ class UserInvitationController extends Controller
         }
 
         return response()->json(['hits' => []], 500);
-    }
-
-    public function searchPixabayMusic(Request $request)
-    {
-        $request->validate([
-            'q' => 'required|string|max:255',
-            'page' => 'nullable|integer|min:1',
-        ]);
-
-        $query = $request->input('q', 'wedding');
-        $page = (int) ($request->input('page', 1));
-
-        $apiKey = '57177868-0d7825d200dece2c90f5973b4';
-        $url = 'https://pixabay.com/api/?key=' . $apiKey . '&q=' . urlencode($query) . '&audio_type=all&per_page=20&page=' . $page;
-
-        try {
-            $response = Http::timeout(15)->get($url);
-
-            if ($response->successful()) {
-                $data = $response->json();
-                $hits = array_map(function ($hit) {
-                    $audioUrl = $hit['audio_url'] ?? ($hit['url'] ?? '');
-                    $title = $hit['title'] ?? '';
-                    $user = $hit['user'] ?? 'Pixabay';
-
-                    if (empty($title) || strlen($title) < 3) {
-                        $tags = $hit['tags'] ?? '';
-                        $title = $tags ? explode(',', $tags)[0] : 'Lagu Pixabay';
-                    }
-
-                    return [
-                        'audio' => $audioUrl,
-                        'title' => $title,
-                        'user' => $user,
-                        'duration' => $hit['duration'] ?? 0,
-                        'cover' => $hit['picture'] ?? $hit['image'] ?? $hit['cover'] ?? $hit['thumbnail'] ?? null,
-                    ];
-                }, $data['hits'] ?? []);
-
-                return response()->json([
-                    'success' => true,
-                    'hits' => $hits,
-                ]);
-            }
-        } catch (\Throwable $e) {
-            \Log::error('Pixabay music search failed: '.$e->getMessage());
-        }
-
-        return response()->json([
-            'success' => false,
-            'message' => 'Gagal memuat musik dari Pixabay.',
-        ], 500);
-    }
-
-    public function proxyPixabayAudio(Request $request)
-    {
-        $request->validate([
-            'url' => 'required|url',
-        ]);
-
-        $audioUrl = $request->input('url');
-
-        try {
-            $response = Http::timeout(30)
-                ->withHeaders([
-                    'User-Agent' => 'Mozilla/5.0 (compatible; MyWeed/1.0)',
-                ])
-                ->get($audioUrl);
-
-            if ($response->successful()) {
-                $contentType = $response->header('Content-Type');
-                if (! $contentType) {
-                    $contentType = 'audio/mpeg';
-                }
-
-                return response($response->body(), 200, [
-                    'Content-Type' => $contentType,
-                    'Cache-Control' => 'no-cache, no-store, must-revalidate',
-                    'Pragma' => 'no-cache',
-                    'Expires' => '0',
-                    'Access-Control-Allow-Origin' => '*',
-                ]);
-            }
-        } catch (\Throwable $e) {
-            \Log::error('Pixabay audio proxy failed: '.$e->getMessage());
-        }
-
-        return response('Gagal memuat audio.', 500);
     }
 
     public function importPixabayImage(Request $request, Invitation $invitation)

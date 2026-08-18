@@ -1,4 +1,4 @@
-<x-app-layout>
+﻿<x-app-layout>
     <style>
         /* =============================================
            LAYOUT & BUILDER WRAPPER
@@ -558,32 +558,57 @@
             background: #198754;
         }
 
-        .upload-toast.error .upload-toast-progress-bar {
-            background: #dc3545;
-        }
-
-        /* Mobile responsive */
-        @media (max-width: 576px) {
-            .upload-toast-container {
-                bottom: 10px;
-                right: 10px;
-                left: 10px;
-                align-items: stretch;
+            .upload-toast.error .upload-toast-progress-bar {
+                background: #dc3545;
             }
 
-            .upload-toast {
-                min-width: auto;
-                max-width: none;
-                width: 100%;
-                padding: 10px 14px;
+            /* Mobile responsive */
+            @media (max-width: 576px) {
+                .upload-toast-container {
+                    bottom: 10px;
+                    right: 10px;
+                    left: 10px;
+                    align-items: stretch;
+                }
+
+                .upload-toast {
+                    min-width: auto;
+                    max-width: none;
+                    width: 100%;
+                    padding: 10px 14px;
+                }
+
+                .upload-toast-thumb {
+                    width: 40px;
+                    height: 40px;
+                }
             }
 
-            .upload-toast-thumb {
-                width: 40px;
-                height: 40px;
+            /* Pixabay Category Chips */
+            .pixabay-categories {
+                gap: 8px;
             }
-        }
-    </style>
+            .pixabay-category-chip {
+                border-radius: 20px;
+                font-size: 0.85rem;
+                font-weight: 500;
+                padding: 6px 14px;
+                transition: all 0.2s ease;
+                border: 1px solid var(--bs-border-color);
+                background: var(--bs-body-bg);
+                color: var(--bs-body-color);
+            }
+            .pixabay-category-chip:hover {
+                border-color: var(--adminuiux-theme-1);
+                color: var(--adminuiux-theme-1);
+                background: rgba(var(--adminuiux-theme-1-rgb), 0.05);
+            }
+            .pixabay-category-chip:active {
+                background: var(--adminuiux-theme-1);
+                color: #fff;
+                border-color: var(--adminuiux-theme-1);
+            }
+        </style>
 
     <div class="builder-wrapper mb-5">
         <!-- 1. SIDEBAR (KIRI) -->
@@ -813,6 +838,26 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
+                    <div class="pixabay-categories mb-3 d-flex gap-2 flex-wrap">
+                        <button type="button" class="btn btn-sm btn-outline-secondary pixabay-category-chip" data-query="wedding">
+                            <i class="bi bi-heart me-1"></i> Wedding
+                        </button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary pixabay-category-chip" data-query="romance couple">
+                            <i class="bi bi-fire me-1"></i> Romance
+                        </button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary pixabay-category-chip" data-query="wedding flowers">
+                            <i class="bi bi-flower1 me-1"></i> Flowers
+                        </button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary pixabay-category-chip" data-query="wedding decoration">
+                            <i class="bi bi-gift me-1"></i> Decoration
+                        </button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary pixabay-category-chip" data-query="bride groom">
+                            <i class="bi bi-person-hearts me-1"></i> Couple
+                        </button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary pixabay-category-chip" data-query="wedding dress">
+                            <i class="bi bi-bag me-1"></i> Dress
+                        </button>
+                    </div>
                     <div class="input-group mb-3">
                         <input type="text" id="pixabayQuery" class="form-control" placeholder="Cari foto (contoh: wedding, couple, flower)...">
                         <button type="button" class="btn btn-builder-next" id="pixabaySearchBtn">
@@ -828,6 +873,11 @@
                     <div id="pixabayEmpty" class="text-center py-5 d-none">
                         <i class="bi bi-image fs-1 text-muted"></i>
                         <p class="text-muted mt-2">Masukkan kata kunci untuk mencari foto.</p>
+                    </div>
+                    <div id="pixabayLoadMore" class="text-center mt-3 d-none">
+                        <button type="button" class="btn btn-outline-primary" id="pixabayLoadMoreBtn">
+                            <i class="bi bi-arrow-down-circle me-1"></i> Muat Lebih Banyak
+                        </button>
                     </div>
                 </div>
             </div>
@@ -1003,7 +1053,7 @@
 
         window.showPremiumAlert = function () {
             Swal.fire({
-                title: 'Tema Premium! 💎',
+                title: 'Tema Premium! ðŸ’Ž',
                 text: 'Tema ini hanya tersedia untuk pengguna Premium. Upgrade paket Anda sekarang untuk membuka semua tema eksklusif!',
                 icon: 'warning',
                 showCancelButton: true,
@@ -1172,7 +1222,7 @@
                     .then(res => res.json())
                     .then(data => {
                         if (data.success) {
-                            if (badge) badge.innerHTML = '<i class="bi bi-cloud-check me-1 text-success"></i>Tersimpan ✨';
+                            if (badge) badge.innerHTML = '<i class="bi bi-cloud-check me-1 text-success"></i>Tersimpan âœ¨';
                             if (window.autosaveToastId) {
                                 hideUploadToast(window.autosaveToastId, true);
                                 window.autosaveToastId = null;
@@ -1196,7 +1246,10 @@
         // --- Media Handlers ---
         window.previewAudio = (url) => {
             const player = document.getElementById('audioPlayer');
-            if (player) { player.src = url; player.play(); }
+            if (!player) return;
+            player.src = url;
+            player.play().catch(err => console.log('Preview audio play blocked:', err));
+            player.onerror = () => console.log('Preview audio load error');
         };
 
         window.selectMusic = (el, id, url) => {
@@ -1731,29 +1784,39 @@
         // --- Pixabay Integration ---
         window.pixabayType = null;
         window.pixabayTargetElement = null;
+        let pixabayPage = 1;
+        let pixabayCurrentQuery = '';
 
         window.openPixabayModal = function (type, targetElement) {
             window.pixabayType = type;
             window.pixabayTargetElement = targetElement || null;
+            pixabayPage = 1;
+            pixabayCurrentQuery = '';
             const modal = new bootstrap.Modal(document.getElementById('pixabayModal'));
             modal.show();
             document.getElementById('pixabayQuery').value = 'wedding';
             window.searchPixabay();
         };
 
-        window.searchPixabay = function () {
+        window.searchPixabay = function (append = false) {
             const query = document.getElementById('pixabayQuery').value.trim();
             if (!query) return;
 
             const loading = document.getElementById('pixabayLoading');
             const results = document.getElementById('pixabayResults');
             const empty = document.getElementById('pixabayEmpty');
+            const loadMoreBtn = document.getElementById('pixabayLoadMore');
 
-            loading.classList.remove('d-none');
-            results.innerHTML = '';
-            empty.classList.add('d-none');
+            if (!append) {
+                pixabayPage = 1;
+                pixabayCurrentQuery = query;
+                loading.classList.remove('d-none');
+                results.innerHTML = '';
+                empty.classList.add('d-none');
+                loadMoreBtn.classList.add('d-none');
+            }
 
-            fetch(`{{ route('pixabay.search') }}?q=${encodeURIComponent(query)}`, {
+            fetch(`{{ route('pixabay.search') }}?q=${encodeURIComponent(query)}&page=${pixabayPage}`, {
                 headers: {
                     'X-CSRF-TOKEN': '{{ csrf_token() }}',
                     'Accept': 'application/json',
@@ -1764,10 +1827,14 @@
                 .then(data => {
                     loading.classList.add('d-none');
                     const hits = data.hits || [];
-                    if (hits.length === 0) {
+                    if (hits.length === 0 && pixabayPage === 1) {
                         empty.classList.remove('d-none');
                         empty.querySelector('p').textContent = 'Tidak ada hasil ditemukan.';
                         return;
+                    }
+
+                    if (pixabayPage === 1) {
+                        empty.classList.add('d-none');
                     }
 
                     hits.forEach(hit => {
@@ -1785,13 +1852,44 @@
                         `;
                         results.appendChild(col);
                     });
+
+                    if (hits.length >= 20) {
+                        loadMoreBtn.classList.remove('d-none');
+                    } else {
+                        loadMoreBtn.classList.add('d-none');
+                    }
                 })
                 .catch(() => {
                     loading.classList.add('d-none');
-                    empty.classList.remove('d-none');
-                    empty.querySelector('p').textContent = 'Gagal memuat hasil. Coba lagi.';
+                    if (pixabayPage === 1) {
+                        empty.classList.remove('d-none');
+                        empty.querySelector('p').textContent = 'Gagal memuat hasil. Coba lagi.';
+                    }
                 });
         };
+
+        window.loadMorePixabay = function () {
+            pixabayPage++;
+            window.searchPixabay(true);
+        };
+
+        document.getElementById('pixabaySearchBtn')?.addEventListener('click', () => window.searchPixabay());
+        document.getElementById('pixabayQuery')?.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                window.searchPixabay();
+            }
+        });
+        document.getElementById('pixabayLoadMoreBtn')?.addEventListener('click', window.loadMorePixabay);
+
+        document.querySelectorAll('.pixabay-category-chip').forEach(chip => {
+            chip.addEventListener('click', function () {
+                const query = this.getAttribute('data-query');
+                if (!query) return;
+                document.getElementById('pixabayQuery').value = query;
+                window.searchPixabay();
+            });
+        });
 
         window.importPixabayImage = function (imageUrl) {
             const type = window.pixabayType || 'gallery';

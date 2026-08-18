@@ -171,7 +171,6 @@
                     <p class="text-muted small mb-3">Scan QR code untuk login. Link hanya bisa digunakan sekali dan berlaku selama 20 menit.</p>
                     <div class="qr-wrapper position-relative d-inline-block">
                         <img id="qrImage" src="" alt="QR Code" class="img-fluid border rounded">
-                       
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -189,20 +188,6 @@
             position: relative;
             display: inline-block;
             line-height: 0;
-        }
-        .qr-wrapper .qr-logo-overlay {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 18%;
-            height: 18%;
-            object-fit: contain;
-            pointer-events: none;
-            background: #ffffff;
-            border-radius: 50%;
-            padding: 4%;
-            box-shadow: 0 0 0 5px rgba(255, 255, 255, 0.95);
         }
     </style>
 
@@ -270,7 +255,7 @@
                     const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=600x600&data=${encodeURIComponent(url)}`;
                     qrImage.src = qrUrl;
                     downloadBtn.onclick = function () {
-                        downloadQr(qrUrl, `qr-login-${userName.replace(/\s+/g, '-').toLowerCase()}.png`, '{{ asset('assets/logo-new.png') }}');
+                        downloadQr(qrUrl, `qr-login-${userName.replace(/\s+/g, '-').toLowerCase()}.png`);
                     };
                     downloadBtn.disabled = false;
                 });
@@ -302,9 +287,7 @@
         document.querySelectorAll('.qr-trigger').forEach(bindQrTrigger);
         document.querySelectorAll('.magic-link-trigger').forEach(bindMagicLinkTrigger);
 
-        function downloadQr(url, filename, logoUrl) {
-            const logo = new Image();
-            logo.crossOrigin = 'anonymous';
+        function downloadQr(url, filename) {
             const qr = new Image();
             qr.crossOrigin = 'anonymous';
 
@@ -319,23 +302,7 @@
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
                 ctx.drawImage(qr, padding, padding);
 
-                if (logoUrl) {
-                    logo.onload = function () {
-                        const logoSize = Math.min(qr.width, qr.height) * 0.18;
-                        const x = padding + (qr.width - logoSize) / 2;
-                        const y = padding + (qr.height - logoSize) / 2;
-                        ctx.fillStyle = '#ffffff';
-                        ctx.fillRect(x - 8, y - 8, logoSize + 16, logoSize + 16);
-                        ctx.drawImage(logo, x, y, logoSize, logoSize);
-                        triggerDownload(canvas, filename);
-                    };
-                    logo.onerror = function () {
-                        triggerDownload(canvas, filename);
-                    };
-                    logo.src = logoUrl;
-                } else {
-                    triggerDownload(canvas, filename);
-                }
+                triggerDownload(canvas, filename);
             };
 
             qr.onerror = function () {

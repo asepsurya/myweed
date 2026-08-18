@@ -33,7 +33,7 @@
             
             <!-- Logo Header -->
             <div style="text-align: center; margin-bottom: 2rem;">
-                <img src="https://ruangundang.inopakinstitute.or.id/assets/logo.png" alt="RuangUndang Logo" style="max-width: 140px; height: auto; margin: 0 auto;">
+                <img src="https://ruangundang.inopakinstitute.or.id/assets/logo-new.png" alt="RuangUndang Logo" style="max-width: 140px; height: auto; margin: 0 auto;">
             </div>
 
             <!-- Invoice Info -->

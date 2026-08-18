@@ -744,7 +744,7 @@
         <!-- Header -->
         <div class="card-header">
             <div class="card-logo">
-                <img src="{{ asset('assets/logo.png') }}" alt="Logo RuangUndang">
+                <img src="{{ asset('assets/logo-new.png') }}" alt="Logo RuangUndang">
             </div>
             <h1>Buat Akun Baru</h1>
             <p>Daftar untuk mulai membuat undangan impianmu</p>

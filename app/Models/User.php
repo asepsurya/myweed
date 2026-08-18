@@ -51,6 +51,7 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return [
             'email_verified_at' => 'datetime',
+            'login_token_expires_at' => 'datetime',
             'password' => 'hashed',
         ];
     }

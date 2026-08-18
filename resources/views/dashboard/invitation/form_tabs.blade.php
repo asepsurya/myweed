@@ -116,7 +116,6 @@
         }
 
         #cropModal { z-index: 1070 !important; }
-        #pixabayMusicModal { z-index: 1070 !important; }
         .modal-backdrop { z-index: 1060 !important; }
     }
 
@@ -256,105 +255,6 @@
         border-color: var(--bs-primary);
         background: rgba(var(--bs-primary-rgb), 0.05);
         transform: translateY(-2px);
-    }
-
-    /* Pixabay Music Search */
-    .pixabay-search-wrapper {
-        display: flex;
-        gap: 8px;
-        margin-bottom: 12px;
-    }
-    .pixabay-search-wrapper .form-control { border-radius: 8px; }
-    .pixabay-search-wrapper .btn { border-radius: 8px; min-width: 90px; }
-
-    #pixabayMusicList {
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-    }
-
-    .pixabay-music-item {
-        background: var(--bs-body-bg);
-        border: 1px solid rgba(0, 0, 0, 0.08);
-        border-radius: 8px;
-        padding: 10px 12px;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        transition: all 0.25s ease;
-        cursor: pointer;
-    }
-
-    .pixabay-music-item:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.07);
-        border-color: var(--bs-primary);
-    }
-
-    .pixabay-music-item.selected {
-        border-color: var(--bs-primary);
-        background: rgba(var(--bs-primary-rgb), 0.1);
-    }
-
-    .pixabay-music-item .pm-thumb {
-        width: 44px;
-        height: 44px;
-        border-radius: 8px;
-        background: var(--bs-tertiary-bg);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: var(--bs-primary);
-        flex-shrink: 0;
-        overflow: hidden;
-        padding: 0;
-    }
-
-    .pixabay-music-item .pm-thumb img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        display: block;
-    }
-
-    .pixabay-music-item .pm-thumb i {
-        font-size: 1.2rem;
-    }
-
-    .pixabay-music-item.selected .pm-thumb {
-        background: var(--bs-primary);
-        color: #fff;
-    }
-
-    .pixabay-music-item.selected .pm-thumb img {
-        opacity: 0.9;
-    }
-
-    .pixabay-music-item .pm-info { flex: 1; overflow: hidden; }
-    .pixabay-music-item .pm-title {
-        font-weight: 600;
-        font-size: 0.85rem;
-        margin: 0;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-    .pixabay-music-item .pm-artist {
-        font-size: 11px;
-        color: var(--bs-secondary-color);
-        margin: 0;
-    }
-
-    .pixabay-loading {
-        text-align: center;
-        padding: 30px;
-        color: var(--bs-secondary-color);
-    }
-    .pixabay-empty {
-        text-align: center;
-        padding: 30px;
-        color: var(--bs-secondary-color);
-        font-size: 0.85rem;
     }
 
     /* Country Code Dropdown */
@@ -638,15 +538,10 @@
                     <div class="card-body p-0">
                         @php $musicSource = $inv?->music_source ?? 'library'; @endphp
                         <input type="hidden" id="music_id" name="music_id" value="{{ $inv?->music ?? '' }}">
-                        <input type="hidden" name="pixabay_music_url" id="pixabay_music_url" value="{{ $inv?->pixabay_music_url ?? '' }}">
-                        <input type="hidden" name="pixabay_music_title" id="pixabay_music_title" value="{{ $inv?->pixabay_music_title ?? '' }}">
 
                         <div class="music-source-tabs">
                             <input type="radio" class="btn-check" name="music_source" id="srcLibrary" value="library" {{ $musicSource == 'library' ? 'checked' : '' }} onchange="switchMusicSource('library')">
                             <label for="srcLibrary"><i class="bi bi-music-note-list"></i> Library</label>
-
-                            <input type="radio" class="btn-check" name="music_source" id="srcPixabay" value="pixabay" {{ $musicSource == 'pixabay' ? 'checked' : '' }} onchange="switchMusicSource('pixabay')">
-                            <label for="srcPixabay"><i class="bi bi-image-music"></i> Pixabay</label>
 
                             <input type="radio" class="btn-check" name="music_source" id="srcYoutube" value="youtube" {{ $musicSource == 'youtube' ? 'checked' : '' }} onchange="switchMusicSource('youtube')">
                             <label for="srcYoutube"><i class="bi bi-youtube"></i> YouTube</label>
@@ -681,35 +576,6 @@
                                     @endforeach
                                 </div>
                                 <small class="text-muted d-block mt-2">Pilih lagu latar yang akan ditampilkan di undangan.</small>
-                            </div>
-
-                            {{-- PIXABAY --}}
-                            <div id="source-pixabay" class="music-source-div {{ $musicSource != 'pixabay' ? 'd-none' : '' }}">
-                                <label class="form-label fw-semibold mb-2">Cari Musik dari Pixabay</label>
-                                <div class="pixabay-search-wrapper">
-                                    <input type="text" id="pixabayMusicSearch" class="form-control" placeholder="Cari lagu (contoh: romantic, wedding, piano)..." onkeypress="if(event.key==='Enter'){event.preventDefault(); searchPixabayMusic();}">
-                                    <button type="button" class="btn btn-primary" onclick="searchPixabayMusic()">
-                                        <i class="bi bi-search me-1"></i> Cari
-                                    </button>
-                                </div>
-                                <div id="pixabayMusicList" class="d-flex flex-column gap-2">
-                                    @if($musicSource == 'pixabay' && $inv?->pixabay_music_url)
-                                        <div class="pixabay-music-item selected" data-url="{{ $inv->pixabay_music_url }}" data-proxy="{{ route('pixabay.audio.proxy') }}?url={{ urlencode($inv->pixabay_music_url) }}" data-title="{{ $inv->pixabay_music_title }}" data-artist="Pixabay Music" onclick="selectPixabayMusic(this)">
-                                            <div class="pm-thumb"><i class="bi bi-music-note-beamed"></i></div>
-                                            <div class="pm-info">
-                                                <p class="pm-title">{{ $inv->pixabay_music_title }}</p>
-                                                <p class="pm-artist">Pixabay Music</p>
-                                            </div>
-                                            <i class="bi bi-check-circle-fill text-primary"></i>
-                                        </div>
-                                    @else
-                                        <div class="pixabay-empty">
-                                            <i class="bi bi-search fs-3 d-block mb-2"></i>
-                                            Ketik kata kunci lalu klik "Cari" untuk menemukan musik dari Pixabay.
-                                        </div>
-                                    @endif
-                                </div>
-                                <small class="text-muted d-block mt-2">Musik dari Pixabay bebas royalti dan dapat digunakan tanpa batasan.</small>
                             </div>
 
                             {{-- YOUTUBE --}}
@@ -1366,14 +1232,6 @@
             if (typeof updateLivePreview === 'function') {
                 updateLivePreview();
             }
-
-            if (source === 'pixabay') {
-                const searchInput = document.getElementById('pixabayMusicSearch');
-                if (searchInput && !searchInput.value.trim()) {
-                    searchInput.value = 'wedding';
-                }
-                setTimeout(() => window.searchPixabayMusic(), 300);
-            }
         }
 
         function updateMapEmbed(inputId, embedId) {
@@ -1471,140 +1329,6 @@
                 hiddenInput.value = '';
             }
             if (typeof updateLivePreview === 'function') updateLivePreview();
-        }
-
-        // =============================================
-        // PIXABAY MUSIC SEARCH
-        // =============================================
-        let pixabayMusicPage = 1;
-        let pixabayMusicCurrentQuery = '';
-
-        async function searchPixabayMusic(reset = true) {
-            const searchInput = document.getElementById('pixabayMusicSearch');
-            const listContainer = document.getElementById('pixabayMusicList');
-            if (!searchInput || !listContainer) return;
-
-            const query = searchInput.value.trim();
-            if (!query) {
-                listContainer.innerHTML = '<div class="pixabay-empty"><i class="bi bi-exclamation-circle fs-3 d-block mb-2"></i>Masukkan kata kunci pencarian.</div>';
-                return;
-            }
-
-            if (reset) {
-                pixabayMusicPage = 1;
-                pixabayMusicCurrentQuery = query;
-                listContainer.innerHTML = '<div class="pixabay-loading"><div class="spinner-border spinner-border-sm me-2"></div>Mencari musik...</div>';
-            }
-
-            try {
-                const response = await fetch("{{ route('pixabay.music.search') }}", {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json',
-                    },
-                    body: JSON.stringify({ q: query, page: pixabayMusicPage })
-                });
-
-                const data = await response.json();
-                if (!data.success) {
-                    listContainer.innerHTML = '<div class="pixabay-empty">Gagal memuat musik: ' + (data.message || 'Unknown error') + '</div>';
-                    return;
-                }
-
-                const tracks = data.hits || [];
-                if (tracks.length === 0) {
-                    listContainer.innerHTML = '<div class="pixabay-empty"><i class="bi bi-emoji-frown fs-3 d-block mb-2"></i>Tidak ada musik ditemukan untuk "' + escapeHtml(query) + '".</div>';
-                    return;
-                }
-
-                const currentSelected = document.getElementById('pixabay_music_url').value;
-                let html = tracks.map(track => {
-                    const isSelected = track.audio === currentSelected;
-                    const proxyUrl = "{{ route('pixabay.audio.proxy') }}?url=" + encodeURIComponent(track.audio);
-                    const coverUrl = track.cover || "{{ asset('tempelate/no_sound.webp') }}";
-                    return `
-                        <div class="pixabay-music-item ${isSelected ? 'selected' : ''}" data-url="${escapeAttr(track.audio)}" data-proxy="${escapeAttr(proxyUrl)}" data-title="${escapeAttr(track.title)}" data-artist="${escapeAttr(track.user)}" onclick="selectPixabayMusic(this)">
-                            <div class="pm-thumb"><img src="${escapeAttr(coverUrl)}" alt="cover"></div>
-                            <div class="pm-info">
-                                <p class="pm-title">${escapeHtml(track.title)}</p>
-                                <p class="pm-artist">${escapeHtml(track.user)} • ${formatDuration(track.duration)}</p>
-                            </div>
-                            <div class="d-flex align-items-center gap-2">
-                                <button type="button" class="btn btn-sm btn-link p-0" onclick="event.stopPropagation(); previewAudio('${escapeAttr(proxyUrl)}')">
-                                    <i class="bi bi-play-circle-fill fs-4 text-primary"></i>
-                                </button>
-                                ${isSelected ? '<i class="bi bi-check-circle-fill text-primary ms-2"></i>' : ''}
-                            </div>
-                        </div>
-                    `;
-                }).join('');
-
-                if (tracks.length >= 20) {
-                    html += `
-                        <div class="text-center mt-2">
-                            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="loadMorePixabayMusic()">
-                                <i class="bi bi-arrow-down-circle me-1"></i> Muat Lebih Banyak
-                            </button>
-                        </div>
-                    `;
-                }
-                listContainer.innerHTML = html;
-            } catch (err) {
-                console.error('Pixabay music error:', err);
-                listContainer.innerHTML = '<div class="pixabay-empty">Terjadi kesalahan. Coba lagi.</div>';
-            }
-        }
-
-        function loadMorePixabayMusic() {
-            pixabayMusicPage++;
-            searchPixabayMusic(false);
-        }
-
-        function selectPixabayMusic(element) {
-            document.querySelectorAll('#pixabayMusicList .pixabay-music-item').forEach(item => {
-                item.classList.remove('selected');
-                const check = item.querySelector('.bi-check-circle-fill');
-                if (check) check.remove();
-            });
-
-            element.classList.add('selected');
-            const url = element.getAttribute('data-url');
-            const proxyUrl = element.getAttribute('data-proxy') || url;
-            const title = element.getAttribute('data-title');
-            const artist = element.getAttribute('data-artist');
-
-            document.getElementById('pixabay_music_url').value = url;
-            document.getElementById('pixabay_music_title').value = title;
-            document.getElementById('music_id').value = '';
-
-            const actionDiv = element.querySelector('.d-flex.align-items-center');
-            if (actionDiv && !actionDiv.querySelector('.bi-check-circle-fill')) {
-                actionDiv.insertAdjacentHTML('beforeend', '<i class="bi bi-check-circle-fill text-primary ms-2"></i>');
-            }
-
-            previewAudio(proxyUrl);
-            if (typeof updateLivePreview === 'function') updateLivePreview();
-        }
-
-        function escapeHtml(str) {
-            if (!str) return '';
-            return String(str).replace(/[&<>"']/g, function(c) {
-                return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
-            });
-        }
-
-        function escapeAttr(str) {
-            if (!str) return '';
-            return String(str).replace(/"/g, '&quot;').replace(/'/g, '&#39;');
-        }
-
-        function formatDuration(seconds) {
-            if (!seconds) return '';
-            const m = Math.floor(seconds / 60);
-            const s = seconds % 60;
-            return m + ':' + (s < 10 ? '0' : '') + s;
         }
 
         // Primary Color Picker Sync

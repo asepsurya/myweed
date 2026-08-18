@@ -422,7 +422,7 @@
         <!-- Header -->
         <div class="card-header">
             <div class="card-logo">
-                <img src="{{ asset('assets/logo.png') }}" alt="Logo RuangUndang">
+                <img src="{{ asset('assets/logo-new.png') }}" alt="Logo RuangUndang">
             </div>
             <h1>Masuk ke Akun Anda</h1>
             <p>Silakan masuk untuk mengelola undangan</p>

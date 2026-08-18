@@ -753,7 +753,7 @@
         <!-- Header -->
         <div class="card-header">
             <div class="card-logo">
-                <img src="{{ asset('assets/logo.png') }}" alt="Logo RuangUndang">
+                <img src="{{ asset('assets/logo-new.png') }}" alt="Logo RuangUndang">
             </div>
             <div class="header-icon">
                 <i class="bi bi-shield-lock-fill"></i>

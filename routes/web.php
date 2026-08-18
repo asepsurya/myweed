@@ -88,8 +88,6 @@ Route::middleware(['auth'])->group(function () {
     Route::post('invitation/{invitation}/bride-photo', [UserInvitationController::class, 'uploadBridePhoto'])->name('bride-photo.upload');
     Route::get('invitation/pixabay/search', [UserInvitationController::class, 'searchPixabay'])->name('pixabay.search');
     Route::post('invitation/{invitation}/pixabay-import', [UserInvitationController::class, 'importPixabayImage'])->name('pixabay.import');
-    Route::post('invitation/pixabay/music-search', [UserInvitationController::class, 'searchPixabayMusic'])->name('pixabay.music.search');
-    Route::get('invitation/pixabay/audio-proxy', [UserInvitationController::class, 'proxyPixabayAudio'])->name('pixabay.audio.proxy');
     Route::post('premium/upgrade', [UserInvitationController::class, 'upgradeToPremium'])->name('premium.upgrade');
 
     Route::post('invitation/{invitation}/invite-partner', [UserInvitationController::class, 'invitePartner'])->name('invitation.invite-partner');

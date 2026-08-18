@@ -1455,7 +1455,7 @@
     <nav class="navbar navbar-expand-lg" id="mainNav">
         <div class="container">
             <a class="navbar-brand" href="{{ route('landing') }}">
-                <img src="{{ asset('assets/logo.png') }}" alt="Logo RuangUndang">
+                <img src="{{ asset('assets/logo-new.png') }}" alt="Logo RuangUndang">
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                 style="border-color: rgba(255,255,255,0.3);">
@@ -1739,7 +1739,7 @@
             <div class="row gy-5">
                 <div class="col-lg-4 reveal">
                     <a href="#" class="footer-logo">
-                        <img src="{{ asset('assets/logo.png') }}" alt="Logo RuangUndang">
+                        <img src="{{ asset('assets/logo-new.png') }}" alt="Logo RuangUndang">
                     </a>
                     <p class="text-secondary small" style="max-width: 350px;">Saat ini kami menyediakan undangan digital untuk pernikahan. Untuk khitanan, aqiqah, dan momen spesial lainnya akan segera hadir. Praktis, elegan, dan hemat biaya.</p>
                     <div class="footer-social">
