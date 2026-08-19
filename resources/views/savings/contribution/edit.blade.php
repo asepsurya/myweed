@@ -62,16 +62,16 @@
                         </div>
 
                         <div class="mb-3">
-                            <label for="contributor_id" class="form-label">Kontributor *</label>
-                            <select class="form-select @error('contributor_id') is-invalid @enderror"
-                                id="contributor_id" name="contributor_id" required>
+                            <label for="savings_contributor_id" class="form-label">Kontributor *</label>
+                            <select class="form-select @error('savings_contributor_id') is-invalid @enderror"
+                                id="savings_contributor_id" name="savings_contributor_id" required>
                                 @foreach($contributors as $c)
-                                    <option value="{{ $c->id }}" {{ old('contributor_id', $contribution->contributor_id) == $c->id ? 'selected' : '' }}>
+                                    <option value="{{ $c->id }}" {{ old('savings_contributor_id', $contribution->savings_contributor_id) == $c->id ? 'selected' : '' }}>
                                         {{ $c->name }}
                                     </option>
                                 @endforeach
                             </select>
-                            @error('contributor_id')
+                            @error('savings_contributor_id')
                             <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>

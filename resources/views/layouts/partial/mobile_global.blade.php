@@ -210,49 +210,149 @@
 
 {{-- Navbar Utama Dashboard/Umum --}}
  @if(!request()->routeIs('invitation.edit*'))
-<nav class="mobile-bottom-nav">
-    <a href="{{ route('dashboard') }}"
-       class="nav-item {{ request()->routeIs('dashboard') ? 'active' : '' }}">
-        <i class="bi bi-columns-gap"></i>
-        <span>Dashboard</span>
-    </a>
 
-    <a href="{{ route('dashboard.user') }}"
-       class="nav-item {{ request()->routeIs('dashboard.user') ? 'active' : '' }}">
-        <i class="bi bi-heart"></i>
-        <span>Pasangan</span>
-    </a>
+ {{-- Wedding Planner Bottom Navigation --}}
+ @if(request()->routeIs('weeding-plan.*', 'budget.*', 'savings.*', 'financial-overview.*'))
+  <nav class="mobile-bottom-nav">
+      <a href="{{ route('weeding-plan.index') }}"
+         class="nav-item {{ request()->routeIs('weeding-plan.*') ? 'active' : '' }}">
+          <i class="bi bi-calendar-check"></i>
+          <span>Rencana</span>
+      </a>
 
-    <a href="{{ route('rsvp.index') }}"
-       class="nav-item {{ request()->routeIs('rsvp.*') ? 'active' : '' }}">
-        <i class="bi bi-clipboard-check"></i>
-        <span>Ucapan</span>
-    </a>
+      <a href="{{ route('budget.dashboard') }}"
+         class="nav-item {{ request()->routeIs('budget.*') ? 'active' : '' }}">
+          <i class="bi bi-calculator"></i>
+          <span>Anggaran</span>
+      </a>
 
-    <a href="{{ route('tema.index') }}"
-       class="nav-item {{ request()->routeIs('tema.*') ? 'active' : '' }}">
-        <i class="bi bi-palette"></i>
-        <span>Tema</span>
-    </a>
+      <a href="{{ route('savings.dashboard') }}"
+         class="nav-item {{ request()->routeIs('savings.dashboard') ? 'active' : '' }}">
+          <i class="bi bi-piggy-bank"></i>
+          <span>Tabungan</span>
+      </a>
 
-    @role('admin')
-    <a href="{{ route('user.index') }}"
-       class="nav-item {{ request()->routeIs('user.*') ? 'active' : '' }}">
-        <i class="bi bi-people"></i>
-        <span>User</span>
-    </a>
-    @endrole
-</nav>
-@endif
+      <a href="{{ route('savings.contributor.index') }}"
+         class="nav-item {{ request()->routeIs('savings.contributor.*') ? 'active' : '' }}">
+          <i class="bi bi-people"></i>
+          <span>Kontributor</span>
+      </a>
+
+      <a href="{{ route('financial-overview.index') }}"
+         class="nav-item {{ request()->routeIs('financial-overview.*') ? 'active' : '' }}">
+          <i class="bi bi-bar-chart-line"></i>
+          <span>Keuangan</span>
+      </a>
+
+      <a href="javascript:void(0)" class="nav-item" id="moreBtn">
+          <i class="bi bi-three-dots"></i>
+          <span>More</span>
+      </a>
+  </nav>
+
+ {{-- More Menu Overlay --}}
+ <div class="more-overlay" id="moreOverlay"></div>
+ <div class="more-menu" id="moreMenu">
+     <div class="more-menu-content">
+         <div class="handle"></div>
+         <a href="{{ route('dashboard.user') }}" class="more-item {{ request()->routeIs('dashboard.user') ? 'active' : '' }}">
+             <i class="bi bi-heart"></i>
+             <span>Pasangan</span>
+         </a>
+         <a href="{{ route('rsvp.index') }}" class="more-item {{ request()->routeIs('rsvp.*') ? 'active' : '' }}">
+             <i class="bi bi-clipboard-check"></i>
+             <span>Ucapan & Doa</span>
+         </a>
+         <a href="{{ route('tema.index') }}" class="more-item {{ request()->routeIs('tema.*') ? 'active' : '' }}">
+             <i class="bi bi-palette"></i>
+             <span>Tema</span>
+         </a>
+         <a href="{{ route('documentation.index') }}" class="more-item {{ request()->routeIs('documentation.index') ? 'active' : '' }}">
+             <i class="bi bi-book"></i>
+             <span>Dokumentasi</span>
+         </a>
+         @role('admin')
+         <a href="{{ route('dashboard') }}" class="more-item {{ request()->routeIs('dashboard') ? 'active' : '' }}">
+             <i class="bi bi-columns-gap"></i>
+             <span>Dashboard</span>
+         </a>
+         <a href="{{ route('user.index') }}" class="more-item {{ request()->routeIs('user.*') ? 'active' : '' }}">
+             <i class="bi bi-people"></i>
+             <span>User</span>
+         </a>
+         @endrole
+     </div>
+ </div>
+
+ {{-- General Bottom Navigation --}}
+ @else
+ <nav class="mobile-bottom-nav">
+     <a href="{{ route('dashboard') }}"
+        class="nav-item {{ request()->routeIs('dashboard') ? 'active' : '' }}">
+         <i class="bi bi-columns-gap"></i>
+         <span>Dashboard</span>
+     </a>
+
+     <a href="{{ route('dashboard.user') }}"
+        class="nav-item {{ request()->routeIs('dashboard.user') ? 'active' : '' }}">
+         <i class="bi bi-heart"></i>
+         <span>Pasangan</span>
+     </a>
+
+     <a href="{{ route('rsvp.index') }}"
+        class="nav-item {{ request()->routeIs('rsvp.*') ? 'active' : '' }}">
+         <i class="bi bi-clipboard-check"></i>
+         <span>Ucapan</span>
+     </a>
+
+     <a href="{{ route('tema.index') }}"
+        class="nav-item {{ request()->routeIs('tema.*') ? 'active' : '' }}">
+         <i class="bi bi-palette"></i>
+         <span>Tema</span>
+     </a>
+
+     @role('admin')
+     <a href="{{ route('user.index') }}"
+        class="nav-item {{ request()->routeIs('user.*') ? 'active' : '' }}">
+         <i class="bi bi-people"></i>
+         <span>User</span>
+     </a>
+     @endrole
+ </nav>
+ @endif
+
+ @endif
 
  @if(request()->routeIs('invitation.edit*'))
  <div class="d-flex justify-content-center align-items-center gap-3 mt-4 mb-4">
-                <button type="button" id="prevPage" class="btn btn-sm btn-outline-secondary" disabled>
-                    <i class="bi bi-chevron-left"></i> Sebelumnya
-                </button>
-                <span id="pageInfo" class="small text-muted">Halaman 1 dari 1</span>
-                <button type="button" id="nextPage" class="btn btn-sm btn-outline-secondary" disabled>
-                    Selanjutnya <i class="bi bi-chevron-right"></i>
-                </button>
-            </div>
-@endif
+                 <button type="button" id="prevPage" class="btn btn-sm btn-outline-secondary" disabled>
+                     <i class="bi bi-chevron-left"></i> Sebelumnya
+                 </button>
+                 <span id="pageInfo" class="small text-muted">Halaman 1 dari 1</span>
+                 <button type="button" id="nextPage" class="btn btn-sm btn-outline-secondary" disabled>
+                     Selanjutnya <i class="bi bi-chevron-right"></i>
+                 </button>
+             </div>
+ @endif
+
+ @push('scripts')
+ <script>
+     document.addEventListener('DOMContentLoaded', function () {
+         const moreBtn = document.getElementById('moreBtn');
+         const moreMenu = document.getElementById('moreMenu');
+         const moreOverlay = document.getElementById('moreOverlay');
+
+         if (moreBtn && moreMenu && moreOverlay) {
+             moreBtn.addEventListener('click', function () {
+                 moreMenu.classList.add('show');
+                 moreOverlay.classList.add('show');
+             });
+
+             moreOverlay.addEventListener('click', function () {
+                 moreMenu.classList.remove('show');
+                 moreOverlay.classList.remove('show');
+             });
+         }
+     });
+ </script>
+ @endpush

@@ -6,7 +6,7 @@
             color: var(--bs-body-color);
         }
 
-        .stat-icon-box {
+        .stat-icon-box, .quick-link-icon {
             width: 48px;
             height: 48px;
             border-radius: 12px;
@@ -19,6 +19,11 @@
 
         .goal-card {
             cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        
+        .goal-card:hover {
+            transform: translateY(-3px);
         }
 
         .progress-ring {
@@ -35,15 +40,15 @@
         }
 
         .empty-icon {
-            width: 60px;
-            height: 60px;
+            width: 70px;
+            height: 70px;
             border-radius: 50%;
             background: var(--bs-tertiary-bg);
             color: var(--bs-secondary-color);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.5rem;
+            font-size: 1.8rem;
             margin: 0 auto 1rem;
         }
 
@@ -59,36 +64,100 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            font-size: 1.5rem;
         }
 
         @media (max-width: 576px) {
             .fab-btn {
-                bottom: 80px;
-                /* Agar tidak tertabrak bottom nav mobile */
+                bottom: 80px; /* Agar tidak tertabrak bottom nav mobile */
                 right: 20px;
                 width: 50px;
                 height: 50px;
+                font-size: 1.3rem;
             }
         }
 
         .contrib-badge {
             position: absolute;
-            top: 8px;
-            right: 8px;
-            font-size: 0.65rem;
-            padding: 0.25rem 0.5rem;
+            top: 12px;
+            right: 12px;
+            font-size: 0.7rem;
+            padding: 0.3rem 0.6rem;
+            border-radius: 8px;
+        }
+
+        .action-btn-circle {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            border-radius: 50% !important;
+        }
+
+        /* SLIDER STYLES (Stat & Quick Links) */
+        .stat-slider, .quick-links-slider {
+            width: 100%;
+        }
+
+        .stat-slider-track, .quick-links-track {
+            display: flex;
+            gap: 16px;
+        }
+
+        /* MOBILE SLIDER */
+        @media (max-width: 767.98px) {
+            .stat-slider, .quick-links-slider {
+                overflow-x: auto;
+                overflow-y: hidden;
+                scroll-snap-type: x mandatory;
+                -webkit-overflow-scrolling: touch;
+                scrollbar-width: none;
+                padding-bottom: 8px; /* Mencegah card terpotot */
+            }
+
+            .stat-slider::-webkit-scrollbar, .quick-links-slider::-webkit-scrollbar {
+                display: none;
+            }
+
+            .stat-slider-track, .quick-links-track {
+                width: max-content;
+                flex-wrap: nowrap;
+            }
+
+            .stat-slide, .quick-link-item {
+                width: 85vw; /* Lebih kecil agar next card terlihat (peek) */
+                max-width: 320px;
+                flex: 0 0 85vw;
+                scroll-snap-align: start;
+            }
+        }
+
+        /* TABLET & DESKTOP GRID */
+        @media (min-width: 768px) {
+            .stat-slider-track, .quick-links-track {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+                gap: 20px;
+            }
+
+            .stat-slide, .quick-link-item {
+                min-width: 0;
+                width: 100%;
+            }
         }
     </style>
 
-    <div
-        class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4 gap-3">
+    <!-- Header Section -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4 gap-3">
         <div>
             <h4 class="mb-1">Tabungan NIKAH</h4>
             <p class="text-muted mb-0">Kelola target tabungan dan kontribusi bersama pasangan</p>
             @if($partner)
-                <div class="d-flex align-items-center gap-2 mt-2">
+                <div class="d-flex align-items-center gap-2 mt-3">
                     <figure class="avatar avatar-24 rounded-circle coverimg mb-0" style="background-image: url('{{ $partner->avatar ? asset('storage/' . $partner->avatar) : asset('assets/fav.png') }}');">
-                        <img src="{{ $partner->avatar ? asset('storage/' . $partner->avatar) : asset('assets/fav.png') }}" alt="" style="display: none;">
+                        <img src="{{ $partner->avatar ? asset('storage/' . $partner->avatar) : asset('assets/fav.png') }}" alt="Avatar" style="display: none;">
                     </figure>
                     <span class="small text-muted">Bersama <strong>{{ $partner->name }}</strong> ({{ $partner->email }})</span>
                 </div>
@@ -99,100 +168,107 @@
         </a>
     </div>
 
-    <!-- Stat Cards -->
-    <div class="row g-3 mb-4">
-        <div class="col-6 col-md-3">
-            <div class="card adminuiux-card shadow-sm h-100">
-                <div class="card-body d-flex align-items-center gap-3">
-                    <div class="stat-icon-box bg-success-subtle text-success">
-                        <i class="bi bi-pig-coin"></i>
-                    </div>
-                    <div>
-                        <div class="fw-bold fs-5">{{ number_format($totalSaved, 0, ',', '.') }}</div>
-                        <div class="text-muted small">Total Tertabung</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-6 col-md-3">
-            <div class="card adminuiux-card shadow-sm h-100">
-                <div class="card-body d-flex align-items-center gap-3">
-                    <div class="stat-icon-box bg-primary-subtle text-primary">
-                        <i class="bi bi-target"></i>
-                    </div>
-                    <div>
-                        <div class="fw-bold fs-5">{{ number_format($totalTarget, 0, ',', '.') }}</div>
-                        <div class="text-muted small">Total Target</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-6 col-md-3">
-            <div class="card adminuiux-card shadow-sm h-100">
-                <div class="card-body d-flex align-items-center gap-3">
-                    <div class="stat-icon-box bg-info-subtle text-info">
-                        <i class="bi bi-graph-up-arrow"></i>
-                    </div>
-                    <div>
-                        <div class="fw-bold fs-5">{{ $overallProgress }}%</div>
-                        <div class="text-muted small">Progres Keseluruhan</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-6 col-md-3">
-            <div class="card adminuiux-card shadow-sm h-100">
-                <div class="card-body d-flex align-items-center gap-3">
-                    <div class="stat-icon-box bg-warning-subtle text-warning">
-                        <i class="bi bi-automation"></i>
-                    </div>
-                    <div>
-                        <div class="fw-bold fs-5">
-                            {{ $nextAuto ? 'Rp ' . number_format($nextAuto['amount'], 0, ',', '.') : '-' }}
+    <!-- Stat Cards Slider -->
+    <div class="stat-slider mb-4">
+        <div class="stat-slider-track">
+
+            <div class="stat-slide">
+                <div class="card adminuiux-card shadow-sm h-100">
+                    <div class="card-body d-flex align-items-center gap-3">
+                        <div class="stat-icon-box bg-success-subtle text-success">
+                            <i class="bi bi-piggy-bank"></i>
                         </div>
-                        <div class="text-muted small">
-                            @if($nextAuto)
-                                Next: {{ \Carbon\Carbon::parse($nextAuto['date'])->format('d M Y') }}
-                            @else
-                                Tidak ada otomatis
-                            @endif
+                        <div>
+                            <div class="fw-bold fs-5">Rp {{ number_format($totalSaved, 0, ',', '.') }}</div>
+                            <div class="text-muted small">Total Tertabung</div>
                         </div>
                     </div>
                 </div>
             </div>
+
+            <div class="stat-slide">
+                <div class="card adminuiux-card shadow-sm h-100">
+                    <div class="card-body d-flex align-items-center gap-3">
+                        <div class="stat-icon-box bg-primary-subtle text-primary">
+                            <i class="bi bi-bullseye"></i>
+                        </div>
+                        <div>
+                            <div class="fw-bold fs-5">Rp {{ number_format($totalTarget, 0, ',', '.') }}</div>
+                            <div class="text-muted small">Total Target</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stat-slide">
+                <div class="card adminuiux-card shadow-sm h-100">
+                    <div class="card-body d-flex align-items-center gap-3">
+                        <div class="stat-icon-box bg-info-subtle text-info">
+                            <i class="bi bi-graph-up-arrow"></i>
+                        </div>
+                        <div>
+                            <div class="fw-bold fs-5">{{ $overallProgress }}%</div>
+                            <div class="text-muted small">Progres Keseluruhan</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stat-slide">
+                <div class="card adminuiux-card shadow-sm h-100">
+                    <div class="card-body d-flex align-items-center gap-3">
+                        <div class="stat-icon-box bg-warning-subtle text-warning">
+                            <i class="bi bi-arrow-repeat"></i>
+                        </div>
+                        <div>
+                            <div class="fw-bold fs-5">
+                                {{ $nextAuto ? 'Rp ' . number_format($nextAuto['amount'], 0, ',', '.') : '-' }}
+                            </div>
+                            <div class="text-muted small">
+                                @if($nextAuto)
+                                    Next: {{ \Carbon\Carbon::parse($nextAuto['date'])->format('d M Y') }}
+                                @else
+                                    Tidak ada otomatis
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
 
-    <!-- Goal Cards -->
-    <h5 class="fw-bold mb-3">Target Tabungan</h5>
+    <!-- Goal Cards Grid -->
+    <h5 class="fw-bold mb-3 mt-4">Target Tabungan</h5>
     <div class="row g-3 mb-4">
         @forelse($goals as $goal)
             @php $progress = $goal->progressPercent(); @endphp
             <div class="col-12 col-md-6 col-lg-4">
                 <div class="card adminuiux-card goal-card shadow-sm position-relative h-100">
                     <div class="card-body p-4">
-                        <div class="d-flex justify-content-between align-items-start mb-2">
-                            <h6 class="fw-bold mb-0">{{ $goal->name }}</h6>
-                            <span class="badge align-items-center"
-                                style="background-color: {{ $goal->colour }}; color: #fff; border: none;">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <div class="pe-4"> <!-- Padding kanan agar tidak menabrak badge -->
+                                <h6 class="fw-bold mb-0">{{ $goal->name }}</h6>
+                                @if($goal->deadline)
+                                    <small class="text-muted mt-1 d-block">
+                                        <i class="bi bi-calendar me-1"></i>{{ $goal->deadline->format('d M Y') }}
+                                        @if($goal->daysRemaining() < 0)
+                                            <span class="text-danger">(Lewat {{ abs($goal->daysRemaining()) }} hari)</span>
+                                        @endif
+                                    </small>
+                                @endif
+                            </div>
+                            <span class="badge align-items-center py-2 px-2"
+                                style="background-color: {{ $goal->colour }}; color: #fff; border: none; font-size: 0.75rem;">
                                 {{ $goal->currency == 'IDR' ? 'Rp ' : $goal->currency . ' ' }}{{ number_format($goal->target_amount, 0, ',', '.') }}
                             </span>
                         </div>
 
-                        @if($goal->deadline)
-                            <small class="text-muted mb-2 d-block">
-                                <i class="bi bi-calendar me-1"></i>Deadline: {{ $goal->deadline->format('d M Y') }}
-                                @if($goal->daysRemaining() < 0)
-                                    <span class="text-danger">(Lewat {{ abs($goal->daysRemaining()) }} hari)</span>
-                                @endif
-                            </small>
-                        @endif
-
-                        <div class="mb-3">
-                            <div class="d-flex justify-content-between align-items-center mb-1">
-                                <small class="text-muted">{{ number_format($goal->totalSaved(), 0, ',', '.') }}
-                                    terkumpul</small>
-                                <small class="fw-bold">{{ $progress }}%</small>
+                        <div class="mb-4">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <small class="text-muted">Rp {{ number_format($goal->totalSaved(), 0, ',', '.') }}</small>
+                                <small class="fw-bold" style="color: {{ $goal->colour }};">{{ $progress }}%</small>
                             </div>
                             <div class="progress-ring">
                                 <div class="fill"
@@ -203,19 +279,19 @@
                         <div class="d-flex justify-content-between align-items-center">
                             <small class="text-muted">
                                 @if($goal->dailyRequired() > 0)
-                                    Butuh Rp {{ number_format($goal->dailyRequired(), 0, ',', '.') }}/hari
+                                    Butuh <strong>Rp {{ number_format($goal->dailyRequired(), 0, ',', '.') }}</strong>/hari
                                 @else
                                     🎉 Tercapai!
                                 @endif
                             </small>
-                            <div class="d-flex gap-1">
-                                <button type="button" class="btn btn-sm btn-outline-success rounded-circle p-1"
+                            <div class="d-flex gap-2">
+                                <button type="button" class="btn btn-sm btn-outline-success action-btn-circle" 
                                     title="Tambah Setoran" data-bs-toggle="modal" data-bs-target="#contributeModal"
                                     data-goal-id="{{ $goal->id }}" data-goal-name="{{ $goal->name }}">
-                                    <i class="bi bi-plus"></i>
+                                    <i class="bi bi-plus-lg"></i>
                                 </button>
                                 <a href="{{ route('savings.goal.edit', $goal) }}"
-                                    class="btn btn-sm btn-outline-secondary rounded-circle p-1" title="Edit">
+                                    class="btn btn-sm btn-outline-secondary action-btn-circle" title="Edit">
                                     <i class="bi bi-pencil"></i>
                                 </a>
                             </div>
@@ -223,7 +299,7 @@
                     </div>
 
                     @if($contributors->count() > 1)
-                        <span class="contrib-badge bg-light text-dark border rounded">
+                        <span class="contrib-badge bg-light text-dark border">
                             <i class="bi bi-people me-1"></i>{{ $contributors->count() }} mitra
                         </span>
                     @endif
@@ -232,51 +308,69 @@
         @empty
             <div class="col-12 text-center py-5">
                 <div class="empty-icon"><i class="bi bi-pig"></i></div>
-                <p class="text-muted mb-0">Belum ada target tabungan.<br>Klik di bawah untuk membuat target pertama.</p>
+                <p class="text-muted mb-0">Belum ada target tabungan.<br>Klik tombol + untuk membuat target pertama.</p>
             </div>
         @endforelse
     </div>
 
-    <!-- Quick Links -->
-    <div class="row g-3">
-        <div class="col-md-4">
-            <a href="{{ route('savings.contribution.index') }}" class="text-decoration-none">
-                <div class="card adminuiux-card shadow-sm h-100">
-                    <div class="card-body text-center">
-                        <div class="stat-icon-box bg-primary-subtle text-primary mx-auto">
-                            <i class="bi bi-journal-text"></i>
+    <!-- Quick Links Slider -->
+    <div class="quick-links-slider mb-5">
+        <div class="quick-links-track">
+
+            <!-- Ledger -->
+            <div class="quick-link-item">
+                <a href="{{ route('savings.contribution.index') }}" class="text-decoration-none">
+                    <div class="card adminuiux-card shadow-sm h-100">
+                        <div class="card-body d-flex align-items-center gap-3 p-3">
+                            <div class="quick-link-icon bg-primary-subtle text-primary">
+                                <i class="bi bi-journal-text"></i>
+                            </div>
+                            <div class="flex-grow-1">
+                                <h6 class="fw-bold mb-1 text-body">Ledger Setoran</h6>
+                                <small class="text-muted">Riwayat semua kontribusi</small>
+                            </div>
+                            <i class="bi bi-chevron-right text-muted"></i>
                         </div>
-                        <h6 class="fw-bold mt-2 mb-0">Ledger Setoran</h6>
-                        <small class="text-muted">Riwayat semua kontribusi</small>
                     </div>
-                </div>
-            </a>
-        </div>
-        <div class="col-md-4">
-            <a href="{{ route('savings.projection') }}" class="text-decoration-none">
-                <div class="card adminuiux-card shadow-sm h-100">
-                    <div class="card-body text-center">
-                        <div class="stat-icon-box bg-info-subtle text-info mx-auto">
-                            <i class="bi bi-calculator"></i>
+                </a>
+            </div>
+
+            <!-- Proyeksi -->
+            <div class="quick-link-item">
+                <a href="{{ route('savings.projection') }}" class="text-decoration-none">
+                    <div class="card adminuiux-card shadow-sm h-100">
+                        <div class="card-body d-flex align-items-center gap-3 p-3">
+                            <div class="quick-link-icon bg-info-subtle text-info">
+                                <i class="bi bi-calculator"></i>
+                            </div>
+                            <div class="flex-grow-1">
+                                <h6 class="fw-bold mb-1 text-body">Proyeksi</h6>
+                                <small class="text-muted">Hitung tabungan harian</small>
+                            </div>
+                            <i class="bi bi-chevron-right text-muted"></i>
                         </div>
-                        <h6 class="fw-bold mt-2 mb-0">Proyeksi</h6>
-                        <small class="text-muted">Hitung tabungan harian</small>
                     </div>
-                </div>
-            </a>
-        </div>
-        <div class="col-md-4">
-            <a href="{{ route('savings.automation.index') }}" class="text-decoration-none">
-                <div class="card adminuiux-card shadow-sm h-100">
-                    <div class="card-body text-center">
-                        <div class="stat-icon-box bg-warning-subtle text-warning mx-auto">
-                            <i class="bi bi-automation"></i>
+                </a>
+            </div>
+
+            <!-- Automasi -->
+            <div class="quick-link-item">
+                <a href="{{ route('savings.automation.index') }}" class="text-decoration-none">
+                    <div class="card adminuiux-card shadow-sm h-100">
+                        <div class="card-body d-flex align-items-center gap-3 p-3">
+                            <div class="quick-link-icon bg-warning-subtle text-warning">
+                                <i class="bi bi-arrow-repeat"></i>
+                            </div>
+                            <div class="flex-grow-1">
+                                <h6 class="fw-bold mb-1 text-body">Automasi</h6>
+                                <small class="text-muted">Atur tabungan rutin</small>
+                            </div>
+                            <i class="bi bi-chevron-right text-muted"></i>
                         </div>
-                        <h6 class="fw-bold mt-2 mb-0">Automasi</h6>
-                        <small class="text-muted">Atur tabungan rutin</small>
                     </div>
-                </div>
-            </a>
+                </a>
+            </div>
+
         </div>
     </div>
 
@@ -300,7 +394,7 @@
                     </div>
                     <div class="modal-body p-4">
                         <div class="mb-3">
-                            <label for="savings_goal_id" class="form-label">Target *</label>
+                            <label for="savings_goal_id" class="form-label small fw-bold">Target Tabungan *</label>
                             <select name="savings_goal_id" id="savings_goal_id" class="form-select" required>
                                 <option value="">Pilih Target</option>
                                 @foreach($goals as $g)
@@ -309,23 +403,24 @@
                             </select>
                         </div>
                         <div class="mb-3">
-                            <label for="contributor_id" class="form-label">Dari *</label>
-                            <select name="contributor_id" id="contributor_id" class="form-select" required>
+                            <label for="savings_contributor_id" class="form-label small fw-bold">Nama Kontributor *</label>
+                            <select name="savings_contributor_id" id="savings_contributor_id" class="form-select" required>
                                 @foreach($contributors as $c)
-                                    <option value="{{ $c->id }}" {{ $c->id == $user->id ? 'selected' : '' }}>{{ $c->name }}
-                                    </option>
+                                    <option value="{{ $c->id }}" {{ $c->id == $user->id ? 'selected' : '' }}>{{ $c->name }}</option>
                                 @endforeach
                             </select>
                         </div>
                         <div class="mb-3">
-                            <label for="amount" class="form-label">Jumlah *</label>
-                            <input type="number" name="amount" id="amount" class="form-control" required min="1"
-                                step="1000" placeholder="0">
+                            <label for="amount" class="form-label small fw-bold">Jumlah Setoran *</label>
+                            <div class="input-group">
+                                <span class="input-group-text">Rp</span>
+                                <input type="number" name="amount" id="amount" class="form-control text-end" required min="1" step="1000" placeholder="0">
+                            </div>
                         </div>
-                        <div class="mb-3">
-                            <label for="method" class="form-label">Metode</label>
+                        <div class="mb-0">
+                            <label for="method" class="form-label small fw-bold">Metode Pembayaran</label>
                             <select name="method" id="method" class="form-select">
-                                <option value="transfer">Transfer</option>
+                                <option value="transfer">Transfer Bank</option>
                                 <option value="e-wallet">E-Wallet</option>
                                 <option value="cash">Tunai</option>
                             </select>

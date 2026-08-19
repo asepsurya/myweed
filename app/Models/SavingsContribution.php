@@ -13,6 +13,7 @@ class SavingsContribution extends Model
     protected $fillable = [
         'savings_goal_id',
         'invitation_id',
+        'savings_contributor_id',
         'contributor_id',
         'user_id',
         'amount',
@@ -44,6 +45,11 @@ class SavingsContribution extends Model
         return $this->belongsTo(User::class, 'contributor_id');
     }
 
+    public function savingsContributor(): BelongsTo
+    {
+        return $this->belongsTo(SavingsContributor::class);
+    }
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
@@ -59,5 +65,14 @@ class SavingsContribution extends Model
         ];
 
         return $map[$this->method] ?? $this->method;
+    }
+
+    public function getContributorNameAttribute(): string
+    {
+        if ($this->savingsContributor) {
+            return $this->savingsContributor->name;
+        }
+
+        return $this->contributor?->name ?? '-';
     }
 }

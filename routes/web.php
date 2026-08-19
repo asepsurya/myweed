@@ -21,6 +21,7 @@ use App\Http\Controllers\RsvpController;
 use App\Http\Controllers\SavingsAutomationController;
 use App\Http\Controllers\SavingsContributionController;
 use App\Http\Controllers\SavingsController;
+use App\Http\Controllers\SavingsContributorController;
 use App\Http\Controllers\SavingsGoalController;
 use App\Http\Controllers\SubscriptionPlanController;
 use App\Http\Controllers\TempelateController;
@@ -275,6 +276,15 @@ Route::middleware(['auth'])->group(function () {
         Route::put('/savings/contributions/{contribution}', [SavingsContributionController::class, 'update'])->name('savings.contribution.update');
         Route::delete('/savings/contributions/{contribution}', [SavingsContributionController::class, 'destroy'])->name('savings.contribution.destroy');
 
+        Route::post('/savings/contributors/invite', [SavingsContributorController::class, 'invite'])->name('savings.contributor.invite');
+
+        Route::get('/savings/contributors', [SavingsContributorController::class, 'index'])->name('savings.contributor.index');
+        Route::get('/savings/contributors/create', [SavingsContributorController::class, 'create'])->name('savings.contributor.create');
+        Route::post('/savings/contributors', [SavingsContributorController::class, 'store'])->name('savings.contributor.store');
+        Route::get('/savings/contributors/{contributor}/edit', [SavingsContributorController::class, 'edit'])->name('savings.contributor.edit');
+        Route::put('/savings/contributors/{contributor}', [SavingsContributorController::class, 'update'])->name('savings.contributor.update');
+        Route::delete('/savings/contributors/{contributor}', [SavingsContributorController::class, 'destroy'])->name('savings.contributor.destroy');
+
         Route::get('/savings/automation', [SavingsAutomationController::class, 'index'])->name('savings.automation.index');
         Route::post('/savings/automation', [SavingsAutomationController::class, 'updateRule'])->name('savings.automation.update');
 
@@ -284,7 +294,10 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/documentation', [DocumentationController::class, 'index'])->name('documentation.index');
     });
 
+    Route::get('/savings/contributors/accept/{token}', [SavingsContributorController::class, 'accept'])->name('savings.contributor.accept');
 });
+
+Route::post('/rsvp/{invitation}', [RsvpController::class, 'store'])->name('rsvp.store');
 
 Route::post('/rsvp/{invitation}', [RsvpController::class, 'store'])->name('rsvp.store');
 

@@ -63,11 +63,12 @@
 
             @if(auth()->user()->hasFeature('budget_management'))
             <?php 
-                // Cek apakah rute saat ini berada di dalam menu Wedding Planner
-                $isWeddingPlannerActive = request()->routeIs(['weeding-plan.index', 'budget.dashboard', 'savings.dashboard', 'financial-overview.index']);
+                $isWeddingPlannerActive = request()->routeIs(['weeding-plan.*', 'budget.*', 'savings.*', 'financial-overview.*']);
+                $isBudgetActive = request()->routeIs('budget.*');
+                $isSavingsActive = request()->routeIs('savings.*');
             ?>
             <li class="nav-item">
-                <a class="nav-link " data-bs-toggle="collapse" data-bs-target="#financeMenu"
+                <a href="{{ route('weeding-plan.index') }}" class="nav-link " data-bs-toggle="collapse" data-bs-target="#financeMenu"
                     aria-expanded="{{ $isWeddingPlannerActive ? 'true' : 'false' }}" aria-controls="financeMenu"
                     role="button">
                     <i class="menu-icon bi bi-folder me-2"></i>
@@ -76,22 +77,73 @@
                 </a>
                 <div class="collapse ps-3 {{ $isWeddingPlannerActive ? 'show' : '' }}" id="financeMenu">
                     <a href="{{ route('weeding-plan.index') }}"
-                        class="nav-link ps-4 {{ request()->routeIs('weeding-plan.index') ? 'active' : '' }}">
+                        class="nav-link ps-4 {{ request()->routeIs('weeding-plan.*') ? 'active' : '' }}">
                         <i class="menu-icon bi bi-calendar-check me-2"></i>
                         <span class="menu-name">Rencana</span>
                     </a>
-                    <a href="{{ route('budget.dashboard') }}"
-                        class="nav-link ps-4 {{ request()->routeIs('budget.dashboard') ? 'active' : '' }}">
+
+                    <a href="{{ route('budget.dashboard') }}" class="nav-link ps-4" data-bs-toggle="collapse" data-bs-target="#budgetMenu"
+                        aria-expanded="{{ $isBudgetActive ? 'true' : 'false' }}" aria-controls="budgetMenu"
+                        role="button">
                         <i class="menu-icon bi bi-calculator me-2"></i>
                         <span class="menu-name">Anggaran</span>
+                        <i class="bi bi-chevron-down ms-auto"></i>
                     </a>
-                    <a href="{{ route('savings.dashboard') }}"
-                        class="nav-link ps-4 {{ request()->routeIs('savings.dashboard') ? 'active' : '' }}">
+                    <div class="collapse ps-4 {{ $isBudgetActive ? 'show' : '' }}" id="budgetMenu">
+                        <a href="{{ route('budget.dashboard') }}"
+                            class="nav-link ps-3 {{ request()->routeIs('budget.dashboard') ? 'active' : '' }}">
+                            <span class="menu-name">Ringkasan</span>
+                        </a>
+                        <a href="{{ route('budget.category.index') }}"
+                            class="nav-link ps-3 {{ request()->routeIs('budget.category.*') ? 'active' : '' }}">
+                            <span class="menu-name">Kategori</span>
+                        </a>
+                        <a href="{{ route('budget.expense.index') }}"
+                            class="nav-link ps-3 {{ request()->routeIs('budget.expense.*') ? 'active' : '' }}">
+                            <span class="menu-name">Pengeluaran</span>
+                        </a>
+                        <a href="{{ route('budget.payment.index') }}"
+                            class="nav-link ps-3 {{ request()->routeIs('budget.payment.*') ? 'active' : '' }}">
+                            <span class="menu-name">Pembayaran</span>
+                        </a>
+                    </div>
+
+                    <a href="{{ route('savings.dashboard') }}" class="nav-link ps-4" data-bs-toggle="collapse" data-bs-target="#savingsMenu"
+                        aria-expanded="{{ $isSavingsActive ? 'true' : 'false' }}" aria-controls="savingsMenu"
+                        role="button">
                         <i class="menu-icon bi bi-piggy-bank me-2"></i>
                         <span class="menu-name">Tabungan</span>
+                        <i class="bi bi-chevron-down ms-auto"></i>
                     </a>
+                    <div class="collapse ps-4 {{ $isSavingsActive ? 'show' : '' }}" id="savingsMenu">
+                        <a href="{{ route('savings.dashboard') }}"
+                            class="nav-link ps-3 {{ request()->routeIs('savings.dashboard') ? 'active' : '' }}">
+                            <span class="menu-name">Ringkasan</span>
+                        </a>
+                        <a href="{{ route('savings.goal.index') }}"
+                            class="nav-link ps-3 {{ request()->routeIs('savings.goal.*') ? 'active' : '' }}">
+                            <span class="menu-name">Target Tabungan</span>
+                        </a>
+                        <a href="{{ route('savings.contributor.index') }}"
+                            class="nav-link ps-3 {{ request()->routeIs('savings.contributor.*') ? 'active' : '' }}">
+                            <span class="menu-name">Kontributor</span>
+                        </a>
+                        <a href="{{ route('savings.contribution.index') }}"
+                            class="nav-link ps-3 {{ request()->routeIs('savings.contribution.*') ? 'active' : '' }}">
+                            <span class="menu-name">Ledger Setoran</span>
+                        </a>
+                        <a href="{{ route('savings.projection') }}"
+                            class="nav-link ps-3 {{ request()->routeIs('savings.projection') ? 'active' : '' }}">
+                            <span class="menu-name">Proyeksi</span>
+                        </a>
+                        <a href="{{ route('savings.automation.index') }}"
+                            class="nav-link ps-3 {{ request()->routeIs('savings.automation.*') ? 'active' : '' }}">
+                            <span class="menu-name">Otomatisasi</span>
+                        </a>
+                    </div>
+
                     <a href="{{ route('financial-overview.index') }}"
-                        class="nav-link ps-4 {{ request()->routeIs('financial-overview.index') ? 'active' : '' }}">
+                        class="nav-link ps-4 {{ request()->routeIs('financial-overview.*') ? 'active' : '' }}">
                         <i class="menu-icon bi bi-bar-chart-line me-2"></i>
                         <span class="menu-name">Ikhtisar Keuangan</span>
                     </a>

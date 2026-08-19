@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Invitation;
 use App\Models\SavingsContribution;
+use App\Models\SavingsContributor;
 use App\Models\SavingsGoal;
 use App\Models\User;
 use Carbon\Carbon;
@@ -43,9 +44,11 @@ class SavingsController extends Controller
 
         $nextAuto = $this->nextAutoContribution($goals);
 
-        $contributors = User::whereIn('id', SavingsContribution::where('invitation_id', $invitationId)
-            ->pluck('contributor_id')
-            ->unique())
+        $contributors = SavingsContributor::where('invitation_id', $invitationId)
+            ->where(function ($q) {
+                $q->whereNotNull('accepted_at')
+                  ->orWhere('is_external', true);
+            })
             ->get();
 
         $invitations = $this->invitationsFor($user);

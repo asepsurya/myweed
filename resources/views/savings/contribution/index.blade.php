@@ -118,7 +118,7 @@
                     <select id="contributorFilter" class="form-select filter-pill" style="max-width: 180px;">
                         <option value="">Semua Kontributor</option>
                         @foreach($contributors as $c)
-                            <option value="{{ $c->id }}" {{ request('contributor_id') == $c->id ? 'selected' : '' }}>{{ $c->name }}</option>
+                            <option value="{{ $c->id }}" {{ request('savings_contributor_id') == $c->id ? 'selected' : '' }}>{{ $c->name }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -143,17 +143,13 @@
                         <td class="ps-4">{{ \Carbon\Carbon::parse($contribution->contributed_at)->format('d M Y') }}</td>
                         <td>{{ $contribution->goal?->name ?? '-' }}</td>
                         <td>
-                            @if($contribution->contributor)
-                                <div class="d-flex align-items-center gap-2">
-                                    <div class="avatar avatar-sm bg-primary-subtle text-primary rounded-circle"
-                                         style="width: 32px; height: 32px; font-size: 0.75rem;">
-                                        {{ strtoupper(substr($contribution->contributor->name ?? '?', 0, 1)) }}
-                                    </div>
-                                    {{ $contribution->contributor->name }}
+                            <div class="d-flex align-items-center gap-2">
+                                <div class="avatar avatar-sm bg-primary-subtle text-primary rounded-circle"
+                                     style="width: 32px; height: 32px; font-size: 0.75rem;">
+                                    {{ strtoupper(substr($contribution->contributor_name ?? '?', 0, 1)) }}
                                 </div>
-                            @else
-                                <span class="text-muted">-</span>
-                            @endif
+                                {{ $contribution->contributor_name }}
+                            </div>
                         </td>
                         <td>{{ $contribution->method_name }}</td>
                         <td class="text-end fw-bold">{{ number_format($contribution->amount, 0, ',', '.') }}</td>
@@ -215,12 +211,14 @@
                             </select>
                         </div>
                         <div class="mb-3">
-                            <label for="contributor_id" class="form-label">Dari *</label>
-                            <select name="contributor_id" id="contributor_id" class="form-select" required>
-                                @foreach($contributors as $c)
-                                    <option value="{{ $c->id }}">{{ $c->name }}</option>
+                            <label for="savings_contributor_id" class="form-label">Dari *</label>
+                            <select name="savings_contributor_id" id="savings_contributor_id" class="form-select" required>
+                                <option value="">Pilih Kontributor</option>
+                                @foreach($contributors as $contributor)
+                                    <option value="{{ $contributor->id }}">{{ $contributor->name }}</option>
                                 @endforeach
                             </select>
+                            <a href="{{ route('savings.contributor.create') }}" class="small text-primary mt-1 d-block">+ Tambah Kontributor Baru</a>
                         </div>
                         <div class="mb-3">
                             <label for="amount" class="form-label">Jumlah *</label>
@@ -272,10 +270,10 @@
                 const url = new URL(window.location.href);
                 url.searchParams.delete('search');
                 url.searchParams.delete('goal_id');
-                url.searchParams.delete('contributor_id');
+                url.searchParams.delete('savings_contributor_id');
                 if (searchInput.value) url.searchParams.set('search', searchInput.value);
                 if (goalFilter.value) url.searchParams.set('goal_id', goalFilter.value);
-                if (contributorFilter.value) url.searchParams.set('contributor_id', contributorFilter.value);
+                if (contributorFilter.value) url.searchParams.set('savings_contributor_id', contributorFilter.value);
                 window.location.href = url.toString();
             }
 
