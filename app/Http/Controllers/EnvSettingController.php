@@ -37,10 +37,6 @@ class EnvSettingController extends Controller
             'DB_USERNAME' => 'required|string',
             'DB_PASSWORD' => 'nullable|string',
 
-            // Mayar configuration
-            'MAYAR_BASE_URL' => 'required|url',
-            'MAYAR_API_KEY' => 'nullable|string',
-
             // Midtrans configuration
             'MIDTRANS_SERVER_KEY' => 'nullable|string',
             'MIDTRANS_CLIENT_KEY' => 'nullable|string',

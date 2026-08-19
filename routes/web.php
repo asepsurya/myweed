@@ -13,7 +13,6 @@ use App\Http\Controllers\EnvSettingController;
 use App\Http\Controllers\FinancialDashboardController;
 use App\Http\Controllers\GiftController;
 use App\Http\Controllers\LandingController;
-use App\Http\Controllers\MayarController;
 use App\Http\Controllers\MusicController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PromotionController;
@@ -183,9 +182,12 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/subscription-plans', [SubscriptionPlanController::class, 'index'])->name('subscribe.page');
     Route::get('/subscription-plans/{planId}', [SubscriptionPlanController::class, 'subscribe'])->name('subscribe');
     Route::post('/subscription/cancel', [SubscriptionPlanController::class, 'cancel'])->name('subscription.cancel')->middleware('auth');
+    Route::get('/payments/status', [SubscriptionPlanController::class, 'paymentStatus'])->name('payments.status');
     Route::get('/payments', [SubscriptionPlanController::class, 'paymentIndex'])->name('payments.index');
+    Route::get('/payment/invoice', [SubscriptionPlanController::class, 'invoice'])->name('payment.invoice');
+    Route::get('/payment/invoice/pdf', [SubscriptionPlanController::class, 'invoicePdf'])->name('payment.invoice.pdf');
+    Route::post('/checkout/initiate-payment', [SubscriptionPlanController::class, 'initiatePayment'])->middleware('auth')->name('checkout.initiate-payment');
     Route::post('/coupons/validate', [SubscriptionPlanController::class, 'validateCoupon'])->name('coupons.validate');
-    Route::post('/mayar/create-payment-link', [MayarController::class, 'createPaymentLink'])->middleware('auth')->name('mayar.create-payment-link');
 
     Route::middleware('role:admin')->prefix('admin/settings')->name('settings.')->group(function () {
         Route::get('/env', [EnvSettingController::class, 'index'])->name('env');
@@ -325,4 +327,3 @@ Route::get('/payment/success', [SubscriptionPlanController::class, 'success'])->
 Route::get('/payment/failed', [SubscriptionPlanController::class, 'failed'])->name('payment.failed');
 Route::get('/payment/pending', [SubscriptionPlanController::class, 'pending'])->name('payment.pending');
 
-Route::post('/mayar/webhook', [MayarController::class, 'webhook'])->name('mayar.webhook');

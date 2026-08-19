@@ -7,7 +7,7 @@ Aplikasi undangan pernikahan berbasis web yang dibangun dengan Laravel 12, dilen
 - **Framework**: Laravel 12 (PHP 8.2+)
 - **Frontend**: Blade Template, Bootstrap 5, AdminUIUX Theme
 - **Database**: MySQL
-- **Payment Gateway**: Midtrans, Mayar
+- **Payment Gateway**: Midtrans
 - **Authentication**: Laravel Breeze + Laravel Socialite (Google OAuth)
 - **Testing**: Pest PHP
 
@@ -165,35 +165,12 @@ Midtrans menggunakan **Notification URL** untuk mengirim status pembayaran secar
 1. Login ke Dashboard Midtrans
 2. Buka **Settings** > **Configuration**
 3. Pada bagian **Payment Notification**, isi URL:
-   ```
-   https://yourdomain.com/payment/notification
-   ```
+    ```
+    https://yourdomain.com/payment/notification
+    ```
 4. Atau bisa diatur di setiap transaksi Snap token
 
 **Catatan:** Midtrans mengirim POST request ke URL ini dengan parameter `signature_key` untuk verifikasi keamanan.
-
-#### 2. Mayar Webhook
-
-Mayar menggunakan webhook untuk notifikasi status pembayaran.
-
-**Route Webhook:**
-```
-POST /mayar/webhook
-```
-
-**Konfigurasi:**
-1. Login ke dashboard Mayar
-2. Buka pengaturan webhook
-3. Set URL webhook:
-   ```
-   https://yourdomain.com/mayar/webhook
-   ```
-4. Webhook ini akan menerima notifikasi untuk status pembayaran (paid, failed, expire, cancel)
-
-**Catatan Penting:**
-- Webhook route sudah dikecualikan dari CSRF verification (lihat `app/Http/Middleware/VerifyCsrfToken.php`)
-- Pastikan server production dapat menerima POST request dari eksternal
-- Webhook Mayar akan mengembalikan JSON response
 
 ## Struktur Project
 
@@ -222,7 +199,7 @@ myweed/
 - Sistem RSVP (Reservation)
 - Manajemen pengguna & admin
 - Sistem langganan (Free / Basic / Pro)
-- Pembayaran otomatis via Midtrans & Mayar
+- Pembayaran otomatis via Midtrans
 - Google OAuth Login
 - Manajemen budget pernikahan
 - Tabungan bersama

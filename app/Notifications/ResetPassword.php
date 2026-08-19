@@ -31,6 +31,8 @@ class ResetPassword extends Notification
             ->view('notifications.reset-password', [
                 'resetUrl' => $resetUrl,
                 'userName' => $notifiable->name,
+                'logoUrl' => 'https://ruangundang.my.id/assets/logo-new.png',
+                'brandName' => 'RuangUndang',
             ]);
     }
 }

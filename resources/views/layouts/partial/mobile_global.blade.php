@@ -97,7 +97,7 @@
         border-radius: 20px 20px 0 0;
         transition: bottom 0.3s ease;
         z-index: 9999;
-        box-shadow: 0 -4px 20px rgba(0,0,0,.1);
+        box-shadow: 0 -4px 20px rgba(0, 0, 0, .1);
     }
 
     .more-menu.show {
@@ -151,7 +151,7 @@
        ================================---------- */
     [data-bs-theme="dark"] .mobile-bottom-nav {
         background: rgba(28, 28, 30, .95);
-        border-top-color: rgba(255,255,255,.08);
+        border-top-color: rgba(255, 255, 255, .08);
         box-shadow: none;
     }
 
@@ -200,6 +200,7 @@
 
     /* Sembunyikan navigasi bawah full width pada layar desktop */
     @media (min-width: 768px) {
+
         .mobile-bottom-nav,
         .more-overlay,
         .more-menu {

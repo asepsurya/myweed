@@ -558,66 +558,74 @@
             background: #198754;
         }
 
-            .upload-toast.error .upload-toast-progress-bar {
-                background: #dc3545;
+        .upload-toast.error .upload-toast-progress-bar {
+            background: #dc3545;
+        }
+
+        /* Mobile responsive */
+        @media (max-width: 576px) {
+            .upload-toast-container {
+                bottom: 10px;
+                right: 10px;
+                left: 10px;
+                align-items: stretch;
             }
 
-            /* Mobile responsive */
-            @media (max-width: 576px) {
-                .upload-toast-container {
-                    bottom: 10px;
-                    right: 10px;
-                    left: 10px;
-                    align-items: stretch;
-                }
-
-                .upload-toast {
-                    min-width: auto;
-                    max-width: none;
-                    width: 100%;
-                    padding: 10px 14px;
-                }
-
-                .upload-toast-thumb {
-                    width: 40px;
-                    height: 40px;
-                }
+            .upload-toast {
+                min-width: auto;
+                max-width: none;
+                width: 100%;
+                padding: 10px 14px;
             }
 
-            /* Pixabay Category Chips */
-            .pixabay-categories {
-                gap: 8px;
+            .upload-toast-thumb {
+                width: 40px;
+                height: 40px;
             }
-            .pixabay-category-chip {
-                border-radius: 20px;
-                font-size: 0.85rem;
-                font-weight: 500;
-                padding: 6px 14px;
-                transition: all 0.2s ease;
-                border: 1px solid var(--bs-border-color);
-                background: var(--bs-body-bg);
-                color: var(--bs-body-color);
-            }
-            .pixabay-category-chip:hover {
-                border-color: var(--adminuiux-theme-1);
-                color: var(--adminuiux-theme-1);
-                background: rgba(var(--adminuiux-theme-1-rgb), 0.05);
-            }
-            .pixabay-category-chip:active {
-                background: var(--adminuiux-theme-1);
-                color: #fff;
-                border-color: var(--adminuiux-theme-1);
-            }
-        </style>
+        }
+
+        /* Pixabay Category Chips */
+        .pixabay-categories {
+            gap: 8px;
+        }
+
+        .pixabay-category-chip {
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            padding: 6px 14px;
+            transition: all 0.2s ease;
+            border: 1px solid var(--bs-border-color);
+            background: var(--bs-body-bg);
+            color: var(--bs-body-color);
+        }
+
+        .pixabay-category-chip:hover {
+            border-color: var(--adminuiux-theme-1);
+            color: var(--adminuiux-theme-1);
+            background: rgba(var(--adminuiux-theme-1-rgb), 0.05);
+        }
+
+        .pixabay-category-chip:active {
+            background: var(--adminuiux-theme-1);
+            color: #fff;
+            border-color: var(--adminuiux-theme-1);
+        }
+    </style>
 
     <div class="builder-wrapper mb-5">
         <!-- 1. SIDEBAR (KIRI) -->
         <div class="builder-sidebar shadow-sm">
             <div class="sidebar-nav-vertical no-scrollbar hide">
-               
+
                 <div class="nav-vertical-link active" data-tab="tab-2" title="Tema">
                     <i class="bi bi-palette"></i><span>Tema</span>
                 </div>
+
+                <div class="nav-vertical-link" data-tab="tab-10" title="Sampul">
+                    <i class="bi bi-image"></i><span>Sampul</span>
+                </div>
+
                 <div class="nav-vertical-link" data-tab="tab-1" title="Pria">
                     <i class="bi bi-person"></i><span>Pria</span>
                 </div>
@@ -655,10 +663,6 @@
                         <i class="bi bi-gift"></i><span>Hadiah</span>
                     </div>
                 @endif
-
-                <div class="nav-vertical-link" data-tab="tab-10" title="Sampul">
-                    <i class="bi bi-image"></i><span>Sampul</span>
-                </div>
 
                 <div class="nav-vertical-link" data-bs-toggle="modal" data-bs-target="#partnerModal" title="Pasangan">
                     <i class="bi bi-person-hearts"></i><span>Pasangan</span>
@@ -703,10 +707,10 @@
                     <button type="button" id="mobileNextBtn" class="btn btn-sm btn-builder-next">Selanjutnya</button>
                 </div>
             </div>
-        
-        
-    </div>
-    <!-- 2. CANVAS PREVIEW (KANAN) -->
+
+
+        </div>
+        <!-- 2. CANVAS PREVIEW (KANAN) -->
         <div class="builder-canvas">
             <div class="preview-device">
                 <div id="previewWindow" class="preview-window no-scrollbar">
@@ -725,7 +729,7 @@
                 <div id="previewFormInputs"></div>
             </form>
         </div>
-        </div>
+    </div>
 
     <!-- UPLOAD TOAST NOTIFICATION -->
     <div class="upload-toast-container" id="uploadToastContainer"></div>
@@ -811,10 +815,11 @@
                             </div>
                             @php $userPlan = auth()->user()->subscription?->plan; @endphp
                             @if($userPlan && !$userPlan->is_free)
-                            <div class="alert alert-info py-2 px-3 small mb-3">
-                                <i class="bi bi-info-circle me-1"></i>
-                                Pasangan akan mendapatkan akses ke paket <strong>{{ $userPlan->name }}</strong> yang sama dengan Anda selama menjadi pasangan undangan ini.
-                            </div>
+                                <div class="alert alert-info py-2 px-3 small mb-3">
+                                    <i class="bi bi-info-circle me-1"></i>
+                                    Pasangan akan mendapatkan akses ke paket <strong>{{ $userPlan->name }}</strong> yang sama
+                                    dengan Anda selama menjadi pasangan undangan ini.
+                                </div>
                             @endif
                             <button type="button" class="btn btn-primary" id="invitePartnerBtn">
                                 <i class="bi bi-send me-1"></i> Kirim Undangan
@@ -839,27 +844,34 @@
                 </div>
                 <div class="modal-body">
                     <div class="pixabay-categories mb-3 d-flex gap-2 flex-wrap">
-                        <button type="button" class="btn btn-sm btn-outline-secondary pixabay-category-chip" data-query="wedding">
+                        <button type="button" class="btn btn-sm btn-outline-secondary pixabay-category-chip"
+                            data-query="wedding">
                             <i class="bi bi-heart me-1"></i> Wedding
                         </button>
-                        <button type="button" class="btn btn-sm btn-outline-secondary pixabay-category-chip" data-query="romance couple">
+                        <button type="button" class="btn btn-sm btn-outline-secondary pixabay-category-chip"
+                            data-query="romance couple">
                             <i class="bi bi-fire me-1"></i> Romance
                         </button>
-                        <button type="button" class="btn btn-sm btn-outline-secondary pixabay-category-chip" data-query="wedding flowers">
+                        <button type="button" class="btn btn-sm btn-outline-secondary pixabay-category-chip"
+                            data-query="wedding flowers">
                             <i class="bi bi-flower1 me-1"></i> Flowers
                         </button>
-                        <button type="button" class="btn btn-sm btn-outline-secondary pixabay-category-chip" data-query="wedding decoration">
+                        <button type="button" class="btn btn-sm btn-outline-secondary pixabay-category-chip"
+                            data-query="wedding decoration">
                             <i class="bi bi-gift me-1"></i> Decoration
                         </button>
-                        <button type="button" class="btn btn-sm btn-outline-secondary pixabay-category-chip" data-query="bride groom">
+                        <button type="button" class="btn btn-sm btn-outline-secondary pixabay-category-chip"
+                            data-query="bride groom">
                             <i class="bi bi-person-hearts me-1"></i> Couple
                         </button>
-                        <button type="button" class="btn btn-sm btn-outline-secondary pixabay-category-chip" data-query="wedding dress">
+                        <button type="button" class="btn btn-sm btn-outline-secondary pixabay-category-chip"
+                            data-query="wedding dress">
                             <i class="bi bi-bag me-1"></i> Dress
                         </button>
                     </div>
                     <div class="input-group mb-3">
-                        <input type="text" id="pixabayQuery" class="form-control" placeholder="Cari foto (contoh: wedding, couple, flower)...">
+                        <input type="text" id="pixabayQuery" class="form-control"
+                            placeholder="Cari foto (contoh: wedding, couple, flower)...">
                         <button type="button" class="btn btn-builder-next" id="pixabaySearchBtn">
                             <i class="bi bi-search me-1"></i> Cari
                         </button>
@@ -1113,11 +1125,11 @@
             }
         }
 
-        window.publishInvitation = function() {
+        window.publishInvitation = function () {
             const myForm = document.getElementById('myForm');
             if (!myForm) return;
 
-            const toastId = window.showUploadToast({name: 'Menyimpan undangan...'}, 'save');
+            const toastId = window.showUploadToast({ name: 'Menyimpan undangan...' }, 'save');
 
             const formData = new FormData(myForm);
             if (!formData.has('_method')) {
@@ -1133,29 +1145,29 @@
                 },
                 body: formData
             })
-            .then(res => {
-                const contentType = res.headers.get('content-type') || '';
-                if (contentType.includes('application/json')) {
-                    return res.json().then(data => ({ ok: res.ok, data }));
-                }
-                // If server returns HTML (redirect), treat as success
-                return { ok: true, data: { success: true } };
-            })
-            .then(({ ok, data }) => {
-                if (ok && data.success) {
-                    window.hideUploadToast(toastId, true);
-                    reloadPreview();
-                } else {
+                .then(res => {
+                    const contentType = res.headers.get('content-type') || '';
+                    if (contentType.includes('application/json')) {
+                        return res.json().then(data => ({ ok: res.ok, data }));
+                    }
+                    // If server returns HTML (redirect), treat as success
+                    return { ok: true, data: { success: true } };
+                })
+                .then(({ ok, data }) => {
+                    if (ok && data.success) {
+                        window.hideUploadToast(toastId, true);
+                        reloadPreview();
+                    } else {
+                        window.hideUploadToast(toastId, false);
+                        const badge = document.getElementById('autoSaveBadge');
+                        if (badge) badge.innerHTML = '<i class="bi bi-cloud-slash me-1 text-danger"></i>Gagal publikasi';
+                    }
+                })
+                .catch(() => {
                     window.hideUploadToast(toastId, false);
                     const badge = document.getElementById('autoSaveBadge');
                     if (badge) badge.innerHTML = '<i class="bi bi-cloud-slash me-1 text-danger"></i>Gagal publikasi';
-                }
-            })
-            .catch(() => {
-                window.hideUploadToast(toastId, false);
-                const badge = document.getElementById('autoSaveBadge');
-                if (badge) badge.innerHTML = '<i class="bi bi-cloud-slash me-1 text-danger"></i>Gagal publikasi';
-            });
+                });
         };
 
         function scaleLivePreview() {

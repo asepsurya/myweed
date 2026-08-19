@@ -17,7 +17,7 @@
                 Kembali ke Dashboard
             </a>
 
-            <a href="{{ route('pricing') }}" class="btn btn-warning btn-lg">
+            <a href="{{ route('subscribe.page') }}" class="btn btn-warning btn-lg">
                 Coba Bayar Lagi
             </a>
 

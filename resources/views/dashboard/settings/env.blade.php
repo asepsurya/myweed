@@ -127,11 +127,6 @@
                             </button>
                         </li>
                         <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="mayar-tab" data-bs-toggle="pill" data-bs-target="#mayar" type="button" role="tab" aria-controls="mayar" aria-selected="false">
-                                <i class="bi bi-wallet2 me-1"></i> Gateway Mayar
-                            </button>
-                        </li>
-                        <li class="nav-item" role="presentation">
                             <button class="nav-link" id="midtrans-tab" data-bs-toggle="pill" data-bs-target="#midtrans" type="button" role="tab" aria-controls="midtrans" aria-selected="false">
                                 <i class="bi bi-credit-card me-1"></i> Gateway Midtrans
                             </button>
@@ -226,31 +221,7 @@
                             </div>
                         </div>
 
-                        <!-- TAB 2: MAYAR -->
-                        <div class="tab-pane fade" id="mayar" role="tabpanel" aria-labelledby="mayar-tab">
-                            <h5 class="section-title"><i class="bi bi-wallet2 me-1 text-primary"></i> Pengaturan Gateway Pembayaran Mayar</h5>
-                            <p class="text-muted small">Konfigurasi API Key Mayar untuk memproses invoice dan link pembayaran langganan.</p>
-                            
-                            <div class="mb-3 col-md-8">
-                                <label for="MAYAR_BASE_URL" class="form-label fw-semibold">Mayar Base URL (MAYAR_BASE_URL)</label>
-                                <input type="url" name="MAYAR_BASE_URL" id="MAYAR_BASE_URL" class="form-control" value="{{ old('MAYAR_BASE_URL', $envData['MAYAR_BASE_URL'] ?? 'https://api.mayar.id/hl/v2') }}" required>
-                                <div class="form-text">Endpoint API default: <code>https://api.mayar.id/hl/v2</code></div>
-                            </div>
 
-                            <div class="mb-3 col-md-8">
-                                <label for="MAYAR_API_KEY" class="form-label fw-semibold">Mayar API Key (MAYAR_API_KEY)</label>
-                                <div class="input-group">
-                                    <span class="input-group-text"><i class="bi bi-key-fill"></i></span>
-                                    <input type="password" name="MAYAR_API_KEY" id="MAYAR_API_KEY" class="form-control" value="{{ old('MAYAR_API_KEY', $envData['MAYAR_API_KEY'] ?? '') }}" placeholder="Masukkan API Key Mayar Anda">
-                                    <button class="btn btn-outline-secondary" type="button" onclick="togglePasswordVisibility('MAYAR_API_KEY')">
-                                        <i class="bi bi-eye" id="toggle-MAYAR_API_KEY-icon"></i>
-                                    </button>
-                                </div>
-                                <div class="form-text text-danger"><i class="bi bi-info-circle me-1"></i> API Key yang salah akan menyebabkan kegagalan pembuatan link transaksi pembayaran (Error 401).</div>
-                            </div>
-                        </div>
-
-                        <!-- TAB 3: MIDTRANS -->
                         <div class="tab-pane fade" id="midtrans" role="tabpanel" aria-labelledby="midtrans-tab">
                             <h5 class="section-title"><i class="bi bi-credit-card me-1 text-success"></i> Pengaturan Gateway Pembayaran Midtrans</h5>
                             <p class="text-muted small">Konfigurasi API Key Midtrans (sebagai alternatif pembayaran atau backup).</p>

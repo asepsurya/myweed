@@ -73,7 +73,7 @@ class SubscriptionPlanController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'slug' => 'required|string|max:255|unique:subscription_plans,slug,'.$subscriptionPlan->id,
+            'slug' => 'required|string|max:255|unique:subscription_plans,slug,' . $subscriptionPlan->id,
             'price' => 'required|integer|min:0',
             'duration' => 'required|integer|min:1',
             'invitation_limit' => 'required|integer|min:1',
@@ -102,11 +102,24 @@ class SubscriptionPlanController extends Controller
     private function buildFeatureMatrix(Request $request): array
     {
         $booleanKeys = [
-            'all_themes', 'edit_guest_name', 'rsvp_messages', 'maps_location',
-            'unlimited_recipients', 'countdown_calendar', 'gallery', 'virtual_gift',
-            'shareable', 'background_music', 'gift_accounts', 'streaming_video',
-            'auto_scroll', 'custom_music', 'love_story', 'custom_theme_color',
-            'admin_setup', 'website_builder',
+            'all_themes',
+            'edit_guest_name',
+            'rsvp_messages',
+            'maps_location',
+            'unlimited_recipients',
+            'countdown_calendar',
+            'gallery',
+            'virtual_gift',
+            'shareable',
+            'background_music',
+            'gift_accounts',
+            'streaming_video',
+            'auto_scroll',
+            'custom_music',
+            'love_story',
+            'custom_theme_color',
+            'admin_setup',
+            'website_builder',
         ];
 
         $numericKeys = ['gallery_limit'];
@@ -114,16 +127,16 @@ class SubscriptionPlanController extends Controller
         $features = [];
 
         foreach ($booleanKeys as $key) {
-            $features[$key] = $request->has('features.'.$key);
+            $features[$key] = $request->has('features.' . $key);
         }
 
         foreach ($numericKeys as $key) {
-            $value = $request->input('features.'.$key.'_value');
+            $value = $request->input('features.' . $key . '_value');
 
             if ($value !== null && $value !== '') {
                 $features[$key] = is_numeric($value) ? (int) $value : 0;
             } else {
-                $features[$key] = $request->has('features.'.$key) ? 0 : 0;
+                $features[$key] = $request->has('features.' . $key) ? 0 : 0;
             }
         }
 
@@ -141,18 +154,47 @@ class SubscriptionPlanController extends Controller
     {
         $plan = SubscriptionPlan::findOrFail($planId);
 
-        if (! $request->user()->hasVerifiedEmail()) {
+        if (!$request->user()->hasVerifiedEmail()) {
             return redirect()->route('verification.notice')
                 ->with('error', 'Silakan verifikasi email Anda sebelum melakukan langganan.');
         }
 
-        $gateway = $request->query('gateway', 'mayar');
         $couponCode = $request->query('coupon');
+
+        if ($plan->is_free) {
+            Subscription::updateOrCreate(
+                ['user_id' => auth()->id()],
+                [
+                    'subscription_plan_id' => $plan->id,
+                    'start_date' => now(),
+                    'end_date' => now()->addDays($plan->duration),
+                    'is_active' => true,
+                ]
+            );
+
+            $user = User::find(auth()->id());
+            $user->notify(new SubscriptionSuccessNotification($plan, null, 'free'));
+
+            return redirect()->back()->with('success', 'Berhasil berlangganan paket gratis!');
+        }
+
+        return view('dashboard.payment.checkout', compact('plan'));
+    }
+
+    public function initiatePayment(Request $request)
+    {
+        $request->validate([
+            'plan_id' => 'required|exists:subscription_plans,id',
+            'coupon' => 'nullable|string',
+        ]);
+
+        $plan = SubscriptionPlan::findOrFail($request->plan_id);
+        $couponCode = $request->coupon;
         $coupon = null;
         $discount = 0;
         $finalAmount = $plan->price;
 
-        if ($couponCode && ! $plan->is_free) {
+        if ($couponCode && !$plan->is_free) {
             $coupon = Coupon::where('code', strtoupper($couponCode))
                 ->where('is_active', true)
                 ->where(function ($q) {
@@ -180,7 +222,20 @@ class SubscriptionPlanController extends Controller
             }
         }
 
-        if ($plan->is_free) {
+        if ($plan->is_free || $finalAmount <= 0) {
+            $orderId = 'FREE-' . time() . '-' . auth()->id();
+
+            $payment = Payment::create([
+                'user_id' => auth()->id(),
+                'subscription_plan_id' => $plan->id,
+                'coupon_id' => $coupon ? $coupon->id : null,
+                'order_id' => $orderId,
+                'amount' => 0,
+                'status' => 'paid',
+                'payment_gateway' => 'midtrans',
+                'paid_at' => now(),
+            ]);
+
             Subscription::updateOrCreate(
                 ['user_id' => auth()->id()],
                 [
@@ -192,16 +247,19 @@ class SubscriptionPlanController extends Controller
             );
 
             $user = User::find(auth()->id());
-            $user->notify(new SubscriptionSuccessNotification($plan, null, 'free'));
+            $user->notify(new SubscriptionSuccessNotification($plan, $payment, 'paid'));
 
-            return redirect()->back()->with('success', 'Berhasil berlangganan paket gratis!');
+            return response()->json([
+                'snap_token' => null,
+                'order_id' => $orderId,
+                'final_amount' => 0,
+                'discount' => $discount,
+                'coupon_code' => $coupon ? $coupon->code : null,
+                'redirect' => route('dashboard'),
+            ]);
         }
 
-        if ($gateway === 'mayar' || ! config('midtrans.client_key')) {
-            return view('dashboard.payment.checkout', compact('plan', 'finalAmount'));
-        }
-
-        $orderId = 'SUB-'.time().'-'.auth()->id();
+        $orderId = 'SUB-' . time() . '-' . auth()->id();
 
         $payment = Payment::create([
             'user_id' => auth()->id(),
@@ -218,6 +276,7 @@ class SubscriptionPlanController extends Controller
         }
 
         try {
+            $baseUrl = rtrim(config('app.url'), '/');
             $params = [
                 'transaction_details' => [
                     'order_id' => $orderId,
@@ -227,22 +286,34 @@ class SubscriptionPlanController extends Controller
                     'first_name' => auth()->user()->name,
                     'email' => auth()->user()->email,
                 ],
-
+                'finish_redirect_url' => $baseUrl.'/api/payment/success',
+                'pending_redirect_url' => $baseUrl.'/api/payment/pending?order_id='.$orderId,
+                'error_redirect_url' => $baseUrl.'/api/payment/failed',
             ];
 
             $snapToken = Snap::getSnapToken($params);
 
-            return view('dashboard.payment.checkout', compact('snapToken', 'plan', 'finalAmount'));
+            return response()->json([
+                'snap_token' => $snapToken,
+                'order_id' => $orderId,
+                'final_amount' => $finalAmount,
+                'discount' => $discount,
+                'coupon_code' => $coupon ? $coupon->code : null,
+            ]);
         } catch (\Throwable $e) {
             Log::error('Midtrans Snap token failed', [
                 'message' => $e->getMessage(),
                 'order_id' => $orderId,
             ]);
 
-            $payment->update(['payment_gateway' => 'midtrans']);
-
-            return view('dashboard.payment.checkout', compact('plan', 'finalAmount'))
-                ->with('error', 'Konfigurasi Midtrans gagal. Silakan pilih metode pembayaran Mayar.');
+            return response()->json([
+                'snap_token' => null,
+                'order_id' => $orderId,
+                'final_amount' => $finalAmount,
+                'discount' => $discount,
+                'coupon_code' => $coupon ? $coupon->code : null,
+                'error' => 'Gagal membuat token pembayaran. Silakan coba lagi.',
+            ], 500);
         }
     }
 
@@ -266,12 +337,12 @@ class SubscriptionPlanController extends Controller
             })
             ->first();
 
-        if (! $coupon) {
+        if (!$coupon) {
             return response()->json(['valid' => false, 'message' => 'Kupon tidak valid atau sudah kadaluarsa.']);
         }
 
         if ($coupon->min_amount && $request->amount < $coupon->min_amount) {
-            return response()->json(['valid' => false, 'message' => 'Minimal pembelian untuk kupon ini adalah Rp '.number_format($coupon->min_amount, 0, ',', '.').'.']);
+            return response()->json(['valid' => false, 'message' => 'Minimal pembelian untuk kupon ini adalah Rp ' . number_format($coupon->min_amount, 0, ',', '.') . '.']);
         }
 
         if ($coupon->type === 'percentage') {
@@ -293,52 +364,86 @@ class SubscriptionPlanController extends Controller
     {
         Log::info('MIDTRANS CALLBACK HIT', $request->all());
 
-        $notification = new Notification;
+        try {
+            $notification = (new \Midtrans\Notification())->getResponse();
 
-        $orderId = $notification->order_id;
-        $status = $notification->transaction_status;
+            $orderId = $notification->order_id;
+            $status = $notification->transaction_status;
+            $paymentType = $notification->payment_type ?? null;
+            $transactionId = $notification->transaction_id ?? null;
 
-        $payment = Payment::where('order_id', $orderId)->first();
+            $payment = Payment::where('order_id', $orderId)->first();
 
-        if (! $payment) {
-            return response()->json(['message' => 'Payment not found'], 404);
-        }
-
-        if (in_array($status, ['settlement', 'capture'])) {
-
-            $plan = SubscriptionPlan::find($payment->subscription_plan_id);
-
-            if (! $plan) {
-                return response()->json(['message' => 'Plan not found'], 404);
+            if (!$payment) {
+                return response()->json(['message' => 'Payment not found'], 404);
             }
 
-            $subscription = Subscription::where('user_id', $payment->user_id)->first();
+            if (in_array($status, ['settlement', 'capture'])) {
 
-            if ($subscription && $subscription->end_date && $subscription->end_date->isFuture()) {
-                $startDate = $subscription->start_date;
-                $endDate = $subscription->end_date->addDays($plan->duration);
-            } else {
-                $startDate = now();
-                $endDate = now()->addDays($plan->duration);
+                $plan = SubscriptionPlan::find($payment->subscription_plan_id);
+
+                if (!$plan) {
+                    return response()->json(['message' => 'Plan not found'], 404);
+                }
+
+                $subscription = Subscription::where('user_id', $payment->user_id)->first();
+
+                if ($subscription && $subscription->end_date && $subscription->end_date->isFuture()) {
+                    $startDate = $subscription->start_date;
+                    $endDate = $subscription->end_date->addDays($plan->duration);
+                } else {
+                    $startDate = now();
+                    $endDate = now()->addDays($plan->duration);
+                }
+
+                Subscription::updateOrCreate(
+                    ['user_id' => $payment->user_id],
+                    [
+                        'subscription_plan_id' => $plan->id,
+                        'start_date' => $startDate,
+                        'end_date' => $endDate,
+                        'is_active' => true,
+                    ]
+                );
+
+                $payment->update([
+                    'status' => 'paid',
+                    'transaction_status' => $status,
+                    'payment_type' => $paymentType,
+                    'gateway_transaction_id' => $transactionId,
+                    'payload' => $request->all(),
+                ]);
+
+                $user = User::find($payment->user_id);
+                $user->notify(new SubscriptionSuccessNotification($plan, $payment, 'paid'));
+            } elseif (in_array($status, ['deny', 'expire', 'cancel'])) {
+                $payment->update([
+                    'status' => 'failed',
+                    'transaction_status' => $status,
+                    'payment_type' => $paymentType,
+                    'gateway_transaction_id' => $transactionId,
+                    'payload' => $request->all(),
+                ]);
+            } elseif ($status === 'pending') {
+                $payment->update([
+                    'status' => 'pending',
+                    'transaction_status' => $status,
+                    'payment_type' => $paymentType,
+                    'gateway_transaction_id' => $transactionId,
+                    'payload' => $request->all(),
+                ]);
             }
 
-            Subscription::updateOrCreate(
-                ['user_id' => $payment->user_id],
-                [
-                    'subscription_plan_id' => $plan->id,
-                    'start_date' => $startDate,
-                    'end_date' => $endDate,
-                    'is_active' => true,
-                ]
-            );
+            return response()->json(['success' => true], 200);
+        } catch (\Throwable $e) {
+            Log::error('MIDTRANS CALLBACK ERROR', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'request' => $request->all(),
+            ]);
 
-            $payment->update(['status' => 'paid']);
-
-            $user = User::find($payment->user_id);
-            $user->notify(new SubscriptionSuccessNotification($plan, $payment, 'paid'));
+            return response()->json(['message' => 'Internal Server Error', 'error' => $e->getMessage()], 500);
         }
-
-        return response()->json(['success' => true], 200);
     }
 
     public function success(Request $request)
@@ -362,11 +467,62 @@ class SubscriptionPlanController extends Controller
         return view('payment.failed');
     }
 
+    public function invoice(Request $request)
+    {
+        $orderId = $request->query('order_id');
+
+        $payment = Payment::with(['subscriptionPlan', 'coupon', 'user'])
+            ->where('order_id', $orderId)
+            ->firstOrFail();
+
+        if (!auth()->user()->hasRole('admin') && $payment->user_id !== auth()->id()) {
+            abort(403);
+        }
+
+        return view('payment.invoice', compact('payment'));
+    }
+
+    public function invoicePdf(Request $request)
+    {
+        $orderId = $request->query('order_id');
+
+        $payment = Payment::with(['subscriptionPlan', 'coupon', 'user'])
+            ->where('order_id', $orderId)
+            ->firstOrFail();
+
+        if (!auth()->user()->hasRole('admin') && $payment->user_id !== auth()->id()) {
+            abort(403);
+        }
+
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('payment.invoice', compact('payment'));
+
+        return $pdf->download('invoice-'.$payment->order_id.'.pdf');
+    }
+
+    public function paymentStatus(Request $request)
+    {
+        $query = Payment::with('subscriptionPlan');
+
+        if (!auth()->user()->hasRole('admin')) {
+            $query->where('user_id', auth()->id());
+        }
+
+        $payments = $query->latest()->get();
+
+        $paidPayments = $payments->where('status', 'paid');
+        $unpaidPayments = $payments->whereIn('status', ['pending', 'failed']);
+
+        $totalPaid = $paidPayments->sum('amount');
+        $totalUnpaid = $unpaidPayments->sum('amount');
+
+        return view('payment.status', compact('payments', 'paidPayments', 'unpaidPayments', 'totalPaid', 'totalUnpaid'));
+    }
+
     public function paymentIndex(Request $request)
     {
         $query = Payment::with('subscriptionPlan');
 
-        if (! auth()->user()->hasRole('admin')) {
+        if (!auth()->user()->hasRole('admin')) {
             $query->where('user_id', auth()->id());
         }
 
@@ -458,7 +614,7 @@ class SubscriptionPlanController extends Controller
         $user = $request->user();
         $subscription = $user->subscription;
 
-        if (! $subscription || ! $subscription->end_date || ! $subscription->end_date->isFuture()) {
+        if (!$subscription || !$subscription->end_date || !$subscription->end_date->isFuture()) {
             return redirect()->route('subscribe.page')->with('error', 'Tidak ada langganan aktif yang dapat dibatalkan.');
         }
 
