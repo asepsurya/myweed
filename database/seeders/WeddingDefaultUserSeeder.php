@@ -42,6 +42,9 @@ class WeddingDefaultUserSeeder extends Seeder
             $guest->assignRole($guestRole);
         }
 
-        $admin->givePermissionTo(Permission::all());
+        $admin = User::where('email', 'admin@wedding.com')->first();
+        if ($admin) {
+            $admin->givePermissionTo(Permission::all());
+        }
     }
 }
