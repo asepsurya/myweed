@@ -31,6 +31,7 @@ use App\Http\Controllers\VendorPaymentController;
 use App\Http\Controllers\WeddingController;
 use App\Http\Controllers\WeedingPlanController;
 use App\Http\Controllers\TemplateTypeController;
+use App\Http\Controllers\SitemapController;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 
@@ -58,7 +59,7 @@ Route::middleware('auth')->group(function () {
 
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
 
 Route::get('/templates/{slug}/{id}', [TempelateController::class, 'preview'])->name('template.preview');
 Route::get('/demo/{slug}', [TempelateController::class, 'demo'])->name('template.demo');
@@ -149,9 +150,9 @@ Route::middleware(['auth'])->group(function () {
         }
 
         $basePath = resource_path("views/templates/$slug");
-        $filePath = realpath($basePath.'/'.ltrim($path, '/'));
+        $filePath = realpath($basePath . '/' . ltrim($path, '/'));
 
-        if (! $filePath || strpos($filePath, realpath($basePath)) !== 0 || ! File::exists($filePath)) {
+        if (!$filePath || strpos($filePath, realpath($basePath)) !== 0 || !File::exists($filePath)) {
             abort(404);
         }
 
@@ -326,4 +327,6 @@ Route::get('/{slug}', [WeddingController::class, 'show'])->where('slug', '[A-Za-
 Route::get('/payment/success', [SubscriptionPlanController::class, 'success'])->name('payment.success');
 Route::get('/payment/failed', [SubscriptionPlanController::class, 'failed'])->name('payment.failed');
 Route::get('/payment/pending', [SubscriptionPlanController::class, 'pending'])->name('payment.pending');
+
+Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
 
