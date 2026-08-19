@@ -111,7 +111,7 @@
                         <div class="row gx-0 d-inline-flex">
                             <div class="col-auto align-self-center">
                                 <figure class="avatar avatar-28 rounded-circle">
-                                    <img src="{{ auth()->user()->avatar ? asset('storage/' . auth()->user()->avatar) : asset('tempelate/user_default.jpg') }}"
+                                    <img src="{{ auth()->user()->avatar ? (filter_var(auth()->user()->avatar, FILTER_VALIDATE_URL) ? auth()->user()->avatar : asset('storage/' . auth()->user()->avatar)) : asset('tempelate/user_default.jpg') }}"
                                         alt="User Avatar" id="userphotoonboarding2" class="rounded-circle"
                                         referrerpolicy="no-referrer"
                                         onerror="this.onerror=null;this.src='{{ asset('tempelate/user_default.jpg') }}';">
@@ -126,7 +126,7 @@
                         <div class="bg-theme-1-space rounded-top py-3 px-3 mb-2 dropdown-dontclose">
                             <div class="d-flex align-items-center gap-3">
                                 <figure class="avatar avatar-50 rounded-circle mb-0">
-                                    <img src="{{ auth()->user()->avatar ? asset('storage/' . auth()->user()->avatar) : asset('tempelate/user_default.jpg') }}"
+                                    <img src="{{ auth()->user()->avatar ? (filter_var(auth()->user()->avatar, FILTER_VALIDATE_URL) ? auth()->user()->avatar : asset('storage/' . auth()->user()->avatar)) : asset('tempelate/user_default.jpg') }}"
                                         class="rounded-circle w-100 h-100 object-fit-cover" alt="User Avatar">
                                 </figure>
                                 <div class="flex-grow-1 overflow-hidden">

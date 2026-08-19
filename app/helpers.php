@@ -145,6 +145,10 @@ if (! function_exists('storage_file_exists')) {
             return false;
         }
 
+        if (filter_var($path, FILTER_VALIDATE_URL)) {
+            return true;
+        }
+
         $disk = config('image.disk', 'public');
 
         if ($disk === 'r2') {

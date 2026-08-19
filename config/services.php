@@ -40,5 +40,8 @@ return [
         'redirect' => env('GOOGLE_REDIRECT_URI'),
     ],
 
+    'pixabay' => [
+        'key' => env('PIXABAY_API_KEY'),
+    ],
 
 ];
