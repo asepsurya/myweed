@@ -1879,11 +1879,17 @@
                 </div>
                 <div class="col-6 col-lg-2 reveal" style="transition-delay: 0.3s;">
                     <h5 class="footer-heading">Informasi</h5>
+
                     <ul class="footer-links">
                         <li><a href="{{ route('pages.cara-pemesanan') }}">Cara Pemesanan</a></li>
                         <li><a href="{{ route('pages.faq') }}">Pertanyaan (FAQ)</a></li>
                         <li><a href="{{ route('pages.syarat-ketentuan') }}">Syarat & Ketentuan</a></li>
                         <li><a href="{{ route('pages.kebijakan-privasi') }}">Kebijakan Privasi</a></li>
+                        <li><a href="https://www.freewebsubmission.com">
+                                <img src="https://www.freewebsubmission.com/images/fwsbutton10.gif" width="88"
+                                    height="31" border="0"
+                                    alt="Submit Your Site To The Web's Top 50 Search Engines for Free!"></a>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -1969,7 +1975,7 @@
             const nextBtn = weddingWrapper.querySelector('.wedding-slider-next');
             const dotsContainer = weddingWrapper.querySelector('.wedding-slider-dots');
             const items = weddingSlider.querySelectorAll('.wedding-item');
-            
+
             let currentIndex = 0;
             let itemsPerView = 3;
             let autoScrollInterval;
