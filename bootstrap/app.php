@@ -31,6 +31,7 @@ return Application::configure(basePath: dirname(__DIR__))
         });
 
     })->withMiddleware(function (Middleware $middleware): void {
+        $middleware->trustProxies(at: '*');
         $middleware->prependToGroup('guest', RedirectByRole::class);
         $middleware->alias([
             'role' => RoleMiddleware::class,
