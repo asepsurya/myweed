@@ -1339,18 +1339,20 @@
         const contentTemplate = document.getElementById('content-template');
         const contentMusic = document.getElementById('content-music');
 
-        tabTemplate.onclick = () => {
-            tabTemplate.classList.replace('btn-outline-secondary', 'btn-primary');
-            tabMusic.classList.replace('btn-primary', 'btn-outline-secondary');
-            contentTemplate.classList.remove('d-none');
-            contentMusic.classList.add('d-none');
-        };
-        tabMusic.onclick = () => {
-            tabMusic.classList.replace('btn-outline-secondary', 'btn-primary');
-            tabTemplate.classList.replace('btn-primary', 'btn-outline-secondary');
-            contentMusic.classList.remove('d-none');
-            contentTemplate.classList.add('d-none');
-        };
+        if (tabTemplate && tabMusic && contentTemplate && contentMusic) {
+            tabTemplate.onclick = () => {
+                tabTemplate.classList.replace('btn-outline-secondary', 'btn-primary');
+                tabMusic.classList.replace('btn-primary', 'btn-outline-secondary');
+                contentTemplate.classList.remove('d-none');
+                contentMusic.classList.add('d-none');
+            };
+            tabMusic.onclick = () => {
+                tabMusic.classList.replace('btn-outline-secondary', 'btn-primary');
+                tabTemplate.classList.replace('btn-primary', 'btn-outline-secondary');
+                contentMusic.classList.remove('d-none');
+                contentTemplate.classList.add('d-none');
+            };
+        }
 
         /* ── Delete Template ── */
         function confirmDelete(id) {
