@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Middleware\CheckSubscription;
+use App\Http\Middleware\ForceHttpsInProduction;
 use App\Http\Middleware\MidtransConfig;
 use App\Http\Middleware\RedirectByRole;
 use Illuminate\Foundation\Application;
@@ -39,6 +40,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'midtrans' => MidtransConfig::class,
         ]);
         $middleware->append(MidtransConfig::class);
+        $middleware->append(ForceHttpsInProduction::class);
         $middleware->validateCsrfTokens(except: [
             'api/midtrans/callback',
         ]);
