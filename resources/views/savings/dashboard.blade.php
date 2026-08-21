@@ -156,8 +156,8 @@
             <p class="text-muted mb-0">Kelola target tabungan dan kontribusi bersama pasangan</p>
             @if($partner)
                 <div class="d-flex align-items-center gap-2 mt-3">
-                    <figure class="avatar avatar-24 rounded-circle coverimg mb-0" style="background-image: url('{{ $partner->avatar ? asset('storage/' . $partner->avatar) : asset('assets/fav.png') }}');">
-                        <img src="{{ $partner->avatar ? asset('storage/' . $partner->avatar) : asset('assets/fav.png') }}" alt="Avatar" style="display: none;">
+                    <figure class="avatar avatar-24 rounded-circle coverimg mb-0" style="background-image: url('{{ $partner->avatar ? asset('storage/' . $partner->avatar) : asset('assets/fav-icon.png') }}');">
+                        <img src="{{ $partner->avatar ? asset('storage/' . $partner->avatar) : asset('assets/fav-icon.png') }}" alt="Avatar" style="display: none;">
                     </figure>
                     <span class="small text-muted">Bersama <strong>{{ $partner->name }}</strong> ({{ $partner->email }})</span>
                 </div>

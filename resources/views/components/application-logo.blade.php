@@ -1,1 +1,2 @@
-<img src="{{ asset('assets/fav.png') }}" {{ $attributes->merge(['alt' => 'RuangUndang']) }}>
+<img src="{{ asset('assets/fav-icon.png') }}" {{ $attributes->merge(['alt' => 'RuangUndang']) }}>
+

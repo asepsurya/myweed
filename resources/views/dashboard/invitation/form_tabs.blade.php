@@ -401,7 +401,7 @@
                     <div id="previewContainerGroom"
                         class="mt-3 {{ ($inv && $inv->foto_pria) ? '' : 'd-none' }} text-center position-relative">
                         <img id="previewGroom"
-                            src="{{ ($inv && $inv->foto_pria) ? storage_url_with_fallback($inv->foto_pria, asset('assets/fav.png'), ($inv->updated_at ?? now())->timestamp) : '' }}"
+                            src="{{ ($inv && $inv->foto_pria) ? storage_url_with_fallback($inv->foto_pria, asset('assets/fav-icon.png'), ($inv->updated_at ?? now())->timestamp) : '' }}"
                             class="img-fluid rounded border shadow-sm" style="max-height: 200px; object-fit: cover;">
                         <button type="button" onclick="removePreview('groom')"
                             class="btn btn-danger btn-sm position-absolute top-0 end-0 m-2"><i
@@ -981,7 +981,7 @@
                     <div id="previewContainerBride"
                         class="mt-3 {{ ($inv && $inv->foto_wanita) ? '' : 'd-none' }} text-center position-relative">
                         <img id="previewBride"
-                            src="{{ ($inv && $inv->foto_wanita) ? storage_url_with_fallback($inv->foto_wanita, asset('assets/fav.png'), ($inv->updated_at ?? now())->timestamp) : '' }}"
+                            src="{{ ($inv && $inv->foto_wanita) ? storage_url_with_fallback($inv->foto_wanita, asset('assets/fav-icon.png'), ($inv->updated_at ?? now())->timestamp) : '' }}"
                             class="img-fluid rounded border shadow-sm" style="max-height: 200px; object-fit: cover;">
                         <button type="button" onclick="removePreview('bride')"
                             class="btn btn-danger btn-sm position-absolute top-0 end-0 m-2"><i
@@ -1207,7 +1207,7 @@
                 <div id="previewContainerCover"
                     class="mt-3 {{ ($inv && $inv->gallery_cover) ? '' : 'd-none' }} text-center position-relative">
                     <img id="previewCover"
-                        src="{{ ($inv && $inv->gallery_cover) ? storage_url_with_fallback($inv->gallery_cover, asset('assets/fav.png'), ($inv->updated_at ?? now())->timestamp) : '' }}"
+                        src="{{ ($inv && $inv->gallery_cover) ? storage_url_with_fallback($inv->gallery_cover, asset('assets/fav-icon.png'), ($inv->updated_at ?? now())->timestamp) : '' }}"
                         class="img-fluid rounded border shadow-sm w-100" style="max-height: 250px; object-fit: cover;">
                     <button type="button" onclick="removePreview('cover')"
                         class="btn btn-danger btn-sm position-absolute top-0 end-0 m-2"><i class="bi bi-x"></i></button>

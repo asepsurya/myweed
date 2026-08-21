@@ -28,7 +28,7 @@
          data-bs-delay="2500">
 
         <div class="toast-header">
-            <img src="{{ asset('assets/fav.png') }}" class="rounded me-2" width="20">
+            <img src="{{ asset('assets/fav-icon.png') }}" class="rounded me-2" width="20">
             <strong class="me-auto">RuangUndang</strong>
             <small>now</small>
             <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
@@ -43,4 +43,5 @@
 
 </div>
 @endif
+
 

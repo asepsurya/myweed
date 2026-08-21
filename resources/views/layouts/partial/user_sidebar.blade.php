@@ -16,7 +16,7 @@
             </div>
             <div class="text-center collapse" id="usersidebarprofile">
                 <figure class="avatar avatar-100 rounded-circle coverimg my-3">
-                    <img src="{{ asset('assets/fav.png') }}" alt="Logo RuangUndang.id">
+                    <img src="{{ asset('assets/fav-icon.png') }}" alt="Logo RuangUndang.id">
                 </figure>
                 <h5 class="mb-1 fw-medium">RuangUndang.id</h5>
                 <p class="small text-muted">Make your moment unforgettable</p>

@@ -9,7 +9,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title id="dynamicTitle">{{ config('app.name', 'RuangUndang') }} — Dashboard</title>
-    <link rel="icon" type="image/png" href="{{ asset('assets/fav.png') }}">
+    <link rel="icon" type="image/png" href="{{ asset('assets/fav-icon.png') }}">
 
     <!-- Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
