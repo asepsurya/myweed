@@ -294,6 +294,25 @@ if (! function_exists('template_thumbnail_url')) {
     }
 }
 
+if (! function_exists('template_asset_url')) {
+    function template_asset_url(string $slug, string $path, $version = null): string
+    {
+        $publicUrl = rtrim(config('filesystems.disks.r2.public_url', ''), '/');
+
+        if ($publicUrl) {
+            $url = $publicUrl.'/templates/'.$slug.'/'.ltrim($path, '/');
+
+            if ($version !== null) {
+                $url .= '?v='.$version;
+            }
+
+            return $url;
+        }
+
+        return url('template-assets/'.$slug.'/'.$path);
+    }
+}
+
 if (! function_exists('template_supports_custom_color')) {
     function template_supports_custom_color(?Template $template): bool
     {

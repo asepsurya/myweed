@@ -545,6 +545,10 @@ class TempelateController extends Controller
             if (! $template) {
                 $thumb = $this->syncThumbnailFromR2($r2, $slug);
 
+                if (! $thumb) {
+                    $thumb = $this->generatePlaceholderImage($slug, 'templates');
+                }
+
                 $data = [
                     'name' => Str::title(str_replace('-', ' ', $slug)),
                     'slug' => $slug,
