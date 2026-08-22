@@ -637,6 +637,11 @@
     {{-- Mobile Bottom Nav --}}
     @include('layouts.partial.mobile_global')
 
+    {{-- AI Chat Widget --}}
+    @include('components.ai-chat')
+
+ 
+
     {{-- Page-level scripts (loaded by child views) --}}
     @stack('scripts')
 

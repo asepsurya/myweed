@@ -115,7 +115,7 @@
                         return;
                     }
                     const script = document.createElement('script');
-                    script.src = 'https://app.sandbox.midtrans.com/snap/snap.js';
+                    script.src = '{{ config("midtrans.is_production") ? "https://app.midtrans.com/snap/snap.js" : "https://app.sandbox.midtrans.com/snap/snap.js" }}';
                     script.setAttribute('data-client-key', '{{ config('midtrans.client_key') }}');
                     script.onload = resolve;
                     script.onerror = reject;
@@ -210,14 +210,15 @@
 
                     snap.pay(currentSnapToken, {
                         onSuccess: function (result) {
-                            window.location.href = "{{ config('app.url') }}/api/payment/success";
+                            window.location.href = "{{ config('app.url') }}/api/payment/success?order_id=" + result.order_id;
                         },
                         onPending: function (result) {
                             window.location.href =
                                 "{{ config('app.url') }}/api/payment/pending?order_id=" + result.order_id;
                         },
-                        onError: function () {
-                            window.location.href = "{{ config('app.url') }}/api/payment/failed";
+                        onError: function (result) {
+                            window.location.href =
+                                "{{ config('app.url') }}/api/payment/failed?order_id=" + (result.order_id || '');
                         },
                         onClose: function () {
                             console.log('Popup ditutup');

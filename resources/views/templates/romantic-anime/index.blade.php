@@ -917,6 +917,8 @@
             window.addEventListener('resize', adjustCharacterHeight);
         };
     </script>
+
 </body>
 
 </html>
+

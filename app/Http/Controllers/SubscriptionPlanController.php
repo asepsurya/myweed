@@ -286,9 +286,9 @@ class SubscriptionPlanController extends Controller
                     'first_name' => auth()->user()->name,
                     'email' => auth()->user()->email,
                 ],
-                'finish_redirect_url' => $baseUrl.'/api/payment/success',
+                'finish_redirect_url' => $baseUrl.'/api/payment/success?order_id='.$orderId,
                 'pending_redirect_url' => $baseUrl.'/api/payment/pending?order_id='.$orderId,
-                'error_redirect_url' => $baseUrl.'/api/payment/failed',
+                'error_redirect_url' => $baseUrl.'/api/payment/failed?order_id='.$orderId,
             ];
 
             $snapToken = Snap::getSnapToken($params);
@@ -448,7 +448,7 @@ class SubscriptionPlanController extends Controller
 
     public function success(Request $request)
     {
-        $orderId = $request->get('order_id');
+        $orderId = $request->query('order_id');
 
         $payment = Payment::with('subscriptionPlan')
             ->where('order_id', $orderId)
@@ -457,14 +457,26 @@ class SubscriptionPlanController extends Controller
         return view('payment.success', compact('payment'));
     }
 
-    public function pending()
+    public function pending(Request $request)
     {
-        return view('payment.pending');
+        $orderId = $request->query('order_id');
+
+        $payment = Payment::with('subscriptionPlan')
+            ->where('order_id', $orderId)
+            ->first();
+
+        return view('payment.pending', compact('payment'));
     }
 
-    public function failed()
+    public function failed(Request $request)
     {
-        return view('payment.failed');
+        $orderId = $request->query('order_id');
+
+        $payment = Payment::with('subscriptionPlan')
+            ->where('order_id', $orderId)
+            ->first();
+
+        return view('payment.failed', compact('payment'));
     }
 
     public function invoice(Request $request)

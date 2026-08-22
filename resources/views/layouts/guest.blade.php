@@ -26,6 +26,11 @@
                 {{ $slot }}
             </div>
         </div>
+
+        @include('components.ai-chat')
+        @include('components.wa-chat', ['mobileBottom' => 24])
+
+        @stack('scripts')
     </body>
 </html>
 
