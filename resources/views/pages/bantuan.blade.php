@@ -667,7 +667,7 @@
                         <div class="help-icon"><i class="bi bi-whatsapp"></i></div>
                         <h4>WhatsApp</h4>
                         <p>Chat langsung dengan tim support. Respon cepat untuk pertanyaan teknis dan non-teknis.</p>
-                        <a href="#">+62 812-3456-7890</a>
+                        <a href="#">+62 859-2343-1716</a>
                     </div>
                 </div>
                 <div class="col-lg-4 col-md-6 reveal" style="transition-delay: 0.2s;">
@@ -675,7 +675,7 @@
                         <div class="help-icon"><i class="bi bi-envelope"></i></div>
                         <h4>Email</h4>
                         <p>Kirim pertanyaan detail dan kami akan merespons dalam waktu kurang dari 1 jam.</p>
-                        <a href="#">support@ruangundang.id</a>
+                        <a href="#">official@ruangundang.id</a>
                     </div>
                 </div>
                 <div class="col-lg-4 col-md-6 reveal" style="transition-delay: 0.3s;">
@@ -698,7 +698,9 @@
                     <a href="#" class="footer-logo">
                         <img src="{{ asset('assets/logo-new.png') }}" alt="Logo RuangUndang">
                     </a>
-                    <p class="text-secondary small" style="max-width: 350px;">Saat ini kami menyediakan undangan digital untuk pernikahan. Untuk khitanan, aqiqah, dan momen spesial lainnya akan segera hadir. Praktis, elegan, dan hemat biaya.</p>
+                    <p class="text-secondary small" style="max-width: 350px;">Saat ini kami menyediakan undangan digital
+                        untuk pernikahan. Untuk khitanan, aqiqah, dan momen spesial lainnya akan segera hadir. Praktis,
+                        elegan, dan hemat biaya.</p>
                     <div class="footer-social">
                         <a href="#" class="social-btn"><i class="bi bi-instagram"></i></a>
                         <a href="#" class="social-btn"><i class="bi bi-facebook"></i></a>
@@ -735,7 +737,8 @@
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>&copy; 2024 RuangUndang Digital Invitation. Dibuat dengan <i class="bi bi-heart-fill text-danger"></i>
+                <p>&copy; 2024 RuangUndang Digital Invitation. Dibuat dengan <i
+                        class="bi bi-heart-fill text-danger"></i>
                     di Indonesia.</p>
             </div>
         </div>
