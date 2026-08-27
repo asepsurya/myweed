@@ -13,7 +13,7 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap"
         rel="stylesheet">
-<link rel="icon" type="image/png" href="{{ asset('assets/fav-icon.png') }}">
+    <link rel="icon" type="image/png" href="{{ asset('assets/fav-icon.png') }}">
     <!-- Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 
@@ -1219,7 +1219,7 @@
     <!-- Hero Section -->
     <section class="hero-section">
         <video class="hero-video" autoplay muted loop playsinline>
-            <source src="{{ asset('assets/Newlyweds_standing_for_wedding_v…_202608082347.mp4') }}" type="video/mp4">
+            <source src="{{ asset('assets/189858-886618183_medium.mp4') }}" type="video/mp4">
         </video>
         <div class="hero-overlay"></div>
         <div class="hero-shape shape-1"></div>
@@ -2041,14 +2041,14 @@
     </style>
 
     <script>
-    @if($promotions->isNotEmpty())
-        document.addEventListener('DOMContentLoaded', function () {
-            setTimeout(function () {
-                const promoModal = new bootstrap.Modal(document.getElementById('promoModal'));
-                promoModal.show();
-            }, 1500);
-        });
-    @endif
+        @if($promotions->isNotEmpty())
+            document.addEventListener('DOMContentLoaded', function () {
+                setTimeout(function () {
+                    const promoModal = new bootstrap.Modal(document.getElementById('promoModal'));
+                    promoModal.show();
+                }, 1500);
+            });
+        @endif
     </script>
 </body>
 

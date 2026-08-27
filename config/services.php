@@ -46,7 +46,7 @@ return [
 
     'fonnte' => [
         'api_key' => env('FONTE_API_KEY'),
-        'api_url' => env('FONTE_API_URL', 'https://api.fonnte.com/send-message'),
+        'api_url' => env('FONTE_API_URL', 'https://api.fonnte.com/send'),
     ],
 
     'admin_whatsapp' => env('ADMIN_WHATSAPP', '087731402487'),
