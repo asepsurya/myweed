@@ -1300,7 +1300,8 @@
 
                 <div class="wedding-slider reveal">
                     @foreach($invitations as $invitation)
-                        <a href="{{ route('invitation.detail', ['slug' => $invitation->slug]) }}" class="wedding-item">
+                        <a href="{{ route('template.frame', ['slug' => $invitation->slug, 'id' => $invitation->template_id]) }}"
+                            class="wedding-item">
                             <div class="couple-avatar-group">
                                 <img src="{{ $invitation->foto_pria ? storage_url_with_fallback($invitation->foto_pria, 'https://ui-avatars.com/api/?name=' . urlencode($invitation->groom_name) . '&background=E8D5A3&color=fff', $invitation->updated_at->timestamp) : 'https://ui-avatars.com/api/?name=' . urlencode($invitation->groom_name) . '&background=E8D5A3&color=fff' }}"
                                     class="couple-avatar avatar-1" alt="Foto Mempelai Pria">
