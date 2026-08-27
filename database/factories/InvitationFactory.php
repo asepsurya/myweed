@@ -18,7 +18,7 @@ class InvitationFactory extends Factory
             'template_id' => null,
             'slug' => 'wedding-'.Str::random(8),
             'is_default' => false,
-            'status' => 'active',
+            'status' => 'published',
             'primary_color' => '#0d9488',
             'groom_name' => fake()->name('male'),
             'bride_name' => fake()->name('female'),

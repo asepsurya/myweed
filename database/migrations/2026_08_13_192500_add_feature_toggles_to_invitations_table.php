@@ -15,8 +15,10 @@ return new class extends Migration
             $table->boolean('enable_love_story')->default(true)->after('enable_video');
         });
 
-        \Illuminate\Support\Facades\DB::statement('ALTER TABLE invitations MODIFY COLUMN enable_gift BOOLEAN DEFAULT TRUE');
-        \Illuminate\Support\Facades\DB::statement('ALTER TABLE invitations MODIFY COLUMN enable_rsvp BOOLEAN DEFAULT TRUE');
+        if (Schema::getConnection()->getDriverName() === 'mysql') {
+            \Illuminate\Support\Facades\DB::statement('ALTER TABLE invitations MODIFY COLUMN enable_gift BOOLEAN DEFAULT TRUE');
+            \Illuminate\Support\Facades\DB::statement('ALTER TABLE invitations MODIFY COLUMN enable_rsvp BOOLEAN DEFAULT TRUE');
+        }
     }
 
     public function down(): void
@@ -25,7 +27,9 @@ return new class extends Migration
             $table->dropColumn(['enable_gallery', 'enable_music', 'enable_video', 'enable_love_story']);
         });
 
-        \Illuminate\Support\Facades\DB::statement('ALTER TABLE invitations MODIFY COLUMN enable_gift VARCHAR NULL');
-        \Illuminate\Support\Facades\DB::statement('ALTER TABLE invitations MODIFY COLUMN enable_rsvp BOOLEAN DEFAULT FALSE');
+        if (Schema::getConnection()->getDriverName() === 'mysql') {
+            \Illuminate\Support\Facades\DB::statement('ALTER TABLE invitations MODIFY COLUMN enable_gift VARCHAR NULL');
+            \Illuminate\Support\Facades\DB::statement('ALTER TABLE invitations MODIFY COLUMN enable_rsvp BOOLEAN DEFAULT FALSE');
+        }
     }
 };

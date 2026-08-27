@@ -764,7 +764,7 @@ class UserInvitationController extends Controller
             $updateData = [
                 'template_id' => $request->template_id,
                 'theme_type' => $request->theme_type,
-                'status' => 'published',
+                'status' => $request->input('status', 'published'),
                 'primary_color' => $request->primary_color,
                 'slug' => $slug,
 
@@ -1865,5 +1865,34 @@ class UserInvitationController extends Controller
                 'message' => 'Gagal mengimpor gambar: '.$e->getMessage(),
             ], 500);
         }
+    }
+
+    public function restore(Request $request, Invitation $invitation)
+    {
+        $user = $request->user();
+
+        abort_if(! $user->canAccessInvitation($invitation), 403);
+        abort_if(! $invitation->canBeRestored(), 403);
+
+        $invitation->restore();
+
+        return redirect()->back()->with('success', 'Undangan berhasil dipulihkan. 🎉');
+    }
+
+    public function forceDestroy(Request $request, Invitation $invitation)
+    {
+        $user = $request->user();
+
+        abort_if(! $user->isAdmin(), 403);
+        abort_if($invitation->is_default, 403);
+
+        $invitation->update([
+            'status' => Invitation::STATUS_TRASH,
+            'retention_until' => now(),
+        ]);
+
+        \App\Jobs\PermanentDeleteInvitationJob::dispatch($invitation->id);
+
+        return redirect()->back()->with('success', 'Undangan telah dijadwalkan untuk penghapusan permanen.');
     }
 }

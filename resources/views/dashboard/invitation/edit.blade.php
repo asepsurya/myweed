@@ -64,6 +64,8 @@
             justify-content: space-between;
             align-items: center;
             background: var(--bs-card-bg);
+            position: relative;
+            z-index: 1040;
         }
 
         .sidebar-nav-vertical {
@@ -122,6 +124,18 @@
         .btn-builder-next {
             background-color: var(--adminuiux-theme-1);
             border-color: var(--adminuiux-theme-1);
+            color: #fff;
+        }
+
+        .sidebar-header .btn-builder-next {
+            background-color: #c6a962;
+            border-color: #c6a962;
+            color: #fff;
+        }
+
+        .sidebar-header .btn-builder-next:hover {
+            background-color: #b09550;
+            border-color: #b09550;
             color: #fff;
         }
 
@@ -684,7 +698,7 @@
                         </div>
                     </div>
                     <button type="button" class="btn btn-sm px-3 text-white rounded-pill btn-builder-next"
-                        onclick="window.publishInvitation(); return false;">
+                        onclick="window.publishInvitation();">
                         <i class="bi bi-send-fill me-1"></i> Publikasikan
                     </button>
                 </div>
@@ -1135,6 +1149,7 @@
             if (!formData.has('_method')) {
                 formData.append('_method', 'PUT');
             }
+            formData.set('status', 'published');
 
             fetch("{{ route('invitation.update', $invitation) }}", {
                 method: 'POST',
@@ -1150,7 +1165,6 @@
                     if (contentType.includes('application/json')) {
                         return res.json().then(data => ({ ok: res.ok, data }));
                     }
-                    // If server returns HTML (redirect), treat as success
                     return { ok: true, data: { success: true } };
                 })
                 .then(({ ok, data }) => {

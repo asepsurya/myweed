@@ -127,6 +127,13 @@ return [
             'path' => storage_path('logs/laravel.log'),
         ],
 
+        'deletion' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/deletion.log'),
+            'level' => env('LOG_LEVEL', 'info'),
+            'replace_placeholders' => true,
+        ],
+
     ],
 
 ];

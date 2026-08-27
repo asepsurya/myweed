@@ -12,9 +12,26 @@ class Invitation extends Model
     protected $casts = [
         'custom_data' => 'array',
         'love_story' => 'array',
+        'expired_at' => 'datetime',
+        'retention_until' => 'datetime',
+        'deletion_started_at' => 'datetime',
+        'deletion_completed_at' => 'datetime',
     ];
 
-    protected $guarded = ['id'];
+    const STATUS_DRAFT = 'draft';
+    const STATUS_PUBLISHED = 'published';
+    const STATUS_EXPIRED = 'expired';
+    const STATUS_TRASH = 'trash';
+
+    const LIFECYCLE_STATUSES = [
+        self::STATUS_DRAFT,
+        self::STATUS_PUBLISHED,
+        self::STATUS_EXPIRED,
+        self::STATUS_TRASH,
+    ];
+
+    const RETENTION_DAYS = 7;
+    const MAX_DELETION_ATTEMPTS = 5;
 
     protected $fillable = [
         'user_id',
@@ -23,6 +40,12 @@ class Invitation extends Model
         'slug',
         'is_default',
         'status',
+        'expired_at',
+        'retention_until',
+        'deletion_started_at',
+        'deletion_completed_at',
+        'deletion_attempts',
+        'deletion_error',
         'primary_color',
         'groom_name',
         'groom_nickname',
@@ -195,5 +218,100 @@ class Invitation extends Model
             'resepsi_location' => 'Gedung Serbaguna',
             'resepsi_time' => '11:00:00',
         ]);
+    }
+
+    public function scopeActive($query)
+    {
+        return $query->where('status', self::STATUS_PUBLISHED);
+    }
+
+    public function scopeExpired($query)
+    {
+        return $query->where('status', self::STATUS_EXPIRED);
+    }
+
+    public function scopeTrash($query)
+    {
+        return $query->where('status', self::STATUS_TRASH);
+    }
+
+    public function scopeScheduledForDeletion($query)
+    {
+        return $query->where('status', self::STATUS_TRASH)
+            ->whereNotNull('retention_until')
+            ->where('retention_until', '<=', now());
+    }
+
+    public function scopeEligibleForExpiration($query)
+    {
+        return $query->where('status', self::STATUS_PUBLISHED)
+            ->whereHas('user', function ($q) {
+                $q->whereDoesntHave('subscription', function ($sq) {
+                    $sq->where('is_active', true)
+                        ->where(function ($sq2) {
+                            $sq2->whereNull('end_date')
+                                ->orWhere('end_date', '>', now());
+                        });
+                });
+            });
+    }
+
+    public function isActive(): bool
+    {
+        return $this->status === self::STATUS_PUBLISHED;
+    }
+
+    public function isExpired(): bool
+    {
+        return $this->status === self::STATUS_EXPIRED;
+    }
+
+    public function isTrash(): bool
+    {
+        return $this->status === self::STATUS_TRASH;
+    }
+
+    public function isScheduledForDeletion(): bool
+    {
+        return $this->isTrash() && $this->retention_until !== null && $this->retention_until->isPast();
+    }
+
+    public function canBeRestored(): bool
+    {
+        if (! $this->user) {
+            return false;
+        }
+
+        return $this->isExpired() || $this->isTrash();
+    }
+
+    public function markAsExpired(): bool
+    {
+        if (! $this->isActive()) {
+            return false;
+        }
+
+        $this->status = self::STATUS_EXPIRED;
+        $this->expired_at = now();
+        $this->retention_until = now()->addDays(self::RETENTION_DAYS);
+
+        return $this->save();
+    }
+
+    public function restore(): bool
+    {
+        if (! $this->canBeRestored()) {
+            return false;
+        }
+
+        $this->status = self::STATUS_PUBLISHED;
+        $this->expired_at = null;
+        $this->retention_until = null;
+        $this->deletion_started_at = null;
+        $this->deletion_completed_at = null;
+        $this->deletion_attempts = 0;
+        $this->deletion_error = null;
+
+        return $this->save();
     }
 }

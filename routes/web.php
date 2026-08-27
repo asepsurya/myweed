@@ -95,6 +95,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('partner/accept/{token}', [UserInvitationController::class, 'acceptPartner'])->name('partner.accept');
     Route::post('invitation/{invitation}/accept-partner', [UserInvitationController::class, 'acceptPartnerDirect'])->name('partner.accept-direct');
     Route::post('invitation/{invitation}/remove-partner', [UserInvitationController::class, 'removePartner'])->name('invitation.remove-partner');
+    Route::post('invitation/{invitation}/restore', [UserInvitationController::class, 'restore'])->name('invitation.restore');
+    Route::delete('invitation/{invitation}/force-delete', [UserInvitationController::class, 'forceDestroy'])->name('invitation.force-delete');
 
     Route::post('/templates/import-code', [TempelateController::class, 'importCode'])->name('templates.import-code');
     Route::get('/tema', [DashboardController::class, 'temaIndex'])->name('tema.index');
