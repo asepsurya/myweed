@@ -329,27 +329,27 @@
                 <div class="col-12">
                     <label for="groom_name" class="form-label fw-semibold mb-2">Nama Lengkap</label>
                     <input type="text" id="groom_name" name="groom_name"
-                        value="{{ old('groom_name', optional(!empty($inv))->groom_name ?? '') }}" placeholder="Contoh: Ahmad Fauzan"
+                        value="{{ old('groom_name', optional($inv)->groom_name ?? '') }}" placeholder="Contoh: Ahmad Fauzan"
                         class="form-control">
                     <small class="text-muted">Nama lengkap sesuai KTP.</small>
                 </div>
                 <div class="col-12">
                     <label for="groom_nickname" class="form-label fw-semibold mb-2">Nama Panggilan</label>
                     <input type="text" id="groom_nickname" name="groom_nickname"
-                        value="{{ old('groom_nickname', optional(!empty($inv))->groom_nickname ?? '') }}" placeholder="Contoh: Fauzan"
+                        value="{{ old('groom_nickname', optional($inv)->groom_nickname ?? '') }}" placeholder="Contoh: Fauzan"
                         class="form-control">
                     <small class="text-muted">Nama panggilan yang akan ditampilkan di undangan.</small>
                 </div>
                 <div class="col-md-6">
                     <label for="groom_father_name" class="form-label fw-semibold mb-2">Nama Ayah</label>
                     <input type="text" id="groom_father_name" name="groom_father_name"
-                        value="{{ old('groom_father_name', optional(!empty($inv))->groom_father_name ?? '') }}"
+                        value="{{ old('groom_father_name', optional($inv)->groom_father_name ?? '') }}"
                         placeholder="Contoh: Bapak Hadi" class="form-control">
                 </div>
                 <div class="col-md-6">
                     <label for="groom_mother_name" class="form-label fw-semibold mb-2">Nama Ibu</label>
                     <input type="text" id="groom_mother_name" name="groom_mother_name"
-                        value="{{ old('groom_mother_name', optional(!empty($inv))->groom_mother_name ?? '') }}"
+                        value="{{ old('groom_mother_name', optional($inv)->groom_mother_name ?? '') }}"
                         placeholder="Contoh: Ibu Siti" class="form-control">
                 </div>
                 <div class="col-12">
@@ -369,7 +369,7 @@
                             style="display: none; max-width: 120px;" placeholder="Nomor" min="6"
                             oninput="formatChildOrderNumber('groom', this.value)">
                         <input type="hidden" id="groom_child_order" name="groom_child_order"
-                            value="{{ old('groom_child_order', optional(!empty($inv))->groom_child_order ?? '') }}">
+                            value="{{ old('groom_child_order', optional($inv)->groom_child_order ?? '') }}">
                     </div>
                     <small class="text-muted">Tulis urutan anak mempelai pria dalam keluarganya.</small>
                 </div>
@@ -378,14 +378,14 @@
                     <div class="input-group">
                         <span class="input-group-text bg-light">@</span>
                         <input type="text" id="groom_username_instagram" name="groom_username_instagram"
-                            value="{{ old('groom_username_instagram', optional(!empty($inv))->groom_username_instagram ?? '') }}"
+                            value="{{ old('groom_username_instagram', optional($inv)->groom_username_instagram ?? '') }}"
                             class="form-control insta-username" placeholder="fauzan_akbar">
                     </div>
                     <small class="text-muted">Username Instagram tanpa tanda @.</small>
                 </div>
                 <div class="col-12">
                     <label class="form-label fw-semibold mb-2">Foto Mempelai Pria</label>
-                    <div class="upload-zone border rounded p-4 text-center {{ (isset(!empty($inv)) && $inv->foto_pria) ? 'd-none' : '' }}"
+                    <div class="upload-zone border rounded p-4 text-center {{ (!empty($inv) && $inv->foto_pria) ? 'd-none' : '' }}"
                         id="uploadBoxGroomContainer">
                         <label for="foto_pria" class="cursor-pointer mb-0 d-block">
                             <i class="bi bi-cloud-upload fs-3 text-primary"></i>
@@ -399,9 +399,9 @@
                         </button>
                     </div>
                     <div id="previewContainerGroom"
-                        class="mt-3 {{ (isset(!empty($inv)) && $inv->foto_pria) ? '' : 'd-none' }} text-center position-relative">
+                        class="mt-3 {{ (!empty($inv) && $inv->foto_pria) ? '' : 'd-none' }} text-center position-relative">
                         <img id="previewGroom"
-                            src="{{ (isset(!empty($inv)) && $inv->foto_pria) ? storage_url_with_fallback($inv->foto_pria, asset('assets/fav-icon.png'), ($inv->updated_at ?? now())->timestamp) : '' }}"
+                            src="{{ (!empty($inv) && $inv->foto_pria) ? storage_url_with_fallback($inv->foto_pria, asset('assets/fav-icon.png'), ($inv->updated_at ?? now())->timestamp) : '' }}"
                             class="img-fluid rounded border shadow-sm" style="max-height: 200px; object-fit: cover;">
                         <button type="button" onclick="removePreview('groom')"
                             class="btn btn-danger btn-sm position-absolute top-0 end-0 m-2"><i
@@ -416,7 +416,7 @@
 {{-- 2. TEMA & WARNA --}}
 <div id="tab-2" class="tab-content active">
     @php
-        $selectedTemplateId = old('template_id', optional(!empty($inv))->template_id ?? ($templates->first()?->id ?? ''));
+        $selectedTemplateId = old('template_id', optional($inv)->template_id ?? ($templates->first()?->id ?? ''));
     @endphp
     <input type="hidden" name="template_id" id="template_id_hidden" value="{{ $selectedTemplateId }}">
     <div class="mb-3">
@@ -508,9 +508,9 @@
                     @endphp
                     <div class="d-flex gap-3 align-items-center">
                         <input type="color" name="primary_color" id="primary_color" class="form-control form-control-color"
-                            value="{{ optional(!empty($inv))->primary_color ?? '#0d9488' }}" style="width: 60px; height: 40px;" {{ $supportsColor ? '' : 'disabled' }}>
+                            value="{{ optional($inv)->primary_color ?? '#0d9488' }}" style="width: 60px; height: 40px;" {{ $supportsColor ? '' : 'disabled' }}>
                         <input type="text" id="primary_color_text" class="form-control" style="max-width: 150px;"
-                            value="{{ optional(!empty($inv))->primary_color ?? '#0d9488' }}" {{ $supportsColor ? '' : 'disabled' }}>
+                            value="{{ optional($inv)->primary_color ?? '#0d9488' }}" {{ $supportsColor ? '' : 'disabled' }}>
                     </div>
                     <div class="mt-2 {{ $supportsColor ? 'd-none' : '' }}" id="colorNotSupportedMsg">
                         <div class="d-flex align-items-center gap-2 px-3 py-2 rounded-3"
@@ -544,10 +544,10 @@
         </div>
         <div class="mb-3">
             <div class="form-check form-switch mb-3">
-                <input class="form-check-input" type="checkbox" id="enable_gallery" name="enable_gallery" value="1" {{ (isset(!empty($inv)) && $inv->enable_gallery) ? 'checked' : '' }} onchange="toggleSettings('galleryContent', this.checked)">
+                <input class="form-check-input" type="checkbox" id="enable_gallery" name="enable_gallery" value="1" {{ (!empty($inv) && $inv->enable_gallery) ? 'checked' : '' }} onchange="toggleSettings('galleryContent', this.checked)">
                 <label class="form-check-label fw-bold" for="enable_gallery">Aktifkan Galeri Foto</label>
             </div>
-            <div id="galleryContent" class="{{ (isset(!empty($inv)) && $inv->enable_gallery) ? '' : 'd-none' }}">
+            <div id="galleryContent" class="{{ (!empty($inv) && $inv->enable_gallery) ? '' : 'd-none' }}">
                 <div class="card-body p-0">
                     <div id="gallery-dropzone" class="border border-dashed p-5 text-center rounded cursor-pointer">
                         <i class="bi bi-images fs-3 text-muted"></i>
@@ -558,7 +558,7 @@
                         <i class="bi bi-images me-1"></i> Atau cari dari Pixabay
                     </button>
                     <div id="gallery-preview" class="d-flex gap-2 flex-wrap mt-3">
-                        @if(isset(!empty($inv)) && $inv->galleries)
+                        @if(!empty($inv) && $inv->galleries)
                             @foreach($inv->galleries as $image)
                                 <div class="position-relative border rounded overflow-hidden" style="width: 80px; height: 80px;">
                                     <img src="{{ storage_url_with_fallback($image->image, 'https://placehold.co/80x80?text=No+Image', ($inv->updated_at ?? now())->timestamp) }}"
@@ -576,7 +576,7 @@
                             $owner = auth()->user();
                             if ($owner->subscription && $owner->subscription->plan) {
                                 $galleryLimit = data_get($owner->subscription->plan->features ?? [], 'gallery_limit');
-                            } elseif (isset($inv->user) && $inv->user->subscription && $inv->user->subscription->plan) {
+                            } elseif (!empty($inv) && isset($inv->user) && $inv->user->subscription && $inv->user->subscription->plan) {
                                 $galleryLimit = data_get($inv->user->subscription->plan->features ?? [], 'gallery_limit');
                             }
                             if (is_null($galleryLimit)) {
@@ -609,13 +609,13 @@
                     </div>
                 </div>
                 <div class="form-check form-switch mb-3">
-                    <input class="form-check-input" type="checkbox" id="enable_music" name="enable_music" value="1" {{ (isset(!empty($inv)) && $inv->enable_music) ? 'checked' : '' }} onchange="toggleSettings('musicContent', this.checked)">
+                    <input class="form-check-input" type="checkbox" id="enable_music" name="enable_music" value="1" {{ (!empty($inv) && $inv->enable_music) ? 'checked' : '' }} onchange="toggleSettings('musicContent', this.checked)">
                     <label class="form-check-label fw-bold" for="enable_music">Aktifkan Musik Latar</label>
                 </div>
-                <div id="musicContent" class="{{ (isset(!empty($inv)) && $inv->enable_music) ? '' : 'd-none' }}">
+                <div id="musicContent" class="{{ (!empty($inv) && $inv->enable_music) ? '' : 'd-none' }}">
                     <div class="card-body p-0">
-                        @php $musicSource = optional(!empty($inv))->music_source ?? 'library'; @endphp
-                        <input type="hidden" id="music_id" name="music_id" value="{{ optional(!empty($inv))->music ?? '' }}">
+                        @php $musicSource = optional($inv)->music_source ?? 'library'; @endphp
+                        <input type="hidden" id="music_id" name="music_id" value="{{ optional($inv)->music ?? '' }}">
 
                         <div class="music-source-tabs">
                             <input type="radio" class="btn-check" name="music_source" id="srcLibrary" value="library" {{ $musicSource == 'library' ? 'checked' : '' }} onchange="switchMusicSource('library')">
@@ -640,7 +640,7 @@
                                 <div id="musicListContainer" class="d-flex flex-column gap-2"
                                     style="max-height: 250px; overflow-y: auto; padding-right: 5px;">
                                     @foreach ($music as $m)
-                                        <div class="music-list-item border rounded {{ (isset(!empty($inv)) && $inv->music == $m->id) ? 'selected' : '' }}"
+                                        <div class="music-list-item border rounded {{ (!empty($inv) && $inv->music == $m->id) ? 'selected' : '' }}"
                                             data-id="{{ $m->id }}" data-url="{{ $m->full_audio_url }}"
                                             data-cover="{{ $m->full_cover_url ?? asset('tempelate/no_sound.webp') }}"
                                             data-artist="{{ $m->artist }}" data-title="{{ $m->title }}"
@@ -671,7 +671,7 @@
                                             class="bi bi-youtube"></i></span>
                                     <input type="text" name="music_youtube_url" class="form-control"
                                         placeholder="https://www.youtube.com/watch?v=..."
-                                        value="{{ optional(!empty($inv))->music_youtube_url ?? '' }}" oninput="updateLivePreview()">
+                                        value="{{ optional($inv)->music_youtube_url ?? '' }}" oninput="updateLivePreview()">
                                 </div>
                                 <small class="text-muted d-block">Masukkan link YouTube untuk musik latar undangan.</small>
                             </div>
@@ -687,7 +687,7 @@
                                         <i class="bi bi-cloud-arrow-up fs-2 text-primary d-block mb-2"></i>
                                         <p class="mb-1 fw-bold">Klik untuk memilih file</p>
                                         <small class="text-muted" id="upload_file_name">
-                                            @if(!empty($inv->custom_music))
+                                            @if(!empty($inv) && !empty($inv->custom_music))
                                                 {{ basename($inv->custom_music) }}
                                             @else
                                                 Belum ada file terpilih
@@ -724,14 +724,14 @@
                 </div>
             </div>
             <div class="form-check form-switch mt-3">
-                <input class="form-check-input" type="checkbox" id="enable_rsvp" name="enable_rsvp" value="1" {{ (isset(!empty($inv)) && $inv->enable_rsvp) ? 'checked' : '' }} onchange="toggleSettings('rsvp_settings', this.checked)">
+                <input class="form-check-input" type="checkbox" id="enable_rsvp" name="enable_rsvp" value="1" {{ (!empty($inv) && $inv->enable_rsvp) ? 'checked' : '' }} onchange="toggleSettings('rsvp_settings', this.checked)">
                 <label class="form-check-label fw-bold" for="enable_rsvp">Aktifkan RSVP</label>
             </div>
         </div>
-        <div class="card-body p-0" id="rsvp_settings" style="{{ (isset(!empty($inv)) && $inv->enable_rsvp) ? '' : 'display:none' }}">
+        <div class="card-body p-0" id="rsvp_settings" style="{{ (!empty($inv) && $inv->enable_rsvp) ? '' : 'display:none' }}">
             <div class="mb-3">
                 <label class="form-label fw-semibold mb-2">Batas Tanggal RSVP</label>
-                <input type="date" name="rsvp_deadline" value="{{ optional(!empty($inv))->rsvp_deadline ?? '' }}" class="form-control">
+                <input type="date" name="rsvp_deadline" value="{{ optional($inv)->rsvp_deadline ?? '' }}" class="form-control">
                 <small class="text-muted">Tanggal batas akhir tamu mengirimkan konfirmasi kehadiran.</small>
             </div>
             <div class="mb-3">
@@ -786,12 +786,12 @@
                     <input type="tel" id="phoneNumber" class="form-control" placeholder="81234567890"
                         autocomplete="off">
                 </div>
-                <input type="hidden" name="rsvp_whatsapp" id="fullPhone" value="{{ optional(!empty($inv))->rsvp_whatsapp ?? '' }}">
+                <input type="hidden" name="rsvp_whatsapp" id="fullPhone" value="{{ optional($inv)->rsvp_whatsapp ?? '' }}">
                 <small class="text-muted">Nomor HP untuk menerima notifikasi RSVP dari tamu.</small>
             </div>
             <div class="mb-3">
                 <label class="form-label fw-semibold mb-2">Pesan Konfirmasi</label>
-                <textarea name="rsvp_message" rows="3" class="form-control">{{ optional(!empty($inv))->rsvp_message ?? '' }}</textarea>
+                <textarea name="rsvp_message" rows="3" class="form-control">{{ optional($inv)->rsvp_message ?? '' }}</textarea>
                 <small class="text-muted">Pesan yang akan ditampilkan di halaman RSVP.</small>
             </div>
         </div>
@@ -812,7 +812,7 @@
                         <small class="d-block text-muted">Tentukan tanggal hari bahagia Anda</small>
                     </div>
                 </div>
-                <input type="date" id="wedding_date" name="wedding_date" value="{{ optional(!empty($inv))->wedding_date ?? '' }}"
+                <input type="date" id="wedding_date" name="wedding_date" value="{{ optional($inv)->wedding_date ?? '' }}"
                     class="form-control">
                 <small class="text-muted">Tanggal pelaksanaan acara pernikahan.</small>
             </div>
@@ -828,19 +828,19 @@
                         <div class="text-muted small">Waktu dan lokasi akad pernikahan</div>
                     </div>
                 </div>
-                <input type="text" name="akad_location" value="{{ optional(!empty($inv))->akad_location ?? '' }}"
+                <input type="text" name="akad_location" value="{{ optional($inv)->akad_location ?? '' }}"
                     placeholder="Contoh: Gedung Merdeka" class="form-control mb-2">
                 <small class="text-muted">Nama tempat pelaksanaan akad nikah.</small>
-                <input type="text" name="akad_address" value="{{ optional(!empty($inv))->akad_address ?? '' }}"
+                <input type="text" name="akad_address" value="{{ optional($inv)->akad_address ?? '' }}"
                     placeholder="Alamat lengkap" class="form-control mt-3 mb-2">
                 <div class="row g-2 mt-1">
                     <div class="col-6">
                         <small class="text-muted d-block mb-1">Waktu Mulai</small>
-                        <input type="time" name="akad_time" value="{{ optional(!empty($inv))->akad_time ?? '' }}" class="form-control">
+                        <input type="time" name="akad_time" value="{{ optional($inv)->akad_time ?? '' }}" class="form-control">
                     </div>
                     <div class="col-6">
                         <small class="text-muted d-block mb-1">Waktu Selesai</small>
-                        <input type="time" name="akad_time_end" value="{{ optional(!empty($inv))->akad_time_end ?? '' }}"
+                        <input type="time" name="akad_time_end" value="{{ optional($inv)->akad_time_end ?? '' }}"
                             class="form-control time-end">
                         <div class="form-check mt-2">
                             <input class="form-check-input sampai-selesai" type="checkbox" id="akad_time_end_done">
@@ -848,7 +848,7 @@
                         </div>
                     </div>
                 </div>
-                <input type="text" name="akad_maps" value="{{ optional(!empty($inv))->akad_maps ?? '' }}" placeholder="Link Google Maps"
+                <input type="text" name="akad_maps" value="{{ optional($inv)->akad_maps ?? '' }}" placeholder="Link Google Maps"
                     class="form-control mt-3" oninput="updateMapEmbed('akad_maps', 'akad_map_embed')">
                 <small class="text-muted">Link peta lokasi akad nikah.</small>
             </div>
@@ -861,20 +861,20 @@
                     </span>
                     <label class="form-label fw-bold text-theme-1 mb-0">Resepsi</label>
                 </div>
-                <input type="text" name="resepsi_location" value="{{ optional(!empty($inv))->resepsi_location ?? '' }}"
+                <input type="text" name="resepsi_location" value="{{ optional($inv)->resepsi_location ?? '' }}"
                     placeholder="Contoh: Hotel Mulia" class="form-control mb-2">
                 <small class="text-muted">Nama tempat pelaksanaan resepsi.</small>
-                <input type="text" name="resepsi_address" value="{{ optional(!empty($inv))->resepsi_address ?? '' }}"
+                <input type="text" name="resepsi_address" value="{{ optional($inv)->resepsi_address ?? '' }}"
                     placeholder="Alamat lengkap" class="form-control mt-3 mb-2">
                 <div class="row g-2 mt-1">
                     <div class="col-6">
                         <small class="text-muted d-block mb-1">Waktu Mulai</small>
-                        <input type="time" name="resepsi_time" value="{{ optional(!empty($inv))->resepsi_time ?? '' }}"
+                        <input type="time" name="resepsi_time" value="{{ optional($inv)->resepsi_time ?? '' }}"
                             class="form-control">
                     </div>
                     <div class="col-6">
                         <small class="text-muted d-block mb-1">Waktu Selesai</small>
-                        <input type="time" name="resepsi_time_end" value="{{ optional(!empty($inv))->resepsi_time_end ?? '' }}"
+                        <input type="time" name="resepsi_time_end" value="{{ optional($inv)->resepsi_time_end ?? '' }}"
                             class="form-control time-end">
                         <div class="form-check mt-2">
                             <input class="form-check-input sampai-selesai" type="checkbox" id="sampai_selesai"
@@ -883,7 +883,7 @@
                         </div>
                     </div>
                 </div>
-                <input type="text" name="resepsi_maps" value="{{ optional(!empty($inv))->resepsi_maps ?? '' }}"
+                <input type="text" name="resepsi_maps" value="{{ optional($inv)->resepsi_maps ?? '' }}"
                     placeholder="Link Google Maps" class="form-control mt-3"
                     oninput="updateMapEmbed('resepsi_maps', 'resepsi_map_embed')">
                 <small class="text-muted">Link peta lokasi resepsi.</small>
@@ -911,26 +911,26 @@
                 <div class="col-12">
                     <label for="bride_name" class="form-label fw-semibold mb-2">Nama Lengkap</label>
                     <input type="text" id="bride_name" name="bride_name"
-                        value="{{ old('bride_name', optional(!empty($inv))->bride_name ?? '') }}" placeholder="Contoh: Siti Rahayu"
+                        value="{{ old('bride_name', optional($inv)->bride_name ?? '') }}" placeholder="Contoh: Siti Rahayu"
                         class="form-control">
                     <small class="text-muted">Nama lengkap sesuai KTP.</small>
                 </div>
                 <div class="col-12">
                     <label for="bride_nickname" class="form-label fw-semibold mb-2">Nama Panggilan</label>
                     <input type="text" id="bride_nickname" name="bride_nickname"
-                        value="{{ old('bride_nickname', optional(!empty($inv))->bride_nickname ?? '') }}" placeholder="Contoh: Rahayu"
+                        value="{{ old('bride_nickname', optional($inv)->bride_nickname ?? '') }}" placeholder="Contoh: Rahayu"
                         class="form-control">
                     <small class="text-muted">Nama panggilan yang akan ditampilkan di undangan.</small>
                 </div>
                 <div class="col-md-6">
                     <label for="bride_father_name" class="form-label fw-semibold mb-2">Nama Ayah</label>
                     <input type="text" id="bride_father_name" name="bride_father_name"
-                        value="{{ old('bride_father_name', optional(!empty($inv))->bride_father_name ?? '') }}" class="form-control">
+                        value="{{ old('bride_father_name', optional($inv)->bride_father_name ?? '') }}" class="form-control">
                 </div>
                 <div class="col-md-6">
                     <label for="bride_mother_name" class="form-label fw-semibold mb-2">Nama Ibu</label>
                     <input type="text" id="bride_mother_name" name="bride_mother_name"
-                        value="{{ old('bride_mother_name', optional(!empty($inv))->bride_mother_name ?? '') }}" class="form-control">
+                        value="{{ old('bride_mother_name', optional($inv)->bride_mother_name ?? '') }}" class="form-control">
                 </div>
                 <div class="col-12">
                     <label class="form-label fw-semibold mb-2">Anak ke-...</label>
@@ -949,7 +949,7 @@
                             style="display: none; max-width: 120px;" placeholder="Nomor" min="6"
                             oninput="formatChildOrderNumber('bride', this.value)">
                         <input type="hidden" id="bride_child_order" name="bride_child_order"
-                            value="{{ old('bride_child_order', optional(!empty($inv))->bride_child_order ?? '') }}">
+                            value="{{ old('bride_child_order', optional($inv)->bride_child_order ?? '') }}">
                     </div>
                     <small class="text-muted">Tulis urutan anak mempelai wanita dalam keluarganya.</small>
                 </div>
@@ -958,14 +958,14 @@
                     <div class="input-group">
                         <span class="input-group-text bg-light">@</span>
                         <input type="text" id="bride_username_instagram" name="bride_username_instagram"
-                            value="{{ old('bride_username_instagram', optional(!empty($inv))->bride_username_instagram ?? '') }}"
+                            value="{{ old('bride_username_instagram', optional($inv)->bride_username_instagram ?? '') }}"
                             class="form-control insta-username" placeholder="siti_rahayu">
                     </div>
                     <small class="text-muted">Username Instagram tanpa tanda @.</small>
                 </div>
                 <div class="col-12">
                     <label class="form-label fw-semibold mb-2">Foto Mempelai Wanita</label>
-                    <div class="upload-zone border rounded p-4 text-center bg-light {{ (isset(!empty($inv)) && $inv->foto_wanita) ? 'd-none' : '' }}"
+                    <div class="upload-zone border rounded p-4 text-center bg-light {{ (!empty($inv) && $inv->foto_wanita) ? 'd-none' : '' }}"
                         id="uploadBoxBrideContainer">
                         <label for="foto_wanita" class="cursor-pointer mb-0 d-block">
                             <i class="bi bi-cloud-upload fs-3 text-primary"></i>
@@ -979,9 +979,9 @@
                         </button>
                     </div>
                     <div id="previewContainerBride"
-                        class="mt-3 {{ (isset(!empty($inv)) && $inv->foto_wanita) ? '' : 'd-none' }} text-center position-relative">
+                        class="mt-3 {{ (!empty($inv) && $inv->foto_wanita) ? '' : 'd-none' }} text-center position-relative">
                         <img id="previewBride"
-                            src="{{ (isset(!empty($inv)) && $inv->foto_wanita) ? storage_url_with_fallback($inv->foto_wanita, asset('assets/fav-icon.png'), ($inv->updated_at ?? now())->timestamp) : '' }}"
+                            src="{{ (!empty($inv) && $inv->foto_wanita) ? storage_url_with_fallback($inv->foto_wanita, asset('assets/fav-icon.png'), ($inv->updated_at ?? now())->timestamp) : '' }}"
                             class="img-fluid rounded border shadow-sm" style="max-height: 200px; object-fit: cover;">
                         <button type="button" onclick="removePreview('bride')"
                             class="btn btn-danger btn-sm position-absolute top-0 end-0 m-2"><i
@@ -1011,13 +1011,13 @@
                 </div>
                 <div class="card-body p-0">
                     <div class="form-check form-switch mb-3">
-                        <input class="form-check-input" type="checkbox" id="enable_video" name="enable_video" value="1" {{ (isset(!empty($inv)) && $inv->enable_video) ? 'checked' : '' }} onchange="toggleSettings('videoContent', this.checked)">
+                        <input class="form-check-input" type="checkbox" id="enable_video" name="enable_video" value="1" {{ (!empty($inv) && $inv->enable_video) ? 'checked' : '' }} onchange="toggleSettings('videoContent', this.checked)">
                         <label class="form-check-label fw-bold" for="enable_video">Aktifkan Video</label>
                     </div>
-                    <div id="videoContent" class="{{ (isset(!empty($inv)) && $inv->enable_video) ? '' : 'd-none' }}">
+                    <div id="videoContent" class="{{ (!empty($inv) && $inv->enable_video) ? '' : 'd-none' }}">
                         <div class="mb-3">
                             <label class="form-label fw-semibold mb-2">Link YouTube Video</label>
-                            <input type="text" name="video_link" value="{{ optional(!empty($inv))->video_link ?? '' }}"
+                            <input type="text" name="video_link" value="{{ optional($inv)->video_link ?? '' }}"
                                 placeholder="https://youtube.com/..." class="form-control" {{ auth()->user()->hasFeature('streaming_video') ? '' : 'disabled' }}>
                             @if(!auth()->user()->hasFeature('streaming_video'))
                                 <small class="text-muted">Fitur Link Video tersedia untuk paket berbayar.</small>
@@ -1031,31 +1031,31 @@
                         <label class="form-label fw-semibold mb-2">Kutipan Pernikahan</label>
                         <select name="quote_id" class="form-select mb-2" onchange="showQuote()">
                             <option value="">-- Pilih Kutipan --</option>
-                            <option value="rum21" {{ (isset(!empty($inv)) && $inv->quote_id == 'rum21') ? 'selected' : '' }}>QS. Ar-Rum : 21
+                            <option value="rum21" {{ (!empty($inv) && $inv->quote_id == 'rum21') ? 'selected' : '' }}>QS. Ar-Rum : 21
                             </option>
-                            <option value="nisa1" {{ (isset(!empty($inv)) && $inv->quote_id == 'nisa1') ? 'selected' : '' }}>QS. An-Nisa : 1
+                            <option value="nisa1" {{ (!empty($inv) && $inv->quote_id == 'nisa1') ? 'selected' : '' }}>QS. An-Nisa : 1
                             </option>
-                            <option value="furqan74" {{ (isset(!empty($inv)) && $inv->quote_id == 'furqan74') ? 'selected' : '' }}>QS. Al-Furqan
+                            <option value="furqan74" {{ (!empty($inv) && $inv->quote_id == 'furqan74') ? 'selected' : '' }}>QS. Al-Furqan
                                 : 74</option>
                         </select>
                         <small class="text-muted">Pilih ayat Al-Qur'an yang akan ditampilkan sebagai kutipan.</small>
                         <textarea name="wedding_quote" id="wedding_quote" rows="3"
-                            class="form-control mt-3">{{ optional(!empty($inv))->wedding_quote ?? '' }}</textarea>
+                            class="form-control mt-3">{{ optional($inv)->wedding_quote ?? '' }}</textarea>
                     </div>
                     <hr class="my-4">
                     <div class="form-check form-switch mb-3">
                         <input class="form-check-input" type="checkbox" id="enable_love_story" name="enable_love_story"
-                            value="1" {{ (isset(!empty($inv)) && $inv->enable_love_story) ? 'checked' : '' }}
+                            value="1" {{ (!empty($inv) && $inv->enable_love_story) ? 'checked' : '' }}
                             onchange="toggleSettings('loveStoryContent', this.checked)">
                         <label class="form-check-label fw-bold" for="enable_love_story">Aktifkan Kisah Cinta</label>
                     </div>
-                    <div id="loveStoryContent" class="{{ (isset(!empty($inv)) && $inv->enable_love_story) ? '' : 'd-none' }}">
+                    <div id="loveStoryContent" class="{{ (!empty($inv) && $inv->enable_love_story) ? '' : 'd-none' }}">
                         @if(auth()->user()->hasFeature('love_story'))
                             <div id="loveStoryWrapper">
                                 <label class="form-label fw-semibold mb-2">Kisah Cinta</label>
                                 <small class="text-muted d-block mb-3">Ceritakan perjalanan cinta kalian agar tamu merasa lebih
                                     dekat.</small>
-                                @if(isset(!empty($inv)) && $inv->love_story && count($inv->love_story) > 0)
+                                @if(!empty($inv) && $inv->love_story && count($inv->love_story) > 0)
                                     @foreach($inv->love_story as $index => $story)
                                         <div class="love-story-item border rounded p-3 mb-3 bg-light">
                                             <input type="text" name="story_title[]" value="{{ $story['title'] ?? '' }}"
@@ -1120,7 +1120,7 @@
                         </div>
                     </div>
                     <div class="form-check form-switch mt-3">
-                        <input class="form-check-input" type="checkbox" id="enableGift" name="enable_gift" value="1" {{ (isset(!empty($inv)) && $inv->enable_gift) ? 'checked' : '' }} onchange="toggleSettings('giftTab', this.checked)" {{ auth()->user()->hasFeature('virtual_gift') ? '' : 'disabled' }}>
+                        <input class="form-check-input" type="checkbox" id="enableGift" name="enable_gift" value="1" {{ (!empty($inv) && $inv->enable_gift) ? 'checked' : '' }} onchange="toggleSettings('giftTab', this.checked)" {{ auth()->user()->hasFeature('virtual_gift') ? '' : 'disabled' }}>
                         <label class="form-check-label fw-bold" for="enableGift">Aktifkan Hadiah Digital</label>
                         @if(!auth()->user()->hasFeature('virtual_gift'))
                             <span class="premium-badge ms-2"><i class="bi bi-gem me-1"></i>PREMIUM</span>
@@ -1128,9 +1128,9 @@
                     </div>
                 </div>
                 @if(auth()->user()->hasFeature('virtual_gift'))
-                    <div class="card-body p-0 {{ (isset(!empty($inv)) && $inv->enable_gift) ? '' : 'd-none' }}" id="giftTab">
+                    <div class="card-body p-0 {{ (!empty($inv) && $inv->enable_gift) ? '' : 'd-none' }}" id="giftTab">
                         <div id="giftContainer">
-                            @if(isset(!empty($inv)) && $inv->gifts)
+                            @if(!empty($inv) && $inv->gifts)
                                 @foreach($inv->gifts as $g)
                                     <div class="gift-item border rounded p-3 mb-3 position-relative shadow-sm">
                                         <button type="button" class="btn-close position-absolute top-0 end-0 m-2"
@@ -1191,7 +1191,7 @@
                         <div class="text-muted small">Gambar sampul utama undangan</div>
                     </div>
                 </div>
-                <div class="upload-zone border rounded p-4 text-center {{ (isset(!empty($inv)) && $inv->gallery_cover) ? 'd-none' : '' }}"
+                <div class="upload-zone border rounded p-4 text-center {{ (!empty($inv) && $inv->gallery_cover) ? 'd-none' : '' }}"
                     id="uploadBoxCoverContainer">
                     <label for="gallery_cover" class="cursor-pointer mb-0 d-block">
                         <i class="bi bi-image fs-3 text-primary"></i>
@@ -1205,9 +1205,9 @@
                     </button>
                 </div>
                 <div id="previewContainerCover"
-                    class="mt-3 {{ (isset(!empty($inv)) && $inv->gallery_cover) ? '' : 'd-none' }} text-center position-relative">
+                    class="mt-3 {{ (!empty($inv) && $inv->gallery_cover) ? '' : 'd-none' }} text-center position-relative">
                     <img id="previewCover"
-                        src="{{ (isset(!empty($inv)) && $inv->gallery_cover) ? storage_url_with_fallback($inv->gallery_cover, asset('assets/fav-icon.png'), ($inv->updated_at ?? now())->timestamp) : '' }}"
+                        src="{{ (!empty($inv) && $inv->gallery_cover) ? storage_url_with_fallback($inv->gallery_cover, asset('assets/fav-icon.png'), ($inv->updated_at ?? now())->timestamp) : '' }}"
                         class="img-fluid rounded border shadow-sm w-100" style="max-height: 250px; object-fit: cover;">
                     <button type="button" onclick="removePreview('cover')"
                         class="btn btn-danger btn-sm position-absolute top-0 end-0 m-2"><i class="bi bi-x"></i></button>
@@ -1241,7 +1241,7 @@
                 submitBtn.disabled = true;
                 submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Mengirim...';
 
-                fetch("{{ $inv ? route('invitation.invite-partner', $inv) : '' }}", {
+                fetch("{{ !empty($inv) ? route('invitation.invite-partner', $inv) : '' }}", {
                     method: 'POST',
                     headers: {
                         'X-CSRF-TOKEN': '{{ csrf_token() }}',
