@@ -203,6 +203,10 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/env', [EnvSettingController::class, 'update'])->name('env.update');
     });
 
+    Route::middleware('role:admin')->prefix('admin/logs')->name('logs.')->group(function () {
+        Route::get('/', [\Rap2hpoutre\LaravelLogViewer\LogViewerController::class, 'index'])->name('index');
+    });
+
     Route::middleware('role:admin')->prefix('admin/subscription-plans')->name('subscription-plans.')->group(function () {
         Route::get('/', [SubscriptionPlanController::class, 'adminIndex'])->name('index');
         Route::get('/create', [SubscriptionPlanController::class, 'create'])->name('create');

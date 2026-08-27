@@ -144,6 +144,13 @@
                     <span class="menu-name">Pengaturan .env</span>
                 </a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('logs.index') }}" data-bs-toggle="tooltip"
+                    data-bs-placement="right" title="Log Viewer">
+                    <i class="menu-icon bi bi-journal-text me-2"></i>
+                    <span class="menu-name">Log Viewer</span>
+                </a>
+            </li>
             @endrole
 
         </ul>
