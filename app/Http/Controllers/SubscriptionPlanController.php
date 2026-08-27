@@ -285,6 +285,42 @@ class SubscriptionPlanController extends Controller
             $coupon->increment('used_count');
         }
 
+        // Notifikasi WhatsApp ke admin: ada pembayaran baru yang perlu dikonfirmasi
+        try {
+            $wa = new WhatsAppService();
+            $adminUser = User::role('admin')->first();
+            $adminPhone = $adminUser ? $adminUser->phone : null;
+            $adminPhone = $adminPhone ?: config('services.admin_whatsapp');
+
+            $initiatorName = auth()->user()->name ?? 'User';
+            $initiatorEmail = auth()->user()->email ?? '-';
+            $initiatorPhone = auth()->user()->phone ?? '-';
+            $planName = $plan->name ?? '-';
+            $amountFormatted = number_format($finalAmount, 0, ',', '.');
+            $methodLabel = $paymentMethod === 'local' ? 'QRIS (Manual)' : 'Midtrans';
+
+            $adminMsg = "🔔 *Pembayaran Baru Perlu Dikonfirmasi*\n\n";
+            $adminMsg .= "Order ID: `{$orderId}`\n";
+            $adminMsg .= "User: {$initiatorName}\n";
+            $adminMsg .= "Email: {$initiatorEmail}\n";
+            $adminMsg .= "WhatsApp: {$initiatorPhone}\n";
+            $adminMsg .= "Paket: {$planName}\n";
+            $adminMsg .= "Total: Rp {$amountFormatted}\n";
+            $adminMsg .= "Metode: {$methodLabel}\n";
+            $adminMsg .= "Status: MENUNGGU PEMBAYARAN\n\n";
+            $adminMsg .= "User telah membuat order. ";
+            if ($paymentMethod === 'local') {
+                $adminMsg .= "Menunggu upload bukti transfer dari user.";
+            } else {
+                $adminMsg .= "Menunggu penyelesaian pembayaran Midtrans.";
+            }
+            $adminMsg .= "\nLink: " . config('app.url') . "/payments/status";
+
+            $wa->sendToUser($adminPhone, $adminMsg);
+        } catch (\Throwable $notifyError) {
+            Log::warning('WhatsApp notification on initiate payment failed: ' . $notifyError->getMessage());
+        }
+
         // LOCAL PAYMENT (QRIS) — Midtrans tidak disentuh
         if ($paymentMethod === 'local' && $finalAmount > 0) {
             return response()->json([
