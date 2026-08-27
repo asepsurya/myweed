@@ -625,6 +625,38 @@
             color: #fff;
             border-color: var(--adminuiux-theme-1);
         }
+
+        /* ========================================
+   GOLD PUBLISH BUTTON
+======================================== */
+
+        .builder-publish-btn {
+            height: 34px;
+
+            color: #ffffff !important;
+            background: #C9A227 !important;
+            border: 1px solid #C9A227 !important;
+
+            font-size: 12px;
+            font-weight: 600;
+
+            transition: all .2s ease;
+        }
+
+        .builder-publish-btn:hover {
+            color: #ffffff !important;
+            background: #B8911F !important;
+            border-color: #B8911F !important;
+
+            transform: translateY(-1px);
+
+            box-shadow: 0 4px 12px rgba(201, 162, 39, .25) !important;
+        }
+
+        .builder-publish-btn:active {
+            transform: translateY(0);
+            background: #A98318 !important;
+        }
     </style>
 
     <div class="builder-wrapper mb-5">
@@ -684,23 +716,65 @@
             </div>
 
             <div class="sidebar-content-pane">
-                <div class="sidebar-header flex-wrap gap-2">
-                    <div class="d-flex align-items-center gap-2">
-                        <a href="{{ route('dashboard.user') }}" class="btn btn-xs btn-outline-secondary border-0 px-2"
-                            title="Kembali ke List">
-                            <i class="bi bi-arrow-left fs-5"></i>
-                        </a>
-                        <div>
-                            <h6 class="mb-0 fw-bold line-height-1" style="font-size: 14px;">Edit Undangan</h6>
-                            <span id="autoSaveBadge" class="x-small text-muted" style="font-size: 10px;">
-                                <i class="bi bi-cloud-check me-1"></i>Tersimpan
-                            </span>
+                <div class="sidebar-header py-2 px-3">
+                    <div class="d-flex align-items-center justify-content-between w-100 gap-3">
+
+                        {{-- Left: Back + Information --}}
+                        <div class="d-flex align-items-center gap-2 min-w-0">
+
+                            {{-- Back Button --}}
+                            <a href="{{ route('dashboard.user') }}"
+                                class="btn btn-sm btn-light border d-flex align-items-center justify-content-center flex-shrink-0"
+                                style="width: 34px; height: 34px;" title="Kembali ke List">
+                                <i class="bi bi-arrow-left"></i>
+                            </a>
+
+                            {{-- Invitation Info --}}
+                            <div class="min-w-0">
+
+                                {{-- Title + Status --}}
+                                <div class="d-flex align-items-center gap-2">
+                                    <h6 class="mb-0 fw-semibold  text-truncate"
+                                        style="font-size: 14px; line-height: 1.2;">
+                                        Editor Undangan
+                                    </h6>
+
+                                    <span id="statusBadgeWrap" class="flex-shrink-0">
+                                        <x-status-badge :status="$invitation->status" />
+                                    </span>
+                                </div>
+
+                                {{-- Autosave --}}
+                                <div id="autoSaveBadge" class="d-flex align-items-center text-muted mt-1"
+                                    style="font-size: 10px; line-height: 1;">
+                                    <i class="bi bi-cloud-check me-1 text-success"></i>
+                                    <span>Tersimpan otomatis</span>
+                                </div>
+
+                            </div>
                         </div>
+
+                        {{-- Right: Publish --}}
+                        {{-- Right: Publish --}}
+                        <button id="publishBtn" type="button"
+                            class="btn btn-sm px-3 rounded-pill d-flex align-items-center gap-1 flex-shrink-0 shadow-sm builder-publish-btn"
+                            onclick="window.publishInvitation(
+        window.__invStatus === 'published'
+            ? 'draft'
+            : 'published'
+    )">
+
+                            <i id="publishBtnIcon" class="bi bi-send-fill" style="font-size: 12px;"></i>
+
+                            <span id="publishBtnLabel" class="fw-semibold" style="font-size: 12px;">
+                                {{ $invitation->status === 'published'
+    ? 'Jadikan Draft'
+    : 'Publikasikan' }}
+                            </span>
+
+                        </button>
+
                     </div>
-                    <button type="button" class="btn btn-sm px-3 text-white rounded-pill btn-builder-next"
-                        onclick="window.publishInvitation();">
-                        <i class="bi bi-send-fill me-1"></i> Publikasikan
-                    </button>
                 </div>
 
                 <div class="sidebar-content no-scrollbar">
@@ -1139,17 +1213,33 @@
             }
         }
 
-        window.publishInvitation = function () {
+        // Status badge helper (mirror of components/status-badge.blade.php)
+        const STATUS_BADGE_HTML = {
+            draft: '<span class="badge bg-secondary">Draft</span>',
+            published: '<span class="badge bg-success">Terbit</span>',
+            expired: '<span class="badge bg-warning text-dark">Kedaluwarsa</span>',
+            trash: '<span class="badge bg-danger">Sampah</span>',
+        };
+
+        function renderStatusBadge(status) {
+            return STATUS_BADGE_HTML[status] || '<span class="badge bg-light text-dark">' + status + '</span>';
+        }
+
+        // Track current invitation status for the publish/unpublish toggle
+        window.__invStatus = '{{ $invitation->status }}';
+
+        window.publishInvitation = function (targetStatus) {
+            const status = targetStatus || 'published';
             const myForm = document.getElementById('myForm');
             if (!myForm) return;
 
-            const toastId = window.showUploadToast({ name: 'Menyimpan undangan...' }, 'save');
+            const toastId = window.showUploadToast({ name: (status === 'published' ? 'Mempublikasikan undangan...' : 'Menyimpan sebagai draft...') }, 'save');
 
             const formData = new FormData(myForm);
             if (!formData.has('_method')) {
                 formData.append('_method', 'PUT');
             }
-            formData.set('status', 'published');
+            formData.set('status', status);
 
             fetch("{{ route('invitation.update', $invitation) }}", {
                 method: 'POST',
@@ -1169,8 +1259,25 @@
                 })
                 .then(({ ok, data }) => {
                     if (ok && data.success) {
+                        window.__invStatus = status;
                         window.hideUploadToast(toastId, true);
                         reloadPreview();
+
+                        const wrap = document.getElementById('statusBadgeWrap');
+                        if (wrap) wrap.innerHTML = renderStatusBadge(status);
+
+                        const label = document.getElementById('publishBtnLabel');
+                        const icon = document.getElementById('publishBtnIcon');
+                        if (status === 'published') {
+                            if (label) label.textContent = 'Jadikan Draft';
+                            if (icon) icon.className = 'bi bi-arrow-counterclockwise me-1';
+                        } else {
+                            if (label) label.textContent = 'Publikasikan';
+                            if (icon) icon.className = 'bi bi-send-fill me-1';
+                        }
+
+                        const badge = document.getElementById('autoSaveBadge');
+                        if (badge) badge.innerHTML = '<i class="bi bi-cloud-check me-1"></i>' + (status === 'published' ? 'Terbit' : 'Tersimpan');
                     } else {
                         window.hideUploadToast(toastId, false);
                         const badge = document.getElementById('autoSaveBadge');
@@ -1248,7 +1355,7 @@
                     .then(res => res.json())
                     .then(data => {
                         if (data.success) {
-                            if (badge) badge.innerHTML = '<i class="bi bi-cloud-check me-1 text-success"></i>Tersimpan âœ¨';
+                            if (badge) badge.innerHTML = '<i class="bi bi-cloud-check me-1 text-success"></i>Tersimpan';
                             if (window.autosaveToastId) {
                                 hideUploadToast(window.autosaveToastId, true);
                                 window.autosaveToastId = null;
@@ -1622,7 +1729,8 @@
             // Form Events
             const myForm = document.getElementById('myForm');
             if (myForm) {
-                myForm.addEventListener('change', (e) => { if (e.target.matches('input, textarea, select')) updateLivePreview(); });
+                myForm.addEventListener('change', (e) => { if (e.target.matches('input, textarea, select')) { updateLivePreview(); dbAutoSave(); } });
+                myForm.addEventListener('input', (e) => { if (e.target.matches('input, textarea, select')) dbAutoSave(); });
             }
 
             const addGiftBtn = document.getElementById('addGift');

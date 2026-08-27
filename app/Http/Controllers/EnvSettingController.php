@@ -42,6 +42,11 @@ class EnvSettingController extends Controller
             'MIDTRANS_CLIENT_KEY' => 'nullable|string',
             'MIDTRANS_IS_PRODUCTION' => 'required|string|in:true,false',
 
+            // Payment gateway & WhatsApp
+            'PAYMENT_GATEWAY' => 'required|string|in:midtrans,local',
+            'FONTE_API_KEY' => 'nullable|string',
+            'ADMIN_WHATSAPP' => 'required|string',
+
             // Mail settings
             'MAIL_HOST' => 'nullable|string',
             'MAIL_PORT' => 'nullable|integer',
@@ -53,7 +58,7 @@ class EnvSettingController extends Controller
             // OAuth & AI settings
             'GOOGLE_CLIENT_ID' => 'nullable|string',
             'GOOGLE_CLIENT_SECRET' => 'nullable|string',
-            'GOOGLE_REDIRECT_URI' => 'nullable|url',
+            'GOOGLE_REDIRECT_URI' => 'nullable|string',
             'AI_SERVER_URL' => 'nullable|url',
             'AI_MODEL_PRIMARY' => 'nullable|string',
             'AI_MODEL_SECONDARY' => 'nullable|string',

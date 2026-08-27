@@ -22,6 +22,8 @@ class Payment extends Model
         'payment_gateway',
         'gateway_transaction_id',
         'payment_url',
+        'proof_image',
+        'payment_method',
     ];
 
     protected $casts = [
@@ -74,6 +76,10 @@ class Payment extends Model
 
     public function paymentMethodLabel(): string
     {
+        if ($this->payment_gateway === 'local') {
+            return 'QRIS (Pembayaran Lokal)';
+        }
+
         return match($this->payment_type) {
             'credit_card' => 'Kartu Kredit',
             'bank_transfer' => 'Transfer Bank',

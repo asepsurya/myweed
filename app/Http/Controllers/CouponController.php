@@ -23,8 +23,9 @@ class CouponController extends Controller
     {
         $validated = $request->validate([
             'code' => 'required|string|max:255|unique:coupons,code',
-            'type' => 'required|in:percentage,fixed',
+            'type' => 'required|in:percentage,fixed,voucher',
             'value' => 'required|integer|min:1',
+            'subscription_plan_id' => 'nullable|exists:subscription_plans,id',
             'min_amount' => 'nullable|integer|min:0',
             'max_uses' => 'nullable|integer|min:1',
             'starts_at' => 'nullable|date',
@@ -33,6 +34,11 @@ class CouponController extends Controller
         ]);
 
         $validated['is_active'] = $request->has('is_active');
+
+        if ($validated['type'] === 'voucher') {
+            $validated['value'] = 100;
+            $validated['min_amount'] = null;
+        }
 
         Coupon::create($validated);
 
@@ -48,8 +54,9 @@ class CouponController extends Controller
     {
         $validated = $request->validate([
             'code' => 'required|string|max:255|unique:coupons,code,'.$coupon->id,
-            'type' => 'required|in:percentage,fixed',
+            'type' => 'required|in:percentage,fixed,voucher',
             'value' => 'required|integer|min:1',
+            'subscription_plan_id' => 'nullable|exists:subscription_plans,id',
             'min_amount' => 'nullable|integer|min:0',
             'max_uses' => 'nullable|integer|min:1',
             'starts_at' => 'nullable|date',
@@ -58,6 +65,11 @@ class CouponController extends Controller
         ]);
 
         $validated['is_active'] = $request->has('is_active');
+
+        if ($validated['type'] === 'voucher') {
+            $validated['value'] = 100;
+            $validated['min_amount'] = null;
+        }
 
         $coupon->update($validated);
 

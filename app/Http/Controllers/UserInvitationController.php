@@ -1319,7 +1319,10 @@ class UserInvitationController extends Controller
         // Data yang akan disimpan (hanya teks/json, bukan file agar ringan)
         $data = $request->except(['foto_pria', 'foto_wanita', 'gallery_cover', 'gallery', 'custom_music', 'qr', 'story_photo', 'love_story', 'story_title', 'music_source', 'searchTemplate', 'categorySelect', 'typeSelect', 'uploaded_gallery_ids']);
         $data['user_id'] = auth()->id();
-        $data['status'] = 'draft';
+
+        // Jangan turunkan status undangan yang sudah 'published' kembali menjadi
+        // 'draft' saat autosave. Hanya undangan baru (belum ada) yang dimulai sebagai draft.
+        $data['status'] = $invitation ? ($invitation->status ?? 'draft') : 'draft';
 
         // --- MUSIC SOURCE HANDLING (AUTOSAVE) ---
         if ($request->has('enable_music') && $request->enable_music) {

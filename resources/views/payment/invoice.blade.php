@@ -298,6 +298,14 @@
             <div class="receipt-row">
                 <span class="receipt-label">Metode Bayar</span>
                 <span class="receipt-value">
+                    @if($payment->payment_gateway === 'local')
+                        QRIS (Pembayaran Langsung)
+                        @if($payment->proof_image)
+                            <div class="mt-2">
+                                <img src="{{ asset('storage/' . $payment->proof_image) }}" alt="Bukti" style="max-width: 100px; border-radius: 0.375rem;">
+                            </div>
+                        @endif
+                    @else
                     @php
                         $method = match ($payment->payment_type) {
                             'credit_card' => 'Kartu Kredit',
@@ -313,6 +321,7 @@
                         };
                     @endphp
                     {{ $method }}
+                    @endif
                 </span>
             </div>
             @if($payment->gateway_transaction_id)

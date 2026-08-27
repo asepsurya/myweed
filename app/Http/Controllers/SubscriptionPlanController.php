@@ -8,8 +8,11 @@ use App\Models\Subscription;
 use App\Models\SubscriptionPlan;
 use App\Models\User;
 use App\Notifications\SubscriptionSuccessNotification;
+use App\Services\WhatsAppService;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 use Midtrans\Notification;
 use Midtrans\Snap;
 
@@ -73,7 +76,7 @@ class SubscriptionPlanController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'slug' => 'required|string|max:255|unique:subscription_plans,slug,' . $subscriptionPlan->id,
+            'slug' => 'required|string|max:255|unique:subscription_plans,slug,'.$subscriptionPlan->id,
             'price' => 'required|integer|min:0',
             'duration' => 'required|integer|min:1',
             'invitation_limit' => 'required|integer|min:1',
@@ -127,16 +130,16 @@ class SubscriptionPlanController extends Controller
         $features = [];
 
         foreach ($booleanKeys as $key) {
-            $features[$key] = $request->has('features.' . $key);
+            $features[$key] = $request->has('features.'.$key);
         }
 
         foreach ($numericKeys as $key) {
-            $value = $request->input('features.' . $key . '_value');
+            $value = $request->input('features.'.$key.'_value');
 
             if ($value !== null && $value !== '') {
                 $features[$key] = is_numeric($value) ? (int) $value : 0;
             } else {
-                $features[$key] = $request->has('features.' . $key) ? 0 : 0;
+                $features[$key] = $request->has('features.'.$key) ? 0 : 0;
             }
         }
 
@@ -154,7 +157,7 @@ class SubscriptionPlanController extends Controller
     {
         $plan = SubscriptionPlan::findOrFail($planId);
 
-        if (!$request->user()->hasVerifiedEmail()) {
+        if (! $request->user()->hasVerifiedEmail()) {
             return redirect()->route('verification.notice')
                 ->with('error', 'Silakan verifikasi email Anda sebelum melakukan langganan.');
         }
@@ -186,16 +189,21 @@ class SubscriptionPlanController extends Controller
         $request->validate([
             'plan_id' => 'required|exists:subscription_plans,id',
             'coupon' => 'nullable|string',
+            'payment_method' => 'nullable|string|in:midtrans,local',
         ]);
 
         $plan = SubscriptionPlan::findOrFail($request->plan_id);
+        $paymentMethod = $request->filled('payment_method')
+            ? $request->input('payment_method')
+            : config('payment.default_gateway', 'midtrans');
         $couponCode = $request->coupon;
         $coupon = null;
         $discount = 0;
         $finalAmount = $plan->price;
 
-        if ($couponCode && !$plan->is_free) {
+        if ($couponCode && ! $plan->is_free) {
             $coupon = Coupon::where('code', strtoupper($couponCode))
+                ->where('type', '!=', 'voucher')
                 ->where('is_active', true)
                 ->where(function ($q) {
                     $q->whereNull('starts_at')->orWhere('starts_at', '<=', now());
@@ -223,7 +231,7 @@ class SubscriptionPlanController extends Controller
         }
 
         if ($plan->is_free || $finalAmount <= 0) {
-            $orderId = 'FREE-' . time() . '-' . auth()->id();
+            $orderId = 'FREE-'.time().'-'.auth()->id();
 
             $payment = Payment::create([
                 'user_id' => auth()->id(),
@@ -259,7 +267,7 @@ class SubscriptionPlanController extends Controller
             ]);
         }
 
-        $orderId = 'SUB-' . time() . '-' . auth()->id();
+        $orderId = 'SUB-'.time().'-'.auth()->id();
 
         $payment = Payment::create([
             'user_id' => auth()->id(),
@@ -268,11 +276,25 @@ class SubscriptionPlanController extends Controller
             'order_id' => $orderId,
             'amount' => $finalAmount,
             'status' => 'pending',
-            'payment_gateway' => 'midtrans',
+            'payment_gateway' => $paymentMethod,
+            'payment_type' => $paymentMethod === 'local' ? 'qris' : null,
+            'payment_method' => $paymentMethod,
         ]);
 
         if ($coupon) {
             $coupon->increment('used_count');
+        }
+
+        // LOCAL PAYMENT (QRIS) — Midtrans tidak disentuh
+        if ($paymentMethod === 'local' && $finalAmount > 0) {
+            return response()->json([
+                'snap_token' => null,
+                'order_id' => $orderId,
+                'final_amount' => $finalAmount,
+                'discount' => $discount,
+                'coupon_code' => $coupon ? $coupon->code : null,
+                'payment_method' => 'local',
+            ]);
         }
 
         try {
@@ -325,6 +347,7 @@ class SubscriptionPlanController extends Controller
         ]);
 
         $coupon = Coupon::where('code', strtoupper($request->code))
+            ->where('type', '!=', 'voucher')
             ->where('is_active', true)
             ->where(function ($q) {
                 $q->whereNull('starts_at')->orWhere('starts_at', '<=', now());
@@ -337,12 +360,12 @@ class SubscriptionPlanController extends Controller
             })
             ->first();
 
-        if (!$coupon) {
+        if (! $coupon) {
             return response()->json(['valid' => false, 'message' => 'Kupon tidak valid atau sudah kadaluarsa.']);
         }
 
         if ($coupon->min_amount && $request->amount < $coupon->min_amount) {
-            return response()->json(['valid' => false, 'message' => 'Minimal pembelian untuk kupon ini adalah Rp ' . number_format($coupon->min_amount, 0, ',', '.') . '.']);
+            return response()->json(['valid' => false, 'message' => 'Minimal pembelian untuk kupon ini adalah Rp '.number_format($coupon->min_amount, 0, ',', '.').'.']);
         }
 
         if ($coupon->type === 'percentage') {
@@ -365,7 +388,7 @@ class SubscriptionPlanController extends Controller
         Log::info('MIDTRANS CALLBACK HIT', $request->all());
 
         try {
-            $notification = (new \Midtrans\Notification())->getResponse();
+            $notification = (new Notification)->getResponse();
 
             $orderId = $notification->order_id;
             $status = $notification->transaction_status;
@@ -374,7 +397,7 @@ class SubscriptionPlanController extends Controller
 
             $payment = Payment::where('order_id', $orderId)->first();
 
-            if (!$payment) {
+            if (! $payment) {
                 return response()->json(['message' => 'Payment not found'], 404);
             }
 
@@ -382,7 +405,7 @@ class SubscriptionPlanController extends Controller
 
                 $plan = SubscriptionPlan::find($payment->subscription_plan_id);
 
-                if (!$plan) {
+                if (! $plan) {
                     return response()->json(['message' => 'Plan not found'], 404);
                 }
 
@@ -487,7 +510,7 @@ class SubscriptionPlanController extends Controller
             ->where('order_id', $orderId)
             ->firstOrFail();
 
-        if (!auth()->user()->hasRole('admin') && $payment->user_id !== auth()->id()) {
+        if (! auth()->user()->hasRole('admin') && $payment->user_id !== auth()->id()) {
             abort(403);
         }
 
@@ -502,11 +525,11 @@ class SubscriptionPlanController extends Controller
             ->where('order_id', $orderId)
             ->firstOrFail();
 
-        if (!auth()->user()->hasRole('admin') && $payment->user_id !== auth()->id()) {
+        if (! auth()->user()->hasRole('admin') && $payment->user_id !== auth()->id()) {
             abort(403);
         }
 
-        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('payment.invoice', compact('payment'));
+        $pdf = Pdf::loadView('payment.invoice', compact('payment'));
 
         return $pdf->download('invoice-'.$payment->order_id.'.pdf');
     }
@@ -515,7 +538,7 @@ class SubscriptionPlanController extends Controller
     {
         $query = Payment::with('subscriptionPlan');
 
-        if (!auth()->user()->hasRole('admin')) {
+        if (! auth()->user()->hasRole('admin')) {
             $query->where('user_id', auth()->id());
         }
 
@@ -527,14 +550,23 @@ class SubscriptionPlanController extends Controller
         $totalPaid = $paidPayments->sum('amount');
         $totalUnpaid = $unpaidPayments->sum('amount');
 
-        return view('payment.status', compact('payments', 'paidPayments', 'unpaidPayments', 'totalPaid', 'totalUnpaid'));
+        $canApprove = auth()->user()->hasRole('admin');
+        $pendingLocalPayments = collect();
+        if ($canApprove) {
+            $pendingLocalPayments = $payments
+                ->where('payment_gateway', 'local')
+                ->filter(fn ($p) => $p->proof_image && $p->status === 'pending')
+                ->reverse();
+        }
+
+        return view('payment.status', compact('payments', 'paidPayments', 'unpaidPayments', 'totalPaid', 'totalUnpaid', 'canApprove', 'pendingLocalPayments'));
     }
 
     public function paymentIndex(Request $request)
     {
         $query = Payment::with('subscriptionPlan');
 
-        if (!auth()->user()->hasRole('admin')) {
+        if (! auth()->user()->hasRole('admin')) {
             $query->where('user_id', auth()->id());
         }
 
@@ -626,7 +658,7 @@ class SubscriptionPlanController extends Controller
         $user = $request->user();
         $subscription = $user->subscription;
 
-        if (!$subscription || !$subscription->end_date || !$subscription->end_date->isFuture()) {
+        if (! $subscription || ! $subscription->end_date || ! $subscription->end_date->isFuture()) {
             return redirect()->route('subscribe.page')->with('error', 'Tidak ada langganan aktif yang dapat dibatalkan.');
         }
 
@@ -636,5 +668,286 @@ class SubscriptionPlanController extends Controller
         ]);
 
         return redirect()->route('subscribe.page')->with('success', 'Langganan Anda berhasil dibatalkan.');
+    }
+
+    public function redeemVoucher(Request $request)
+    {
+        $request->validate([
+            'voucher_code' => 'required|string',
+        ]);
+
+        $user = $request->user();
+
+        if (! $user->hasVerifiedEmail()) {
+            return redirect()->route('verification.notice')
+                ->with('error', 'Silakan verifikasi email Anda sebelum menukar voucher.');
+        }
+
+        $voucher = Coupon::where('code', strtoupper($request->voucher_code))
+            ->where('is_active', true)
+            ->where(function ($q) {
+                $q->whereNull('starts_at')->orWhere('starts_at', '<=', now());
+            })
+            ->where(function ($q) {
+                $q->whereNull('expires_at')->orWhere('expires_at', '>=', now());
+            })
+            ->where(function ($q) {
+                $q->whereNull('max_uses')->orWhere('used_count', '<', 'max_uses');
+            })
+            ->first();
+
+        if (! $voucher) {
+            return redirect()->route('subscribe.page')->with('error', 'Voucher tidak valid atau sudah kadaluarsa.');
+        }
+
+        $plan = $voucher->plan;
+
+        if (! $plan) {
+            $plan = SubscriptionPlan::where('is_free', false)->first();
+
+            if (! $plan) {
+                return redirect()->route('subscribe.page')->with('error', 'Voucher tidak memiliki paket yang valid.');
+            }
+        }
+
+        $discount = 0;
+
+        if ($voucher->type === 'percentage') {
+            $discount = (int) floor($plan->price * $voucher->value / 100);
+        } elseif ($voucher->type === 'fixed') {
+            $discount = min($voucher->value, $plan->price);
+        } elseif ($voucher->type === 'voucher') {
+            $discount = $plan->price;
+        }
+
+        $finalAmount = max(0, $plan->price - $discount);
+
+        if ($finalAmount > 0) {
+            return redirect()->route('subscribe.page')->with('error', 'Voucher ini tidak memberikan potongan 100%. Silakan gunakan fitur checkout untuk menerapkan kupon ini.');
+        }
+
+        $orderId = 'VOUCHER-'.time().'-'.$user->id;
+
+        $payment = Payment::create([
+            'user_id' => $user->id,
+            'subscription_plan_id' => $plan->id,
+            'coupon_id' => $voucher->id,
+            'order_id' => $orderId,
+            'amount' => 0,
+            'status' => 'paid',
+            'payment_gateway' => 'voucher',
+            'paid_at' => now(),
+        ]);
+
+        Subscription::updateOrCreate(
+            ['user_id' => $user->id],
+            [
+                'subscription_plan_id' => $plan->id,
+                'start_date' => now(),
+                'end_date' => now()->addDays($plan->duration),
+                'is_active' => true,
+            ]
+        );
+
+        $voucher->increment('used_count');
+
+        $user->notify(new SubscriptionSuccessNotification($plan, $payment, 'paid'));
+
+        return redirect()->route('subscribe.page')->with('success', 'Voucher berhasil ditukar! Paket '.$plan->name.' aktif selama '.$plan->duration.' hari.');
+    }
+
+    /* =====================
+    |  LOCAL PAYMENT (QRIS)
+    ====================== */
+
+    public function localPaymentIndex(Request $request)
+    {
+        $orderId = $request->query('order_id');
+
+        $payment = Payment::with('subscriptionPlan')
+            ->where('order_id', $orderId)
+            ->where('payment_gateway', 'local')
+            ->firstOrFail();
+
+        if (! auth()->user()->hasRole('admin') && $payment->user_id !== auth()->id()) {
+            abort(403);
+        }
+
+        return view('payment.local', compact('payment'));
+    }
+
+    public function confirmLocalPayment(Request $request)
+    {
+        $request->validate([
+            'order_id' => 'required|string|exists:payments,order_id',
+            'proof_image' => 'required|image|max:5120',
+        ]);
+
+        $payment = Payment::with(['subscriptionPlan', 'user'])
+            ->where('order_id', $request->order_id)
+            ->where('payment_gateway', 'local')
+            ->firstOrFail();
+
+        if (! auth()->user()->hasRole('admin') && $payment->user_id !== auth()->id()) {
+            abort(403);
+        }
+
+        if ($payment->proof_image) {
+            return back()->with('error', 'Bukti pembayaran sudah pernah dikirim. Silakan tunggu konfirmasi admin.');
+        }
+
+        $path = $request->file('proof_image')->store('payment-proofs', 'public');
+
+        $payment->update([
+            'proof_image' => $path,
+            'status' => 'pending',
+            'payload' => array_merge((array) $payment->payload, ['confirmed_at' => now()->toDateTimeString()]),
+        ]);
+
+        // Kirim notifikasi WhatsApp ke admin
+        $whatsapp = new WhatsAppService();
+        $adminUser = User::role('admin')->first();
+        $adminPhone = $adminUser ? $adminUser->phone : null;
+        $adminPhone = $adminPhone ?: config('services.admin_whatsapp');
+
+        $planName = $payment->subscriptionPlan->name ?? '-';
+        $amount = number_format($payment->amount, 0, ',', '.');
+        $userName = $payment->user->name ?? 'Customer';
+        $userEmail = $payment->user->email ?? '-';
+        $userPhone = $payment->user->phone ?? '-';
+
+        $message = "🟢 *Pembayaran Lokal (QRIS) Diterima*\n\n";
+        $message .= "Order ID: `{$payment->order_id}`\n";
+        $message .= "Nama: {$userName}\n";
+        $message .= "Email: {$userEmail}\n";
+        $message .= "WhatsApp: {$userPhone}\n";
+        $message .= "Paket: {$planName}\n";
+        $message .= "Total: Rp {$amount}\n\n";
+        $message .= "Bukti transfer telah di-upload. Silakan verifikasi dan konfirmasi di panel admin.\n";
+        $message .= "Link: " . config('app.url') . "/payments/status";
+
+        $whatsapp->sendToUser($adminPhone, $message);
+
+        return redirect()->route('payment.local.index', ['order_id' => $payment->order_id])
+            ->with('success', 'Bukti pembayaran berhasil dikirim. Silakan tunggu konfirmasi dari admin.');
+    }
+
+    public function approveLocalPayment(Request $request, $orderId)
+    {
+        $request->validate([
+            'status' => 'required|in:paid,failed',
+        ]);
+
+        $payment = Payment::with(['subscriptionPlan', 'user'])
+            ->where('order_id', $orderId)
+            ->where('payment_gateway', 'local')
+            ->firstOrFail();
+
+        if (! auth()->user()->hasRole('admin')) {
+            abort(403);
+        }
+
+        if ($request->status === 'paid') {
+            $plan = SubscriptionPlan::find($payment->subscription_plan_id);
+
+            if ($plan) {
+                $subscription = Subscription::where('user_id', $payment->user_id)->first();
+
+                if ($subscription && $subscription->end_date && $subscription->end_date->isFuture()) {
+                    $startDate = $subscription->start_date;
+                    $endDate = $subscription->end_date->addDays($plan->duration);
+                } else {
+                    $startDate = now();
+                    $endDate = now()->addDays($plan->duration);
+                }
+
+                Subscription::updateOrCreate(
+                    ['user_id' => $payment->user_id],
+                    [
+                        'subscription_plan_id' => $plan->id,
+                        'start_date' => $startDate,
+                        'end_date' => $endDate,
+                        'is_active' => true,
+                    ]
+                );
+            }
+
+            $payment->update([
+                'status' => 'paid',
+                'transaction_status' => 'settlement',
+                'payment_type' => 'qris',
+                'gateway_transaction_id' => 'LOCAL-'.now()->timestamp,
+                'paid_at' => now(),
+                'payload' => array_merge((array) $payment->payload, [
+                    'approved_by' => auth()->id(),
+                    'approved_at' => now()->toDateTimeString(),
+                ]),
+            ]);
+
+            $user = User::find($payment->user_id);
+            if ($plan) {
+                $user->notify(new SubscriptionSuccessNotification($plan, $payment, 'paid'));
+            }
+
+            // Notifikasi WhatsApp ke user bahwa pembayaran disetujui
+            $whatsapp = new WhatsAppService();
+            $userName = $payment->user->name ?? 'Customer';
+            $planName = $payment->subscriptionPlan->name ?? '-';
+            $amount = number_format($payment->amount, 0, ',', '.');
+
+            $userMessage = "✅ *Pembayaran QRIS Anda Disetujui!*\n\n";
+            $userMessage .= "Order ID: `{$payment->order_id}`\n";
+            $userMessage .= "Paket: {$planName}\n";
+            $userMessage .= "Total: Rp {$amount}\n\n";
+            $userMessage .= "Pembayaran Anda telah dikonfirmasi dan langganan telah diaktifkan. Terima kasih!";
+
+            if ($payment->user->phone) {
+                $whatsapp->sendToUser($payment->user->phone, $userMessage);
+            }
+
+            // Notifikasi admin
+            $adminMessage = "✅ *Pembayaran QRIS Diverifikasi & Disetujui*\n\n";
+            $adminMessage .= "Order ID: `{$payment->order_id}`\n";
+            $adminMessage .= "User: {$userName}";
+            if ($payment->user->email) {
+                $adminMessage .= " ({$payment->user->email})";
+            }
+            $adminMessage .= "\nPaket: {$planName}\n";
+            $adminMessage .= "Total: Rp {$amount}\n";
+            $adminMessage .= "Status: LUNAS\n";
+            $adminMessage .= "Diproses oleh: " . (auth()->user()->name ?? 'Admin') . "\n";
+            $adminMessage .= "Link: " . config('app.url') . "/payments/status";
+
+            $whatsapp->sendAdminNotification($adminMessage);
+
+            return back()->with('success', 'Pembayaran berhasil disetujui. Langganan pengguna telah diaktifkan.');
+        } else {
+            $payment->update([
+                'status' => 'failed',
+                'transaction_status' => 'failed',
+                'payload' => array_merge((array) $payment->payload, [
+                    'rejected_by' => auth()->id(),
+                    'rejected_at' => now()->toDateTimeString(),
+                ]),
+            ]);
+
+            $whatsapp = new WhatsAppService();
+            $userName = $payment->user->name ?? 'Customer';
+            $amount = number_format($payment->amount, 0, ',', '.');
+
+            $adminMessage = "❌ *Pembayaran QRIS Ditolak*\n\n";
+            $adminMessage .= "Order ID: `{$payment->order_id}`\n";
+            $adminMessage .= "User: {$userName}";
+            if ($payment->user->email) {
+                $adminMessage .= " ({$payment->user->email})";
+            }
+            $adminMessage .= "\nTotal: Rp {$amount}\n";
+            $adminMessage .= "Bukti transfer ditolak. Silakan hubungi customer.";
+            $adminMessage .= "\nLink: " . config('app.url') . "/payments/status";
+
+            $whatsapp->sendAdminNotification($adminMessage);
+
+            return back()->with('success', 'Pembayaran ditolak. Pengguna akan diberi tahu.');
+        }
     }
 }

@@ -37,10 +37,20 @@
                             <p class="mb-1 fw-medium">
                                 Order ID: <b>{{ $payment->order_id }}</b>
                             </p>
-                            <p class="text-secondary small mb-0">
-                                Paket: {{ $payment->subscriptionPlan->name ?? '-' }} |
-                                {{ $payment->created_at->format('d M Y H:i') }}
-                            </p>
+                         <p class="text-secondary small mb-0">
+                             {{ $payment->subscriptionPlan->name ?? '-' }} |
+                             {{ $payment->paymentMethodLabel() }} |
+                             {{ $payment->created_at->format('d M Y H:i') }}
+                             @if($payment->payment_gateway === 'local' && $payment->proof_image)
+                                 <span class="badge bg-info ms-2">Ada Bukti</span>
+                             @endif
+                         </p>
+
+                         @if($payment->payment_gateway === 'local' && $payment->proof_image && $payment->status === 'pending')
+                             <p class="mb-1">
+                                 <img src="{{ asset('storage/' . $payment->proof_image) }}" alt="Bukti" style="max-width: 60px; border-radius: 0.25rem;">
+                             </p>
+                         @endif
                         </div>
 
                         <div class="col-auto">
@@ -60,13 +70,33 @@
 
 
 
-                        <div class="col-auto d-flex gap-2">
-                            <a href="{{ route('payment.invoice', ['order_id' => $payment->order_id]) }}"
-                                class="avatar avatar-40 rounded-circle border" target="_blank" title="Lihat Invoice">
-                                <i class="bi bi-eye"></i>
-                            </a>
+                         <div class="col-auto d-flex gap-2">
 
-                            @if($payment->status === 'paid')
+                             @if($payment->payment_gateway === 'local' && $payment->proof_image && $payment->status === 'pending' && auth()->user()->hasRole('admin'))
+                                 <form action="{{ route('payment.local.approve', $payment->order_id) }}" method="POST" class="d-inline">
+                                     @csrf
+                                     <input type="hidden" name="status" value="paid">
+                                     <button type="submit" class="avatar avatar-40 rounded-circle border text-success" title="Setujui"
+                                         onclick="return confirm('Setujui pembayaran ini?')">
+                                         <i class="bi bi-check-lg"></i>
+                                     </button>
+                                 </form>
+                                 <form action="{{ route('payment.local.approve', $payment->order_id) }}" method="POST" class="d-inline">
+                                     @csrf
+                                     <input type="hidden" name="status" value="failed">
+                                     <button type="submit" class="avatar avatar-40 rounded-circle border text-danger" title="Tolak"
+                                         onclick="return confirm('Tolak pembayaran ini?')">
+                                         <i class="bi bi-x-lg"></i>
+                                     </button>
+                                 </form>
+                             @endif
+
+                             <a href="{{ route('payment.invoice', ['order_id' => $payment->order_id]) }}"
+                                 class="avatar avatar-40 rounded-circle border" target="_blank" title="Lihat Invoice">
+                                 <i class="bi bi-eye"></i>
+                             </a>
+
+                             @if($payment->status === 'paid')
                                 <a href="{{ route('payment.invoice', ['order_id' => $payment->order_id]) }}"
                                     class="avatar avatar-40 rounded-circle border" target="_blank" title="Cetak Invoice">
                                     <i class="bi bi-file-earmark-pdf"></i>

@@ -240,7 +240,7 @@
                             </div>
 
                             <div class="mb-3 col-md-8">
-                                <label for="MIDTRANS_SERVER_KEY" class="form-label fw-semibold">Midtrans Server Key (MIDTRANS_SERVER_KEY)</label>
+                                 <label for="MIDTRANS_SERVER_KEY" class="form-label fw-semibold">Midtrans Server Key (MIDTRANS_SERVER_KEY)</label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="bi bi-key-fill"></i></span>
                                     <input type="password" name="MIDTRANS_SERVER_KEY" id="MIDTRANS_SERVER_KEY" class="form-control" value="{{ old('MIDTRANS_SERVER_KEY', $envData['MIDTRANS_SERVER_KEY'] ?? '') }}" placeholder="Mata Kunci Server (misal: SB-Mid-server-...)">
@@ -248,6 +248,36 @@
                                         <i class="bi bi-eye" id="toggle-MIDTRANS_SERVER_KEY-icon"></i>
                                     </button>
                                 </div>
+                            </div>
+
+                            <hr class="my-4">
+
+                            <h5 class="section-title"><i class="bi bi-qr-code me-1 text-success"></i> Pengaturan Metode Pembayaran</h5>
+                            <p class="text-muted small">Pilih metode pembayaran utama untuk checkout. Midtrans = gateway pembayaran (kartu, e-wallet, VA). Lokal = QRIS langsung.</p>
+
+                            <div class="mb-3 col-md-8">
+                                <label for="PAYMENT_GATEWAY" class="form-label fw-semibold">Metode Pembayaran Default (PAYMENT_GATEWAY)</label>
+                                <select name="PAYMENT_GATEWAY" id="PAYMENT_GATEWAY" class="form-select">
+                                    <option value="midtrans" {{ old('PAYMENT_GATEWAY', $envData['PAYMENT_GATEWAY'] ?? 'midtrans') === 'midtrans' ? 'selected' : '' }}>Midtrans (Kartu, e-wallet, VA)</option>
+                                    <option value="local" {{ old('PAYMENT_GATEWAY', $envData['PAYMENT_GATEWAY'] ?? '') === 'local' ? 'selected' : '' }}>QRIS Lokal (Pembayaran Langsung)</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3 col-md-8">
+                                <label for="ADMIN_WHATSAPP" class="form-label fw-semibold">Nomor WhatsApp Admin (ADMIN_WHATSAPP)</label>
+                                <input type="text" name="ADMIN_WHATSAPP" id="ADMIN_WHATSAPP" class="form-control" value="{{ old('ADMIN_WHATSAPP', $envData['ADMIN_WHATSAPP'] ?? '') }}" placeholder="087731402487">
+                                <div class="form-text">Nomor WhatsApp admin yang akan menerima notifikasi pembayaran QRIS lokal.</div>
+                            </div>
+
+                            <div class="mb-3 col-md-8">
+                                <label for="FONTE_API_KEY" class="form-label fw-semibold">Fonnte API Key (FONTE_API_KEY)</label>
+                                <div class="input-group">
+                                    <input type="password" name="FONTE_API_KEY" id="FONTE_API_KEY" class="form-control" value="{{ old('FONTE_API_KEY', $envData['FONTE_API_KEY'] ?? '') }}" placeholder="API Key dari https://fonnte.com">
+                                    <button class="btn btn-outline-secondary" type="button" onclick="togglePasswordVisibility('FONTE_API_KEY')">
+                                        <i class="bi bi-eye" id="toggle-FONTE_API_KEY-icon"></i>
+                                    </button>
+                                </div>
+                                <div class="form-text">API key gateway WhatsApp Fonnte untuk notifikasi. <a href="https://fonnte.com" target="_blank">Daftar di sini</a>.</div>
                             </div>
                         </div>
 
@@ -319,7 +349,7 @@
 
                                     <div class="mb-3">
                                         <label for="GOOGLE_REDIRECT_URI" class="form-label fw-semibold">Google Redirect URI</label>
-                                        <input type="url" name="GOOGLE_REDIRECT_URI" id="GOOGLE_REDIRECT_URI" class="form-control" value="{{ old('GOOGLE_REDIRECT_URI', $envData['GOOGLE_REDIRECT_URI'] ?? '') }}" placeholder="http://localhost:8000/auth/google/callback">
+                                         <input type="text" name="GOOGLE_REDIRECT_URI" id="GOOGLE_REDIRECT_URI" class="form-control" value="{{ old('GOOGLE_REDIRECT_URI', $envData['GOOGLE_REDIRECT_URI'] ?? '') }}" placeholder="http://localhost:8000/auth/google/callback">
                                     </div>
                                 </div>
 

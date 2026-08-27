@@ -6,7 +6,9 @@
 
     <style>
         :root {
-            --mobile-nav-active-color: {{ $themeColor }};
+            --mobile-nav-active-color:
+                {{ $themeColor }}
+            ;
         }
 
         .list-group-item {
@@ -15,7 +17,8 @@
         }
 
         .info-text {
-            min-width: 0; /* Penting agar flexbox text-truncate berfungsi */
+            min-width: 0;
+            /* Penting agar flexbox text-truncate berfungsi */
         }
 
         .info-text h6 {
@@ -30,9 +33,11 @@
             .list-group-item {
                 padding: 12px 14px;
             }
+
             .w-md-100 {
                 width: 100% !important;
             }
+
             .btn-icon-mobile {
                 width: 44px;
                 height: 44px;
@@ -42,6 +47,7 @@
                 padding: 0;
                 font-size: 1.1rem;
             }
+
             .dropdown-toggle.btn-icon-mobile {
                 border-radius: 50%;
             }
@@ -53,16 +59,18 @@
                 height: 40px;
             }
         }
-        .btn-bulk-delete {
-    width: auto !important;
-    display: inline-flex !important;
-    white-space: nowrap;
-    flex-shrink: 0;
-}
 
-.form-check {
-    margin-bottom: 0 !important;
-}
+        .btn-bulk-delete {
+            width: auto !important;
+            display: inline-flex !important;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .form-check {
+            margin-bottom: 0 !important;
+        }
+        
     </style>
 
     <!-- TAB 1: Aktivitas Undangan -->
@@ -70,7 +78,8 @@
         <div class="py-10">
             <div class="container-fluid">
 
-                <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4 gap-3">
+                <div
+                    class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4 gap-3">
                     <div>
                         <h4 class="mb-1">Aktivitas Undangan Terbaru</h4>
                         @php $status = auth()->user()->subscriptionStatus(); @endphp
@@ -108,11 +117,13 @@
                         @endphp
 
                         @if($canCreateMore)
-                            <button type="button" class="btn btn-sm btn-outline-primary w-100 w-md-auto" data-bs-toggle="modal" data-bs-target="#newInvitationModal">
+                            <button type="button" class="btn btn-sm btn-outline-primary w-100 w-md-auto"
+                                data-bs-toggle="modal" data-bs-target="#newInvitationModal">
                                 <i class="bi bi-plus-circle me-1"></i> Buat Undangan
                             </button>
                         @else
-                            <button type="button" class="btn btn-sm btn-warning w-100 w-md-auto" data-bs-toggle="modal" data-bs-target="#upgradeModal">
+                            <button type="button" class="btn btn-sm btn-warning w-100 w-md-auto" data-bs-toggle="modal"
+                                data-bs-target="#upgradeModal">
                                 <i class="bi bi-star me-1"></i> Upgrade ke Premium
                             </button>
                         @endif
@@ -122,130 +133,168 @@
                 <form id="bulkDeleteForm" action="{{ route('invitation.bulk-delete') }}" method="POST">
                     @csrf
 
-                   @if($invitations->isNotEmpty())
-    <div class="d-flex flex-nowrap align-items-center justify-content-between w-100 mb-2 px-2 py-2 rounded border" style="background-color: rgba(198, 169, 98, 0.1); border-color: rgba(198, 169, 98, 0.2) !important;">
+                    @if($invitations->isNotEmpty())
+                        <div class="d-flex flex-nowrap align-items-center justify-content-between w-100 mb-2 px-2 py-2 rounded border"
+                            style="background-color: rgba(198, 169, 98, 0.1); border-color: rgba(198, 169, 98, 0.2) !important;">
 
-        {{-- Pilih Semua --}}
-        <div class="form-check mb-0 d-flex align-items-center">
-            <input
-                class="form-check-input mt-0 me-2"
-                type="checkbox"
-                id="selectAll"
-            >
+                            {{-- Pilih Semua --}}
+                            <div class="form-check mb-0 d-flex align-items-center">
+                                <input class="form-check-input mt-0 me-2" type="checkbox" id="selectAll">
 
-            <label
-                class="form-check-label small fw-bold text-nowrap"
-                for="selectAll"
-            >
-                Pilih Semua
-            </label>
-        </div>
+                                <label class="form-check-label small fw-bold text-nowrap" for="selectAll">
+                                    Pilih Semua
+                                </label>
+                            </div>
 
-        {{-- Tombol Hapus --}}
-        <button
-            type="submit"
-            class="btn btn-danger btn-sm btn-bulk-delete ms-auto flex-shrink-0"
-            disabled
-        >
-            <i class="bi bi-trash me-1"></i>
-            Hapus yang Dipilih
-        </button>
+                            {{-- Tombol Hapus --}}
+                            <button type="submit" class="btn btn-danger btn-sm btn-bulk-delete ms-auto flex-shrink-0"
+                                disabled>
+                                <i class="bi bi-trash me-1"></i>
+                                Hapus yang Dipilih
+                            </button>
 
-    </div>
-@endif
+                        </div>
+                    @endif
 
                     <ul class="list-group">
                         @forelse ($invitations as $inv)
-                            <li class="list-group-item d-flex align-items-center gap-3">
-                                <!-- Checkbox -->
-                                <input type="checkbox" name="ids[]" value="{{ $inv->public_id }}" class="form-check-input flex-shrink-0 m-0 bulk-checkbox">
+                                            <li class="list-group-item d-flex align-items-center gap-3">
+                                                <!-- Checkbox -->
+                                                <input type="checkbox" name="ids[]" value="{{ $inv->public_id }}"
+                                                    class="form-check-input flex-shrink-0 m-0 bulk-checkbox">
 
-                                <!-- Cover -->
-                                <div class="flex-shrink-0">
-                                    @if($inv->gallery_cover)
-                                        <img src="{{ storage_url_with_fallback($inv->gallery_cover, null, $inv->updated_at->timestamp) }}" class="rounded object-fit-cover" style="width: 48px; height: 48px;" alt="Cover">
-                                    @else
-                                        <div class="rounded bg-light d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
-                                            <i class="bi bi-image text-muted"></i>
-                                        </div>
-                                    @endif
-                                </div>
+                                                <!-- Cover -->
+                                                <div class="flex-shrink-0">
+                                                    @if($inv->gallery_cover)
+                                                        <img src="{{ storage_url_with_fallback($inv->gallery_cover, null, $inv->updated_at->timestamp) }}"
+                                                            class="rounded object-fit-cover" style="width: 48px; height: 48px;" alt="Cover">
+                                                    @else
+                                                        <div class="rounded bg-light d-flex align-items-center justify-content-center"
+                                                            style="width: 48px; height: 48px;">
+                                                            <i class="bi bi-image text-muted"></i>
+                                                        </div>
+                                                    @endif
+                                                </div>
 
-                                <!-- Info -->
-                                <div class="flex-grow-1 info-text">
-                                    <h6 class="mb-0 fw-bold text-dark">
-                                        {{ $inv->groom_nickname ?? $inv->groom_name }} & {{ $inv->bride_nickname ?? $inv->bride_name }}
-                                    </h6>
-                                    <small class="text-muted d-block text-truncate">
-                                        <i class="bi bi-calendar3 me-1"></i>
-                                        {{ $inv->wedding_date ? \Carbon\Carbon::parse($inv->wedding_date)->format('d M Y') : 'Tanggal belum ditentukan' }}
-                                    </small>
-                                </div>
+                                                <!-- Info -->
+                                                <div class="flex-grow-1 min-w-0 info-text">
 
-                                <!-- Tombol Aksi -->
-                                <div class="flex-shrink-0 d-flex align-items-center gap-2">
-                                    <!-- Desktop -->
-                                    <div class="d-none d-md-flex gap-2">
-                                        <a href="{{ route('invitation.show', $inv->slug) }}" class="btn btn-outline-primary btn-sm" target="_blank" title="Lihat">
-                                            <i class="bi bi-eye"></i>
-                                        </a>
-                                        <a href="{{ route('invitation.edit', $inv) }}" class="btn btn-outline-primary btn-sm" title="Edit">
-                                            <i class="bi bi-pencil"></i>
-                                        </a>
-                                        @if(auth()->user()->isPaidSubscribed())
-                                             <button type="button" class="btn btn-outline-success btn-sm" data-bs-toggle="modal" data-bs-target="#shareModalDynamic" data-id="{{ $inv->public_id }}" title="Bagikan Undangan">
-                                                <i class="bi bi-share"></i>
-                                            </button>
-                                        @endif
+                                                    {{-- Nama Pasangan --}}
+                                                    <div class="d-flex align-items-center gap-2 min-w-0 mb-1">
+                                                        <h6 class="mb-0 fw-semibold text-body text-truncate invitation-title">
+                                                            {{ $inv->groom_nickname ?? $inv->groom_name }}
+                                                            <span class="text-muted fw-normal mx-1">&</span>
+                                                            {{ $inv->bride_nickname ?? $inv->bride_name }}
+                                                        </h6>
+                                                    </div>
 
-                                        @if(!$inv->is_default)
-                                            <a href="{{ route('invitation.destroy.get', $inv) }}" class="btn btn-outline-danger btn-sm btn-delete-single" data-name="{{ $inv->groom_nickname ?? $inv->groom_name }} & {{ $inv->bride_nickname ?? $inv->bride_name }}" title="Hapus">
-                                                <i class="bi bi-trash"></i>
-                                            </a>
-                                        @endif
-                                    </div>
+                                                    {{-- Tanggal --}}
+                                                    <div class="d-flex align-items-center text-muted invitation-date mb-2">
+                                                        <i class="bi bi-calendar3 me-1"></i>
+                                                        <span>
+                                                            {{ $inv->wedding_date
+                            ? \Carbon\Carbon::parse($inv->wedding_date)->format('d M Y')
+                            : 'Tanggal belum ditentukan'
+                                                    }}
+                                                        </span>
+                                                    </div>
 
-                                   <!-- MOBILE -->
-<div class="dropdown d-md-none">
-    <button class="btn btn-outline-secondary btn-icon-mobile" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-        <i class="bi bi-three-dots-vertical"></i>
-    </button>
-    <ul class="dropdown-menu dropdown-menu-end">
-        <li>
-            <a class="dropdown-item" href="{{ route('invitation.show', $inv->slug) }}" target="_blank">
-                <i class="bi bi-eye me-2"></i> Lihat
-            </a>
-        </li>
-        <li>
-            <a class="dropdown-item" href="{{ route('invitation.edit', $inv) }}">
-                <i class="bi bi-pencil me-2"></i> Edit
-            </a>
-        </li>
-        <li>
-            @if(auth()->user()->isPaidSubscribed())
-                 <button type="button" class="dropdown-item text-success" data-bs-toggle="modal" data-bs-target="#shareModalDynamic" data-id="{{ $inv->public_id }}">
-                    <i class="bi bi-share me-2"></i> Bagikan Undangan
-                </button>
-            @endif
-        </li>
-        @if(!$inv->is_default)
-            <li><hr class="dropdown-divider"></li>
-            <li>
-                <a href="{{ route('invitation.destroy.get', $inv) }}" class="dropdown-item text-danger w-100 text-start btn-delete-single" data-name="{{ $inv->groom_nickname ?? $inv->groom_name }} & {{ $inv->bride_nickname ?? $inv->bride_name }}">
-                    <i class="bi bi-trash me-2"></i> Hapus
-                </a>
-            </li>
-        @endif
-    </ul>
-</div>
-                                </div>
-                            </li>
+                                                    {{-- Status --}}
+                                                    <div class="d-flex align-items-center gap-1 flex-wrap">
+
+                                                        <x-status-badge :status="$inv->status" />
+
+                                                        @if($inv->is_default)
+                                                            <span class="badge bg-info-subtle text-info-emphasis border border-info-subtle">
+                                                                <i class="bi bi-star-fill me-1"></i>
+                                                                Default
+                                                            </span>
+                                                        @endif
+
+                                                    </div>
+
+                                                </div>
+
+                                                <!-- Tombol Aksi -->
+                                                <div class="flex-shrink-0 d-flex align-items-center gap-2">
+                                                    <!-- Desktop -->
+                                                    <div class="d-none d-md-flex gap-2">
+                                                        <a href="{{ route('invitation.show', $inv->slug) }}"
+                                                            class="btn btn-outline-primary btn-sm" target="_blank" title="Lihat">
+                                                            <i class="bi bi-eye"></i>
+                                                        </a>
+                                                        <a href="{{ route('invitation.edit', $inv) }}"
+                                                            class="btn btn-outline-primary btn-sm" title="Edit">
+                                                            <i class="bi bi-pencil"></i>
+                                                        </a>
+                                                        @if(auth()->user()->isPaidSubscribed())
+                                                            <button type="button" class="btn btn-outline-success btn-sm" data-bs-toggle="modal"
+                                                                data-bs-target="#shareModalDynamic" data-id="{{ $inv->public_id }}"
+                                                                title="Bagikan Undangan">
+                                                                <i class="bi bi-share"></i>
+                                                            </button>
+                                                        @endif
+
+                                                        @if(!$inv->is_default)
+                                                            <a href="{{ route('invitation.destroy.get', $inv) }}"
+                                                                class="btn btn-outline-danger btn-sm btn-delete-single"
+                                                                data-name="{{ $inv->groom_nickname ?? $inv->groom_name }} & {{ $inv->bride_nickname ?? $inv->bride_name }}"
+                                                                title="Hapus">
+                                                                <i class="bi bi-trash"></i>
+                                                            </a>
+                                                        @endif
+                                                    </div>
+
+                                                    <!-- MOBILE -->
+                                                    <div class="dropdown d-md-none">
+                                                        <button class="btn btn-outline-secondary btn-icon-mobile" type="button"
+                                                            data-bs-toggle="dropdown" aria-expanded="false">
+                                                            <i class="bi bi-three-dots-vertical"></i>
+                                                        </button>
+                                                        <ul class="dropdown-menu dropdown-menu-end">
+                                                            <li>
+                                                                <a class="dropdown-item" href="{{ route('invitation.show', $inv->slug) }}"
+                                                                    target="_blank">
+                                                                    <i class="bi bi-eye me-2"></i> Lihat
+                                                                </a>
+                                                            </li>
+                                                            <li>
+                                                                <a class="dropdown-item" href="{{ route('invitation.edit', $inv) }}">
+                                                                    <i class="bi bi-pencil me-2"></i> Edit
+                                                                </a>
+                                                            </li>
+                                                            <li>
+                                                                @if(auth()->user()->isPaidSubscribed())
+                                                                    <button type="button" class="dropdown-item text-success"
+                                                                        data-bs-toggle="modal" data-bs-target="#shareModalDynamic"
+                                                                        data-id="{{ $inv->public_id }}">
+                                                                        <i class="bi bi-share me-2"></i> Bagikan Undangan
+                                                                    </button>
+                                                                @endif
+                                                            </li>
+                                                            @if(!$inv->is_default)
+                                                                <li>
+                                                                    <hr class="dropdown-divider">
+                                                                </li>
+                                                                <li>
+                                                                    <a href="{{ route('invitation.destroy.get', $inv) }}"
+                                                                        class="dropdown-item text-danger w-100 text-start btn-delete-single"
+                                                                        data-name="{{ $inv->groom_nickname ?? $inv->groom_name }} & {{ $inv->bride_nickname ?? $inv->bride_name }}">
+                                                                        <i class="bi bi-trash me-2"></i> Hapus
+                                                                    </a>
+                                                                </li>
+                                                            @endif
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </li>
                         @empty
                             <li class="list-group-item text-center py-5 border-0">
                                 <i class="bi bi-inbox fs-1 text-muted d-block mb-2"></i>
                                 <h6 class="text-dark">Belum ada undangan yang dibuat</h6>
                                 <p class="text-muted small mb-3">Mulai buat undangan pertamamu sekarang</p>
-                                <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#newInvitationModal">
+                                <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal"
+                                    data-bs-target="#newInvitationModal">
                                     <i class="bi bi-plus-circle me-1"></i> Buat Undangan
                                 </button>
                             </li>
@@ -258,7 +307,7 @@
 
         <!-- Hidden Divs untuk Menyimpan Template Pesan WhatsApp (Mencegah DOM bloat) -->
         @foreach ($invitations as $inv)
-             <div id="wa-message-{{ $inv->public_id }}" class="d-none">
+            <div id="wa-message-{{ $inv->public_id }}" class="d-none">
                 @include('dashboard.invitation.pesan')
             </div>
         @endforeach
@@ -266,71 +315,97 @@
         <!-- Modal: New Invitation -->
         <div class="modal fade" id="newInvitationModal" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content" style="border: none; border-radius: 16px; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.2);">
+                <div class="modal-content"
+                    style="border: none; border-radius: 16px; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.2);">
                     <form id="quickCreateForm" action="{{ route('invitation.quick-create') }}" method="POST">
                         @csrf
-                        
-                        <div class="modal-header text-center" style="background-color: #053B2D; color: #D4AF37; border-bottom: 3px solid #D4AF37; padding: 20px;">
-                            <h5 class="modal-title w-100 fw-bold" style="font-family: 'Cinzel', serif; letter-spacing: 1px;">
+
+                        <div class="modal-header text-center"
+                            style="background-color: #053B2D; color: #D4AF37; border-bottom: 3px solid #D4AF37; padding: 20px;">
+                            <h5 class="modal-title w-100 fw-bold"
+                                style="font-family: 'Cinzel', serif; letter-spacing: 1px;">
                                 <i class="bi bi-suit-heart-fill me-2" style="color: #D4AF37;"></i> Bangun Mimpimu
                             </h5>
-                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Tutup" style="opacity: 0.8;"></button>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                                aria-label="Tutup" style="opacity: 0.8;"></button>
                         </div>
 
                         <div class="modal-body p-4 p-md-5" style="background-color: #F7FDF9;">
-                            <p class="text-muted small text-center mb-4" style="font-style: italic;">Mulai perjalanan indah Anda dengan mengisi data berikut.</p>
+                            <p class="text-muted small text-center mb-4" style="font-style: italic;">Mulai perjalanan
+                                indah Anda dengan mengisi data berikut.</p>
 
                             <div class="mb-4">
-                                <h6 class="text-uppercase mb-3 d-flex align-items-center" style="color: #053B2D; font-weight: 700; letter-spacing: 1px; font-size: 0.85rem;">
-                                    <i class="bi bi-gender-male me-2" style="font-size: 1.2rem; color: #10B981;"></i> Mempelai Pria
+                                <h6 class="text-uppercase mb-3 d-flex align-items-center"
+                                    style="color: #053B2D; font-weight: 700; letter-spacing: 1px; font-size: 0.85rem;">
+                                    <i class="bi bi-gender-male me-2" style="font-size: 1.2rem; color: #10B981;"></i>
+                                    Mempelai Pria
                                 </h6>
                                 <div class="input-group mb-2">
-                                    <span class="input-group-text bg-white border-end-0" style="border-color: #d1ede1; border-radius: 10px 0 0 10px;">
+                                    <span class="input-group-text bg-white border-end-0"
+                                        style="border-color: #d1ede1; border-radius: 10px 0 0 10px;">
                                         <i class="bi bi-person" style="color: #10B981;"></i>
                                     </span>
-                                    <input type="text" name="groom_name" class="form-control border-start-0 py-2" placeholder="Nama lengkap" required style="border-color: #d1ede1; border-radius: 0 10px 10px 0;">
+                                    <input type="text" name="groom_name" class="form-control border-start-0 py-2"
+                                        placeholder="Nama lengkap" required
+                                        style="border-color: #d1ede1; border-radius: 0 10px 10px 0;">
                                 </div>
                                 <div class="input-group">
-                                    <span class="input-group-text bg-white border-end-0" style="border-color: #d1ede1; border-radius: 10px 0 0 10px;">
+                                    <span class="input-group-text bg-white border-end-0"
+                                        style="border-color: #d1ede1; border-radius: 10px 0 0 10px;">
                                         <i class="bi bi-person-badge" style="color: #10B981;"></i>
                                     </span>
-                                    <input type="text" name="groom_nickname" class="form-control border-start-0 py-2" placeholder="Nama panggilan (opsional)" style="border-color: #d1ede1; border-radius: 0 10px 10px 0;">
+                                    <input type="text" name="groom_nickname" class="form-control border-start-0 py-2"
+                                        placeholder="Nama panggilan (opsional)"
+                                        style="border-color: #d1ede1; border-radius: 0 10px 10px 0;">
                                 </div>
                             </div>
 
                             <div class="text-center my-3">
-                                <div style="display: inline-block; background: #F7FDF9; padding: 0 15px; margin-top: -25px; position: relative; z-index: 2;">
+                                <div
+                                    style="display: inline-block; background: #F7FDF9; padding: 0 15px; margin-top: -25px; position: relative; z-index: 2;">
                                     <i class="bi bi-suit-heart-fill" style="color: #D4AF37; font-size: 1.4rem;"></i>
                                 </div>
                                 <hr style="margin-top: -12px; border-color: #D4AF37; opacity: 0.3;">
                             </div>
 
                             <div class="mb-3">
-                                <h6 class="text-uppercase mb-3 d-flex align-items-center" style="color: #053B2D; font-weight: 700; letter-spacing: 1px; font-size: 0.85rem;">
-                                    <i class="bi bi-gender-female me-2" style="font-size: 1.2rem; color: #10B981;"></i> Mempelai Wanita
+                                <h6 class="text-uppercase mb-3 d-flex align-items-center"
+                                    style="color: #053B2D; font-weight: 700; letter-spacing: 1px; font-size: 0.85rem;">
+                                    <i class="bi bi-gender-female me-2" style="font-size: 1.2rem; color: #10B981;"></i>
+                                    Mempelai Wanita
                                 </h6>
                                 <div class="input-group mb-2">
-                                    <span class="input-group-text bg-white border-end-0" style="border-color: #d1ede1; border-radius: 10px 0 0 10px;">
+                                    <span class="input-group-text bg-white border-end-0"
+                                        style="border-color: #d1ede1; border-radius: 10px 0 0 10px;">
                                         <i class="bi bi-person" style="color: #10B981;"></i>
                                     </span>
-                                    <input type="text" name="bride_name" class="form-control border-start-0 py-2" placeholder="Nama lengkap" required style="border-color: #d1ede1; border-radius: 0 10px 10px 0;">
+                                    <input type="text" name="bride_name" class="form-control border-start-0 py-2"
+                                        placeholder="Nama lengkap" required
+                                        style="border-color: #d1ede1; border-radius: 0 10px 10px 0;">
                                 </div>
                                 <div class="input-group">
-                                    <span class="input-group-text bg-white border-end-0" style="border-color: #d1ede1; border-radius: 10px 0 0 10px;">
+                                    <span class="input-group-text bg-white border-end-0"
+                                        style="border-color: #d1ede1; border-radius: 10px 0 0 10px;">
                                         <i class="bi bi-person-badge" style="color: #10B981;"></i>
                                     </span>
-                                    <input type="text" name="bride_nickname" class="form-control border-start-0 py-2" placeholder="Nama panggilan (opsional)" style="border-color: #d1ede1; border-radius: 0 10px 10px 0;">
+                                    <input type="text" name="bride_nickname" class="form-control border-start-0 py-2"
+                                        placeholder="Nama panggilan (opsional)"
+                                        style="border-color: #d1ede1; border-radius: 0 10px 10px 0;">
                                 </div>
                             </div>
 
-                            <div id="modal_error" class="alert alert-danger d-none mt-3" style="border-radius: 10px;"></div>
+                            <div id="modal_error" class="alert alert-danger d-none mt-3" style="border-radius: 10px;">
+                            </div>
                         </div>
 
-                        <div class="modal-footer d-flex justify-content-between align-items-center" style="background-color: #F7FDF9; border-top: none; padding: 0 2rem 2rem 2rem;">
-                            <button type="button" class="btn btn-link text-decoration-none text-muted" data-bs-dismiss="modal" style="font-weight: 600;">
+                        <div class="modal-footer d-flex justify-content-between align-items-center"
+                            style="background-color: #F7FDF9; border-top: none; padding: 0 2rem 2rem 2rem;">
+                            <button type="button" class="btn btn-link text-decoration-none text-muted"
+                                data-bs-dismiss="modal" style="font-weight: 600;">
                                 Batal
                             </button>
-                            <button type="submit" class="btn px-4 py-2 fw-bold shadow-sm" id="quickCreateBtn" style="background-color: #053B2D; color: #D4AF37; border-radius: 50px; letter-spacing: 1px; font-size: 0.9rem;">
+                            <button type="submit" class="btn px-4 py-2 fw-bold shadow-sm" id="quickCreateBtn"
+                                style="background-color: #053B2D; color: #D4AF37; border-radius: 50px; letter-spacing: 1px; font-size: 0.9rem;">
                                 <i class="bi bi-stars me-1"></i> Buat Undangan
                             </button>
                         </div>
@@ -345,11 +420,13 @@
                 <div class="modal-content">
                     <div class="modal-header bg-warning text-white">
                         <h5 class="modal-title"><i class="bi bi-star me-2"></i> Upgrade ke Premium</h5>
-                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Tutup"></button>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                            aria-label="Tutup"></button>
                     </div>
                     <div class="modal-body">
                         <p>Anda telah mencapai batas maksimal <strong>1 undangan</strong> untuk akun gratis.</p>
-                        <p>Upgrade ke berlangganan premium untuk membuat undangan tanpa batas dan mengakses fitur eksklusif lainnya.</p>
+                        <p>Upgrade ke berlangganan premium untuk membuat undangan tanpa batas dan mengakses fitur
+                            eksklusif lainnya.</p>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Nanti</button>
@@ -363,49 +440,52 @@
 
         <!-- Modal: Share Invitation -->
         @if(auth()->user()->isPaidSubscribed())
-        <div class="modal fade" id="shareModalDynamic" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog modal-lg modal-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-header bg-success text-white">
-                        <h5 class="modal-title"><i class="bi bi-share me-2"></i> Bagikan Undangan</h5>
-                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Tutup"></button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="form-floating mb-3">
-                            <input type="text" class="form-control" id="recipientNameDynamic" placeholder="Nama penerima" required>
-                            <label for="recipientNameDynamic">Nama Penerima</label>
+            <div class="modal fade" id="shareModalDynamic" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-lg modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header bg-success text-white">
+                            <h5 class="modal-title"><i class="bi bi-share me-2"></i> Bagikan Undangan</h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                                aria-label="Tutup"></button>
                         </div>
-                        <div class="form-floating mb-3">
-                            <textarea class="form-control" id="shareMessageDynamic" placeholder="Pesan undangan" style="height: 180px"></textarea>
-                            <label for="shareMessageDynamic">Pesan Undangan</label>
+                        <div class="modal-body">
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control" id="recipientNameDynamic"
+                                    placeholder="Nama penerima" required>
+                                <label for="recipientNameDynamic">Nama Penerima</label>
+                            </div>
+                            <div class="form-floating mb-3">
+                                <textarea class="form-control" id="shareMessageDynamic" placeholder="Pesan undangan"
+                                    style="height: 180px"></textarea>
+                                <label for="shareMessageDynamic">Pesan Undangan</label>
+                            </div>
+                            <div class="d-flex flex-wrap gap-2 mt-3">
+                                <button type="button" class="btn btn-success" onclick="shareToWhatsApp()">
+                                    <i class="bi bi-whatsapp me-1"></i> WhatsApp
+                                </button>
+                                <button type="button" class="btn btn-primary" onclick="shareToFacebook()">
+                                    <i class="bi bi-facebook me-1"></i> Facebook
+                                </button>
+                                <button type="button" class="btn btn-info text-white" onclick="shareToTwitter()">
+                                    <i class="bi bi-twitter-x me-1"></i> Twitter
+                                </button>
+                                <button type="button" class="btn btn-primary" onclick="shareToTelegram()">
+                                    <i class="bi bi-telegram me-1"></i> Telegram
+                                </button>
+                                <button type="button" class="btn btn-secondary" onclick="shareViaEmail()">
+                                    <i class="bi bi-envelope me-1"></i> Email
+                                </button>
+                                <button type="button" class="btn btn-outline-dark" onclick="copyInvitationLink()">
+                                    <i class="bi bi-link-45deg me-1"></i> Salin Tautan
+                                </button>
+                            </div>
                         </div>
-                        <div class="d-flex flex-wrap gap-2 mt-3">
-                            <button type="button" class="btn btn-success" onclick="shareToWhatsApp()">
-                                <i class="bi bi-whatsapp me-1"></i> WhatsApp
-                            </button>
-                            <button type="button" class="btn btn-primary" onclick="shareToFacebook()">
-                                <i class="bi bi-facebook me-1"></i> Facebook
-                            </button>
-                            <button type="button" class="btn btn-info text-white" onclick="shareToTwitter()">
-                                <i class="bi bi-twitter-x me-1"></i> Twitter
-                            </button>
-                            <button type="button" class="btn btn-primary" onclick="shareToTelegram()">
-                                <i class="bi bi-telegram me-1"></i> Telegram
-                            </button>
-                            <button type="button" class="btn btn-secondary" onclick="shareViaEmail()">
-                                <i class="bi bi-envelope me-1"></i> Email
-                            </button>
-                            <button type="button" class="btn btn-outline-dark" onclick="copyInvitationLink()">
-                                <i class="bi bi-link-45deg me-1"></i> Salin Tautan
-                            </button>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
                         </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
                     </div>
                 </div>
             </div>
-        </div>
         @endif
 
         <script>
@@ -477,10 +557,10 @@
                         const button = event.relatedTarget;
                         const invId = button.getAttribute('data-id');
                         const messageDiv = document.getElementById('wa-message-' + invId);
-                        
+
                         const messageInput = document.getElementById('shareMessageDynamic');
                         const recipientInput = document.getElementById('recipientNameDynamic');
-                        
+
                         if (messageDiv) {
                             messageInput.value = messageDiv.textContent.trim();
                         }
@@ -490,8 +570,8 @@
 
                 // Handle Select All Checkbox
                 const selectAll = document.getElementById('selectAll');
-                if(selectAll) {
-                    selectAll.addEventListener('change', function() {
+                if (selectAll) {
+                    selectAll.addEventListener('change', function () {
                         document.querySelectorAll('.bulk-checkbox').forEach(cb => {
                             cb.checked = this.checked;
                         });
@@ -527,7 +607,7 @@
                 }
                 let message = document.getElementById('shareMessageDynamic').value;
                 message = message.replace(/\[nama\]/g, recipient);
-                message = message.replace(/(\?penerima=)([^&\n]+)/g, function(match, prefix, value) {
+                message = message.replace(/(\?penerima=)([^&\n]+)/g, function (match, prefix, value) {
                     return prefix + encodeURIComponent(value.trim());
                 });
                 return { recipient, message };
@@ -601,7 +681,7 @@
 
             // SweetAlert confirm for single delete
             document.querySelectorAll('.btn-delete-single').forEach(btn => {
-                btn.addEventListener('click', function(e) {
+                btn.addEventListener('click', function (e) {
                     e.preventDefault();
                     const url = this.getAttribute('href');
                     const name = this.getAttribute('data-name') || 'undangan ini';
@@ -627,7 +707,7 @@
             if (bulkDeleteForm) {
                 const bulkDeleteBtn = bulkDeleteForm.querySelector('.btn-bulk-delete');
                 if (bulkDeleteBtn) {
-                    bulkDeleteBtn.addEventListener('click', function(e) {
+                    bulkDeleteBtn.addEventListener('click', function (e) {
                         e.preventDefault();
                         const checked = bulkDeleteForm.querySelectorAll('.bulk-checkbox:checked');
                         if (checked.length === 0) {

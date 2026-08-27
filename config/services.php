@@ -44,4 +44,11 @@ return [
         'key' => env('PIXABAY_API_KEY'),
     ],
 
+    'fonnte' => [
+        'api_key' => env('FONTE_API_KEY'),
+        'api_url' => env('FONTE_API_URL', 'https://api.fonnte.com/send-message'),
+    ],
+
+    'admin_whatsapp' => env('ADMIN_WHATSAPP', '087731402487'),
+
 ];

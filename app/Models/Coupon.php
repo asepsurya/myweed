@@ -16,6 +16,7 @@ class Coupon extends Model
         'starts_at',
         'expires_at',
         'is_active',
+        'subscription_plan_id',
     ];
 
     protected $casts = [
@@ -23,4 +24,9 @@ class Coupon extends Model
         'expires_at' => 'datetime',
         'is_active' => 'boolean',
     ];
+
+    public function plan()
+    {
+        return $this->belongsTo(SubscriptionPlan::class, 'subscription_plan_id');
+    }
 }

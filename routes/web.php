@@ -19,19 +19,19 @@ use App\Http\Controllers\PromotionController;
 use App\Http\Controllers\RsvpController;
 use App\Http\Controllers\SavingsAutomationController;
 use App\Http\Controllers\SavingsContributionController;
-use App\Http\Controllers\SavingsController;
 use App\Http\Controllers\SavingsContributorController;
+use App\Http\Controllers\SavingsController;
 use App\Http\Controllers\SavingsGoalController;
+use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\SubscriptionPlanController;
 use App\Http\Controllers\TempelateController;
 use App\Http\Controllers\TemplateCreatorController;
+use App\Http\Controllers\TemplateTypeController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserInvitationController;
 use App\Http\Controllers\VendorPaymentController;
 use App\Http\Controllers\WeddingController;
 use App\Http\Controllers\WeedingPlanController;
-use App\Http\Controllers\TemplateTypeController;
-use App\Http\Controllers\SitemapController;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 
@@ -59,7 +59,7 @@ Route::middleware('auth')->group(function () {
 
 });
 
-require __DIR__ . '/auth.php';
+require __DIR__.'/auth.php';
 
 Route::get('/templates/{slug}/{id}', [TempelateController::class, 'preview'])->name('template.preview');
 Route::get('/demo/{slug}', [TempelateController::class, 'demo'])->name('template.demo');
@@ -138,23 +138,23 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/templates/{slug}/{id}', [TempelateController::class, 'previewUpdate'])->name('template.preview.update');
 
     Route::get('/template-assets/{slug}/{path}', function ($slug, $path) {
-        $r2Path = 'templates/' . $slug . '/' . ltrim($path, '/');
+        $r2Path = 'templates/'.$slug.'/'.ltrim($path, '/');
         $publicUrl = rtrim(config('filesystems.disks.r2.public_url', ''), '/');
 
         if ($publicUrl) {
             try {
                 if (Storage::disk('r2')->exists($r2Path)) {
-                    return redirect($publicUrl . '/' . $r2Path);
+                    return redirect($publicUrl.'/'.$r2Path);
                 }
-            } catch (\Throwable $e) {
+            } catch (Throwable $e) {
                 // Fall through to local check
             }
         }
 
         $basePath = resource_path("views/templates/$slug");
-        $filePath = realpath($basePath . '/' . ltrim($path, '/'));
+        $filePath = realpath($basePath.'/'.ltrim($path, '/'));
 
-        if (!$filePath || strpos($filePath, realpath($basePath)) !== 0 || !File::exists($filePath)) {
+        if (! $filePath || strpos($filePath, realpath($basePath)) !== 0 || ! File::exists($filePath)) {
             abort(404);
         }
 
@@ -191,6 +191,12 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/payment/invoice/pdf', [SubscriptionPlanController::class, 'invoicePdf'])->name('payment.invoice.pdf');
     Route::post('/checkout/initiate-payment', [SubscriptionPlanController::class, 'initiatePayment'])->middleware('auth')->name('checkout.initiate-payment');
     Route::post('/coupons/validate', [SubscriptionPlanController::class, 'validateCoupon'])->name('coupons.validate');
+    Route::post('/voucher/redeem', [SubscriptionPlanController::class, 'redeemVoucher'])->middleware('auth')->name('voucher.redeem');
+
+    // LOCAL PAYMENT (QRIS) ROUTES
+    Route::get('/payment/local', [SubscriptionPlanController::class, 'localPaymentIndex'])->middleware('auth')->name('payment.local.index');
+    Route::post('/payment/local/confirm', [SubscriptionPlanController::class, 'confirmLocalPayment'])->middleware('auth')->name('payment.local.confirm');
+    Route::post('/payment/local/{orderId}/approve', [SubscriptionPlanController::class, 'approveLocalPayment'])->middleware('role:admin')->name('payment.local.approve');
 
     Route::middleware('role:admin')->prefix('admin/settings')->name('settings.')->group(function () {
         Route::get('/env', [EnvSettingController::class, 'index'])->name('env');
@@ -331,4 +337,3 @@ Route::get('/payment/failed', [SubscriptionPlanController::class, 'failed'])->na
 Route::get('/payment/pending', [SubscriptionPlanController::class, 'pending'])->name('payment.pending');
 
 Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
-

@@ -1,4 +1,7 @@
 <x-app-layout>
+    @php
+        $defaultGateway = config('payment.default_gateway', 'midtrans');
+    @endphp
     <style>
         .card-logo {
             display: flex;
@@ -10,12 +13,23 @@
             width: 160px;
             height: auto;
         }
+       
+        .method-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.35rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
     </style>
     <div class="container py-5">
         <div class="row justify-content-center">
             <div class="col-md-6">
 
-                <div class="card shadow-sm border-0 rounded-4">
+                <div class="card  shadow-sm border-0 rounded-4">
                     <div class="card-body p-4">
                         <div class="card-logo">
                             <img src="{{ asset('assets/logo-new.png') }}" alt="Logo RuangUndang">
@@ -59,6 +73,19 @@
                             </div>
                         </div>
 
+                        <!-- METODE PEMBAYARAN (dari ENV) -->
+                        <div class="text-center mb-4">
+                            @if($defaultGateway === 'local')
+                                <span class="method-badge bg-success-subtle text-success">
+                                    <i class="bi bi-qr-code"></i> QRIS Langsung
+                                </span>
+                            @else
+                                <span class="method-badge bg-primary-subtle text-primary">
+                                    <i class="bi bi-credit-card-2-front"></i> Midtrans
+                                </span>
+                            @endif
+                        </div>
+
                         <!-- COUPON FORM -->
                         <form id="couponForm" class="mb-3">
                             @csrf
@@ -72,10 +99,17 @@
                             <div id="coupon-message" class="mt-2 small"></div>
                         </form>
 
-                        <!-- BUTTON -->
-                        <button id="payBtn" class="btn btn-primary w-100 rounded-3 py-2">
-                            Bayar Sekarang
-                        </button>
+                        @if($defaultGateway === 'local')
+                            <!-- QRIS LOCAL PAYMENT BUTTON -->
+                            <button id="payLocalBtn" class="btn btn-success w-100 rounded-3 py-2">
+                                <i class="bi bi-qr-code me-1"></i> Bayar via QRIS
+                            </button>
+                        @else
+                            <!-- MIDTRANS PAYMENT BUTTON -->
+                            <button id="payBtn" class="btn btn-primary w-100 rounded-3 py-2">
+                                Bayar Sekarang
+                            </button>
+                        @endif
 
                         <p class="text-center text-muted small mt-3 mb-0">
                             Pembayaran diproses dengan aman
@@ -88,6 +122,7 @@
         </div>
     </div>
 
+    @if($defaultGateway === 'midtrans')
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const couponForm = document.getElementById('couponForm');
@@ -190,7 +225,8 @@
                         },
                         body: JSON.stringify({
                             plan_id: {{ $plan->id }},
-                            coupon: appliedCoupon
+                            coupon: appliedCoupon,
+                            payment_method: 'midtrans'
                         })
                     });
 
@@ -234,5 +270,112 @@
             });
         });
     </script>
+    @else
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const couponForm = document.getElementById('couponForm');
+            const couponInput = document.getElementById('coupon_code');
+            const couponMessage = document.getElementById('coupon-message');
+            const couponDiscountRow = document.getElementById('coupon-discount-row');
+            const couponDiscountEl = document.getElementById('coupon-discount');
+            const finalPriceEl = document.getElementById('final-price');
+            const payLocalBtn = document.getElementById('payLocalBtn');
+
+            let appliedCoupon = null;
+            let originalPrice = {{ $plan->price }};
+            let discountedPrice = originalPrice;
+            let isProcessing = false;
+
+            function formatRupiah(number) {
+                return 'Rp ' + number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+            }
+
+            couponForm.addEventListener('submit', function (e) {
+                e.preventDefault();
+                const code = couponInput.value.trim();
+                if (!code) {
+                    couponMessage.innerHTML = '<span class="text-danger">Masukkan kode kupon.</span>';
+                    return;
+                }
+
+                couponMessage.innerHTML = '<span class="text-muted">Memverifikasi kupon...</span>';
+
+                fetch('{{ route('coupons.validate') }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({ code: code, amount: originalPrice })
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.valid) {
+                            appliedCoupon = data.coupon;
+                            discountedPrice = Math.max(0, originalPrice - data.discount);
+                            couponDiscountRow.classList.remove('d-none');
+                            couponDiscountEl.textContent = '- ' + formatRupiah(data.discount);
+                            finalPriceEl.textContent = formatRupiah(discountedPrice);
+                            couponMessage.innerHTML = '<span class="text-success">Kupon berhasil diterapkan!</span>';
+                        } else {
+                            appliedCoupon = null;
+                            discountedPrice = originalPrice;
+                            couponDiscountRow.classList.add('d-none');
+                            finalPriceEl.textContent = formatRupiah(originalPrice);
+                            couponMessage.innerHTML = '<span class="text-danger">' + data.message + '</span>';
+                        }
+                    })
+                    .catch(() => {
+                        couponMessage.innerHTML = '<span class="text-danger">Terjadi kesalahan, coba lagi.</span>';
+                    });
+            });
+
+            payLocalBtn.addEventListener('click', async function () {
+                if (isProcessing) return;
+
+                isProcessing = true;
+                payLocalBtn.disabled = true;
+                payLocalBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Memproses...';
+
+                try {
+                    const response = await fetch('{{ route('checkout.initiate-payment') }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        body: JSON.stringify({
+                            plan_id: {{ $plan->id }},
+                            coupon: appliedCoupon,
+                            payment_method: 'local'
+                        })
+                    });
+
+                    const data = await response.json();
+
+                    if (data.redirect) {
+                        window.location.href = data.redirect;
+                        return;
+                    }
+
+                    if (data.error) {
+                        couponMessage.innerHTML = '<span class="text-danger">' + (data.error || 'Gagal membuat pesanan.') + '</span>';
+                        return;
+                    }
+
+                    if (data.order_id) {
+                        window.location.href = '{{ route('payment.local.index') }}?order_id=' + data.order_id;
+                    }
+                } catch (e) {
+                    couponMessage.innerHTML = '<span class="text-danger">Terjadi kesalahan. Silakan coba lagi.</span>';
+                } finally {
+                    isProcessing = false;
+                    payLocalBtn.disabled = false;
+                    payLocalBtn.innerHTML = '<i class="bi bi-qr-code me-1"></i> Bayar via QRIS';
+                }
+            });
+        });
+    </script>
+    @endif
 
 </x-app-layout>

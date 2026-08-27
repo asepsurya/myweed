@@ -2,7 +2,8 @@
     <x-slot name="header">
         <div class="d-flex justify-content-between align-items-center">
             <h2 class="fw-bold m-0" style="font-family: 'Plus Jakarta Sans', sans-serif; color: var(--bs-body-color);">
-                <i class="bi bi-ticket-perforated me-2" style="color: var(--adminuiux-theme-1);"></i> Manajemen Kupon Promo
+                <i class="bi bi-ticket-perforated me-2" style="color: var(--adminuiux-theme-1);"></i> Manajemen Kupon
+                Promo
             </h2>
             <a href="{{ route('coupons.create') }}" class="btn btn-primary btn-sm px-3 py-2 fw-bold"
                 style="border-radius: 10px;">
@@ -32,6 +33,29 @@
             font-size: 1.25rem;
             letter-spacing: 1px;
         }
+
+        .voucher-add-btn {
+            background: #C9A227 !important;
+            border: 1px solid #C9A227 !important;
+            color: #fff !important;
+            font-weight: 600;
+            min-height: 36px;
+            transition: all .2s ease;
+        }
+
+        .voucher-add-btn:hover {
+            background: #B8911F !important;
+            border-color: #B8911F !important;
+            color: #fff !important;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(201, 162, 39, .25);
+        }
+
+        .voucher-add-btn:active {
+            background: #A98318 !important;
+            border-color: #A98318 !important;
+            transform: translateY(0);
+        }
     </style>
 
     <div class="container mt-4" style="padding-bottom: 100px;">
@@ -42,7 +66,30 @@
                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
         @endif
+        <div class="d-flex align-items-center justify-content-between gap-3 mb-4">
 
+            {{-- Title --}}
+            <div>
+                <h5 class="mb-1 fw-bold text-body">
+                    Voucher
+                </h5>
+
+                <p class="mb-0 text-muted small">
+                    Kelola voucher dan promo untuk pelanggan
+                </p>
+            </div>
+
+            {{-- Add Voucher --}}
+            <a href="{{ route('coupons.create') }}"
+                class="btn btn-sm rounded-pill px-3 d-flex align-items-center gap-2 voucher-add-btn">
+
+                <i class="bi bi-plus-lg"></i>
+
+                <span>Tambah Voucher</span>
+
+            </a>
+
+        </div>
         <div class="row g-4">
             @forelse($coupons as $coupon)
                 <div class="col-12 col-md-6 col-xl-4">
@@ -64,8 +111,7 @@
                                     </button>
                                     <ul class="dropdown-menu dropdown-menu-end" style="z-index: 1050;">
                                         <li>
-                                            <a class="dropdown-item py-2"
-                                                href="{{ route('coupons.edit', $coupon) }}">
+                                            <a class="dropdown-item py-2" href="{{ route('coupons.edit', $coupon) }}">
                                                 <i class="bi bi-pencil me-2"></i> Edit
                                             </a>
                                         </li>
@@ -87,42 +133,61 @@
                                     {{ $coupon->code }}
                                 </div>
                                 <p class="text-muted small mb-0 mt-1">
-                                    {{ $coupon->type === 'percentage' ? 'Diskon ' . $coupon->value . '%' : 'Potongan Rp ' . number_format($coupon->value, 0, ',', '.') }}
+                                    @if($coupon->type === 'percentage')
+                                        Diskon {{ $coupon->value }}%
+                                    @elseif($coupon->type === 'fixed')
+                                        Potongan Rp {{ number_format($coupon->value, 0, ',', '.') }}
+                                    @elseif($coupon->type === 'voucher')
+                                        Voucher Langganan
+                                        @if($coupon->plan)
+                                            - {{ $coupon->plan->name }}
+                                        @else
+                                            - Semua Paket
+                                        @endif
+                                    @endif
                                 </p>
                             </div>
 
                             <div class="mb-3">
-                                @if($coupon->min_amount)
+                                @if($coupon->type !== 'voucher' && $coupon->min_amount)
                                     <p class="text-muted small mb-1">
-                                        <i class="bi bi-currency-exchange me-1"></i> Minimal pembelian Rp {{ number_format($coupon->min_amount, 0, ',', '.') }}
+                                        <i class="bi bi-currency-exchange me-1"></i> Minimal pembelian Rp
+                                        {{ number_format($coupon->min_amount, 0, ',', '.') }}
                                     </p>
                                 @endif
-                                @if($coupon->max_uses)
+                                @if($coupon->type !== 'voucher')
                                     <p class="text-muted small mb-1">
-                                        <i class="bi bi-ticket me-1"></i> Sisa kuota: {{ max(0, $coupon->max_uses - $coupon->used_count) }} / {{ $coupon->max_uses }}
-                                    </p>
-                                @else
-                                    <p class="text-muted small mb-1">
-                                        <i class="bi bi-ticket me-1"></i> Kuota: Unlimited
+                                        <i class="bi bi-ticket me-1"></i> Sisa kuota:
+                                        {{ max(0, $coupon->max_uses - $coupon->used_count) }} /
+                                        {{ $coupon->max_uses ?? 'Unlimited' }}
                                     </p>
                                 @endif
                                 @if($coupon->starts_at)
                                     <p class="text-muted small mb-1">
-                                        <i class="bi bi-calendar-event me-1"></i> Mulai {{ $coupon->starts_at->format('d M Y H:i') }}
+                                        <i class="bi bi-calendar-event me-1"></i> Mulai
+                                        {{ $coupon->starts_at->format('d M Y H:i') }}
                                     </p>
                                 @endif
                                 @if($coupon->expires_at)
                                     <p class="text-muted small mb-1">
-                                        <i class="bi bi-calendar-x me-1"></i> Berakhir {{ $coupon->expires_at->format('d M Y H:i') }}
+                                        <i class="bi bi-calendar-x me-1"></i> Berakhir
+                                        {{ $coupon->expires_at->format('d M Y H:i') }}
                                     </p>
                                 @endif
                             </div>
 
                             <div class="mt-auto pt-3 border-top" style="border-color: var(--bs-border-color) !important;">
                                 <small class="text-muted">
-                                    Tipe: <span class="text-capitalize">{{ $coupon->type }}</span>
+                                    Tipe: <span
+                                        class="text-capitalize">{{ $coupon->type === 'voucher' ? 'Voucher Langganan' : $coupon->type }}</span>
                                 </small>
                             </div>
+
+                            <form id="delete-coupon-form-{{ $coupon->id }}" action="{{ route('coupons.destroy', $coupon) }}"
+                                method="POST" class="d-none">
+                                @csrf
+                                @method('DELETE')
+                            </form>
                         </div>
                     </div>
                 </div>

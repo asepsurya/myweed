@@ -1,32 +1,33 @@
 <style>
     /* Mobile: pastikan dropdown fit ke layar */
-@media (max-width: 575.98px) {
-    #profile-dropdown-menu {
-        margin-inline: 0 !important;
-        right: -0.5rem !important;
-        left: auto !important;
-        max-width: calc(100vw - 2rem) !important;
-        width: 300px !important;
+    @media (max-width: 575.98px) {
+        #profile-dropdown-menu {
+            margin-inline: 0 !important;
+            right: -0.5rem !important;
+            left: auto !important;
+            max-width: calc(100vw - 2rem) !important;
+            width: 300px !important;
+        }
     }
-}
 
-/* Desktop: pertahankan offset margin seperti semula */
-@media (min-width: 576px) {
-    #profile-dropdown-menu {
-        margin-inline-start: -45px;
+    /* Desktop: pertahankan offset margin seperti semula */
+    @media (min-width: 576px) {
+        #profile-dropdown-menu {
+            margin-inline-start: -45px;
+        }
     }
-}
-.logo-dark {
-    display: none;
-}
 
-[data-bs-theme="dark"] .logo-light {
-    display: none;
-}
+    .logo-dark {
+        display: none;
+    }
 
-[data-bs-theme="dark"] .logo-dark {
-    display: block;
-}
+    [data-bs-theme="dark"] .logo-light {
+        display: none;
+    }
+
+    [data-bs-theme="dark"] .logo-dark {
+        display: block;
+    }
 </style>
 <!-- standard header -->
 <header class="adminuiux-header">
@@ -41,16 +42,12 @@
 
             <!-- logo -->
             <a class="navbar-brand d-flex align-items-center" href="/">
-    <img class="logo-light"
-         src="{{ asset('assets/logo-new.png') }}"
-         alt="Logo RuangUndang"
-         style="height: 30px; width: auto;">
+                <img class="logo-light" src="{{ asset('assets/logo-new.png') }}" alt="Logo RuangUndang"
+                    style="height: 30px; width: auto;">
 
-    <img class="logo-dark"
-         src="{{ asset('assets/logo-white-new.png') }}"
-         alt="Logo RuangUndang"
-         style="height: 30px; width: auto;">
-</a>
+                <img class="logo-dark" src="{{ asset('assets/logo-white-new.png') }}" alt="Logo RuangUndang"
+                    style="height: 30px; width: auto;">
+            </a>
 
             @role('admin')
             <!-- navigation inline -->
@@ -66,6 +63,12 @@
                         <a class="nav-link d-flex align-items-center" href="{{ route('music.index') }}"
                             :active="request()->routeIs('music.index')">
                             <i class="menu-icon bi bi-music-note-beamed me-2"></i> Music
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link d-flex align-items-center" href="{{ route('coupons.index') }}"
+                            :active="request()->routeIs('coupons.index')">
+                            <i class="menu-icon bi bi-ticket-perforated me-2"></i> Kupon
                         </a>
                     </li>
                 </ul>
@@ -101,91 +104,98 @@
                     </div>
                 </div>
 
-        
+
 
                 @auth
-                <!-- profile dropdown -->
-                <div class="dropdown d-inline-block">
-                    <a class="dropdown-toggle btn btn-link btn-square btn-link-header style-none no-caret px-0"
-                        id="userprofiledd" data-bs-toggle="dropdown" aria-expanded="false" role="button">
-                        <div class="row gx-0 d-inline-flex">
-                            <div class="col-auto align-self-center">
-                                <figure class="avatar avatar-28 rounded-circle">
-                                    <img src="{{ auth()->user()->avatar ? (filter_var(auth()->user()->avatar, FILTER_VALIDATE_URL) ? auth()->user()->avatar : asset('storage/' . auth()->user()->avatar)) : asset('tempelate/user_default.jpg') }}"
-                                        alt="User Avatar" id="userphotoonboarding2" class="rounded-circle"
-                                        referrerpolicy="no-referrer"
-                                        onerror="this.onerror=null;this.src='{{ asset('tempelate/user_default.jpg') }}';">
-                                </figure>
-                            </div>
-                        </div>
-                    </a>
-                    <div class="dropdown-menu dropdown-menu-end width-300 p-0"
-                        aria-labelledby="userprofiledd" id="profile-dropdown-menu">
-
-                        {{-- USER HEADER --}}
-                        <div class="bg-theme-1-space rounded-top py-3 px-3 mb-2 dropdown-dontclose">
-                            <div class="d-flex align-items-center gap-3">
-                                <figure class="avatar avatar-50 rounded-circle mb-0">
-                                    <img src="{{ auth()->user()->avatar ? (filter_var(auth()->user()->avatar, FILTER_VALIDATE_URL) ? auth()->user()->avatar : asset('storage/' . auth()->user()->avatar)) : asset('tempelate/user_default.jpg') }}"
-                                        class="rounded-circle w-100 h-100 object-fit-cover" alt="User Avatar">
-                                </figure>
-                                <div class="flex-grow-1 overflow-hidden">
-                                    <p class="mb-1 fw-semibold text-truncate" title="{{ auth()->user()->name }}">
-                                        {{ auth()->user()->name }}
-                                    </p>
-                                    <p class="mb-0 small text-truncate">
-                                        {{ auth()->user()->email }}
-                                    </p>
+                    <!-- profile dropdown -->
+                    <div class="dropdown d-inline-block">
+                        <a class="dropdown-toggle btn btn-link btn-square btn-link-header style-none no-caret px-0"
+                            id="userprofiledd" data-bs-toggle="dropdown" aria-expanded="false" role="button">
+                            <div class="row gx-0 d-inline-flex">
+                                <div class="col-auto align-self-center">
+                                    <figure class="avatar avatar-28 rounded-circle">
+                                        <img src="{{ auth()->user()->avatar ? (filter_var(auth()->user()->avatar, FILTER_VALIDATE_URL) ? auth()->user()->avatar : asset('storage/' . auth()->user()->avatar)) : asset('tempelate/user_default.jpg') }}"
+                                            alt="User Avatar" id="userphotoonboarding2" class="rounded-circle"
+                                            referrerpolicy="no-referrer"
+                                            onerror="this.onerror=null;this.src='{{ asset('tempelate/user_default.jpg') }}';">
+                                    </figure>
                                 </div>
                             </div>
-                        </div>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-end width-300 p-0" aria-labelledby="userprofiledd"
+                            id="profile-dropdown-menu">
 
-                        {{-- MENU --}}
-                        <div class="px-2 pb-2">
-                            <a class="dropdown-item d-flex align-items-center gap-2"
-                                href="{{ auth()->user()->hasRole('admin') ? route('dashboard') : route('dashboard.user') }}">
-                                <i class="bi bi-speedometer2 fs-6"></i>
-                                Dashboard Saya
-                            </a>
-
-                            @php $status = auth()->user()->subscriptionStatus(); @endphp
-
-                            <a class="dropdown-item d-flex align-items-center justify-content-between"
-                                href="{{ route('subscribe.page') }}">
-                                <div class="d-flex align-items-center gap-2">
-                                    <i class="bi bi-gift fs-6"></i>
-                                    Subscription
+                            {{-- USER HEADER --}}
+                            <div class="bg-theme-1-space rounded-top py-3 px-3 mb-2 dropdown-dontclose">
+                                <div class="d-flex align-items-center gap-3">
+                                    <figure class="avatar avatar-50 rounded-circle mb-0">
+                                        <img src="{{ auth()->user()->avatar ? (filter_var(auth()->user()->avatar, FILTER_VALIDATE_URL) ? auth()->user()->avatar : asset('storage/' . auth()->user()->avatar)) : asset('tempelate/user_default.jpg') }}"
+                                            class="rounded-circle w-100 h-100 object-fit-cover" alt="User Avatar">
+                                    </figure>
+                                    <div class="flex-grow-1 overflow-hidden">
+                                        <p class="mb-1 fw-semibold text-truncate" title="{{ auth()->user()->name }}">
+                                            {{ auth()->user()->name }}
+                                        </p>
+                                        <p class="mb-0 small text-truncate">
+                                            {{ auth()->user()->email }}
+                                        </p>
+                                    </div>
                                 </div>
-                                <span
-                                    class="small {{ $status === 'active' ? 'text-success' : ($status === 'expired' ? 'text-danger' : 'text-muted') }}">
-                                    {{ ucfirst($status) }}
-                                </span>
-                            </a>
+                            </div>
 
-                            <a class="dropdown-item d-flex align-items-center gap-2" href="{{ route('profile.edit') }}">
-                                <i class="bi bi-shield-lock fs-6"></i>
-                                Ganti Password
-                            </a>
+                            {{-- MENU --}}
+                            <div class="px-2 pb-2">
+                                <a class="dropdown-item d-flex align-items-center gap-2"
+                                    href="{{ auth()->user()->hasRole('admin') ? route('dashboard') : route('dashboard.user') }}">
+                                    <i class="bi bi-speedometer2 fs-6"></i>
+                                    Dashboard Saya
+                                </a>
 
-                            <a class="dropdown-item d-flex align-items-center gap-2" href="{{ route('profile.edit') }}">
-                                <i class="bi bi-gear fs-6"></i>
-                                Setelan Akun
-                            </a>
+                                @php $status = auth()->user()->subscriptionStatus(); @endphp
 
-                            <hr class="my-2">
+                                <a class="dropdown-item d-flex align-items-center justify-content-between"
+                                    href="{{ route('subscribe.page') }}">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <i class="bi bi-gift fs-6"></i>
+                                        Subscription
+                                    </div>
+                                    <span
+                                        class="small {{ $status === 'active' ? 'text-success' : ($status === 'expired' ? 'text-danger' : 'text-muted') }}">
+                                        {{ ucfirst($status) }}
+                                    </span>
+                                </a>
 
-                            <form method="POST" action="{{ route('logout') }}" id="logoutForm">
-                                @csrf
-                            </form>
+                                <a class="dropdown-item d-flex align-items-center gap-2" href="{{ route('profile.edit') }}">
+                                    <i class="bi bi-shield-lock fs-6"></i>
+                                    Ganti Password
+                                </a>
 
-                            <a href="#" class="dropdown-item d-flex align-items-center gap-2 text-danger"
-                                onclick="event.preventDefault(); document.getElementById('logoutForm').submit();">
-                                <i class="bi bi-power fs-6"></i>
-                                Keluar
-                            </a>
+                                <a class="dropdown-item d-flex align-items-center gap-2" href="{{ route('profile.edit') }}">
+                                    <i class="bi bi-gear fs-6"></i>
+                                    Setelan Akun
+                                </a>
+
+                                <a class="dropdown-item d-flex align-items-center gap-2"
+                                    href="{{ route('subscribe.page') }}">
+                                    <i class="bi bi-ticket-perforated fs-6"></i>
+                                    Klaim Voucher
+                                </a>
+
+
+                                <hr class="my-2">
+
+                                <form method="POST" action="{{ route('logout') }}" id="logoutForm">
+                                    @csrf
+                                </form>
+
+                                <a href="#" class="dropdown-item d-flex align-items-center gap-2 text-danger"
+                                    onclick="event.preventDefault(); document.getElementById('logoutForm').submit();">
+                                    <i class="bi bi-power fs-6"></i>
+                                    Keluar
+                                </a>
+                            </div>
                         </div>
                     </div>
-                </div>
                 @endauth
 
                 @role('admin')
