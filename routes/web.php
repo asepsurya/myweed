@@ -84,6 +84,23 @@ Route::middleware(['auth'])->group(function () {
         return view('dashboard.invitation.import-kontak');
     })->name('invitation.import-kontak');
 
+    Route::post('invitation/import-kontak', function (\Illuminate\Http\Request $request) {
+        $validated = $request->validate([
+            'contacts' => 'required|array|min:1',
+            'contacts.*.name' => 'required|string|max:255',
+            'contacts.*.phone' => 'required|string|max:20',
+        ]);
+
+        $contacts = $validated['contacts'];
+
+        return response()->json([
+            'success' => true,
+            'message' => count($contacts) . ' kontak berhasil disimpan',
+            'count' => count($contacts),
+            'data' => $contacts,
+        ]);
+    })->name('invitation.import-kontak.store');
+
     Route::get('invitation/{slug}', [UserInvitationController::class, 'detail'])->name('invitation.detail');
     Route::post('invitation', [UserInvitationController::class, 'store'])->name('invitation.store');
     Route::get('invitation/{invitation}/edit', [UserInvitationController::class, 'edit'])->name('invitation.edit');

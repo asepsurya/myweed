@@ -12,7 +12,7 @@
         <div class="card border-0 shadow-sm">
             <div class="card-header bg-white border-0 pt-4 px-4">
                 <h4 class="fw-bold mb-0">Import Kontak</h4>
-                <p class="text-muted small mb-0">Pilih kontak dari buku kontak HP Anda</p>
+                <p class="text-muted small mb-0">Pilih kontak dari HP atau tambah manual</p>
             </div>
             <div class="card-body px-4 pb-4">
                 <div id="unsupportedWarning" class="alert alert-warning" style="display: none;">
@@ -24,14 +24,35 @@
                     <i class="bi bi-people me-2"></i> Pilih dari Kontak
                 </button>
 
-                <div id="contactResult" class="mt-3" style="display: none;">
-                    <h6 class="fw-semibold mb-2">Kontak Terpilih</h6>
-                    <div id="contactList" class="list-group"></div>
-                </div>
+                <hr class="my-4">
 
-                <div id="emptyState" class="text-center text-muted py-4">
-                    <i class="bi bi-person-lines-fill display-6 d-block mb-2"></i>
-                    <small>Belum ada kontak yang dipilih</small>
+                <form id="contactForm" action="{{ route('invitation.import-kontak.store') }}" method="POST">
+                    @csrf
+
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h6 class="fw-semibold mb-0">Daftar Kontak</h6>
+                        <button type="button" id="addManualBtn" class="btn btn-sm btn-outline-secondary">
+                            <i class="bi bi-plus-lg me-1"></i> Tambah Manual
+                        </button>
+                    </div>
+
+                    <div id="contactList">
+                        <div class="text-center text-muted py-4" id="emptyState">
+                            <i class="bi bi-person-lines-fill display-6 d-block mb-2"></i>
+                            <small>Belum ada kontak. Pilih dari HP atau tambah manual.</small>
+                        </div>
+                    </div>
+
+                    <div id="formActions" class="mt-4" style="display: none;">
+                        <button type="submit" class="btn btn-success btn-lg w-100">
+                            <i class="bi bi-check-lg me-2"></i> Simpan Kontak
+                        </button>
+                    </div>
+                </form>
+
+                <div id="successMessage" class="alert alert-success mt-3" style="display: none;">
+                    <i class="bi bi-check-circle me-2"></i>
+                    <span id="successText">Kontak berhasil disimpan!</span>
                 </div>
             </div>
         </div>
@@ -40,10 +61,16 @@
     <script>
     (function () {
         const pickBtn = document.getElementById('pickContactsBtn');
-        const resultDiv = document.getElementById('contactResult');
+        const addManualBtn = document.getElementById('addManualBtn');
         const contactList = document.getElementById('contactList');
         const emptyState = document.getElementById('emptyState');
+        const formActions = document.getElementById('formActions');
+        const contactForm = document.getElementById('contactForm');
+        const successMessage = document.getElementById('successMessage');
+        const successText = document.getElementById('successText');
         const unsupportedWarning = document.getElementById('unsupportedWarning');
+
+        let contactIndex = 0;
 
         const supported = 'contacts' in navigator;
 
@@ -51,7 +78,6 @@
             pickBtn.disabled = true;
             pickBtn.classList.add('disabled');
             unsupportedWarning.style.display = 'block';
-            return;
         }
 
         pickBtn.addEventListener('click', async () => {
@@ -61,11 +87,21 @@
                 });
 
                 if (!contacts || contacts.length === 0) {
-                    alert('Tidak ada kontak yang dipilih.');
                     return;
                 }
 
-                renderContacts(contacts);
+                contacts.forEach(contact => {
+                    const fullName = [
+                        contact.name[0] || '',
+                        contact.name[1] || '',
+                    ].filter(Boolean).join(' ') || 'Tanpa Nama';
+
+                    const phone = (contact.tel && contact.tel[0]) || '';
+
+                    addContactRow(fullName, phone);
+                });
+
+                updateUI();
             } catch (err) {
                 if (err.name !== 'AbortError') {
                     console.error('Contact Picker error:', err);
@@ -74,33 +110,85 @@
             }
         });
 
-        function renderContacts(contacts) {
-            contactList.innerHTML = '';
+        addManualBtn.addEventListener('click', () => {
+            addContactRow('', '');
+            updateUI();
+        });
 
-            contacts.forEach((contact, index) => {
-                const fullName = [
-                    contact.name[0] || '',
-                    contact.name[1] || '',
-                ].filter(Boolean).join(' ') || 'Tanpa Nama';
-
-                const phone = (contact.tel && contact.tel[0]) || '-';
-
-                const item = document.createElement('div');
-                item.className = 'list-group-item d-flex align-items-center justify-content-between';
-                item.innerHTML = `
-                    <div>
-                        <div class="fw-semibold">${escapeHtml(fullName)}</div>
-                        <div class="small text-muted">${escapeHtml(phone)}</div>
+        function addContactRow(name, phone) {
+            const index = contactIndex++;
+            const div = document.createElement('div');
+            div.className = 'card mb-2 border';
+            div.innerHTML = `
+                <div class="card-body p-3">
+                    <div class="row g-2">
+                        <div class="col-12 col-md-5">
+                            <label class="form-label small text-muted mb-1">Nama</label>
+                            <input type="text" name="contacts[${index}][name]" class="form-control form-control-sm" placeholder="Nama kontak" value="${escapeHtml(name)}" required>
+                        </div>
+                        <div class="col-10 col-md-5">
+                            <label class="form-label small text-muted mb-1">Nomor HP</label>
+                            <input type="tel" name="contacts[${index}][phone]" class="form-control form-control-sm" placeholder="+628xxxxxxxxxx" value="${escapeHtml(phone)}" required>
+                        </div>
+                        <div class="col-2 col-md-2 d-flex align-items-end">
+                            <button type="button" class="btn btn-sm btn-outline-danger w-100 remove-btn">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </div>
                     </div>
-                    <span class="badge bg-light text-dark border">#${index + 1}</span>
-                `;
+                </div>
+            `;
 
-                contactList.appendChild(item);
+            div.querySelector('.remove-btn').addEventListener('click', () => {
+                div.remove();
+                updateUI();
             });
 
-            emptyState.style.display = 'none';
-            resultDiv.style.display = 'block';
+            contactList.appendChild(div);
         }
+
+        function updateUI() {
+            const hasContacts = contactList.querySelectorAll('.card').length > 0;
+            emptyState.style.display = hasContacts ? 'none' : 'block';
+            formActions.style.display = hasContacts ? 'block' : 'none';
+        }
+
+        contactForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const formData = new FormData(contactForm);
+
+            try {
+                const response = await fetch(contactForm.action, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value,
+                        'Accept': 'application/json',
+                    },
+                    body: formData,
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    successText.textContent = `Berhasil menyimpan ${data.count} kontak!`;
+                    successMessage.style.display = 'block';
+                    contactList.innerHTML = '';
+                    emptyState.style.display = 'block';
+                    formActions.style.display = 'none';
+                    contactIndex = 0;
+
+                    setTimeout(() => {
+                        successMessage.style.display = 'none';
+                    }, 5000);
+                } else {
+                    alert('Gagal: ' + (data.message || 'Terjadi kesalahan'));
+                }
+            } catch (err) {
+                console.error('Submit error:', err);
+                alert('Gagal mengirim data: ' + err.message);
+            }
+        });
 
         function escapeHtml(text) {
             const div = document.createElement('div');
