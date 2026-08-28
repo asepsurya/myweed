@@ -37,6 +37,10 @@ use Illuminate\Support\Facades\Storage;
 
 Route::get('/', [LandingController::class, 'index'])->name('landing');
 
+Route::get('/test-import-kontak', function () {
+    return '<h1>Import Kontak Test</h1><p>Route ini jalan!</p><a href="/invitation/import-kontak">Buka Import Kontak</a>';
+});
+
 Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
     ->name('logout');
 
@@ -76,6 +80,10 @@ Route::middleware(['auth'])->group(function () {
     Route::post('invitation/autosave', [UserInvitationController::class, 'autoSave'])->name('invitation.autosave');
     Route::get('invitation/create', [UserInvitationController::class, 'create'])->name('invitation.create');
     Route::post('invitation/quick-create', [UserInvitationController::class, 'quickCreate'])->name('invitation.quick-create');
+    Route::get('invitation/import-kontak', function () {
+        return view('dashboard.invitation.import-kontak');
+    })->name('invitation.import-kontak');
+
     Route::get('invitation/{slug}', [UserInvitationController::class, 'detail'])->name('invitation.detail');
     Route::post('invitation', [UserInvitationController::class, 'store'])->name('invitation.store');
     Route::get('invitation/{invitation}/edit', [UserInvitationController::class, 'edit'])->name('invitation.edit');
@@ -307,10 +315,6 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/financial-overview', [FinancialDashboardController::class, 'index'])->name('financial-overview.index');
 
         Route::get('/documentation', [DocumentationController::class, 'index'])->name('documentation.index');
-
-        Route::get('/invitation/import-kontak', function () {
-            return view('dashboard.invitation.import-kontak');
-        })->name('invitation.import-kontak');
     });
 
     Route::get('/savings/contributors/accept/{token}', [SavingsContributorController::class, 'accept'])->name('savings.contributor.accept');
