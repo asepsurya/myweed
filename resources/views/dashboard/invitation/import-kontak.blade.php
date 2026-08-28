@@ -15,9 +15,35 @@
                 <p class="text-muted small mb-0">Pilih kontak dari HP atau tambah manual</p>
             </div>
             <div class="card-body px-4 pb-4">
+                @if(session('success'))
+                    <div class="alert alert-success alert-dismissible fade show">
+                        <i class="bi bi-check-circle me-2"></i>
+                        {{ session('success') }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                @endif
+
                 <div id="unsupportedWarning" class="alert alert-warning" style="display: none;">
                     <i class="bi bi-exclamation-triangle me-2"></i>
                     Browser Anda tidak mendukung Contact Picker API. Silakan gunakan Chrome atau Edge di Android.
+                </div>
+
+                <div class="mb-4">
+                    <label for="invitationSelect" class="form-label fw-semibold">Pilih Undangan</label>
+                    <select id="invitationSelect" class="form-select">
+                        <option value="">-- Pilih undangan --</option>
+                        @foreach($invitations as $inv)
+                            <option value="{{ $inv->id }}" {{ $invitationId == $inv->id ? 'selected' : '' }}>
+                                {{ $inv->groom_name }} & {{ $inv->bride_name }} ({{ $inv->slug }})
+                            </option>
+                        @endforeach
+                    </select>
+                    @if($invitations->isEmpty())
+                        <div class="form-text text-warning">
+                            <i class="bi bi-exclamation-triangle me-1"></i>
+                            Belum ada undangan. Buat undangan terlebih dahulu.
+                        </div>
+                    @endif
                 </div>
 
                 <button id="pickContactsBtn" class="btn btn-primary btn-lg w-100 mb-3">
@@ -28,6 +54,7 @@
 
                 <form id="contactForm" action="{{ route('invitation.import-kontak.store') }}" method="POST">
                     @csrf
+                    <input type="hidden" name="invitation_id" id="invitationIdInput" value="{{ $invitationId }}">
 
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <h6 class="fw-semibold mb-0">Daftar Kontak</h6>
@@ -44,7 +71,7 @@
                     </div>
 
                     <div id="formActions" class="mt-4" style="display: none;">
-                        <button type="submit" class="btn btn-success btn-lg w-100">
+                        <button type="submit" class="btn btn-success btn-lg w-100" id="saveBtn" disabled>
                             <i class="bi bi-check-lg me-2"></i> Simpan Kontak
                         </button>
                     </div>
@@ -54,6 +81,28 @@
                     <i class="bi bi-check-circle me-2"></i>
                     <span id="successText">Kontak berhasil disimpan!</span>
                 </div>
+
+                @if($guests->isNotEmpty())
+                    <hr class="my-4">
+                    <h6 class="fw-semibold mb-3">Kontak Tersimpan ({{ $guests->count() }})</h6>
+                    <div class="list-group">
+                        @foreach($guests as $guest)
+                            <div class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    <div class="fw-semibold">{{ $guest->name }}</div>
+                                    <div class="small text-muted">{{ $guest->phone }}</div>
+                                </div>
+                                <form action="{{ route('invitation.import-kontak.destroy', $guest) }}" method="POST" class="d-inline">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Hapus kontak ini?')">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        @endforeach
+                    </div>
+                @endif
             </div>
         </div>
     </div>
@@ -69,6 +118,9 @@
         const successMessage = document.getElementById('successMessage');
         const successText = document.getElementById('successText');
         const unsupportedWarning = document.getElementById('unsupportedWarning');
+        const invitationSelect = document.getElementById('invitationSelect');
+        const invitationIdInput = document.getElementById('invitationIdInput');
+        const saveBtn = document.getElementById('saveBtn');
 
         let contactIndex = 0;
 
@@ -80,7 +132,29 @@
             unsupportedWarning.style.display = 'block';
         }
 
+        if (invitationSelect) {
+            invitationSelect.addEventListener('change', function () {
+                const invitationId = this.value;
+                if (invitationId) {
+                    window.location.href = '{{ route("invitation.import-kontak") }}?invitation_id=' + invitationId;
+                }
+            });
+        }
+
+        function updateSaveButton() {
+            const hasInvitation = invitationIdInput && invitationIdInput.value;
+            const hasContacts = contactList.querySelectorAll('.card').length > 0;
+            if (saveBtn) {
+                saveBtn.disabled = !(hasInvitation && hasContacts);
+            }
+        }
+
         pickBtn.addEventListener('click', async () => {
+            if (!invitationIdInput.value) {
+                alert('Pilih undangan terlebih dahulu!');
+                return;
+            }
+
             try {
                 const contacts = await navigator.contacts.select(['name', 'tel'], {
                     multiple: true,
@@ -111,6 +185,10 @@
         });
 
         addManualBtn.addEventListener('click', () => {
+            if (!invitationIdInput.value) {
+                alert('Pilih undangan terlebih dahulu!');
+                return;
+            }
             addContactRow('', '');
             updateUI();
         });
@@ -151,10 +229,16 @@
             const hasContacts = contactList.querySelectorAll('.card').length > 0;
             emptyState.style.display = hasContacts ? 'none' : 'block';
             formActions.style.display = hasContacts ? 'block' : 'none';
+            updateSaveButton();
         }
 
         contactForm.addEventListener('submit', async (e) => {
             e.preventDefault();
+
+            if (!invitationIdInput.value) {
+                alert('Pilih undangan terlebih dahulu!');
+                return;
+            }
 
             const formData = new FormData(contactForm);
 
@@ -171,7 +255,7 @@
                 const data = await response.json();
 
                 if (data.success) {
-                    successText.textContent = `Berhasil menyimpan ${data.count} kontak!`;
+                    successText.textContent = data.message;
                     successMessage.style.display = 'block';
                     contactList.innerHTML = '';
                     emptyState.style.display = 'block';
@@ -179,8 +263,8 @@
                     contactIndex = 0;
 
                     setTimeout(() => {
-                        successMessage.style.display = 'none';
-                    }, 5000);
+                        window.location.reload();
+                    }, 1500);
                 } else {
                     alert('Gagal: ' + (data.message || 'Terjadi kesalahan'));
                 }
@@ -195,6 +279,8 @@
             div.textContent = text;
             return div.innerHTML;
         }
+
+        updateSaveButton();
     })();
     </script>
 </body>
