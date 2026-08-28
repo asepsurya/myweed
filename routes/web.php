@@ -307,6 +307,10 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/financial-overview', [FinancialDashboardController::class, 'index'])->name('financial-overview.index');
 
         Route::get('/documentation', [DocumentationController::class, 'index'])->name('documentation.index');
+
+        Route::get('/invitation/import-kontak', function () {
+            return view('dashboard.invitation.import-kontak');
+        })->name('invitation.import-kontak');
     });
 
     Route::get('/savings/contributors/accept/{token}', [SavingsContributorController::class, 'accept'])->name('savings.contributor.accept');
