@@ -4,8 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FAQ - RuangUndang</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
+
+    @include('layouts.partial.seo_head')
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -505,40 +506,12 @@
                 font-size: 1.8rem;
             }
         }
-    </style>
+    @include('layouts.partial.page_styles')
 </head>
 
 <body>
 
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg" id="mainNav">
-        <div class="container">
-            <a class="navbar-brand" href="{{ route('landing') }}">
-                <img src="{{ asset('assets/logo-white.png') }}" alt="Logo RuangUndang" class="logo-white">
-                <img src="{{ asset('assets/logo-new.png') }}" alt="Logo RuangUndang" class="logo-dark">
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                style="border-color: rgba(255,255,255,0.3);">
-                <span class="navbar-toggler-icon" style="filter: invert(1);"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav mx-auto">
-                    <li class="nav-item"><a class="nav-link" href="{{ route('pages.cari-tema') }}">Cari Tema</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ route('pages.fitur') }}">Fitur</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ route('pages.harga') }}">Harga</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ route('pages.bantuan') }}">Bantuan</a></li>
-                </ul>
-                <div class="d-flex align-items-center gap-3">
-                    @auth
-                        <a href="{{ route('dashboard.user') }}" class="nav-link text-white">Dashboard</a>
-                    @else
-                        <a href="{{ route('login') }}" class="nav-link">Masuk</a>
-                        <a href="{{ route('register') }}" class="btn-gold">Mulai Gratis</a>
-                    @endauth
-                </div>
-            </div>
-        </div>
-    </nav>
+    @include('layouts.partial.page_navbar')
 
     <!-- Page Header -->
     <section class="page-header">
@@ -678,21 +651,21 @@
                     <div class="contact-card">
                         <div class="contact-icon"><i class="bi bi-whatsapp"></i></div>
                         <h5>WhatsApp</h5>
-                        <p class="text-secondary mb-0">+62 812-3456-7890</p>
+                        <p class="text-secondary mb-0"><a href="https://wa.me/6285923431716?text=Halo%20RuangUndang%2C%20saya%20ingin%20bertanya." target="_blank" rel="noopener noreferrer">+62 859-2343-1716</a></p>
                     </div>
                 </div>
                 <div class="col-lg-4 col-md-6 reveal" style="transition-delay: 0.2s;">
                     <div class="contact-card">
                         <div class="contact-icon"><i class="bi bi-envelope"></i></div>
                         <h5>Email</h5>
-                        <p class="text-secondary mb-0">support@ruangundang.id</p>
+                        <p class="text-secondary mb-0"><a href="mailto:official@ruangundang.my.id">official@ruangundang.my.id</a></p>
                     </div>
                 </div>
                 <div class="col-lg-4 col-md-6 reveal" style="transition-delay: 0.3s;">
                     <div class="contact-card">
                         <div class="contact-icon"><i class="bi bi-chat-dots"></i></div>
                         <h5>Live Chat</h5>
-                        <p class="text-secondary mb-0">Tersedia 24/7</p>
+                        <p class="text-secondary mb-0"><a href="https://wa.me/6285923431716?text=Halo%20RuangUndang%2C%20saya%20ingin%20bertanya." target="_blank" rel="noopener noreferrer">Tersedia 24/7</a></p>
                     </div>
                 </div>
             </div>
@@ -775,6 +748,8 @@
             observer.observe(reveal);
         });
     </script>
+
+    @include('layouts.partial.whatsapp_float')
 </body>
 
 </html>

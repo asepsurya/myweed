@@ -261,6 +261,35 @@ class TempelateController extends Controller
             abort(404, 'Template tidak ditemukan');
         }
 
+        $seoTitle = "Template {$template->name} - Undangan Digital | RuangUndang";
+        $seoDescription = $template->description ?? "Pratinjau template undangan digital '{$template->name}'. Desain elegan dan modern untuk pernikahan impian Anda. Lihat tampilan live dan gunakan untuk undangan Anda.";
+        $seoKeywords = "template undangan, {$template->name}, undangan digital, template pernikahan, desain undangan";
+        $seoImage = template_thumbnail_url($template, $template->updated_at->timestamp);
+
+        $jsonLd = [
+            [
+                '@context' => 'https://schema.org',
+                '@type' => 'Product',
+                'name' => $template->name,
+                'description' => $seoDescription,
+                'image' => $seoImage,
+                'url' => url()->current(),
+                'category' => 'Template Undangan Digital',
+                'offers' => [
+                    '@type' => 'Offer',
+                    'price' => '0',
+                    'priceCurrency' => 'IDR',
+                    'availability' => 'https://schema.org/InStock',
+                ],
+            ],
+        ];
+
+        view()->share('seoTitle', $seoTitle);
+        view()->share('seoDescription', $seoDescription);
+        view()->share('seoKeywords', $seoKeywords);
+        view()->share('seoImage', $seoImage);
+        view()->share('jsonLd', $jsonLd);
+
         return view($templateView, compact('invitation', 'themeColor'));
     }
 

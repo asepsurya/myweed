@@ -4,8 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bantuan - RuangUndang</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
+
+    @include('layouts.partial.seo_head')
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -526,42 +527,65 @@
                 font-size: 1.8rem;
             }
         }
-    </style>
+
+        .login-link {
+            font-weight: 500;
+            text-decoration: none;
+            transition: all .3s ease;
+        }
+
+        .login-link:hover {
+            color: #d4af37 !important;
+        }
+
+        /* Dashboard */
+        .dashboard-link {
+            color: #fff !important;
+            text-decoration: none;
+            border: 1px solid rgba(255, 255, 255, .25);
+            background: rgba(255, 255, 255, .08);
+            backdrop-filter: blur(10px);
+            transition: all .3s ease;
+        }
+
+        .dashboard-link:hover {
+            background: rgba(212, 175, 55, .15);
+            border-color: #d4af37;
+            color: #d4af37 !important;
+        }
+
+        /* Button Gold */
+        .btn-gold {
+            color: #fff !important;
+            text-decoration: none;
+            font-weight: 600;
+            background: linear-gradient(135deg,
+                    #b8860b,
+                    #d4af37,
+                    #f1d77a);
+            box-shadow: 0 8px 25px rgba(212, 175, 55, .25);
+            transition: all .3s ease;
+        }
+
+        .btn-gold:hover {
+            color: #fff !important;
+            transform: translateY(-2px);
+            box-shadow: 0 12px 30px rgba(212, 175, 55, .4);
+        }
+
+        .btn-gold i {
+            transition: transform .3s ease;
+        }
+
+        .btn-gold:hover i {
+            transform: translateX(4px);
+        }
+    @include('layouts.partial.page_styles')
 </head>
 
 <body>
 
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg" id="mainNav">
-        <div class="container">
-            <a class="navbar-brand" href="{{ route('landing') }}">
-                <!-- Logo Light (Untuk background gelap) -->
-                <img src="{{ asset('assets/logo-white.png') }}" alt="Logo RuangUndang" class="logo-light">
-                <!-- Logo Dark (Untuk background putih) -->
-                <img src="{{ asset('assets/logo-new.png') }}" alt="Logo RuangUndang" class="logo-dark">
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                style="border-color: rgba(255,255,255,0.3);">
-                <span class="navbar-toggler-icon" style="filter: invert(1);"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav mx-auto">
-                    <li class="nav-item"><a class="nav-link" href="{{ route('pages.cari-tema') }}">Cari Tema</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ route('pages.fitur') }}">Fitur</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ route('pages.harga') }}">Harga</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ route('pages.bantuan') }}">Bantuan</a></li>
-                </ul>
-                <div class="d-flex align-items-center gap-3">
-                    @auth
-                        <a href="{{ route('dashboard.user') }}" class="nav-link text-white">Dashboard</a>
-                    @else
-                        <a href="{{ route('login') }}" class="nav-link">Masuk</a>
-                        <a href="{{ route('register') }}" class="btn-gold">Mulai Gratis</a>
-                    @endauth
-                </div>
-            </div>
-        </div>
-    </nav>
+    @include('layouts.partial.page_navbar')
 
     <!-- Page Header -->
     <section class="page-header">
@@ -667,7 +691,9 @@
                         <div class="help-icon"><i class="bi bi-whatsapp"></i></div>
                         <h4>WhatsApp</h4>
                         <p>Chat langsung dengan tim support. Respon cepat untuk pertanyaan teknis dan non-teknis.</p>
-                        <a href="#">+62 859-2343-1716</a>
+                        <a href="https://wa.me/6285923431716?text=Halo%20RuangUndang%2C%20saya%20ingin%20bertanya." target="_blank" rel="noopener noreferrer">
+                            +62 859-2343-1716
+                        </a>
                     </div>
                 </div>
                 <div class="col-lg-4 col-md-6 reveal" style="transition-delay: 0.2s;">
@@ -675,7 +701,7 @@
                         <div class="help-icon"><i class="bi bi-envelope"></i></div>
                         <h4>Email</h4>
                         <p>Kirim pertanyaan detail dan kami akan merespons dalam waktu kurang dari 1 jam.</p>
-                        <a href="#">official@ruangundang.id</a>
+                        <a href="mailto:official@ruangundang.my.id">official@ruangundang.my.id</a>
                     </div>
                 </div>
                 <div class="col-lg-4 col-md-6 reveal" style="transition-delay: 0.3s;">
@@ -683,7 +709,7 @@
                         <div class="help-icon"><i class="bi bi-chat-dots"></i></div>
                         <h4>Live Chat</h4>
                         <p>Tersedia 24/7 di website. Klik ikon chat di pojok kanan bawah untuk memulai percakapan.</p>
-                        <a href="#">Mulai Chat <i class="bi bi-arrow-right ms-1"></i></a>
+                        <a href="https://wa.me/6285923431716?text=Halo%20RuangUndang%2C%20saya%20ingin%20bertanya." target="_blank" rel="noopener noreferrer">Mulai Chat <i class="bi bi-arrow-right ms-1"></i></a>
                     </div>
                 </div>
             </div>
@@ -760,6 +786,8 @@
         }, { threshold: 0.15 });
         reveals.forEach(reveal => observer.observe(reveal));
     </script>
+
+    @include('layouts.partial.whatsapp_float')
 </body>
 
 </html>
