@@ -413,7 +413,7 @@
 
         <!-- Modal: Share Invitation -->
        @if(auth()->user()->isPaidSubscribed())
-<div class="modal fade" id="shareModalDynamic" tabindex="-1" aria-hidden="true" style="z-index: 9999;">
+<div class="modal fade" id="shareModalDynamic" tabindex="-1" aria-hidden="true" >
     <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content border-0 shadow-lg">
 
@@ -589,7 +589,7 @@
 
 
             {{-- FOOTER --}}
-            <div class="modal-footer bg-light px-4">
+            <div class="modal-footer  px-4">
 
                 <div class="me-auto small text-muted">
                     <i class="bi bi-shield-check me-1"></i>
