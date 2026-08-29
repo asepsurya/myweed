@@ -334,11 +334,22 @@
             const isYoutube = youtubeId.length > 0;
             const isCustom = "{{ $isCustomUpload ? 'true' : 'false' }}" === 'true';
             const isPreviewMode = "{{ request('muted') ? '1' : '0' }}" === '1';
-            const isEditPage = window.location.pathname.includes('/edit');
+            let muteFromParent = false;
             const bgMusic = document.getElementById('bgMusic');
-            if (bgMusic && (isPreviewMode || isEditPage)) {
+            if (bgMusic && isPreviewMode) {
                 bgMusic.muted = true;
             }
+
+            window.addEventListener('message', (e) => {
+                if (e.data && e.data.type === 'mute-music') {
+                    muteFromParent = true;
+                    if (bgMusic) bgMusic.muted = true;
+                }
+                if (e.data && e.data.type === 'unmute-music') {
+                    muteFromParent = false;
+                    if (bgMusic) bgMusic.muted = false;
+                }
+            });
             const musicToggle = document.getElementById('musicToggle');
             const musicIcon = document.getElementById('musicIcon');
             const musicCover = document.getElementById('musicCover');
@@ -510,14 +521,14 @@
 
                 if (playPromise !== undefined) {
                     playPromise.then(() => {
-                        if (!isPreviewMode) {
+                        if (!isPreviewMode && !muteFromParent) {
                             bgMusic.muted = false;
                         }
                         setPauseIcon();
                         startWaveformAnimation();
                     }).catch((e) => {
                         console.log('Autoplay blocked by browser:', e);
-                        if (!isPreviewMode) {
+                        if (!isPreviewMode && !muteFromParent) {
                             bgMusic.muted = false;
                         }
                         setPlayIcon();
@@ -552,7 +563,7 @@
 
             function pauseYoutube() { sendYtCommand('pauseVideo'); sendYtCommand('pause'); setPlayIcon(); stopWaveformAnimation(); ytMuted = true; }
             function playYoutube() {
-                if (isPreviewMode) return;
+                if (isPreviewMode || muteFromParent) return;
                 sendYtCommand('unMute'); ytMuted = false;
                 sendYtCommand('playVideo');
                 setTimeout(() => sendYtCommand('setVolume', [100]), 500);
@@ -670,7 +681,7 @@
             }
 
             // LOGIKA AUTOPLAY DIPERCEPAT
-            const shouldAutoplay = !isPreviewMode && !isEditPage;
+            const shouldAutoplay = !isPreviewMode && !muteFromParent;
             if (isYoutube) {
                 ytIframe = document.getElementById('youtubeIframe');
                 if (shouldAutoplay) {

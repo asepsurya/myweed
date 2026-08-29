@@ -1201,7 +1201,7 @@
                 // Reload iframe directly to invitation preview URL with cache buster
                 const iframe = document.getElementById('livePreviewIframe');
                 if (iframe) {
-                    const previewUrl = `{{ route('invitation.show', $invitation->slug) }}?v=${Date.now()}`;
+                    const previewUrl = `{{ route('invitation.show', $invitation->slug) }}?v=${Date.now()}&muted=1`;
                     iframe.src = previewUrl;
                 }
 
@@ -1215,7 +1215,7 @@
         function reloadPreview() {
             const iframe = document.getElementById('livePreviewIframe');
             if (iframe) {
-                const previewUrl = `{{ route('invitation.show', $invitation->slug) }}?v=${Date.now()}`;
+                const previewUrl = `{{ route('invitation.show', $invitation->slug) }}?v=${Date.now()}&muted=1`;
                 iframe.src = previewUrl;
             }
         }
@@ -1718,6 +1718,17 @@
             if (categorySelect) categorySelect.onchange = filterTemplates;
             if (typeSelect) typeSelect.onchange = filterTemplates;
             if (searchTemplate) searchTemplate.oninput = filterTemplates;
+
+            const previewIframe = document.getElementById('livePreviewIframe');
+            if (previewIframe) {
+                previewIframe.addEventListener('load', () => {
+                    try {
+                        previewIframe.contentWindow.postMessage({ type: 'mute-music' }, '*');
+                    } catch (e) {
+                        // Ignore cross-origin or access errors
+                    }
+                });
+            }
 
             // Pagination
             const prevPageBtn = document.getElementById('prevPage');
