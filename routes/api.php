@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\AiChatController;
 use App\Http\Controllers\MusicController;
 use App\Http\Controllers\SubscriptionPlanController;
 use Illuminate\Http\Request;
@@ -17,5 +16,3 @@ Route::get('/payment/pending', [SubscriptionPlanController::class, 'pending'])->
 
 Route::get('/music', [MusicController::class, 'apiIndex']);
 Route::get('/music/{music}', [MusicController::class, 'apiShow']);
-
-Route::post('/ai/chat', [AiChatController::class, 'chat'])->middleware('throttle:10,1');

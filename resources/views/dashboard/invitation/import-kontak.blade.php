@@ -15,6 +15,8 @@
             border-radius: 0.75rem;
             box-shadow: 0 4px 15px rgba(198, 169, 98, 0.3);
             transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
         }
         .btn-tambah:hover {
             background: var(--primary-dark);
@@ -64,30 +66,34 @@
             font-size: 0.85rem;
             margin: 0;
         }
+        
+        /* Rapihkan Tabel */
         .guest-table {
             width: 100%;
             margin: 0;
+            border-collapse: collapse;
         }
         .guest-table th {
             background: #f8f9fa;
             font-weight: 600;
             font-size: 0.8rem;
             color: #6c757d;
-            padding: 0.85rem 1rem;
+            padding: 1rem 1.5rem;
             border-bottom: 2px solid #e9ecef;
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            white-space: nowrap;
         }
         .guest-table td {
-            padding: 0.85rem 1rem;
+            padding: 1rem 1.5rem;
             border-bottom: 1px solid #f0f0f0;
             vertical-align: middle;
         }
         .guest-table tr:last-child td {
             border-bottom: none;
         }
-        .guest-table tr:hover {
-            background: rgba(198, 169, 98, 0.02);
+        .guest-table tbody tr:hover {
+            background: rgba(198, 169, 98, 0.03);
         }
         .guest-name {
             font-weight: 600;
@@ -109,24 +115,30 @@
             border-radius: 50%;
             background: #28a745;
         }
+        
+        /* Rapihkan Tombol Aksi */
         .action-btns {
             display: flex;
-            gap: 0.4rem;
+            gap: 0.5rem;
+            justify-content: flex-end; /* Rata kanan */
+            align-items: center;
         }
         .btn-action {
-            width: 34px;
-            height: 34px;
+            width: 36px;
+            height: 36px;
             border-radius: 0.5rem;
             display: inline-flex;
             align-items: center;
             justify-content: center;
             border: none;
-            font-size: 0.85rem;
+            font-size: 1rem;
             transition: all 0.2s;
             cursor: pointer;
+            text-decoration: none; /* Hilangkan garis bawah link */
+            color: inherit; /* Warisi warna dari class parent */
         }
         .btn-action.copy {
-            background: rgba(13, 110, 253, 0.08);
+            background: rgba(13, 110, 253, 0.1);
             color: #0d6efd;
         }
         .btn-action.copy:hover {
@@ -134,7 +146,7 @@
             color: #fff;
         }
         .btn-action.wa {
-            background: rgba(25, 135, 84, 0.08);
+            background: rgba(25, 135, 84, 0.1);
             color: #198754;
         }
         .btn-action.wa:hover {
@@ -142,7 +154,7 @@
             color: #fff;
         }
         .btn-action.delete {
-            background: rgba(220, 53, 69, 0.08);
+            background: rgba(220, 53, 69, 0.1);
             color: #dc3545;
         }
         .btn-action.delete:hover {
@@ -156,27 +168,29 @@
             display: inline-flex;
             align-items: center;
             gap: 0.3rem;
-            padding: 0.25rem 0.5rem;
-            border-radius: 0.4rem;
-            background: rgba(198, 169, 98, 0.08);
+            padding: 0.35rem 0.75rem;
+            border-radius: 0.5rem;
+            background: rgba(198, 169, 98, 0.1);
             transition: all 0.2s;
+            font-weight: 500;
         }
         .link-preview:hover {
-            background: rgba(198, 169, 98, 0.15);
+            background: rgba(198, 169, 98, 0.2);
             color: var(--primary-dark);
         }
         .empty-state {
             text-align: center;
-            padding: 3rem 1rem;
+            padding: 4rem 1rem;
         }
         .empty-state i {
-            font-size: 3rem;
+            font-size: 3.5rem;
             color: #dee2e6;
             margin-bottom: 1rem;
         }
         .empty-state p {
             color: #adb5bd;
             margin: 0;
+            font-size: 0.9rem;
         }
     </style>
     @endpush
@@ -195,7 +209,7 @@
         <!-- Stats -->
         <div class="row mb-4">
             <div class="col-md-6 mb-3">
-                <div class="card adminuiux-card">
+                <div class="card adminuiux-card h-100">
                     <div class="card-body d-flex align-items-center gap-3">
                         <div class="stat-icon bg-primary-soft">
                             <i class="bi bi-people"></i>
@@ -208,7 +222,7 @@
                 </div>
             </div>
             <div class="col-md-6 mb-3">
-                <div class="card adminuiux-card">
+                <div class="card adminuiux-card h-100">
                     <div class="card-body d-flex align-items-center gap-3">
                         <div class="stat-icon bg-success-soft">
                             <i class="bi bi-whatsapp"></i>
@@ -237,56 +251,60 @@
             </div>
             <div class="card-body p-0">
                 @if($guests->isNotEmpty())
-                    <table class="guest-table">
-                        <thead>
-                            <tr>
-                                <th style="width: 40px;" class="ps-4">
-                                    <input class="form-check-input" type="checkbox" id="selectAll">
-                                </th>
-                                <th>Nama</th>
-                                <th>Nomor HP</th>
-                                <th>Link</th>
-                                <th style="width: 140px;" class="pe-4">Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach($guests as $guest)
-                                <tr class="guest-row" data-id="{{ $guest->id }}" data-name="{{ $guest->name }}" data-phone="{{ $guest->phone }}" data-link="{{ $guest->personalLink() }}">
-                                    <td class="ps-4">
-                                        <input class="form-check-input guest-checkbox" type="checkbox" value="{{ $guest->id }}">
-                                    </td>
-                                    <td>
-                                        <div class="guest-name">{{ $guest->name }}</div>
-                                    </td>
-                                    <td>
-                                        <div class="guest-phone">{{ $guest->phone }}</div>
-                                    </td>
-                                    <td>
-                                        <a href="{{ $guest->personalLink() }}" target="_blank" class="link-preview">
-                                            <i class="bi bi-link-45deg"></i> Lihat
-                                        </a>
-                                    </td>
-                                    <td class="pe-4">
-                                        <div class="action-btns">
-                                            <button class="btn-action copy copy-link-btn" data-link="{{ $guest->personalLink() }}" title="Copy Link">
-                                                <i class="bi bi-clipboard"></i>
-                                            </button>
-                                            <a href="{{ $guest->whatsappLink() }}" target="_blank" class="btn-action wa" title="Chat WhatsApp">
-                                                <i class="bi bi-whatsapp"></i>
-                                            </a>
-                                            <form action="{{ route('invitation.import-kontak.destroy', $guest) }}" method="POST" class="d-inline">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="btn-action delete" onclick="return confirm('Hapus kontak ini?')" title="Hapus">
-                                                    <i class="bi bi-trash"></i>
-                                                </button>
-                                            </form>
-                                        </div>
-                                    </td>
+                    <!-- Tambahkan table-responsive agar tidak pecah di mobile -->
+                    <div class="table-responsive">
+                        <table class="guest-table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 40px;" class="ps-4">
+                                        <input class="form-check-input" type="checkbox" id="selectAll">
+                                    </th>
+                                    <th>Nama</th>
+                                    <th>Nomor HP</th>
+                                    <th>Link</th>
+                                    <th style="width: 160px;" class="text-end pe-4">Aksi</th>
                                 </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                @foreach($guests as $guest)
+                                    <tr class="guest-row" data-id="{{ $guest->id }}" data-name="{{ $guest->name }}" data-phone="{{ $guest->phone }}" data-link="{{ $guest->personalLink() }}">
+                                        <td class="ps-4">
+                                            <input class="form-check-input guest-checkbox" type="checkbox" value="{{ $guest->id }}">
+                                        </td>
+                                        <td>
+                                            <div class="guest-name">{{ $guest->name }}</div>
+                                        </td>
+                                        <td>
+                                            <div class="guest-phone">{{ $guest->phone }}</div>
+                                        </td>
+                                        <td>
+                                            <a href="{{ $guest->personalLink() }}" target="_blank" class="link-preview">
+                                                <i class="bi bi-link-45deg"></i> Lihat
+                                            </a>
+                                        </td>
+                                        <td class="pe-4">
+                                            <div class="action-btns">
+                                                <button class="btn-action copy copy-link-btn" data-link="{{ $guest->personalLink() }}" title="Copy Link">
+                                                    <i class="bi bi-clipboard"></i>
+                                                </button>
+                                                <a href="{{ $guest->whatsappLink() }}" target="_blank" class="btn-action wa" title="Chat WhatsApp">
+                                                    <i class="bi bi-whatsapp"></i>
+                                                </a>
+                                                <!-- Tambahkan class m-0 p-0 agar form tidak mengganggu flexbox -->
+                                                <form action="{{ route('invitation.import-kontak.destroy', $guest) }}" method="POST" class="m-0 p-0 d-inline-block">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="btn-action delete" onclick="return confirm('Hapus kontak ini?')" title="Hapus">
+                                                        <i class="bi bi-trash"></i>
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
                 @else
                     <div class="empty-state">
                         <i class="bi bi-people d-block"></i>

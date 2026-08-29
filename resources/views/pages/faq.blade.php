@@ -118,9 +118,9 @@
                 </div>
                 <div class="col-lg-4 col-md-6 reveal" style="transition-delay: 0.3s;">
                     <div class="contact-card">
-                        <div class="contact-icon"><i class="bi bi-chat-dots"></i></div>
-                        <h5>Live Chat</h5>
-                        <p><a href="https://wa.me/6285923431716?text=Halo%20RuangUndang%2C%20saya%20ingin%20bertanya." target="_blank" rel="noopener noreferrer">Tersedia 24/7</a></p>
+                        <div class="contact-icon"><i class="bi bi-whatsapp"></i></div>
+                        <h5>Chat WhatsApp</h5>
+                        <p><a href="https://wa.me/6285923431716?text=Halo%20RuangUndang%2C%20saya%20ingin%20bertanya." target="_blank" rel="noopener noreferrer">Klik ikon di pojok kanan bawah</a></p>
                     </div>
                 </div>
             </div>

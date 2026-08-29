@@ -114,9 +114,9 @@
                 </div>
                 <div class="col-lg-4 col-md-6 reveal" style="transition-delay: 0.3s;">
                     <div class="help-card">
-                        <div class="help-icon"><i class="bi bi-chat-dots"></i></div>
-                        <h4>Live Chat</h4>
-                        <p>Tersedia 24/7 di website. Klik ikon chat di pojok kanan bawah untuk memulai percakapan.</p>
+                        <div class="help-icon"><i class="bi bi-whatsapp"></i></div>
+                        <h4>Chat WhatsApp</h4>
+                        <p>Tim support kami siap membantu. Klik ikon WhatsApp di pojok kanan bawah untuk memulai percakapan.</p>
                         <a href="https://wa.me/6285923431716?text=Halo%20RuangUndang%2C%20saya%20ingin%20bertanya." target="_blank" rel="noopener noreferrer">Mulai Chat <i class="bi bi-arrow-right ms-1"></i></a>
                     </div>
                 </div>

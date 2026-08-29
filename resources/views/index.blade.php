@@ -1187,35 +1187,7 @@
             animation-play-state: paused;
         }
 
-        /* ===== WhatsApp Float ===== */
-        .wa-float {
-            position: fixed;
-            bottom: 24px;
-            right: 24px;
-            z-index: 9999;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            background: #25D366;
-            color: #fff;
-            padding: 12px 20px 12px 16px;
-            border-radius: 50px;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 0.9rem;
-            box-shadow: 0 8px 30px rgba(37, 211, 102, 0.4);
-            transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
-            overflow: visible;
-        }
-        .wa-float:hover { transform: translateY(-3px) scale(1.05); box-shadow: 0 12px 40px rgba(37, 211, 102, 0.5); color: #fff; }
-        .wa-float__icon { display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; font-size: 1.4rem; flex-shrink: 0; }
-        .wa-float__text { white-space: nowrap; }
-        .wa-float__pulse { position: absolute; top: -4px; right: -4px; width: 16px; height: 16px; background: #ff4444; border-radius: 50%; border: 2px solid #fff; animation: waPulse 2s infinite; }
-        @keyframes waPulse { 0% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.3); opacity: 0.7; } 100% { transform: scale(1); opacity: 1; } }
-        @media (max-width: 768px) {
-            .wa-float { bottom: 16px; right: 16px; padding: 10px 16px 10px 14px; font-size: 0.85rem; }
-            .wa-float__icon { width: 28px; height: 28px; font-size: 1.2rem; }
-        }
+        /* ===== WhatsApp Float: provided by components.wa-chat (floating round button) ===== */
     </style>
 </head>
 
@@ -1781,7 +1753,7 @@
     </script>
 
     <!-- ============================================================= -->
-    @include('components.ai-chat')
+
 
 
     @if($promotions->isNotEmpty())
@@ -2086,7 +2058,12 @@
         @endif
     </script>
 
-    @include('layouts.partial.whatsapp_float')
+    @include('components.wa-chat', [
+        'phone' => '6285923431716',
+        'message' => 'Halo RuangUndang, saya ingin bertanya tentang layanan undangan digital.',
+        'title' => 'Chat WhatsApp RuangUndang',
+        'mobileBottom' => 24
+    ])
 </body>
 
 </html>

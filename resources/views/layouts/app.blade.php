@@ -515,6 +515,8 @@
         }
 }
     </style>
+
+    @stack('styles')
 </head>
 
 <body class="main-bg main-bg-opac main-bg-blur adminuiux-sidebar-fill-white adminuiux-sidebar-boxed theme-gold"
@@ -636,9 +638,6 @@
 
     {{-- Mobile Bottom Nav --}}
     @include('layouts.partial.mobile_global')
-
-    {{-- AI Chat Widget --}}
-    @include('components.ai-chat')
 
  
 
