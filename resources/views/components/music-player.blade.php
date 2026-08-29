@@ -334,7 +334,11 @@
             const isYoutube = youtubeId.length > 0;
             const isCustom = "{{ $isCustomUpload ? 'true' : 'false' }}" === 'true';
             const isPreviewMode = "{{ request('muted') ? '1' : '0' }}" === '1';
+            const isEditPage = window.location.pathname.includes('/edit');
             const bgMusic = document.getElementById('bgMusic');
+            if (bgMusic && (isPreviewMode || isEditPage)) {
+                bgMusic.muted = true;
+            }
             const musicToggle = document.getElementById('musicToggle');
             const musicIcon = document.getElementById('musicIcon');
             const musicCover = document.getElementById('musicCover');
@@ -506,12 +510,16 @@
 
                 if (playPromise !== undefined) {
                     playPromise.then(() => {
-                        bgMusic.muted = false;
+                        if (!isPreviewMode) {
+                            bgMusic.muted = false;
+                        }
                         setPauseIcon();
                         startWaveformAnimation();
                     }).catch((e) => {
                         console.log('Autoplay blocked by browser:', e);
-                        bgMusic.muted = false;
+                        if (!isPreviewMode) {
+                            bgMusic.muted = false;
+                        }
                         setPlayIcon();
                     });
                 }
@@ -544,6 +552,7 @@
 
             function pauseYoutube() { sendYtCommand('pauseVideo'); sendYtCommand('pause'); setPlayIcon(); stopWaveformAnimation(); ytMuted = true; }
             function playYoutube() {
+                if (isPreviewMode) return;
                 sendYtCommand('unMute'); ytMuted = false;
                 sendYtCommand('playVideo');
                 setTimeout(() => sendYtCommand('setVolume', [100]), 500);
@@ -661,16 +670,17 @@
             }
 
             // LOGIKA AUTOPLAY DIPERCEPAT
+            const shouldAutoplay = !isPreviewMode && !isEditPage;
             if (isYoutube) {
                 ytIframe = document.getElementById('youtubeIframe');
-                if (!isPreviewMode) {
+                if (shouldAutoplay) {
                     setTimeout(() => {
                         if (!isAudioPlaying()) playYoutube();
                     }, 300);
                 }
             } else if (isCustom) {
                 setTimeout(() => loadCustomAudio(), 0);
-                if (!isPreviewMode) {
+                if (shouldAutoplay) {
                     setTimeout(() => {
                         if (!isAudioPlaying()) playAudio();
                     }, 400); // Dipercepat dari 800ms ke 400ms
@@ -678,13 +688,13 @@
             } else {
                 setTimeout(() => {
                     loadMusicData().then(() => {
-                        if (!isPreviewMode) {
+                        if (shouldAutoplay) {
                             setTimeout(() => {
                                 if (!isAudioPlaying()) playAudio();
                             }, 400); // Dipercepat dari 800ms ke 400ms
                         }
                     }).catch(() => {
-                        if (!isPreviewMode) {
+                        if (shouldAutoplay) {
                             setTimeout(() => {
                                 if (!isAudioPlaying()) playAudio();
                             }, 400);

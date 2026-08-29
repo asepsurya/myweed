@@ -804,7 +804,7 @@
                 <div id="previewWindow" class="preview-window no-scrollbar">
                     <div class="preview-notch"></div>
                     <iframe id="livePreviewIframe" name="livePreviewIframe" class="preview-iframe no-scrollbar"
-                        src="{{ route('invitation.show', $invitation->slug) }}?v={{ ($invitation->updated_at->timestamp ?? time()) }}"></iframe>
+                        src="{{ route('invitation.show', $invitation->slug) }}?v={{ ($invitation->updated_at->timestamp ?? time()) }}&muted=1"></iframe>
                     <div id="previewLoader" class="d-none">
                         <div class="spinner-border mb-3" role="status" style="color: var(--adminuiux-theme-1);"></div>
                         <p class="small fw-bold">Updating...</p>
