@@ -1002,6 +1002,10 @@
 
             links.forEach(link => {
                 link.addEventListener('click', function (e) {
+                    if (this.hasAttribute('data-bs-toggle') && this.getAttribute('data-bs-toggle') === 'modal') {
+                        return;
+                    }
+
                     e.preventDefault();
                     links.forEach(l => l.classList.remove('active'));
                     contents.forEach(c => { c.classList.add('d-none'); c.classList.remove('active'); });
@@ -1171,7 +1175,10 @@
             const quotes = {
                 rum21: "Dan di antara tanda-tanda (kebesaran)-Nya ialah Dia menciptakan pasangan-pasangan untukmu dari jenismu sendiri, agar kamu cenderung dan merasa tenteram kepadanya, dan Dia menjadikan di antaramu rasa kasih dan sayang. Sungguh, pada yang demikian itu benar-benar terdapat tanda-tanda (kebesaran Allah) bagi kaum yang berpikir.",
                 nisa1: "Wahai manusia! Bertakwalah kepada Tuhanmu yang telah menciptakan kamu dari diri yang satu (Adam), dan (Allah) menciptakan pasangannya (Hawa) dari (diri)-nya; dan dari keduanya Allah memperkembangbiakkan laki-laki dan perempuan yang banyak.",
-                furqan74: "Dan orang-orang yang berkata, \"Ya Tuhan kami, anugerahkanlah kepada kami pasangan kami dan keturunan kami sebagai penyenang hati (kami), dan jadikanlah kami pemimpin bagi orang-orang yang bertakwa.\""
+                furqan74: "Dan orang-orang yang berkata, \"Ya Tuhan kami, anugerahkanlah kepada kami pasangan kami dan keturunan kami sebagai penyenang hati (kami), dan jadikanlah kami pemimpin bagi orang-orang yang bertakwa.\"",
+                baqarah187: "Dianugerahkan-Nya bagimu istri-isteri dari jenismu, agar kamu merasa tenang dan sentosa pada-Nya. Dan dijadikan-Nya di antaramu rasa kasih dan sayang. Sesungguhnya pada yang demikian itu benar-benar terdapat tanda-tanda kebesaran Allah bagi kaum yang berpikir.",
+                nur32: "Dan nikahkanlah orang-orang yang lajang di antaramu, dan orang-orang yang saleh dari hamba-hamba wanita yang ada di bawah tangan kamu. Jika mereka miskin, Allah akan memberikan kekayaan kepadanya dengan karunia-Nya. Dan Allah Maha Luas Pemberian-Nya, Maha Mengetahui.",
+                imran159: "Maka oleh karena kerendahan hati-Mu terhadap mereka, maka jika kamu adalah orang yang keras hati, niscaya mereka akan tercerai berai dari sekelilingmu. Karena itu maafkanlah mereka dan mohonkanlah ampunan untuk mereka, dan bermusyawarahlah dengan mereka dalam urusan itu..."
             };
             const select = document.querySelector('select[name="quote_id"]');
             if (select && quotes[select.value]) {
@@ -1539,6 +1546,25 @@
                 });
         };
 
+        window.previewLoveStoryPhoto = function(input) {
+            const file = input.files && input.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const item = input.closest('.love-story-item');
+                if (!item) return;
+
+                const container = item.querySelector('.love-story-photo-preview');
+                const img = container ? container.querySelector('img') : null;
+                if (container && img) {
+                    img.src = e.target.result;
+                    container.classList.remove('d-none');
+                }
+            };
+            reader.readAsDataURL(file);
+        };
+
         window.addLoveStory = () => {
             const div = document.createElement('div');
             div.className = 'love-story-item border rounded p-2 mb-2 bg-body-tertiary';
@@ -1552,7 +1578,7 @@
                     <img src="" class="img-fluid rounded border" style="max-height: 120px; object-fit: cover;">
                     <button type="button" class="btn btn-danger btn-sm position-absolute top-0 end-0 m-1" style="width:20px;height:20px;line-height:1;padding:0;" onclick="this.closest('.position-relative').remove(); this.closest('.love-story-item').querySelector('.imported-love-story-photo').value='';">&times;</button>
                 </div>
-                <input type="file" name="story_photo[]" accept="image/*" class="form-control form-control-sm mt-1">
+                <input type="file" name="story_photo[]" accept="image/*" class="form-control form-control-sm mt-1" onchange="previewLoveStoryPhoto(this)">
                 <button type="button" class="btn btn-sm btn-outline-primary mt-2" onclick="openPixabayModal('love_story', this.closest('.love-story-item'))">
                     <i class="bi bi-images me-1"></i> Atau cari dari Pixabay
                 </button>

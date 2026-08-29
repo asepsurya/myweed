@@ -1229,12 +1229,15 @@ function selectTemplateCard(card) {
                                     <div class="row g-3">
                                         <div class="col-md-6">
                                             <label for="wedding_quote_select" class="form-label">Kutipan Pernikahan</label>
-                                            <select id="wedding_quote_select" class="form-select" onchange="showQuote()" name="quote_id">
-                                                <option value="">-- Pilih Kutipan --</option>
-                                                <option value="rum21">QS. Ar-Rum : 21</option>
-                                                <option value="nisa1">QS. An-Nisa : 1</option>
-                                                <option value="furqan74">QS. Al-Furqan : 74</option>
-                                            </select>
+                                             <select id="wedding_quote_select" class="form-select" onchange="showQuote()" name="quote_id">
+                                                 <option value="">-- Pilih Kutipan --</option>
+                                                 <option value="rum21">QS. Ar-Rum : 21</option>
+                                                 <option value="nisa1">QS. An-Nisa : 1</option>
+                                                 <option value="furqan74">QS. Al-Furqan : 74</option>
+                                                 <option value="baqarah187">QS. Al-Baqarah : 187</option>
+                                                 <option value="nur32">QS. An-Nur : 32</option>
+                                                 <option value="imran159">QS. Ali Imran : 159</option>
+                                             </select>
                                             <div id="quote_result" class="mt-3 p-3 border rounded" style="display:none;">
                                                 <p id="quote_text" class="mb-1 fst-italic"></p>
                                                 <strong id="quote_source"></strong>
@@ -1635,6 +1638,18 @@ function selectTemplateCard(card) {
         furqan74: {
             text: "Ya Tuhan kami, anugerahkanlah kepada kami pasangan dan keturunan sebagai penyejuk mata.",
             source: "(QS. Al-Furqan : 74)"
+        },
+        baqarah187: {
+            text: "Dianugerahkan-Nya bagimu istri-isteri dari jenismu, agar kamu merasa tenang dan sentosa pada-Nya. Dan dijadikan-Nya di antaramu rasa kasih dan sayang.",
+            source: "(QS. Al-Baqarah : 187)"
+        },
+        nur32: {
+            text: "Dan nikahkanlah orang-orang yang lajang di antaramu, dan orang-orang yang saleh dari hamba-hamba wanita yang ada di bawah tangan kamu. Jika mereka miskin, Allah akan memberikan kekayaan kepadanya dengan karunia-Nya.",
+            source: "(QS. An-Nur : 32)"
+        },
+        imran159: {
+            text: "Maka oleh karena kerendahan hati-Mu terhadap mereka, maafkanlah mereka dan mohonkanlah ampunan untuk mereka, dan bermusyawarahlah dengan mereka dalam urusan itu.",
+            source: "(QS. Ali Imran : 159)"
         }
     };
 

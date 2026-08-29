@@ -1411,6 +1411,31 @@ class UserInvitationController extends Controller
         $data['enable_love_story'] = $request->has('enable_love_story');
 
         if ($invitation) {
+            if ($request->has('enable_gift') && $request->enable_gift) {
+                $banks = $request->bank ?? [];
+                $numbers = $request->number ?? [];
+                $names = $request->name ?? [];
+
+                $invitation->gifts()->delete();
+
+                foreach ($banks as $i => $bank) {
+                    if (empty($numbers[$i]) || empty($names[$i])) {
+                        continue;
+                    }
+
+                    Gift::create([
+                        'invitation_id' => $invitation->id,
+                        'bank' => $bank,
+                        'number' => $numbers[$i] ?? null,
+                        'name' => $names[$i] ?? null,
+                    ]);
+                }
+            } else {
+                $invitation->gifts()->delete();
+            }
+        }
+
+        if ($invitation) {
             // Jika sudah ada, jangan ganti slugnya terus menerus kalau sudah punya nama
             if ($invitation->groom_name && $invitation->bride_name && isset($data['slug'])) {
                 unset($data['slug']);

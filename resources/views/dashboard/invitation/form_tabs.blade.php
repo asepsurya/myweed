@@ -1029,15 +1029,15 @@
                     <hr class="my-4">
                     <div class="mb-3">
                         <label class="form-label fw-semibold mb-2">Kutipan Pernikahan</label>
-                        <select name="quote_id" class="form-select mb-2" onchange="showQuote()">
-                            <option value="">-- Pilih Kutipan --</option>
-                            <option value="rum21" {{ (!empty($inv) && $inv->quote_id == 'rum21') ? 'selected' : '' }}>QS. Ar-Rum : 21
-                            </option>
-                            <option value="nisa1" {{ (!empty($inv) && $inv->quote_id == 'nisa1') ? 'selected' : '' }}>QS. An-Nisa : 1
-                            </option>
-                            <option value="furqan74" {{ (!empty($inv) && $inv->quote_id == 'furqan74') ? 'selected' : '' }}>QS. Al-Furqan
-                                : 74</option>
-                        </select>
+                            <select name="quote_id" class="form-select mb-2" onchange="showQuote()">
+                                <option value="">-- Pilih Kutipan --</option>
+                                <option value="rum21" {{ (!empty($inv) && $inv->quote_id == 'rum21') ? 'selected' : '' }}>QS. Ar-Rum : 21</option>
+                                <option value="nisa1" {{ (!empty($inv) && $inv->quote_id == 'nisa1') ? 'selected' : '' }}>QS. An-Nisa : 1</option>
+                                <option value="furqan74" {{ (!empty($inv) && $inv->quote_id == 'furqan74') ? 'selected' : '' }}>QS. Al-Furqan : 74</option>
+                                <option value="baqarah187" {{ (!empty($inv) && $inv->quote_id == 'baqarah187') ? 'selected' : '' }}>QS. Al-Baqarah : 187</option>
+                                <option value="nur32" {{ (!empty($inv) && $inv->quote_id == 'nur32') ? 'selected' : '' }}>QS. An-Nur : 32</option>
+                                <option value="imran159" {{ (!empty($inv) && $inv->quote_id == 'imran159') ? 'selected' : '' }}>QS. Ali Imran : 159</option>
+                            </select>
                         <small class="text-muted">Pilih ayat Al-Qur'an yang akan ditampilkan sebagai kutipan.</small>
                         <textarea name="wedding_quote" id="wedding_quote" rows="3"
                             class="form-control mt-3">{{ optional($inv)->wedding_quote ?? '' }}</textarea>
@@ -1076,7 +1076,7 @@
                                                     </div>
                                                 @endif
                                                 <input type="file" name="story_photo[]" accept="image/*"
-                                                    class="form-control form-control-sm mt-1">
+                                                    class="form-control form-control-sm mt-1" onchange="previewLoveStoryPhoto(this)">
                                                 <button type="button" class="btn btn-sm btn-outline-primary mt-2"
                                                     onclick="openPixabayModal('love_story', this.closest('.love-story-item'))">
                                                     <i class="bi bi-images me-1"></i> Atau cari dari Pixabay

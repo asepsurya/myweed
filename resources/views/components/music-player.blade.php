@@ -511,6 +511,7 @@
                         startWaveformAnimation();
                     }).catch((e) => {
                         console.log('Autoplay blocked by browser:', e);
+                        bgMusic.muted = false;
                         setPlayIcon();
                     });
                 }
