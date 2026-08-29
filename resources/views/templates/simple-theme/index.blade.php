@@ -134,6 +134,8 @@
 
 <body class="bg-gray-200 flex justify-center font-sans font-light tracking-wide">
 
+    @include('components.personal-greeting')
+
     <div class="w-full max-w-[420px] min-h-screen bg-[#fdfaf6] relative overflow-hidden shadow-2xl">
 
         <!-- Hero Section -->

@@ -10,12 +10,12 @@ return new class extends Migration
     {
         Schema::create('guests', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('invitation_id')->constrained('invitations')->onDelete('cascade');
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->string('name');
             $table->string('phone', 20);
             $table->timestamps();
 
-            $table->index(['invitation_id', 'phone']);
+            $table->index(['user_id', 'phone']);
         });
     }
 

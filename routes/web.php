@@ -80,38 +80,27 @@ Route::middleware(['auth'])->group(function () {
     Route::post('invitation/autosave', [UserInvitationController::class, 'autoSave'])->name('invitation.autosave');
     Route::get('invitation/create', [UserInvitationController::class, 'create'])->name('invitation.create');
     Route::post('invitation/quick-create', [UserInvitationController::class, 'quickCreate'])->name('invitation.quick-create');
-    Route::get('invitation/import-kontak', function (\Illuminate\Http\Request $request) {
-        $invitationId = $request->query('invitation_id');
-        $guests = collect();
-
-        if ($invitationId) {
-            $guests = \App\Models\Guest::where('invitation_id', $invitationId)
-                ->orderBy('created_at', 'desc')
-                ->get();
-        }
-
-        $invitations = \App\Models\Invitation::where('user_id', auth()->id())
+    Route::get('invitation/import-kontak', function () {
+        $guests = \App\Models\Guest::where('user_id', auth()->id())
             ->orderBy('created_at', 'desc')
-            ->get(['id', 'slug', 'groom_name', 'bride_name']);
+            ->get();
 
-        return view('dashboard.invitation.import-kontak', compact('guests', 'invitations', 'invitationId'));
+        return view('dashboard.invitation.import-kontak', compact('guests'));
     })->name('invitation.import-kontak');
 
     Route::post('invitation/import-kontak', function (\Illuminate\Http\Request $request) {
         $validated = $request->validate([
-            'invitation_id' => 'required|exists:invitations,id',
             'contacts' => 'required|array|min:1',
             'contacts.*.name' => 'required|string|max:255',
             'contacts.*.phone' => 'required|string|max:20',
         ]);
 
-        $invitationId = $validated['invitation_id'];
         $contacts = $validated['contacts'];
 
         $saved = [];
         foreach ($contacts as $contact) {
             $saved[] = \App\Models\Guest::create([
-                'invitation_id' => $invitationId,
+                'user_id' => auth()->id(),
                 'name' => $contact['name'],
                 'phone' => $contact['phone'],
             ]);
@@ -126,7 +115,7 @@ Route::middleware(['auth'])->group(function () {
             ]);
         }
 
-        return redirect()->route('invitation.import-kontak', ['invitation_id' => $invitationId])
+        return redirect()->route('invitation.import-kontak')
             ->with('success', count($saved) . ' kontak berhasil disimpan!');
     })->name('invitation.import-kontak.store');
 
@@ -137,6 +126,14 @@ Route::middleware(['auth'])->group(function () {
         return redirect()->route('invitation.import-kontak', ['invitation_id' => $invitationId])
             ->with('success', 'Kontak berhasil dihapus!');
     })->name('invitation.import-kontak.destroy');
+
+    Route::get('invitation/import-kontak/guests', function () {
+        $guests = \App\Models\Guest::where('user_id', auth()->id())
+            ->orderBy('created_at', 'desc')
+            ->get(['id', 'name', 'phone']);
+
+        return response()->json(['guests' => $guests]);
+    })->name('invitation.import-kontak.guests');
 
     Route::get('invitation/{slug}', [UserInvitationController::class, 'detail'])->name('invitation.detail');
     Route::post('invitation', [UserInvitationController::class, 'store'])->name('invitation.store');

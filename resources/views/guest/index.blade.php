@@ -143,7 +143,18 @@
                                 <i class="bi bi-star me-1"></i> Upgrade ke Premium
                             </button>
                         @endif
+                            </div>
+                </div>
+
+                <!-- Buku Tamu Header -->
+                <div class="d-flex align-items-center justify-content-between mb-4 px-3">
+                    <div>
+                        <h5 class="fw-bold mb-0"><i class="bi bi-people me-2"></i>Buku Tamu</h5>
+                        <small class="text-muted">Daftar tamu undangan Anda</small>
                     </div>
+                    <a href="{{ route('invitation.import-kontak') }}" class="btn btn-primary btn-sm">
+                        <i class="bi bi-plus-lg me-1"></i> Tambah Tamu
+                    </a>
                 </div>
 
                 <form id="bulkDeleteForm" action="{{ route('invitation.bulk-delete') }}" method="POST">
@@ -225,9 +236,9 @@
                                             </button>
                                         @endif
                                         @if(auth()->user()->isPaidSubscribed())
-                                             <button type="button" class="btn btn-outline-success btn-sm" data-bs-toggle="modal" data-bs-target="#shareModalDynamic" data-id="{{ $inv->public_id }}" title="Bagikan Undangan">
-                                                <i class="bi bi-share"></i>
-                                            </button>
+                                                <button type="button" class="btn btn-outline-success btn-icon-mobile" data-bs-toggle="modal" data-bs-target="#shareModalDynamic" data-id="{{ $inv->public_id }}" data-invitation-id="{{ $inv->id }}" title="Bagikan Undangan">
+                                                    <i class="bi bi-share"></i>
+                                                </button>
                                         @endif
 
                                         @if(auth()->user()->id === $inv->user_id && !$inv->is_default)
@@ -264,8 +275,8 @@
                                             @endif
                                             <li>
                                                 @if(auth()->user()->isPaidSubscribed())
-                                                     <button type="button" class="dropdown-item text-success" data-bs-toggle="modal" data-bs-target="#shareModalDynamic" data-id="{{ $inv->public_id }}">
-                                                        <i class="bi bi-share me-2"></i> Bagikan Undangan
+                                                     <button type="button" class="dropdown-item text-success" data-bs-toggle="modal" data-bs-target="#shareModalDynamic" data-id="{{ $inv->public_id }}" data-invitation-id="{{ $inv->id }}">
+                                                        <i class="bi bi-share me-2"></i> Bagikan
                                                     </button>
                                                 @endif
                                             </li>
@@ -409,51 +420,253 @@
         </div>
 
         <!-- Modal: Share Invitation -->
-        @if(auth()->user()->isPaidSubscribed())
-        <div class="modal fade" id="shareModalDynamic" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog modal-lg modal-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-header bg-success text-white">
-                        <h5 class="modal-title"><i class="bi bi-share me-2"></i> Bagikan Undangan</h5>
-                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Tutup"></button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="form-floating mb-3">
-                            <input type="text" class="form-control" id="recipientNameDynamic" placeholder="Nama penerima" required>
-                            <label for="recipientNameDynamic">Nama Penerima</label>
-                        </div>
-                        <div class="form-floating mb-3">
-                            <textarea class="form-control" id="shareMessageDynamic" placeholder="Pesan undangan" style="height: 180px"></textarea>
-                            <label for="shareMessageDynamic">Pesan Undangan</label>
-                        </div>
-                        <div class="d-flex flex-wrap gap-2 mt-3">
-                            <button type="button" class="btn btn-success" onclick="shareToWhatsApp()">
-                                <i class="bi bi-whatsapp me-1"></i> WhatsApp
-                            </button>
-                            <button type="button" class="btn btn-primary" onclick="shareToFacebook()">
-                                <i class="bi bi-facebook me-1"></i> Facebook
-                            </button>
-                            <button type="button" class="btn btn-info text-white" onclick="shareToTwitter()">
-                                <i class="bi bi-twitter-x me-1"></i> Twitter
-                            </button>
-                            <button type="button" class="btn btn-primary" onclick="shareToTelegram()">
-                                <i class="bi bi-telegram me-1"></i> Telegram
-                            </button>
-                            <button type="button" class="btn btn-secondary" onclick="shareViaEmail()">
-                                <i class="bi bi-envelope me-1"></i> Email
-                            </button>
-                            <button type="button" class="btn btn-outline-dark" onclick="copyInvitationLink()">
-                                <i class="bi bi-link-45deg me-1"></i> Salin Tautan
-                            </button>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
-                    </div>
+       @if(auth()->user()->isPaidSubscribed())
+<div class="modal fade" id="shareModalDynamic" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content border-0 shadow-lg">
+
+            {{-- HEADER --}}
+            <div class="modal-header bg-success text-white px-4">
+                <div>
+                    <h5 class="modal-title fw-bold mb-1">
+                        <i class="bi bi-whatsapp me-2"></i>
+                        Bagikan Undangan
+                    </h5>
+                    <small class="opacity-75">
+                        Pilih tamu dan bagikan undangan
+                    </small>
+                </div>
+
+                <button
+                    type="button"
+                    class="btn-close btn-close-white"
+                    data-bs-dismiss="modal"
+                    aria-label="Tutup">
+                </button>
+            </div>
+
+
+           <div class="modal-body">
+    <div class="row g-4">
+
+        {{-- ========================= --}}
+        {{-- KIRI: KONTAK --}}
+        {{-- ========================= --}}
+        <div class="col-md-5">
+
+            <div class="d-flex align-items-center mb-3">
+                <div class="me-2 text-success">
+                    <i class="bi bi-people-fill fs-4"></i>
+                </div>
+                <div>
+                    <h6 class="mb-0 fw-bold">Kontak</h6>
+                    <small class="text-muted">Pilih penerima undangan</small>
                 </div>
             </div>
+
+            {{-- Nama Penerima --}}
+            <div class="mb-3">
+                <label for="recipientNameDynamic" class="form-label fw-semibold">
+                    Nama Penerima
+                </label>
+
+                <div class="input-group">
+                    <input
+                        type="text"
+                        class="form-control"
+                        id="recipientNameDynamic"
+                        placeholder="Nama penerima"
+                        required
+                    >
+
+                    <button
+                        type="button"
+                        class="btn btn-outline-primary"
+                        id="pickContactBtn"
+                        title="Pilih dari kontak HP">
+                        <i class="bi bi-person-lines-fill"></i>
+                    </button>
+                </div>
+
+                <div
+                    id="contactUnsupported"
+                    class="form-text text-warning"
+                    style="display: none;">
+                    <i class="bi bi-exclamation-triangle me-1"></i>
+                    Gunakan Chrome/Edge Android untuk pilih kontak.
+                </div>
+            </div>
+
+
+            {{-- ========================= --}}
+            {{-- DAFTAR TAMU --}}
+            {{-- ========================= --}}
+            <div class="mb-3" id="savedGuestsSection" style="display: none;">
+
+                <div class="d-flex justify-content-between align-items-center mb-2">
+
+                    <label class="form-label fw-semibold mb-0">
+                        Kirim ke Banyak Kontak
+                    </label>
+
+                    <div class="form-check">
+                        <input
+                            class="form-check-input"
+                            type="checkbox"
+                            id="selectAllGuests">
+
+                        <label
+                            class="form-check-label small"
+                            for="selectAllGuests">
+                            Pilih Semua
+                        </label>
+                    </div>
+
+                </div>
+
+
+                {{-- LIST TAMU --}}
+                <div
+                    class="list-group"
+                    id="savedGuestsList"
+                    style="max-height: 300px; overflow-y: auto;">
+                </div>
+
+
+                {{-- TOMBOL BULK --}}
+                <button
+                    type="button"
+                    class="btn btn-sm btn-success mt-2 w-100"
+                    id="bulkSendBtn"
+                    style="display: none;">
+
+                    <i class="bi bi-whatsapp me-1"></i>
+                    Kirim ke Terpilih
+
+                </button>
+
+            </div>
+
         </div>
-        @endif
+
+
+        {{-- ========================= --}}
+        {{-- KANAN: PESAN --}}
+        {{-- ========================= --}}
+        <div class="col-md-7">
+
+            <div class="d-flex align-items-center mb-3">
+                <div class="me-2 text-primary">
+                    <i class="bi bi-chat-text-fill fs-4"></i>
+                </div>
+
+                <div>
+                    <h6 class="mb-0 fw-bold">Pesan Undangan</h6>
+                    <small class="text-muted">
+                        Pesan yang akan dikirim kepada penerima
+                    </small>
+                </div>
+            </div>
+
+
+            {{-- PESAN --}}
+            <div class="form-floating mb-3">
+
+                <textarea
+                    class="form-control"
+                    id="shareMessageDynamic"
+                    placeholder="Pesan undangan"
+                    style="height: 220px"></textarea>
+
+                <label for="shareMessageDynamic">
+                    Pesan Undangan
+                </label>
+
+            </div>
+
+
+            {{-- TOMBOL SHARE --}}
+            <div class="d-flex flex-wrap gap-2">
+
+                <button
+                    type="button"
+                    class="btn btn-success"
+                    onclick="shareToWhatsApp()">
+                    <i class="bi bi-whatsapp me-1"></i>
+                    WhatsApp
+                </button>
+
+                <button
+                    type="button"
+                    class="btn btn-primary"
+                    onclick="shareToFacebook()">
+                    <i class="bi bi-facebook me-1"></i>
+                    Facebook
+                </button>
+
+                <button
+                    type="button"
+                    class="btn btn-info text-white"
+                    onclick="shareToTwitter()">
+                    <i class="bi bi-twitter-x me-1"></i>
+                    Twitter
+                </button>
+
+                <button
+                    type="button"
+                    class="btn btn-primary"
+                    onclick="shareToTelegram()">
+                    <i class="bi bi-telegram me-1"></i>
+                    Telegram
+                </button>
+
+                <button
+                    type="button"
+                    class="btn btn-secondary"
+                    onclick="shareViaEmail()">
+                    <i class="bi bi-envelope me-1"></i>
+                    Email
+                </button>
+
+                <button
+                    type="button"
+                    class="btn btn-outline-dark"
+                    onclick="copyInvitationLink()">
+                    <i class="bi bi-link-45deg me-1"></i>
+                    Salin Tautan
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+
+            {{-- FOOTER --}}
+            <div class="modal-footer bg-light px-4">
+
+                <div class="me-auto small text-muted">
+                    <i class="bi bi-shield-check me-1"></i>
+                    Data kontak tetap berada di perangkat Anda.
+                </div>
+
+                <button
+                    type="button"
+                    class="btn btn-secondary"
+                    data-bs-dismiss="modal">
+
+                    Tutup
+
+                </button>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+@endif
  <script>
         document.addEventListener('DOMContentLoaded', function() {
             const selectAll = document.getElementById('selectAll');
@@ -612,6 +825,165 @@
                             messageInput.value = messageDiv.textContent.trim();
                         }
                         recipientInput.value = '';
+                    });
+                }
+
+                // Contact Picker API
+                const pickContactBtn = document.getElementById('pickContactBtn');
+                const contactUnsupported = document.getElementById('contactUnsupported');
+                const recipientNameDynamic = document.getElementById('recipientNameDynamic');
+
+                if (pickContactBtn) {
+                    if ('contacts' in navigator) {
+                        pickContactBtn.addEventListener('click', async () => {
+                            try {
+                                const contacts = await navigator.contacts.select(['name', 'tel'], {
+                                    multiple: false,
+                                });
+
+                                if (contacts && contacts.length > 0) {
+                                    const contact = contacts[0];
+                                    const fullName = [
+                                        contact.name[0] || '',
+                                        contact.name[1] || '',
+                                    ].filter(Boolean).join(' ');
+                                    if (fullName && recipientNameDynamic) {
+                                        recipientNameDynamic.value = fullName;
+                                    }
+                                }
+                            } catch (err) {
+                                if (err.name !== 'AbortError') {
+                                    console.error('Contact Picker error:', err);
+                                }
+                            }
+                        });
+                    } else {
+                        pickContactBtn.disabled = true;
+                        pickContactBtn.classList.add('disabled');
+                        if (contactUnsupported) contactUnsupported.style.display = 'block';
+                    }
+                }
+
+                // Bulk Send to Saved Guests
+                const savedGuestsSection = document.getElementById('savedGuestsSection');
+                const savedGuestsList = document.getElementById('savedGuestsList');
+                const selectAllGuests = document.getElementById('selectAllGuests');
+                const bulkSendBtn = document.getElementById('bulkSendBtn');
+
+                shareModal.addEventListener('show.bs.modal', function (event) {
+                    const button = event.relatedTarget;
+                    const publicId = button.getAttribute('data-id');
+
+                    const messageDiv = document.getElementById('wa-message-' + publicId);
+                    const messageInput = document.getElementById('shareMessageDynamic');
+                    const recipientInput = document.getElementById('recipientNameDynamic');
+
+                    if (messageDiv) {
+                        messageInput.value = messageDiv.textContent.trim();
+                    }
+                    recipientInput.value = '';
+
+                    if (savedGuestsSection) {
+                        savedGuestsSection.style.display = 'block';
+                        loadSavedGuests();
+                    }
+                });
+
+                function loadSavedGuests() {
+                    if (!savedGuestsList) return;
+
+                    savedGuestsList.innerHTML = '<div class="text-center py-2"><small class="text-muted">Memuat...</small></div>';
+
+                    fetch('/invitation/import-kontak/guests')
+                        .then(res => res.json())
+                        .then(data => {
+                            if (data.guests && data.guests.length > 0) {
+                                savedGuestsList.innerHTML = '';
+                                data.guests.forEach(guest => {
+                                    const item = document.createElement('div');
+                                    item.className = 'list-group-item d-flex align-items-center justify-content-between py-2';
+                                    item.innerHTML = `
+                                        <div class="d-flex align-items-center gap-2">
+                                            <input class="form-check-input guest-checkbox" type="checkbox" value="${guest.id}" data-name="${guest.name}" data-phone="${guest.phone}">
+                                            <div>
+                                                <div class="small fw-semibold">${guest.name}</div>
+                                                <div class="small text-muted">${guest.phone}</div>
+                                            </div>
+                                        </div>
+                                    `;
+                                    savedGuestsList.appendChild(item);
+                                });
+
+                                bindGuestCheckboxes();
+                            } else {
+                                savedGuestsList.innerHTML = '<div class="text-center py-3"><small class="text-muted">Belum ada kontak tersimpan</small></div>';
+                                if (bulkSendBtn) bulkSendBtn.style.display = 'none';
+                            }
+                        })
+                        .catch(err => {
+                            console.error('Load guests error:', err);
+                            savedGuestsList.innerHTML = '<div class="text-center py-2"><small class="text-danger">Gagal memuat kontak</small></div>';
+                        });
+                }
+
+                function bindGuestCheckboxes() {
+                    const checkboxes = savedGuestsList.querySelectorAll('.guest-checkbox');
+                    checkboxes.forEach(cb => {
+                        cb.addEventListener('change', updateBulkButton);
+                    });
+                }
+
+                function updateBulkButton() {
+                    const checked = savedGuestsList.querySelectorAll('.guest-checkbox:checked');
+                    if (bulkSendBtn) {
+                        bulkSendBtn.style.display = checked.length > 0 ? 'block' : 'none';
+                    }
+                    if (selectAllGuests) {
+                        const allCheckboxes = savedGuestsList.querySelectorAll('.guest-checkbox');
+                        selectAllGuests.checked = allCheckboxes.length > 0 && checked.length === allCheckboxes.length;
+                    }
+                }
+
+                if (selectAllGuests) {
+                    selectAllGuests.addEventListener('change', function () {
+                        const checkboxes = savedGuestsList.querySelectorAll('.guest-checkbox');
+                        checkboxes.forEach(cb => {
+                            cb.checked = this.checked;
+                        });
+                        updateBulkButton();
+                    });
+                }
+
+                if (bulkSendBtn) {
+                    bulkSendBtn.addEventListener('click', () => {
+                        const checked = savedGuestsList.querySelectorAll('.guest-checkbox:checked');
+                        if (checked.length === 0) return;
+
+                        const messageInput = document.getElementById('shareMessageDynamic');
+                        const template = messageInput.value || 'Halo [nama], undangan untuk Anda:\n\n{link}\n\nTerima kasih!';
+
+                        const selectedGuests = [];
+                        checked.forEach(cb => {
+                            selectedGuests.push({
+                                name: cb.dataset.name,
+                                phone: cb.dataset.phone,
+                            });
+                        });
+
+                        if (!confirm(`Kirim WhatsApp ke ${selectedGuests.length} kontak?\n\nWhatsApp akan terbuka satu per satu.`)) return;
+
+                        let delay = 0;
+                        selectedGuests.forEach((guest) => {
+                            const message = template.replace(/\[nama\]/g, guest.name);
+                            const phone = guest.phone.replace(/[^0-9]/g, '');
+                            const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+
+                            setTimeout(() => {
+                                window.open(url, '_blank');
+                            }, delay);
+
+                            delay += 1500;
+                        });
                     });
                 }
 

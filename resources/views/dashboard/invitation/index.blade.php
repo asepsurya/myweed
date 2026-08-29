@@ -228,7 +228,7 @@
                                                             <i class="bi bi-pencil"></i>
                                                         </a>
                                                         @if(auth()->user()->isPaidSubscribed())
-                                                            <button type="button" class="btn btn-outline-success btn-sm" data-bs-toggle="modal"
+                                                            <button type="button" class="btn btn-outline-success btn-icon-mobile" data-bs-toggle="modal"
                                                                 data-bs-target="#shareModalDynamic" data-id="{{ $inv->public_id }}"
                                                                 title="Bagikan Undangan">
                                                                 <i class="bi bi-share"></i>
@@ -268,7 +268,7 @@
                                                                     <button type="button" class="dropdown-item text-success"
                                                                         data-bs-toggle="modal" data-bs-target="#shareModalDynamic"
                                                                         data-id="{{ $inv->public_id }}">
-                                                                        <i class="bi bi-share me-2"></i> Bagikan Undangan
+                                                                        <i class="bi bi-share me-2"></i> Bagikan
                                                                     </button>
                                                                 @endif
                                                             </li>

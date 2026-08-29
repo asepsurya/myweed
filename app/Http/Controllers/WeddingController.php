@@ -82,6 +82,8 @@ class WeddingController extends Controller
         view()->share('seoImage', $pageImage);
         view()->share('jsonLd', $jsonLd);
 
-        return view($templateView, compact('invitation'));
+        $guestName = request()->query('penerima');
+
+        return view($templateView, compact('invitation', 'guestName'));
     }
 }
