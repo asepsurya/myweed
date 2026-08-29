@@ -1731,7 +1731,7 @@
             if (myForm) {
                 myForm.addEventListener('change', (e) => { if (e.target.matches('input, textarea, select')) { updateLivePreview(); dbAutoSave(); } });
                 myForm.addEventListener('input', (e) => { if (e.target.matches('input, textarea, select')) dbAutoSave(); });
-GET http://127.0.0.1:8000/assets/logo-new-white.png 404 (Not Found)            }
+            }
 
             const addGiftBtn = document.getElementById('addGift');
             if (addGiftBtn) addGiftBtn.onclick = addGift;

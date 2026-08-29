@@ -494,15 +494,7 @@
                                 style="max-height: 300px; overflow-y: auto;">
                             </div>
 
-                            {{-- TOMBOL BULK --}}
-                            <button
-                                type="button"
-                                class="btn btn-sm btn-success mt-2 w-100"
-                                id="bulkSendBtn"
-                                style="display: none;">
-                                <i class="bi bi-whatsapp me-1"></i>
-                                Kirim ke Terpilih
-                            </button>
+                            <small class="text-muted mt-2 d-block">Centang kontak untuk langsung mengirim undangan ke WhatsApp-nya.</small>
                         </div>
                     </div>
 
@@ -799,8 +791,17 @@
                                         contact.name[0] || '',
                                         contact.name[1] || '',
                                     ].filter(Boolean).join(' ');
-                                    if (fullName && recipientNameDynamic) {
+
+                                    if (recipientNameDynamic) {
                                         recipientNameDynamic.value = fullName;
+                                    }
+
+                                    const phone = ((contact.tel && contact.tel[0]) || '').replace(/[^0-9]/g, '');
+                                    if (phone) {
+                                        const messageInput = document.getElementById('shareMessageDynamic');
+                                        let message = messageInput.value || 'Halo [nama], undangan untuk Anda.\n\nTerima kasih!';
+                                        message = message.replace(/\[nama\]/g, fullName || '');
+                                        window.open('https://wa.me/' + phone + '?text=' + encodeURIComponent(message), '_blank');
                                     }
                                 }
                             } catch (err) {
@@ -899,8 +900,38 @@
                 function bindGuestCheckboxes() {
                     const checkboxes = savedGuestsList.querySelectorAll('.guest-checkbox');
                     checkboxes.forEach(cb => {
-                        cb.addEventListener('change', updateBulkButton);
+                        cb.addEventListener('change', function () {
+                            if (this.checked) {
+                                openWaToGuest(this);
+                            }
+                            updateBulkButton();
+                        });
                     });
+                }
+
+                function openWaToGuest(cb) {
+                    const messageInput = document.getElementById('shareMessageDynamic');
+                    let message = messageInput.value || 'Halo [nama], undangan untuk Anda.\n\nTerima kasih!';
+                    message = message.replace(/\[nama\]/g, cb.dataset.name || '');
+
+                    const phone = (cb.dataset.phone || '').replace(/[^0-9]/g, '');
+                    if (!phone) {
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Nomor tidak valid',
+                            text: 'Kontak "' + (cb.dataset.name || '') + '" belum memiliki nomor WhatsApp.',
+                            confirmButtonColor: '#C6A962'
+                        });
+                        cb.checked = false;
+                        return;
+                    }
+
+                    // Isi nama penerima cukup dengan nama saja
+                    const recipientInput = document.getElementById('recipientNameDynamic');
+                    if (recipientInput) recipientInput.value = cb.dataset.name || '';
+
+                    const url = 'https://wa.me/' + phone + '?text=' + encodeURIComponent(message);
+                    window.open(url, '_blank');
                 }
 
                 function updateBulkButton() {
@@ -924,38 +955,7 @@
                     });
                 }
 
-                if (bulkSendBtn) {
-                    bulkSendBtn.addEventListener('click', () => {
-                        const checked = savedGuestsList.querySelectorAll('.guest-checkbox:checked');
-                        if (checked.length === 0) return;
 
-                        const messageInput = document.getElementById('shareMessageDynamic');
-                        const template = messageInput.value || 'Halo [nama], undangan untuk Anda:\n\n{link}\n\nTerima kasih!';
-
-                        const selectedGuests = [];
-                        checked.forEach(cb => {
-                            selectedGuests.push({
-                                name: cb.dataset.name,
-                                phone: cb.dataset.phone,
-                            });
-                        });
-
-                        if (!confirm(`Kirim WhatsApp ke ${selectedGuests.length} kontak?\n\nWhatsApp akan terbuka satu per satu.`)) return;
-
-                        let delay = 0;
-                        selectedGuests.forEach((guest) => {
-                            const message = template.replace(/\[nama\]/g, guest.name);
-                            const phone = guest.phone.replace(/[^0-9]/g, '');
-                            const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
-
-                            setTimeout(() => {
-                                window.open(url, '_blank');
-                            }, delay);
-
-                            delay += 1500;
-                        });
-                    });
-                }
 
                 // Handle Select All Checkbox
                 const selectAll = document.getElementById('selectAll');
