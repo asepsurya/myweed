@@ -346,6 +346,7 @@
             const isYoutube = youtubeId.length > 0;
             const isCustom = "{{ $isCustomUpload ? 'true' : 'false' }}" === 'true';
             const isPreviewMode = "{{ request('muted') ? '1' : '0' }}" === '1';
+            const isOwner = {{ isset($isOwner) && $isOwner ? 'true' : 'false' }};
             let muteFromParent = false;
             const bgMusic = document.getElementById('bgMusic');
             if (bgMusic && isPreviewMode) {
@@ -694,6 +695,26 @@
                 bgMusic.volume = 0.4;
             }
 
+            let userInteracted = false;
+            function onFirstInteraction() {
+                if (userInteracted) return;
+                userInteracted = true;
+                if (!isPreviewMode && !isAudioPlaying()) {
+                    if (isYoutube) playYoutube();
+                    else if (isCustom) { loadCustomAudio(); setTimeout(() => { if (!isAudioPlaying()) playAudio(); }, 400); }
+                    else {
+                        loadMusicData().then(() => {
+                            setTimeout(() => { if (!isAudioPlaying()) playAudio(); }, 400);
+                        }).catch(() => {
+                            setTimeout(() => { if (!isAudioPlaying()) playAudio(); }, 400);
+                        });
+                    }
+                }
+            }
+            document.addEventListener('click', onFirstInteraction, { once: false });
+            document.addEventListener('touchstart', onFirstInteraction, { once: false });
+            document.addEventListener('keydown', onFirstInteraction, { once: false });
+
             if (musicProgress) {
                 musicProgress.addEventListener('input', () => {
                     if (bgMusic && bgMusic.duration) {
@@ -702,50 +723,13 @@
                 });
             }
 
-            // LOGIKA AUTOPLAY DIPERCEPAT
+            // Preload music data (auto-play will happen on first user interaction)
             if (isYoutube) {
                 ytIframe = document.getElementById('youtubeIframe');
-                setTimeout(() => {
-                    if (!isAudioPlaying()) {
-                        if (isPreviewMode || muteFromParent) {
-                            sendYtCommand('mute');
-                            ytMuted = true;
-                        } else {
-                            sendYtCommand('unMute');
-                            ytMuted = false;
-                        }
-                        sendYtCommand('playVideo');
-                        setTimeout(() => sendYtCommand('setVolume', [100]), 500);
-                        ytPlaying = true;
-                        setPauseIcon();
-                    }
-                }, 300);
             } else if (isCustom) {
                 setTimeout(() => loadCustomAudio(), 0);
-                const shouldAutoplay = !isPreviewMode && !muteFromParent;
-                if (shouldAutoplay) {
-                    setTimeout(() => {
-                        if (!isAudioPlaying()) playAudio();
-                    }, 400);
-                }
             } else {
-                setTimeout(() => {
-                    loadMusicData().then(() => {
-                        const shouldAutoplay = !isPreviewMode && !muteFromParent;
-                        if (shouldAutoplay) {
-                            setTimeout(() => {
-                                if (!isAudioPlaying()) playAudio();
-                            }, 400);
-                        }
-                    }).catch(() => {
-                        const shouldAutoplay = !isPreviewMode && !muteFromParent;
-                        if (shouldAutoplay) {
-                            setTimeout(() => {
-                                if (!isAudioPlaying()) playAudio();
-                            }, 400);
-                        }
-                    });
-                }, 0);
+                setTimeout(() => loadMusicData(), 0);
             }
         })();
     </script>

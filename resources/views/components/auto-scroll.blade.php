@@ -147,6 +147,24 @@
             });
         }
 
+        // Auto-start scroll setelah delay (bukan pada first interaction agar tidak konflik)
+        let autoScrollStarted = false;
+        let userInteracted = false;
+        const autoScrollDelay = setTimeout(() => {
+            if (!userInteracted && !autoScrollStarted) {
+                autoScrollStarted = true;
+                startScroll();
+            }
+        }, 3000);
+
+        function cancelAutoScroll() {
+            userInteracted = true;
+            clearTimeout(autoScrollDelay);
+        }
+        document.addEventListener('click', cancelAutoScroll, { once: false });
+        document.addEventListener('touchstart', cancelAutoScroll, { once: false });
+        document.addEventListener('wheel', cancelAutoScroll, { once: false });
+
         // Hentikan scroll otomatis jika pengguna scroll manual (scroll wheel mouse / sentuhan layar)
         // Gunakan timeout agar klik tombol tidak langsung memicu stopScroll
         let interactionTimeout;
