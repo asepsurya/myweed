@@ -68,6 +68,9 @@
             <button type="button" class="btn btn-outline-secondary flex-grow-1 flex-md-grow-0" id="syncLocalBtn" onclick="syncLocal()">
                 <i class="bi bi-arrow-clockwise me-1"></i> Sinkron Lokal
             </button>
+            <a href="{{ route('youtube-music.index') }}" class="btn btn-outline-danger flex-grow-1 flex-md-grow-0 text-white">
+                <i class="bi bi-youtube me-1"></i> YouTube Music
+            </a>
             <a href="{{ route('music.create') }}" class="btn btn-primary flex-grow-1 flex-md-grow-0 text-white">
                 <i class="bi bi-plus-lg me-1"></i> Tambah Lagu
             </a>

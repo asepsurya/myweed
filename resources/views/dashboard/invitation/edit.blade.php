@@ -784,7 +784,7 @@
                         @method('PUT')
                         <input type="hidden" name="id" value="{{ $invitation->id }}">
                         <input type="hidden" name="uploaded_gallery_ids" id="uploadedGalleryIds" value="">
-                        @include('dashboard.invitation.form_tabs', ['invitation' => $invitation, 'music' => $music, 'templates' => $templates])
+                        @include('dashboard.invitation.form_tabs', ['invitation' => $invitation, 'music' => $music, 'youtubeMusic' => $youtubeMusic, 'templates' => $templates])
                     </form>
                 </div>
 
@@ -843,7 +843,7 @@
 
     <!-- PARTNER MODAL -->
     <div class="modal fade" id="partnerModal" tabindex="-1">
-        <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-dialog modal-sm modal-dialog-centered">
             <div class="modal-content border-0 shadow-lg rounded-4">
                 <div class="modal-header border-0 pb-0">
                     <h5 class="modal-title fw-bold">Kelola Pasangan</h5>
@@ -984,12 +984,40 @@
         </div>
     </div>
 
+    <!-- YOUTUBE LIGHTBOX MODAL -->
+    <div class="modal fade" id="youtubeLightboxModal" tabindex="-1">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg rounded-4 bg-black">
+                <div class="modal-body p-0 position-relative" style="background:#000;">
+                    <button type="button" class="btn btn-close btn-close-white position-absolute top-0 end-0 m-3 z-3" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <div style="position:relative; padding-bottom:56.25%; height:0; overflow:hidden; background:#000;">
+                        <iframe id="youtubeLightboxIframe" src="" frameborder="0" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen style="position:absolute; top:0; left:0; width:100%; height:100%;"></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         let cropper;
         let currentTarget = null;
         let previewTimer;
         let saveTimer;
         let galleryFiles = [];
+
+        window.openYoutubeLightbox = function(youtubeId, title) {
+            const modal = bootstrap.Modal.getInstance(document.getElementById('youtubeLightboxModal')) || new bootstrap.Modal(document.getElementById('youtubeLightboxModal'));
+            const iframe = document.getElementById('youtubeLightboxIframe');
+            if (youtubeId) {
+                iframe.src = 'https://www.youtube.com/embed/' + youtubeId + '?autoplay=1&rel=0&modestbranding=1';
+            }
+            modal.show();
+        };
+
+        document.getElementById('youtubeLightboxModal')?.addEventListener('hidden.bs.modal', function () {
+            const iframe = document.getElementById('youtubeLightboxIframe');
+            if (iframe) iframe.src = '';
+        });
 
         function toggleGlobalSidebar() {
             document.body.classList.toggle('adminuiux-sidebar-close');
@@ -1198,26 +1226,29 @@
             if (loader) loader.classList.remove('d-none');
 
             previewTimer = setTimeout(() => {
-                // Reload iframe directly to invitation preview URL with cache buster
                 const iframe = document.getElementById('livePreviewIframe');
                 if (iframe) {
-                    const previewUrl = `{{ route('invitation.show', $invitation->slug) }}?v=${Date.now()}&muted=1`;
+                    const youtubeUrl = (document.getElementById('music_youtube_url')?.value || '').trim();
+                    const isYoutube = youtubeUrl.length > 0;
+                    const previewUrl = `{{ route('invitation.show', $invitation->slug) }}?v=${Date.now()}${isYoutube ? '' : '&muted=1'}`;
                     iframe.src = previewUrl;
                 }
 
                 if (loader) loader.classList.add('d-none');
 
-                // Trigger autosave after preview reload
                 dbAutoSave();
             }, 300);
         }
 
         function reloadPreview() {
             const iframe = document.getElementById('livePreviewIframe');
-            if (iframe) {
-                const previewUrl = `{{ route('invitation.show', $invitation->slug) }}?v=${Date.now()}&muted=1`;
-                iframe.src = previewUrl;
-            }
+            if (!iframe) return;
+
+            const youtubeUrl = (document.getElementById('music_youtube_url')?.value || '').trim();
+            const isYoutube = youtubeUrl.length > 0;
+
+            const previewUrl = `{{ route('invitation.show', $invitation->slug) }}?v=${Date.now()}${isYoutube ? '' : '&muted=1'}`;
+            iframe.src = previewUrl;
         }
 
         // Status badge helper (mirror of components/status-badge.blade.php)
@@ -1330,8 +1361,13 @@
 
                 const cleanData = new URLSearchParams();
                 formData.forEach((v, k) => {
-                    if (!(v instanceof File) && k !== '_method') cleanData.append(k, v);
+                    if (!(v instanceof File) && k !== '_method' && k !== '_token') cleanData.append(k, v);
                 });
+
+                const csrfToken = document.querySelector('input[name="_token"]')?.value || document.querySelector('meta[name="csrf-token"]')?.content;
+                if (csrfToken) {
+                    cleanData.append('_token', csrfToken);
+                }
 
                 const badge = document.getElementById('autoSaveBadge');
                 if (badge) badge.innerHTML = '<i class="bi bi-cloud-arrow-up me-1 text-primary"></i>Menyimpan...';
@@ -1352,14 +1388,24 @@
 
                 fetch("{{ route('invitation.autosave') }}", {
                     method: 'POST',
+                    credentials: 'same-origin',
                     headers: {
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '{{ csrf_token() }}',
+                        'Content-Type': 'application/x-www-form-urlencoded',
                         'Accept': 'application/json',
                         'X-Requested-With': 'XMLHttpRequest'
                     },
-                    body: cleanData
+                    body: cleanData.toString()
                 })
-                    .then(res => res.json())
+                    .then(res => {
+                        if (!res.ok) {
+                            if (res.status === 419) {
+                                throw new Error('SESSION_EXPIRED');
+                            }
+                            throw new Error('HTTP_ERROR');
+                        }
+                        return res.json();
+                    })
                     .then(data => {
                         if (data.success) {
                             if (badge) badge.innerHTML = '<i class="bi bi-cloud-check me-1 text-success"></i>Tersimpan';
@@ -1367,7 +1413,6 @@
                                 hideUploadToast(window.autosaveToastId, true);
                                 window.autosaveToastId = null;
                             }
-                            // Reload preview after successful autosave
                             reloadPreview();
                         } else {
                             if (badge) badge.innerHTML = '<i class="bi bi-cloud-slash me-1 text-danger"></i>Gagal simpan';
@@ -1378,7 +1423,12 @@
                         }
                     })
                     .catch(err => {
-                        if (badge) badge.innerHTML = '<i class="bi bi-cloud-slash me-1 text-danger"></i>Gagal simpan';
+                        if (err.message === 'SESSION_EXPIRED') {
+                            if (badge) badge.innerHTML = '<i class="bi bi-cloud-slash me-1 text-danger"></i>Sesi expired';
+                            alert('Sesi Anda telah expired. Silakan refresh halaman untuk melanjutkan.');
+                        } else {
+                            if (badge) badge.innerHTML = '<i class="bi bi-cloud-slash me-1 text-danger"></i>Gagal simpan';
+                        }
                     });
             }, 800);
         }
@@ -1387,8 +1437,27 @@
         window.previewAudio = (url) => {
             const player = document.getElementById('audioPlayer');
             if (!player) return;
+
+            try {
+                player.pause();
+            } catch (e) {
+                // ignore
+            }
+
             player.src = url;
-            player.play().catch(err => console.log('Preview audio play blocked:', err));
+            player.load();
+            const playPromise = player.play();
+
+            if (playPromise !== undefined) {
+                playPromise.catch(err => {
+                    if (err.name === 'AbortError') {
+                        console.log('Preview audio play interrupted by source change');
+                    } else {
+                        console.log('Preview audio play blocked:', err);
+                    }
+                });
+            }
+
             player.onerror = () => console.log('Preview audio load error');
         };
 
@@ -1396,6 +1465,8 @@
             document.querySelectorAll('.music-list-item').forEach(item => item.classList.remove('selected'));
             el.classList.add('selected');
             document.getElementById('music_id').value = id;
+            const srcLibrary = document.getElementById('srcLibrary');
+            if (srcLibrary) srcLibrary.checked = true;
             previewAudio(url);
             updateLivePreview();
         };
@@ -1404,6 +1475,24 @@
             const id = el.getAttribute('data-id');
             const url = el.getAttribute('data-url');
             selectMusic(el, id, url);
+        };
+
+        window.selectYoutubeMusic = (el, youtubeUrl) => {
+            document.querySelectorAll('#youtubeMusicListContainer .music-list-item').forEach(item => item.classList.remove('selected'));
+            el.classList.add('selected');
+            const input = document.getElementById('music_youtube_url');
+            if (input) input.value = youtubeUrl;
+
+            const srcYoutube = document.getElementById('srcYoutube');
+            if (srcYoutube) srcYoutube.checked = true;
+
+            const youtubeId = el.getAttribute('data-youtube-id');
+            const title = el.getAttribute('data-title') || '';
+            if (youtubeId) {
+                openYoutubeLightbox(youtubeId, title);
+            }
+
+            dbAutoSave();
         };
 
         window.removePreview = (type) => {
@@ -1723,7 +1812,12 @@
             if (previewIframe) {
                 previewIframe.addEventListener('load', () => {
                     try {
-                        previewIframe.contentWindow.postMessage({ type: 'mute-music' }, '*');
+                        const youtubeUrl = (document.getElementById('music_youtube_url')?.value || '').trim();
+                        if (youtubeUrl) {
+                            previewIframe.contentWindow.postMessage({ type: 'unmute-music' }, '*');
+                        } else {
+                            previewIframe.contentWindow.postMessage({ type: 'mute-music' }, '*');
+                        }
                     } catch (e) {
                         // Ignore cross-origin or access errors
                     }

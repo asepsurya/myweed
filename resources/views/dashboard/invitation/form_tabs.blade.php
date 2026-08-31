@@ -208,16 +208,46 @@
         border-radius: 14px;
         padding: 16px;
         margin-top: 12px;
-        height: calc(100vh - 250px);
-        overflow-y: auto;
+        height: calc(100vh - 220px);
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
+        overflow: hidden;
+    }
+
+    .music-source-div {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
+        overflow: hidden;
+    }
+
+    .music-source-div > label {
+        flex-shrink: 0;
     }
 
     #musicListContainer {
         border: none !important;
         max-height: none !important;
-        height: 100%;
+        flex: 1;
         overflow-y: auto;
         padding-right: 5px;
+        min-height: 0;
+    }
+
+    #youtubeMusicListContainer {
+        border: none !important;
+        max-height: none !important;
+        flex: 1;
+        overflow-y: auto;
+        padding-right: 5px;
+        min-height: 0;
+    }
+
+    .music-source-div .alert,
+    .music-source-div small {
+        flex-shrink: 0;
     }
 
     .music-list-item {
@@ -259,6 +289,35 @@
             transform: scale(1);
             box-shadow: 0 0 0 0 rgba(var(--bs-primary-rgb), 0);
         }
+    }
+
+    .youtube-music-list .music-icon-box {
+        width: 48px;
+        height: 48px;
+        padding: 0;
+        border: none;
+        background: transparent;
+        overflow: hidden;
+    }
+
+    .youtube-music-list .music-icon-box img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 0.5rem;
+        display: block;
+    }
+
+    .youtube-music-list .music-list-item.selected .music-icon-box {
+        background: transparent !important;
+        color: inherit;
+        animation: none;
+    }
+
+    .youtube-music-list .music-list-item.selected .music-icon-box img {
+        outline: 2px solid var(--bs-primary);
+        outline-offset: 2px;
+        border-radius: 0.5rem;
     }
 
     /* Audio Player & Upload */
@@ -637,8 +696,7 @@
                             {{-- LIBRARY --}}
                             <div id="source-library" class="music-source-div {{ $musicSource != 'library' ? 'd-none' : '' }}">
                                 <label class="form-label fw-semibold mb-2">Pilih Lagu dari Library</label>
-                                <div id="musicListContainer" class="d-flex flex-column gap-2"
-                                    style="max-height: 250px; overflow-y: auto; padding-right: 5px;">
+                                <div id="musicListContainer" class="d-flex flex-column gap-2">
                                     @foreach ($music as $m)
                                         <div class="music-list-item border rounded {{ (!empty($inv) && $inv->music == $m->id) ? 'selected' : '' }}"
                                             data-id="{{ $m->id }}" data-url="{{ $m->full_audio_url }}"
@@ -665,15 +723,42 @@
 
                             {{-- YOUTUBE --}}
                             <div id="source-youtube" class="music-source-div {{ $musicSource != 'youtube' ? 'd-none' : '' }}">
-                                <label class="form-label fw-semibold mb-2">Link YouTube (Musik)</label>
+                                <label class="form-label fw-semibold mb-2">Pilih dari YouTube Library</label>
+                                @if($youtubeMusic->count() > 0)
+                                    <div id="youtubeMusicListContainer" class="youtube-music-list d-flex flex-column gap-2 mb-3">
+                                        @foreach($youtubeMusic as $ym)
+                                            <div class="music-list-item border rounded {{ (!empty($inv) && $inv->music_youtube_url == $ym->youtube_url) ? 'selected' : '' }}"
+                                                data-youtube-url="{{ $ym->youtube_url }}" data-title="{{ $ym->title }}" data-artist="{{ $ym->artist }}" data-youtube-id="{{ $ym->youtube_id }}"
+                                                onclick="selectYoutubeMusic(this, '{{ $ym->youtube_url }}')">
+                                                <div class="music-icon-box" style="cursor:pointer; overflow:hidden; padding:0; border:none; background:transparent;" onclick="event.stopPropagation(); document.getElementById('youtube_music_cover_input').click()">
+                                                    <img src="{{ $ym->cover_url ?? 'https://img.youtube.com/vi/'.$ym->youtube_id.'/mqdefault.jpg' }}"
+                                                        style="width:100%;height:100%;object-fit:cover;border-radius:0.5rem;"
+                                                        onerror="this.src='https://img.youtube.com/vi/'.$ym->youtube_id.'/mqdefault.jpg'">
+                                                </div>
+                                                <div class="flex-grow-1 overflow-hidden">
+                                                    <p class="mb-0 fw-bold music-title-clamp">{{ $ym->title }}</p>
+                                                    <p class="mb-0 text-muted" style="font-size: 11px;">{{ $ym->artist }}</p>
+                                                </div>
+                                                <div class="music-play-btn" onclick="event.stopPropagation(); openYoutubeLightbox('{{ $ym->youtube_id }}', '{{ addslashes($ym->title) }}')">
+                                                    <i class="bi bi-play-circle-fill fs-4"></i>
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                @else
+                                    <div class="alert alert-info py-2 px-3 small mb-3">
+                                        <i class="bi bi-info-circle me-1"></i> Belum ada YouTube music di library. Admin dapat menambahkan melalui panel admin.
+                                    </div>
+                                @endif
+
+                                <label class="form-label fw-semibold mb-2">Atau masukkan link YouTube manual</label>
                                 <div class="input-group mb-2">
-                                    <span class="input-group-text bg-danger text-white border-0"><i
-                                            class="bi bi-youtube"></i></span>
-                                    <input type="text" name="music_youtube_url" class="form-control"
+                                    <span class="input-group-text bg-danger text-white border-0"><i class="bi bi-youtube"></i></span>
+                                    <input type="text" name="music_youtube_url" id="music_youtube_url" class="form-control"
                                         placeholder="https://www.youtube.com/watch?v=..."
                                         value="{{ optional($inv)->music_youtube_url ?? '' }}" oninput="updateLivePreview()">
                                 </div>
-                                <small class="text-muted d-block">Masukkan link YouTube untuk musik latar undangan.</small>
+                                <small class="text-muted d-block">Pilih dari library di atas atau masukkan link YouTube untuk musik latar undangan.</small>
                             </div>
 
                             {{-- UPLOAD --}}

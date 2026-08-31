@@ -626,10 +626,11 @@ class UserInvitationController extends Controller
         $invitation->load('user.subscription.plan');
 
         $music = Music::where('is_active', true)->get();
+        $youtubeMusic = \App\Models\YoutubeMusic::where('is_active', true)->get();
         $templates = Template::where('is_active', true)->with('category', 'templateType')->get();
         $templateTypes = TemplateType::orderBy('name')->get();
 
-        return view('dashboard.invitation.edit', compact('invitation', 'music', 'templates', 'templateTypes'));
+        return view('dashboard.invitation.edit', compact('invitation', 'music', 'youtubeMusic', 'templates', 'templateTypes'));
     }
 
     public function update(Request $request, Invitation $invitation)
@@ -913,6 +914,7 @@ class UserInvitationController extends Controller
             if ($request->input('music_source') === 'youtube') {
                 $invitation->update([
                     'music_youtube_url' => $request->music_youtube_url,
+                    'music_youtube_cover' => $request->music_youtube_cover,
                     'music' => 0,
                 ]);
             } elseif ($request->hasFile('custom_music')) {
@@ -1262,6 +1264,49 @@ class UserInvitationController extends Controller
         }
     }
 
+    public function uploadYoutubeMusicCover(Request $request, Invitation $invitation)
+    {
+        $user = auth()->user();
+
+        if (! $user->canAccessInvitation($invitation)) {
+            abort(403, 'Anda tidak memiliki akses ke undangan ini.');
+        }
+
+        if ($user->id === $invitation->partner_user_id && ! $invitation->partner_can_edit) {
+            abort(403, 'Anda hanya memiliki akses melihat undangan ini.');
+        }
+
+        $request->validate([
+            'cover' => 'required|file|mimes:jpeg,jpg,png,webp|max:10240',
+        ]);
+
+        try {
+            $oldPath = $invitation->music_youtube_cover;
+            $path = "invitations/{$invitation->public_id}/youtube-music-cover/cover.webp";
+
+            $this->uploadImageAsWebP($request->file('cover'), $path, 1600);
+
+            if ($oldPath && $oldPath !== $path) {
+                $this->imageDisk()->delete($oldPath);
+            }
+
+            $invitation->update(['music_youtube_cover' => $path]);
+
+            return response()->json([
+                'success' => true,
+                'url' => storage_url($path, $invitation->updated_at->timestamp),
+                'path' => $path,
+            ]);
+        } catch (\Throwable $e) {
+            \Log::error('YouTube music cover upload failed: '.$e->getMessage());
+
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
     public function detail($slug)
     {
         $invitation = Invitation::where('slug', $slug)->firstOrFail();
@@ -1330,12 +1375,15 @@ class UserInvitationController extends Controller
             if ($musicSource === 'youtube') {
                 $data['music'] = 0;
                 $data['music_youtube_url'] = $request->input('music_youtube_url');
+                $data['music_youtube_cover'] = $request->input('music_youtube_cover');
             } elseif ($musicSource === 'upload') {
                 $data['music'] = $request->input('music_id');
                 $data['music_youtube_url'] = null;
+                $data['music_youtube_cover'] = null;
             } else {
                 $data['music'] = $request->input('music_id');
                 $data['music_youtube_url'] = null;
+                $data['music_youtube_cover'] = null;
             }
         }
 

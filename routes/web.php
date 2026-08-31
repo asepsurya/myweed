@@ -29,6 +29,7 @@ use App\Http\Controllers\TemplateCreatorController;
 use App\Http\Controllers\TemplateTypeController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserInvitationController;
+use App\Http\Controllers\YoutubeMusicController;
 use App\Http\Controllers\VendorPaymentController;
 use App\Http\Controllers\WeddingController;
 use App\Http\Controllers\WeedingPlanController;
@@ -146,6 +147,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('invitation/{invitation}/cover', [UserInvitationController::class, 'uploadCover'])->name('cover.upload');
     Route::post('invitation/{invitation}/groom-photo', [UserInvitationController::class, 'uploadGroomPhoto'])->name('groom-photo.upload');
     Route::post('invitation/{invitation}/bride-photo', [UserInvitationController::class, 'uploadBridePhoto'])->name('bride-photo.upload');
+    Route::post('invitation/{invitation}/youtube-music-cover', [UserInvitationController::class, 'uploadYoutubeMusicCover'])->name('youtube-music.cover.upload');
     Route::get('invitation/pixabay/search', [UserInvitationController::class, 'searchPixabay'])->name('pixabay.search');
     Route::post('invitation/{invitation}/pixabay-import', [UserInvitationController::class, 'importPixabayImage'])->name('pixabay.import');
     Route::post('premium/upgrade', [UserInvitationController::class, 'upgradeToPremium'])->name('premium.upgrade');
@@ -227,6 +229,14 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/music/{music}', [MusicController::class, 'update'])->middleware('role:admin')->name('music.update');
     Route::delete('music/destroy/{id}', [MusicController::class, 'destroy'])->middleware('role:admin')->name('music.destroy');
     Route::post('/music/sync-local', [MusicController::class, 'syncLocal'])->middleware('role:admin')->name('music.sync-local');
+
+    Route::get('/youtube-music', [YoutubeMusicController::class, 'index'])->middleware('role:admin')->name('youtube-music.index');
+    Route::get('/youtube-music/create', [YoutubeMusicController::class, 'create'])->middleware('role:admin')->name('youtube-music.create');
+    Route::post('/youtube-music/store', [YoutubeMusicController::class, 'store'])->middleware('role:admin')->name('youtube-music.store');
+    Route::post('/youtube-music/bulk-store', [YoutubeMusicController::class, 'bulkStore'])->middleware('role:admin')->name('youtube-music.bulk-store');
+    Route::get('/youtube-music/{youtubeMusic}/edit', [YoutubeMusicController::class, 'edit'])->middleware('role:admin')->name('youtube-music.edit');
+    Route::put('/youtube-music/{youtubeMusic}', [YoutubeMusicController::class, 'update'])->middleware('role:admin')->name('youtube-music.update');
+    Route::delete('/youtube-music/destroy/{id}', [YoutubeMusicController::class, 'destroy'])->middleware('role:admin')->name('youtube-music.destroy');
 
     Route::get('/gifts', [GiftController::class, 'index'])->name('gift.index')->middleware('subscription');
     Route::post('/gifts', [GiftController::class, 'store'])->name('gift.store')->middleware('subscription');

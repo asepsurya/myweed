@@ -44,6 +44,18 @@
 </style>
 
 <style>
+    .youtube-player-container {
+        position: fixed;
+        bottom: 0;
+        right: 0;
+        width: 2px;
+        height: 2px;
+        overflow: hidden;
+        opacity: 0;
+        pointer-events: none;
+        z-index: -1;
+    }
+
     /* ====== Tombol Musik Konsep Wedding (Lebih Kecil & Glassmorphism) ====== */
     .music-toggle-btn {
         position: fixed;
@@ -316,10 +328,10 @@
     </div>
 
     @if($youtubeId)
-        <div id="youtubePlayerContainer" class="youtube-player-container" style="display:none;">
+        <div id="youtubePlayerContainer" class="youtube-player-container">
             <iframe id="youtubeIframe" width="2" height="2"
                 src="https://www.youtube.com/embed/{{ $youtubeId }}?enablejsapi=1&autoplay=1&loop=1&playlist={{ $youtubeId }}&controls=0&modestbranding=1&rel=0&mute=1"
-                frameborder="0" allow="autoplay; encrypted-media; picture-in-picture" onload="window.ytIframeReady = true;">
+                frameborder="0" allow="autoplay; encrypted-media; picture-in-picture">
             </iframe>
         </div>
     @endif
@@ -362,6 +374,7 @@
             const waveformContainer = document.getElementById('musicWaveformContainer');
             const waveformCanvas = document.getElementById('musicWaveformCanvas');
             let ytIframe = null;
+            let ytPlaying = false;
             let ytMuted = true;
             let waveformAudioCtx = null;
             let waveformAnalyser = null;
@@ -493,7 +506,7 @@
 
             function isAudioPlaying() {
                 if (isYoutube) {
-                    return !ytMuted;
+                    return ytPlaying;
                 }
                 if (!bgMusic || !bgMusic.src) return false;
                 return !bgMusic.paused;
@@ -551,22 +564,31 @@
             function sendYtCommand(command, args) {
                 if (!ytIframe) return;
                 const msg = JSON.stringify({ event: 'command', func: command, args: args ? args : [] });
-                if (window.ytIframeReady) {
-                    setTimeout(() => ytIframe.contentWindow.postMessage(msg, '*'), 200);
-                } else {
-                    const check = setInterval(() => {
-                        if (window.ytIframeReady) { clearInterval(check); setTimeout(() => ytIframe.contentWindow.postMessage(msg, '*'), 200); }
-                    }, 100);
-                    setTimeout(() => { clearInterval(check); setTimeout(() => ytIframe.contentWindow.postMessage(msg, '*'), 500); }, 2000);
+                try {
+                    ytIframe.contentWindow.postMessage(msg, '*');
+                } catch (e) {
+                    console.warn('YouTube command failed:', e);
                 }
             }
 
-            function pauseYoutube() { sendYtCommand('pauseVideo'); sendYtCommand('pause'); setPlayIcon(); stopWaveformAnimation(); ytMuted = true; }
+            function pauseYoutube() { 
+                sendYtCommand('pauseVideo'); 
+                sendYtCommand('pause'); 
+                setPlayIcon(); 
+                stopWaveformAnimation(); 
+                ytPlaying = false; 
+            }
             function playYoutube() {
-                if (isPreviewMode || muteFromParent) return;
-                sendYtCommand('unMute'); ytMuted = false;
+                if (isPreviewMode || muteFromParent) {
+                    sendYtCommand('mute');
+                    ytMuted = true;
+                } else {
+                    sendYtCommand('unMute');
+                    ytMuted = false;
+                }
                 sendYtCommand('playVideo');
                 setTimeout(() => sendYtCommand('setVolume', [100]), 500);
+                ytPlaying = true;
                 setPauseIcon();
             }
 
@@ -681,30 +703,40 @@
             }
 
             // LOGIKA AUTOPLAY DIPERCEPAT
-            const shouldAutoplay = !isPreviewMode && !muteFromParent;
             if (isYoutube) {
                 ytIframe = document.getElementById('youtubeIframe');
-                if (shouldAutoplay) {
-                    setTimeout(() => {
-                        if (!isAudioPlaying()) playYoutube();
-                    }, 300);
-                }
+                setTimeout(() => {
+                    if (!isAudioPlaying()) {
+                        if (isPreviewMode || muteFromParent) {
+                            sendYtCommand('mute');
+                            ytMuted = true;
+                        } else {
+                            ytMuted = false;
+                        }
+                        sendYtCommand('playVideo');
+                        ytPlaying = true;
+                        setPauseIcon();
+                    }
+                }, 300);
             } else if (isCustom) {
                 setTimeout(() => loadCustomAudio(), 0);
+                const shouldAutoplay = !isPreviewMode && !muteFromParent;
                 if (shouldAutoplay) {
                     setTimeout(() => {
                         if (!isAudioPlaying()) playAudio();
-                    }, 400); // Dipercepat dari 800ms ke 400ms
+                    }, 400);
                 }
             } else {
                 setTimeout(() => {
                     loadMusicData().then(() => {
+                        const shouldAutoplay = !isPreviewMode && !muteFromParent;
                         if (shouldAutoplay) {
                             setTimeout(() => {
                                 if (!isAudioPlaying()) playAudio();
-                            }, 400); // Dipercepat dari 800ms ke 400ms
+                            }, 400);
                         }
                     }).catch(() => {
+                        const shouldAutoplay = !isPreviewMode && !muteFromParent;
                         if (shouldAutoplay) {
                             setTimeout(() => {
                                 if (!isAudioPlaying()) playAudio();

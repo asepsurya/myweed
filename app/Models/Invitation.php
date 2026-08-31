@@ -92,6 +92,7 @@ class Invitation extends Model
         'rsvp_whatsapp',
         'music',
         'music_youtube_url',
+        'music_youtube_cover',
         'partner_user_id',
         'partner_invite_token',
         'partner_accepted_at',
