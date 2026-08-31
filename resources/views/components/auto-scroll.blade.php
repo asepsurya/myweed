@@ -69,14 +69,47 @@
         // Path Icon untuk Pause (Berhenti Scroll)
         const pausePath = "M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 12H9V10h2v4zm4 0h-2V10h2v4z";
 
+        let scrollableElements = [];
+
+        function findScrollableElements() {
+            scrollableElements = [window]; // Default
+            
+            // Cari elemen wrapper yang mungkin digunakan sebagai scroll container di template tertentu
+            const elements = document.querySelectorAll('*');
+            for (let i = 0; i < elements.length; i++) {
+                const el = elements[i];
+                // Fokus pada elemen besar (container utama)
+                if (el.clientHeight > 200 && el.scrollHeight > el.clientHeight) {
+                    const style = window.getComputedStyle(el);
+                    if (style.overflowY === 'auto' || style.overflowY === 'scroll') {
+                        scrollableElements.push(el);
+                    }
+                }
+            }
+        }
+
         function step() {
             if (!isScrolling) return;
             
-            // Kecepatan scroll (1 pixel per frame)
-            window.scrollBy(0, 1);
+            let didScroll = false;
             
-            // Cek apakah sudah mencapai bagian paling bawah halaman
-            if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 2) {
+            // Scroll ke semua elemen yang bisa di-scroll (window + container)
+            for (let i = 0; i < scrollableElements.length; i++) {
+                const el = scrollableElements[i];
+                if (el === window) {
+                    const before = window.scrollY;
+                    window.scrollBy(0, 1);
+                    // Cek desimal untuk DPI tinggi
+                    if (Math.abs(window.scrollY - before) > 0.1) didScroll = true;
+                } else {
+                    const before = el.scrollTop;
+                    el.scrollBy(0, 1);
+                    if (Math.abs(el.scrollTop - before) > 0.1) didScroll = true;
+                }
+            }
+            
+            // Jika tidak ada elemen yang bergerak, berarti semua sudah mentok bawah
+            if (!didScroll) {
                 stopScroll();
             } else {
                 scrollAnimationId = window.requestAnimationFrame(step);
@@ -97,6 +130,10 @@
             isScrolling = true;
             btn.classList.add('active');
             icon.innerHTML = `<path d="${pausePath}"/>`;
+            
+            // Cari elemen yang scrollable sebelum mulai
+            findScrollableElements();
+            
             scrollAnimationId = window.requestAnimationFrame(step);
         }
 
