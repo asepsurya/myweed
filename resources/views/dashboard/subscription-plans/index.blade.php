@@ -174,6 +174,16 @@
                             </div>
 
                             <div class="mb-4">
+                                @if(!$plan->is_free && $plan->original_price && $plan->original_price > $plan->price)
+                                    <div class="d-flex align-items-center gap-2 mb-1">
+                                        <span class="text-muted text-decoration-line-through small">
+                                            Rp {{ number_format($plan->original_price, 0, ',', '.') }}
+                                        </span>
+                                        <span class="badge bg-danger-subtle text-danger px-2 py-1" style="font-size: 0.65rem;">
+                                            <i class="bi bi-fire me-1"></i>{{ $plan->badge_text ?: 'Spesial Launching' }}
+                                        </span>
+                                    </div>
+                                @endif
                                 <div class="plan-price mb-0">
                                     {{ $plan->is_free ? 'Gratis' : 'Rp ' . number_format($plan->price, 0, ',', '.') }}
                                 </div>

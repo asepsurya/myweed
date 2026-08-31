@@ -711,9 +711,11 @@
                             sendYtCommand('mute');
                             ytMuted = true;
                         } else {
+                            sendYtCommand('unMute');
                             ytMuted = false;
                         }
                         sendYtCommand('playVideo');
+                        setTimeout(() => sendYtCommand('setVolume', [100]), 500);
                         ytPlaying = true;
                         setPauseIcon();
                     }

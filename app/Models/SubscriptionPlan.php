@@ -9,13 +9,14 @@ class SubscriptionPlan extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'name', 'slug', 'price', 'duration', 'description', 'is_free', 'features', 'invitation_limit',
+        'name', 'slug', 'price', 'original_price', 'badge_text', 'duration', 'description', 'is_free', 'features', 'invitation_limit',
     ];
 
     protected $casts = [
         'features' => 'array',
         'duration' => 'integer',
         'price' => 'integer',
+        'original_price' => 'integer',
         'is_free' => 'boolean',
         'invitation_limit' => 'integer',
     ];
