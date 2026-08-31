@@ -40,6 +40,16 @@
                                     <i class="bi bi-{{ $plan->is_free ? 'gift' : ($plan->slug === 'pro' ? 'award' : 'gem') }}"></i>
                                 </div>
                                 <h4>{{ $plan->name }}</h4>
+                                @if(!$plan->is_free && $plan->original_price && $plan->original_price > $plan->price)
+                                    <div class="d-flex align-items-center justify-content-center gap-2 mb-1">
+                                        <span class="text-muted text-decoration-line-through small">
+                                            Rp {{ number_format($plan->original_price, 0, ',', '.') }}
+                                        </span>
+                                        <span class="badge bg-danger-subtle text-danger px-2 py-1" style="font-size: 0.65rem;">
+                                            <i class="bi bi-fire me-1"></i>{{ $plan->badge_text ?: 'Spesial Launching' }}
+                                        </span>
+                                    </div>
+                                @endif
                                 <div class="pricing-price">
                                     {{ $plan->is_free ? 'Gratis' : 'Rp ' . number_format($plan->price, 0, ',', '.') }}
                                     <span>{{ $plan->is_free ? '' : '/undangan' }}</span>
