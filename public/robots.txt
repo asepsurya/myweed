@@ -11,11 +11,17 @@ Disallow: /register
 Disallow: /password
 Disallow: /email
 Disallow: /api/
+Disallow: /auth/
+Disallow: /preview/
 Disallow: /invitation/live-preview
 Disallow: /*?search=
-Disallow: /*?category=
 Disallow: /*&search=
-Disallow: /*&category=
+Disallow: /*?penerima=
+Disallow: /*&penerima=
+Disallow: /*?to=
+Disallow: /*&to=
+Disallow: /*?theme_color=
+Disallow: /*&theme_color=
 
 User-agent: Googlebot
 Allow: /
@@ -27,11 +33,18 @@ Disallow: /gifts
 Disallow: /rsvps
 Disallow: /login
 Disallow: /register
+Disallow: /api/
+Disallow: /auth/
+Disallow: /preview/
 Disallow: /invitation/live-preview
 Disallow: /*?search=
-Disallow: /*?category=
 Disallow: /*&search=
-Disallow: /*&category=
+Disallow: /*?penerima=
+Disallow: /*&penerima=
+Disallow: /*?to=
+Disallow: /*&to=
+Disallow: /*?theme_color=
+Disallow: /*&theme_color=
 
 User-agent: Bingbot
 Allow: /
@@ -43,11 +56,18 @@ Disallow: /gifts
 Disallow: /rsvps
 Disallow: /login
 Disallow: /register
+Disallow: /api/
+Disallow: /auth/
+Disallow: /preview/
 Disallow: /invitation/live-preview
 Disallow: /*?search=
-Disallow: /*?category=
 Disallow: /*&search=
-Disallow: /*&category=
+Disallow: /*?penerima=
+Disallow: /*&penerima=
+Disallow: /*?to=
+Disallow: /*&to=
+Disallow: /*?theme_color=
+Disallow: /*&theme_color=
 
 User-agent: GPTBot
 Disallow: /
@@ -64,4 +84,4 @@ Disallow: /
 User-agent: ClaudeBot
 Disallow: /
 
-Sitemap: http://localhost:8000/sitemap.xml
+Sitemap: https://ruangundang.my.id/sitemap.xml

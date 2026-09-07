@@ -200,7 +200,8 @@ class LandingController extends Controller
         $searchQuery = $request->search;
         $categoryFilter = request('category');
 
-        $isSearchResult = ! empty($searchQuery) || (! empty($categoryFilter) && $categoryFilter != 'All');
+        $canonicalUrl = route('pages.cari-tema');
+        $noIndex = ! empty($searchQuery);
 
         $seoTitle = 'Cari Tema Undangan Digital - RuangUndang';
         $seoDescription = 'Jelajahi koleksi template undangan digital premium. Filter berdasarkan kategori: Modern, Rustic, Floral, Islami, dan lainnya. Temukan tema impian Anda.';
@@ -228,7 +229,7 @@ class LandingController extends Controller
 
         return view('pages.cari-tema', compact(
             'templates', 'categories', 'searchQuery', 'categoryFilter',
-            'seoTitle', 'seoDescription', 'seoKeywords', 'jsonLd', 'isSearchResult'
+            'seoTitle', 'seoDescription', 'seoKeywords', 'jsonLd', 'canonicalUrl', 'noIndex'
         ));
     }
 

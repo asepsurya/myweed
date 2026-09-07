@@ -236,8 +236,8 @@
                     @auth
                         <a href="{{ route('dashboard.user') }}" class="nav-link text-white">Dashboard</a>
                     @else
-                        <a href="{{ route('login') }}" class="nav-link">Masuk</a>
-                        <a href="{{ route('register') }}" class="btn-gold">Mulai Gratis</a>
+                        <a href="{{ route('login') }}" rel="nofollow" class="nav-link">Masuk</a>
+                        <a href="{{ route('register') }}" rel="nofollow" class="btn-gold">Mulai Gratis</a>
                     @endauth
                 </div>
             </div>

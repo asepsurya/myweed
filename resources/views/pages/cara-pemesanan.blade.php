@@ -56,7 +56,7 @@
             <div class="reveal">
                 <h2 class="section-title">Siap Membuat Undangan Impian?</h2>
                 <p class="section-desc mx-auto mb-4">Mulai gratis hari ini. Tanpa biaya tersembunyi, tanpa kartu kredit.</p>
-                <a href="{{ route('register') }}" class="btn-gold" style="font-size: 1rem; padding: 1rem 2.5rem;">
+                <a href="{{ route('register') }}" rel="nofollow" class="btn-gold" style="font-size: 1rem; padding: 1rem 2.5rem;">
                     Buat Undangan Sekarang <i class="bi bi-arrow-right ms-2"></i>
                 </a>
             </div>

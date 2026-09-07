@@ -8,7 +8,7 @@
             <a href="{{ route('landing') }}" class="nav-link">Beranda</a>
             <a href="{{ route('pages.harga') }}" class="nav-link">Harga</a>
             <a href="{{ route('pages.faq') }}" class="nav-link">FAQ</a>
-            <a href="{{ route('login') }}" class="btn btn-gold">Masuk</a>
+            <a href="{{ route('login') }}" rel="nofollow" class="btn btn-gold">Masuk</a>
         </div>
     </div>
 </nav>

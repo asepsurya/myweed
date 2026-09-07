@@ -284,13 +284,16 @@ class TempelateController extends Controller
             ],
         ];
 
+        $canonicalUrl = route('template.preview', ['slug' => $template->slug, 'id' => $template->id]);
+
         view()->share('seoTitle', $seoTitle);
         view()->share('seoDescription', $seoDescription);
         view()->share('seoKeywords', $seoKeywords);
         view()->share('seoImage', $seoImage);
+        view()->share('canonicalUrl', $canonicalUrl);
         view()->share('jsonLd', $jsonLd);
 
-        return view($templateView, compact('invitation', 'themeColor'));
+        return view($templateView, compact('invitation', 'themeColor', 'canonicalUrl'));
     }
 
     public function previewUpdate($slug, $id, Request $request)

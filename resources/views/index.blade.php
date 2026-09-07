@@ -1214,8 +1214,8 @@
                     @auth
                         <a href="{{ route('dashboard.user') }}" class="nav-link text-white">Dashboard</a>
                     @else
-                        <a href="{{ route('login') }}" class="nav-link">Masuk</a>
-                        <a href="{{ route('register') }}" class="btn-gold">Mulai Gratis</a>
+                        <a href="{{ route('login') }}" rel="nofollow" class="nav-link">Masuk</a>
+                        <a href="{{ route('register') }}" rel="nofollow" class="btn-gold">Mulai Gratis</a>
                     @endauth
                 </div>
             </div>
@@ -1307,7 +1307,7 @@
                 <div class="wedding-slider reveal">
                     @foreach($invitations as $invitation)
                         <a href="{{ route('template.frame', ['slug' => $invitation->slug, 'id' => $invitation->template_id]) }}"
-                            class="wedding-item">
+                            rel="nofollow" class="wedding-item">
                             <div class="couple-avatar-group">
                                 <img src="{{ $invitation->foto_pria ? storage_url_with_fallback($invitation->foto_pria, 'https://ui-avatars.com/api/?name=' . urlencode($invitation->groom_name) . '&background=E8D5A3&color=fff', $invitation->updated_at->timestamp) : 'https://ui-avatars.com/api/?name=' . urlencode($invitation->groom_name) . '&background=E8D5A3&color=fff' }}"
                                     class="couple-avatar avatar-1" alt="Foto Mempelai Pria">
@@ -1438,9 +1438,9 @@
                             @endif
                             <div class="template-overlay">
                                 <a href="{{ route('template.frame', ['slug' => 'romeo-juliet', 'id' => $template->id]) }}"
-                                    target="_blank" class="btn btn-light rounded-pill px-4 fw-bold shadow-sm">Pratinjau</a>
+                                    target="_blank" rel="nofollow" class="btn btn-light rounded-pill px-4 fw-bold shadow-sm">Pratinjau</a>
                                 <a href="{{ route('dashboard.user') }}?template_id={{ $template->id }}"
-                                    class="btn btn-gold rounded-pill px-4 fw-bold shadow-sm">Gunakan</a>
+                                    rel="nofollow" class="btn btn-gold rounded-pill px-4 fw-bold shadow-sm">Gunakan</a>
                             </div>
                         </div>
                         <div class="template-footer">
@@ -1481,7 +1481,7 @@
             <div class="cta-box reveal">
                 <h2>Siap Memulai Perjalanan Anda?</h2>
                 <p>Buat undangan digital impian Anda hari ini. Gratis untuk memulai, tanpa kartu kredit.</p>
-                <a href="{{ route('register') }}" class="btn-gold" style="font-size: 1rem; padding: 1rem 2.5rem;">
+                <a href="{{ route('register') }}" rel="nofollow" class="btn-gold" style="font-size: 1rem; padding: 1rem 2.5rem;">
                     Buat Undangan Sekarang <i class="bi bi-arrow-right ms-2"></i>
                 </a>
             </div>

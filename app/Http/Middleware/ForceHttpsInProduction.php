@@ -15,7 +15,7 @@ class ForceHttpsInProduction
             $isSecure = $request->secure() || ($forwardedProto && strtolower($forwardedProto) === 'https');
 
             if (! $isSecure) {
-                return redirect()->secure($request->getRequestUri());
+                return redirect()->secure($request->getRequestUri(), 301);
             }
         }
 

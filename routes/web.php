@@ -149,6 +149,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('invitation/{invitation}/bride-photo', [UserInvitationController::class, 'uploadBridePhoto'])->name('bride-photo.upload');
     Route::post('invitation/{invitation}/youtube-music-cover', [UserInvitationController::class, 'uploadYoutubeMusicCover'])->name('youtube-music.cover.upload');
     Route::get('invitation/pixabay/search', [UserInvitationController::class, 'searchPixabay'])->name('pixabay.search');
+    Route::get('invitation/theme-image/search', [UserInvitationController::class, 'searchThemeImage'])->name('theme-image.search');
     Route::post('invitation/{invitation}/pixabay-import', [UserInvitationController::class, 'importPixabayImage'])->name('pixabay.import');
     Route::post('premium/upgrade', [UserInvitationController::class, 'upgradeToPremium'])->name('premium.upgrade');
 

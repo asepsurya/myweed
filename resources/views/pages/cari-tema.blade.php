@@ -1,8 +1,9 @@
 @extends('layouts.page')
 
 @php
-    $isSearchResult = ! empty($searchQuery) || (! empty($categoryFilter) && $categoryFilter != 'All');
-    $noIndex = $isSearchResult;
+    $canonicalUrl = route('pages.cari-tema');
+    // Only search results with query should be noindexed, category browsing consolidates via canonical
+    $noIndex = ! empty($searchQuery);
 @endphp
 
 @section('content')
@@ -65,9 +66,9 @@
                             @endif
                             <div class="template-overlay">
                                 <a href="{{ route('template.frame', ['slug' => 'romeo-juliet', 'id' => $template->id]) }}"
-                                    target="_blank" class="btn btn-light rounded-pill px-4 fw-bold shadow-sm">Pratinjau</a>
+                                    target="_blank" rel="nofollow" class="btn btn-light rounded-pill px-4 fw-bold shadow-sm">Pratinjau</a>
                                 <a href="{{ route('dashboard.user') }}?template_id={{ $template->id }}"
-                                    class="btn btn-gold rounded-pill px-4 fw-bold shadow-sm">Gunakan</a>
+                                    rel="nofollow" class="btn btn-gold rounded-pill px-4 fw-bold shadow-sm">Gunakan</a>
                             </div>
                         </div>
                         <div class="template-footer">

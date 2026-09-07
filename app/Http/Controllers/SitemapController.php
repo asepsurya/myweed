@@ -11,20 +11,25 @@ class SitemapController extends Controller
 {
     public function index()
     {
-        $baseUrl = rtrim(config('app.url'), '/');
+        $baseUrl = rtrim(app()->environment('production') ? 'https://ruangundang.my.id' : config('app.url'), '/');
+        if (app()->environment('production') && str_starts_with($baseUrl, 'http://')) {
+            $baseUrl = preg_replace('/^http:/', 'https:', $baseUrl);
+        }
 
         $urls = [];
 
+        $today = Carbon::today()->toAtomString();
+
         $staticPages = [
-            ['loc' => $baseUrl.'/', 'changefreq' => 'daily', 'priority' => '1.0'],
-            ['loc' => $baseUrl.'/cari-tema', 'changefreq' => 'daily', 'priority' => '0.9'],
-            ['loc' => $baseUrl.'/fitur', 'changefreq' => 'weekly', 'priority' => '0.8'],
-            ['loc' => $baseUrl.'/harga', 'changefreq' => 'weekly', 'priority' => '0.9'],
-            ['loc' => $baseUrl.'/bantuan', 'changefreq' => 'monthly', 'priority' => '0.6'],
-            ['loc' => $baseUrl.'/faq', 'changefreq' => 'weekly', 'priority' => '0.7'],
-            ['loc' => $baseUrl.'/cara-pemesanan', 'changefreq' => 'monthly', 'priority' => '0.7'],
-            ['loc' => $baseUrl.'/syarat-ketentuan', 'changefreq' => 'monthly', 'priority' => '0.5'],
-            ['loc' => $baseUrl.'/kebijakan-privasi', 'changefreq' => 'monthly', 'priority' => '0.5'],
+            ['loc' => $baseUrl, 'lastmod' => $today, 'changefreq' => 'daily', 'priority' => '1.0'],
+            ['loc' => $baseUrl.'/cari-tema', 'lastmod' => $today, 'changefreq' => 'daily', 'priority' => '0.9'],
+            ['loc' => $baseUrl.'/fitur', 'lastmod' => $today, 'changefreq' => 'weekly', 'priority' => '0.8'],
+            ['loc' => $baseUrl.'/harga', 'lastmod' => $today, 'changefreq' => 'weekly', 'priority' => '0.9'],
+            ['loc' => $baseUrl.'/bantuan', 'lastmod' => $today, 'changefreq' => 'monthly', 'priority' => '0.6'],
+            ['loc' => $baseUrl.'/faq', 'lastmod' => $today, 'changefreq' => 'weekly', 'priority' => '0.7'],
+            ['loc' => $baseUrl.'/cara-pemesanan', 'lastmod' => $today, 'changefreq' => 'monthly', 'priority' => '0.7'],
+            ['loc' => $baseUrl.'/syarat-ketentuan', 'lastmod' => $today, 'changefreq' => 'monthly', 'priority' => '0.5'],
+            ['loc' => $baseUrl.'/kebijakan-privasi', 'lastmod' => $today, 'changefreq' => 'monthly', 'priority' => '0.5'],
         ];
 
         foreach ($staticPages as $page) {
@@ -38,7 +43,7 @@ class SitemapController extends Controller
         foreach ($templates as $template) {
             $urls[] = [
                 'loc' => $baseUrl.'/templates/'.$template->slug.'/'.$template->id,
-                'lastmod' => $template->updated_at ? Carbon::parse($template->updated_at)->toAtomString() : null,
+                'lastmod' => $template->updated_at ? Carbon::parse($template->updated_at)->toAtomString() : $today,
                 'changefreq' => 'weekly',
                 'priority' => '0.8',
             ];
@@ -48,13 +53,18 @@ class SitemapController extends Controller
             ->whereHas('template')
             ->whereNotNull('slug')
             ->where('is_default', false)
+            ->where(function ($q) {
+                $q->where('status', 'published')
+                  ->orWhereNull('status');
+            })
+            ->whereNotNull('wedding_date')
             ->orderByDesc('updated_at')
             ->get(['id', 'slug', 'groom_name', 'bride_name', 'updated_at']);
 
         foreach ($invitations as $invitation) {
             $urls[] = [
                 'loc' => $baseUrl.'/'.$invitation->slug,
-                'lastmod' => $invitation->updated_at ? Carbon::parse($invitation->updated_at)->toAtomString() : null,
+                'lastmod' => $invitation->updated_at ? Carbon::parse($invitation->updated_at)->toAtomString() : $today,
                 'changefreq' => 'monthly',
                 'priority' => '0.6',
             ];

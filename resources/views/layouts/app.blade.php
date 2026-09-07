@@ -7,6 +7,7 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="robots" content="noindex, nofollow">
 
     <title id="dynamicTitle">{{ config('app.name', 'RuangUndang') }} — Dashboard</title>
     <link rel="icon" type="image/png" href="{{ asset('assets/fav-icon.png') }}">

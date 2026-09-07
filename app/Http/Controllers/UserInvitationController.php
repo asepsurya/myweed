@@ -1775,6 +1775,34 @@ class UserInvitationController extends Controller
         }
     }
 
+    public function searchThemeImage(Request $request)
+    {
+        $query = $request->get('q', 'wedding background');
+        $page = (int) $request->get('page', 1);
+        $apiKey = config('services.pixabay.key') ?: env('PIXABAY_API_KEY');
+
+        if (! $apiKey) {
+            \Log::error('Pixabay API key is missing. Set PIXABAY_API_KEY in .env');
+            return response()->json(['hits' => [], 'error' => 'API key Pixabay belum dikonfigurasi.'], 500);
+        }
+
+        $url = 'https://pixabay.com/api/?key=' . $apiKey . '&q=' . urlencode($query) . '&image_type=photo&orientation=horizontal&safesearch=true&per_page=20&page=' . $page;
+
+        try {
+            $response = Http::timeout(15)->get($url);
+
+            if ($response->successful()) {
+                return response()->json($response->json());
+            }
+
+            \Log::error('Pixabay API error: HTTP ' . $response->status() . ' - ' . $response->body());
+            return response()->json(['hits' => [], 'error' => 'Pixabay API error: HTTP ' . $response->status()], $response->status());
+        } catch (\Throwable $e) {
+            \Log::error('Pixabay theme image search failed: '.$e->getMessage());
+            return response()->json(['hits' => [], 'error' => 'Gagal terhubung ke Pixabay: '.$e->getMessage()], 500);
+        }
+    }
+
     public function importPixabayImage(Request $request, Invitation $invitation)
     {
         $request->validate([

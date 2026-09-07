@@ -77,13 +77,18 @@ class WeddingController extends Controller
             ];
         }
 
+        $canonicalUrl = route('invitation.show', $invitation->slug);
+        $noIndex = ($invitation->status ?? 'published') !== 'published';
+
         view()->share('seoTitle', $seoTitle);
         view()->share('seoDescription', $seoDescription);
         view()->share('seoImage', $pageImage);
+        view()->share('canonicalUrl', $canonicalUrl);
+        view()->share('noIndex', $noIndex);
         view()->share('jsonLd', $jsonLd);
 
         $guestName = request()->query('penerima');
 
-        return view($templateView, compact('invitation', 'guestName'));
+        return view($templateView, compact('invitation', 'guestName', 'canonicalUrl'));
     }
 }
