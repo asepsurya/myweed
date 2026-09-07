@@ -1481,6 +1481,8 @@
         const activeDiv = document.getElementById('source-' + source);
         if (activeDiv) activeDiv.classList.remove('d-none');
 
+        localStorage.setItem('lastMusicSource', source);
+
         const audioPlayer = document.getElementById('audioPlayer');
         if (audioPlayer) {
             audioPlayer.pause();
@@ -1490,6 +1492,15 @@
             updateLivePreview();
         }
     }
+
+    (function restoreMusicSource() {
+        const saved = localStorage.getItem('lastMusicSource');
+        if (saved) {
+            const radio = document.getElementById('src' + saved.charAt(0).toUpperCase() + saved.slice(1));
+            if (radio) radio.checked = true;
+            switchMusicSource(saved);
+        }
+    })();
 
     function updateMapEmbed(inputId, embedId) {
         const input = document.getElementById(inputId);

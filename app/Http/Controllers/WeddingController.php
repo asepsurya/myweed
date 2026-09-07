@@ -88,7 +88,8 @@ class WeddingController extends Controller
         view()->share('jsonLd', $jsonLd);
 
         $guestName = request()->query('penerima');
+        $isOwner = auth()->check() && auth()->id() === $invitation->user_id;
 
-        return view($templateView, compact('invitation', 'guestName', 'canonicalUrl'));
+        return view($templateView, compact('invitation', 'guestName'));
     }
 }

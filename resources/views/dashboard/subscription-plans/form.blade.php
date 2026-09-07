@@ -97,20 +97,34 @@
                     </div>
 
                     <div class="row g-3">
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <div class="mb-3">
                                 <label for="price" class="form-label fw-semibold">Harga (Rp)</label>
                                 <input type="number" name="price" id="price" class="form-control" value="{{ old('price', $subscriptionPlan->price ?? 0) }}" min="0" required>
-                                <div class="form-text">Hanya angka, tanpa titik atau koma.</div>
+                                <div class="form-text">Harga saat ini.</div>
                             </div>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-3">
+                            <div class="mb-3">
+                                <label for="original_price" class="form-label fw-semibold">Harga Asli (Rp)</label>
+                                <input type="number" name="original_price" id="original_price" class="form-control" value="{{ old('original_price', $subscriptionPlan->original_price ?? '') }}" min="0" placeholder="Contoh: 149000">
+                                <div class="form-text">Kosongkan jika tidak ada harga coret.</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="mb-3">
+                                <label for="badge_text" class="form-label fw-semibold">Teks Badge</label>
+                                <input type="text" name="badge_text" id="badge_text" class="form-control" value="{{ old('badge_text', $subscriptionPlan->badge_text ?? '') }}" maxlength="50" placeholder="Contoh: Spesial Launching">
+                                <div class="form-text">Teks label kecil di atas harga. Maks 50 karakter.</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
                             <div class="mb-3">
                                 <label for="duration" class="form-label fw-semibold">Durasi (Hari)</label>
                                 <input type="number" name="duration" id="duration" class="form-control" value="{{ old('duration', $subscriptionPlan->duration ?? 30) }}" min="1" required>
                             </div>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <div class="mb-3">
                                 <label for="invitation_limit" class="form-label fw-semibold">Batas Undangan</label>
                                 <input type="number" name="invitation_limit" id="invitation_limit" class="form-control" value="{{ old('invitation_limit', $subscriptionPlan->invitation_limit ?? 1) }}" min="1" required>

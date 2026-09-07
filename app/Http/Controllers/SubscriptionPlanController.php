@@ -43,6 +43,8 @@ class SubscriptionPlanController extends Controller
             'name' => 'required|string|max:255',
             'slug' => 'required|string|max:255|unique:subscription_plans,slug',
             'price' => 'required|integer|min:0',
+            'original_price' => 'nullable|integer|min:0',
+            'badge_text' => 'nullable|string|max:50',
             'duration' => 'required|integer|min:1',
             'invitation_limit' => 'required|integer|min:1',
             'description' => 'nullable|string',
@@ -51,6 +53,8 @@ class SubscriptionPlanController extends Controller
 
         $validated['is_free'] = $request->has('is_free');
         $validated['price'] = $validated['is_free'] ? 0 : $validated['price'];
+        $validated['original_price'] = $validated['is_free'] ? null : ($request->input('original_price') ?: null);
+        $validated['badge_text'] = $request->input('badge_text') ?: null;
 
         if ($request->filled('description')) {
             $validated['description'] = json_encode(
@@ -78,6 +82,8 @@ class SubscriptionPlanController extends Controller
             'name' => 'required|string|max:255',
             'slug' => 'required|string|max:255|unique:subscription_plans,slug,'.$subscriptionPlan->id,
             'price' => 'required|integer|min:0',
+            'original_price' => 'nullable|integer|min:0',
+            'badge_text' => 'nullable|string|max:50',
             'duration' => 'required|integer|min:1',
             'invitation_limit' => 'required|integer|min:1',
             'description' => 'nullable|string',
@@ -86,6 +92,8 @@ class SubscriptionPlanController extends Controller
 
         $validated['is_free'] = $request->has('is_free');
         $validated['price'] = $validated['is_free'] ? 0 : $validated['price'];
+        $validated['original_price'] = $validated['is_free'] ? null : ($request->input('original_price') ?: null);
+        $validated['badge_text'] = $request->input('badge_text') ?: null;
 
         if ($request->filled('description')) {
             $validated['description'] = json_encode(
