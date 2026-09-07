@@ -170,6 +170,25 @@ class User extends Authenticatable implements MustVerifyEmail
         return false;
     }
 
+    public function isOnFreePlan(): bool
+    {
+        if ($this->isAdmin()) {
+            return false;
+        }
+
+        if ($this->subscription && $this->subscription->is_active && $this->subscription->end_date && $this->subscription->end_date->isFuture()) {
+            return $this->subscription->plan->is_free;
+        }
+
+        $partnerOwner = $this->getPartnerSubscriptionOwner();
+
+        if ($partnerOwner && $partnerOwner->subscription && $partnerOwner->subscription->is_active && $partnerOwner->subscription->end_date && $partnerOwner->subscription->end_date->isFuture()) {
+            return $partnerOwner->subscription->plan->is_free;
+        }
+
+        return true;
+    }
+
     public function canAccessTemplateType(int $templateTypeId): bool
     {
         if ($this->isAdmin()) {

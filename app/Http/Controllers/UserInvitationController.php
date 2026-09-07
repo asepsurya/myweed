@@ -1389,6 +1389,13 @@ class UserInvitationController extends Controller
             ], 403);
         }
 
+        if ($template->template_type_id && ! $user->canAccessTemplateType($template->template_type_id)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Template ini hanya tersedia untuk paket berbayar. Upgrade untuk mengakses semua tema.',
+            ], 403);
+        }
+
         $id = $request->id;
         $invitation = null;
 

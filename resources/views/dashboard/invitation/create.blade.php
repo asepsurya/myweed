@@ -821,7 +821,9 @@
                                                     $templateColor = $defaultThemeColors[$template->slug] ?? $template->primary_color ?? '#FF6B81';
                                                     $user = auth()->user();
                                                     $isLocked = false;
-                                                    if ($template->template_type_id) {
+                                                    if ($user->isOnFreePlan() && $template->slug !== 'simple-theme') {
+                                                        $isLocked = true;
+                                                    } elseif ($template->template_type_id) {
                                                         $isLocked = ! $user->canAccessTemplateType($template->template_type_id);
                                                     } elseif ($template->is_premium && ! $user->hasFeature('all_themes')) {
                                                         $isLocked = true;
