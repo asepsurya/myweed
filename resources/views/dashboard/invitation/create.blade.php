@@ -825,8 +825,6 @@
                                                         $isLocked = ! $user->canAccessTemplateType($template->template_type_id);
                                                     } elseif ($template->is_premium && ! $user->hasFeature('all_themes')) {
                                                         $isLocked = true;
-                                                    } elseif ($template->slug !== 'simple-theme' && ! $user->hasFeature('all_themes')) {
-                                                        $isLocked = true;
                                                     }
                                             @endphp
                                             <div class="col-6 col-md-4">
