@@ -146,7 +146,7 @@
                     <div class="mb-3">
                         <label for="description" class="form-label fw-semibold">Fitur / Keunggulan (Deskripsi)</label>
                         <textarea name="description" id="description" rows="4" class="form-control" placeholder="Satu fitur per baris">{{ old('description', isset($subscriptionPlan) ? implode("\n", json_decode($subscriptionPlan->description ?? '[]')) : '') }}</textarea>
-                        <div class="form-text">Setiap baris akan menjadi satu poin keunggulan yang ditampilkan di halaman harga.</div>
+                        <div class="form-text">Setiap baris akan menjadi satu poin keunggulan yang ditampilkan di halaman harga. Isi otomatis berdasarkan fitur yang aktif di bawah.</div>
                     </div>
 
                     <div class="mb-3">
@@ -166,9 +166,9 @@
                                                     <div class="col-md-6 col-lg-4">
                                                         <div class="form-check form-switch">
                                                             @if(in_array($key, $numericFeatures))
-                                                                <input class="form-check-input" type="checkbox" name="features[{{ $key }}]" id="feature_{{ $key }}" value="1" {{ old('features.' . $key, isset($planFeatures[$key]) && $planFeatures[$key] ? 'checked' : '') ? 'checked' : '' }} onchange="toggleNumericInput(this, '{{ $key }}')">
+                                                                <input class="form-check-input feature-checkbox" type="checkbox" name="features[{{ $key }}]" id="feature_{{ $key }}" value="1" {{ old('features.' . $key, isset($planFeatures[$key]) && $planFeatures[$key] ? 'checked' : '') ? 'checked' : '' }} onchange="toggleNumericInput(this, '{{ $key }}')">
                                                             @else
-                                                                <input class="form-check-input" type="checkbox" name="features[{{ $key }}]" id="feature_{{ $key }}" value="1" {{ old('features.' . $key, isset($planFeatures[$key]) && $planFeatures[$key] ? 'checked' : '') ? 'checked' : '' }}>
+                                                                <input class="form-check-input feature-checkbox" type="checkbox" name="features[{{ $key }}]" id="feature_{{ $key }}" value="1" {{ old('features.' . $key, isset($planFeatures[$key]) && $planFeatures[$key] ? 'checked' : '') ? 'checked' : '' }}>
                                                             @endif
                                                             <label class="form-check-label small" for="feature_{{ $key }}">{{ $label }}</label>
                                                         </div>
@@ -200,11 +200,44 @@
     </div>
 
     <script>
+        const featureLabelMap = @json($featureGroups);
+
+        function updateDescriptionFromFeatures() {
+            const checkedBoxes = document.querySelectorAll('input[name^="features["]:checked');
+            const lines = [];
+            checkedBoxes.forEach(box => {
+                const label = box.closest('.form-check')?.querySelector('.form-check-label');
+                if (label) {
+                    lines.push(label.textContent.trim());
+                }
+            });
+            const descriptionField = document.getElementById('description');
+            if (descriptionField) {
+                const cursorPosition = descriptionField.selectionStart;
+                const oldLength = descriptionField.value.length;
+                descriptionField.value = lines.join('\n');
+                if (document.activeElement === descriptionField) {
+                    const newLength = descriptionField.value.length;
+                    descriptionField.setSelectionRange(
+                        Math.min(cursorPosition, newLength),
+                        Math.min(cursorPosition + (newLength - oldLength), newLength)
+                    );
+                }
+            }
+        }
+
         function toggleNumericInput(checkbox, key) {
             const wrapper = document.getElementById('numeric-wrapper-' + key);
             if (wrapper) {
                 wrapper.style.display = checkbox.checked ? 'block' : 'none';
             }
+            updateDescriptionFromFeatures();
         }
+
+        document.querySelectorAll('input[name^="features["]').forEach(box => {
+            box.addEventListener('change', updateDescriptionFromFeatures);
+        });
+
+        document.addEventListener('DOMContentLoaded', updateDescriptionFromFeatures);
     </script>
 </x-app-layout>

@@ -426,6 +426,113 @@
                         <i class="bi bi-x-circle me-2"></i> Batalkan Langganan
                     </button>
                 </div>
+
+                <div class="mt-4 pt-3 border-top">
+                    <h5 class="fw-semibold mb-3">Upgrade / Ganti Paket</h5>
+                    <p class="text-muted small mb-3">
+                        <i class="bi bi-info-circle me-1"></i>
+                        Upgrade prorated: Anda hanya bayar selisih harga berdasarkan sisa masa aktif paket saat ini.
+                    </p>
+                    <div class="row g-3">
+                        @foreach($plans as $plan)
+                            @php
+                                $prorated = $upgradeProrated[$plan->id] ?? null;
+                                $isActivePlan = $subscription && $subscription->plan && $plan->id === $subscription->plan->id;
+                            @endphp
+                            @if($isActivePlan)
+                                <div class="col-md-4">
+                                    <div class="premium-card pricing-card text-center">
+                                        <div class="plan-name">{{ $plan->name }}</div>
+                                        <div class="plan-price">
+                                            @if($plan->price > 0)
+                                                Rp {{ number_format($plan->price, 0, ',', '.') }}
+                                            @else
+                                                Gratis
+                                            @endif
+                                        </div>
+                                        <span class="plan-duration">{{ $plan->duration }} Hari aktif</span>
+                                        <button class="btn-disabled-custom" disabled>
+                                            <i class="bi bi-check2 me-2"></i> Paket Aktif
+                                        </button>
+                                    </div>
+                                </div>
+                            @else
+                                <div class="col-md-4">
+                                    <div class="premium-card pricing-card text-center">
+                                        <div class="plan-name">{{ $plan->name }}</div>
+                                        <div class="plan-price">
+                                            @if($plan->price > 0)
+                                                Rp {{ number_format($plan->price, 0, ',', '.') }}
+                                            @else
+                                                Gratis
+                                            @endif
+                                        </div>
+                                        <span class="plan-duration">{{ $plan->duration }} Hari aktif</span>
+                                        @if($prorated && $prorated['credit'] > 0)
+                                            <div class="text-success small mb-2">
+                                                <i class="bi bi-check-circle me-1"></i>
+                                                Kredit sisa paket: -Rp {{ number_format($prorated['credit'], 0, ',', '.') }}
+                                            </div>
+                                            <div class="fw-bold text-primary mb-2">
+                                                Bayar: Rp {{ number_format($prorated['amount'], 0, ',', '.') }}
+                                            </div>
+                                        @endif
+                                        <button class="btn btn-outline-navy w-100 upgrade-plan-btn"
+                                            data-plan-id="{{ $plan->id }}"
+                                            data-plan-name="{{ $plan->name }}"
+                                            data-plan-price="{{ $plan->price }}"
+                                            data-prorated-amount="{{ $prorated['amount'] ?? $plan->price }}"
+                                            data-prorated-credit="{{ $prorated['credit'] ?? 0 }}">
+                                            <i class="bi bi-arrow-repeat me-2"></i> Upgrade ke {{ $plan->name }}
+                                        </button>
+                                    </div>
+                                </div>
+                            @endif
+                        @endforeach
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Upgrade Subscription Modal -->
+        <div class="modal fade" id="upgradeSubscriptionModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content custom-modal">
+                    <div class="modal-header custom-modal-header">
+                        <h5 class="modal-title custom-modal-title">
+                            <i class="bi bi-arrow-repeat text-warning me-2"></i> Upgrade Langganan
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body custom-modal-body">
+                        <p>Anda akan mengupgrade dari <strong>{{ $subscription->plan->name ?? 'paket sebelumnya' }}</strong> ke <strong id="upgradePlanName"></strong>.</p>
+                        <div class="bg-light rounded p-3 mb-3">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Harga paket baru:</span>
+                                <span class="fw-semibold" id="upgradePlanPrice"></span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2 text-success">
+                                <span>Kredit sisa paket lama:</span>
+                                <span class="fw-semibold" id="upgradePlanCredit">-Rp 0</span>
+                            </div>
+                            <hr>
+                            <div class="d-flex justify-content-between fw-bold">
+                                <span>Total bayar:</span>
+                                <span class="text-primary" id="upgradePlanTotal"></span>
+                            </div>
+                        </div>
+                        <p class="mb-0 small text-muted">Paket baru akan langsung aktif dan masa berlaku akan dilanjutkan dari tanggal berakhir langganan Anda saat ini.</p>
+                    </div>
+                    <div class="modal-footer custom-modal-footer">
+                        <button type="button" class="btn-outline-navy" data-bs-dismiss="modal" style="width: auto;">Batal</button>
+                        <form id="upgradeForm" method="POST" action="{{ route('subscription.upgrade', ['planId' => '__PLAN_ID__']) }}">
+                            @csrf
+                            <button type="submit" class="btn-gold" style="width: auto; border: none;">
+                                <i class="bi bi-lock-fill me-2"></i> Bayar Sekarang
+                            </button>
+                        </form>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -563,4 +670,30 @@
     @endif
 
 </div>
+
+@push('scripts')
+<script>
+    document.querySelectorAll('.upgrade-plan-btn').forEach(btn => {
+        btn.addEventListener('click', function () {
+            const planId = this.getAttribute('data-plan-id');
+            const planName = this.getAttribute('data-plan-name');
+            const planPrice = parseInt(this.getAttribute('data-plan-price')) || 0;
+            const proratedAmount = parseInt(this.getAttribute('data-prorated-amount')) || planPrice;
+            const proratedCredit = parseInt(this.getAttribute('data-prorated-credit')) || 0;
+
+            if (!planId) return;
+
+            document.getElementById('upgradePlanName').textContent = planName || 'paket baru';
+            document.getElementById('upgradePlanPrice').textContent = 'Rp ' + planPrice.toLocaleString('id-ID');
+            document.getElementById('upgradePlanCredit').textContent = '-Rp ' + proratedCredit.toLocaleString('id-ID');
+            document.getElementById('upgradePlanTotal').textContent = 'Rp ' + proratedAmount.toLocaleString('id-ID');
+
+            const form = document.getElementById('upgradeForm');
+            form.action = form.action.replace('__PLAN_ID__', planId);
+
+            new bootstrap.Modal(document.getElementById('upgradeSubscriptionModal')).show();
+        });
+    });
+</script>
+@endpush
 </x-app-layout>

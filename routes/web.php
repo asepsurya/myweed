@@ -259,6 +259,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/subscription-plans/voucher', [SubscriptionPlanController::class, 'voucherPage'])->name('subscribe.voucher');
     Route::get('/subscription-plans/{planId}', [SubscriptionPlanController::class, 'subscribe'])->name('subscribe');
     Route::post('/subscription/cancel', [SubscriptionPlanController::class, 'cancel'])->name('subscription.cancel')->middleware('auth');
+    Route::post('/subscription/upgrade/{planId}', [SubscriptionPlanController::class, 'upgradeSubscription'])->middleware('auth')->name('subscription.upgrade');
     Route::get('/payments/status', [SubscriptionPlanController::class, 'paymentStatus'])->name('payments.status');
     Route::get('/payments', [SubscriptionPlanController::class, 'paymentIndex'])->name('payments.index');
     Route::get('/payment/invoice', [SubscriptionPlanController::class, 'invoice'])->name('payment.invoice');

@@ -239,7 +239,7 @@
                         href="{{ route('settings.env') }}" data-bs-toggle="tooltip" data-bs-placement="right"
                         title="Pengaturan .env">
                         <i class="menu-icon bi bi-sliders me-2"></i>
-                        <span class="menu-name">Pengaturan .env</span>
+                        <span class="menu-name">Pengaturan</span>
                     </a>
                 </li>
                 <li class="nav-item">

@@ -20,8 +20,36 @@ class SubscriptionPlanController extends Controller
     public function index()
     {
         $plans = SubscriptionPlan::all();
+        $user = auth()->user();
+        $subscription = $user->subscription;
 
-        return view('dashboard.subscriptions.index', compact('plans'));
+        $upgradeProrated = [];
+        if ($subscription && $subscription->plan && $subscription->end_date && $subscription->end_date->isFuture()) {
+            $remainingDays = max(1, now()->diffInDays($subscription->end_date));
+            $totalDays = max(1, $subscription->plan->duration);
+            $currentDailyRate = $subscription->plan->price / $totalDays;
+            $currentCredit = (int) ceil($currentDailyRate * $remainingDays);
+
+            foreach ($plans as $plan) {
+                if ($plan->id === $subscription->plan->id) {
+                    $upgradeProrated[$plan->id] = [
+                        'credit' => 0,
+                        'amount' => $plan->price,
+                        'remaining_days' => $remainingDays,
+                    ];
+                    continue;
+                }
+
+                $amountToPay = max(0, $plan->price - $currentCredit);
+                $upgradeProrated[$plan->id] = [
+                    'credit' => $currentCredit,
+                    'amount' => $amountToPay,
+                    'remaining_days' => $remainingDays,
+                ];
+            }
+        }
+
+        return view('dashboard.subscriptions.index', compact('plans', 'upgradeProrated'));
     }
 
     public function voucherPage()
@@ -526,6 +554,141 @@ class SubscriptionPlanController extends Controller
         }
     }
 
+    public function upgradeSubscription($planId, Request $request)
+    {
+        $user = auth()->user();
+        $plan = SubscriptionPlan::findOrFail($planId);
+
+        $currentSubscription = $user->subscription;
+        $currentPlan = $currentSubscription?->plan;
+
+        if ($currentPlan && $currentPlan->id === $plan->id && $currentSubscription && $currentSubscription->end_date && $currentSubscription->end_date->isFuture()) {
+            return response()->json(['error' => 'Anda sudah berlangganan paket ini.'], 400);
+        }
+
+        if ($plan->is_free) {
+            $startDate = $currentSubscription && $currentSubscription->end_date && $currentSubscription->end_date->isFuture()
+                ? $currentSubscription->end_date
+                : now();
+
+            Subscription::updateOrCreate(
+                ['user_id' => $user->id],
+                [
+                    'subscription_plan_id' => $plan->id,
+                    'start_date' => $startDate,
+                    'end_date' => $startDate->addDays($plan->duration),
+                    'is_active' => true,
+                ]
+            );
+
+            return response()->json([
+                'snap_token' => null,
+                'order_id' => null,
+                'final_amount' => 0,
+                'redirect' => route('subscribe.page'),
+                'message' => 'Paket berhasil di-upgrade.',
+            ]);
+        }
+
+        $finalAmount = $plan->price;
+        $proratedCredit = 0;
+
+        if ($currentPlan && $currentPlan->price > 0 && $currentSubscription && $currentSubscription->end_date && $currentSubscription->end_date->isFuture()) {
+            $remainingDays = max(1, now()->diffInDays($currentSubscription->end_date));
+            $totalDays = max(1, $currentPlan->duration);
+            $proratedCredit = (int) ceil(($currentPlan->price / $totalDays) * $remainingDays);
+            $finalAmount = max(0, $plan->price - $proratedCredit);
+        }
+
+        $orderId = 'UPG-'.time().'-'.$user->id;
+
+        $payment = Payment::create([
+            'user_id' => $user->id,
+            'subscription_plan_id' => $plan->id,
+            'order_id' => $orderId,
+            'amount' => $finalAmount,
+            'status' => 'pending',
+            'payment_gateway' => config('payment.default_gateway', 'midtrans'),
+            'payment_type' => config('payment.default_gateway', 'midtrans') === 'local' ? 'qris' : null,
+            'payment_method' => config('payment.default_gateway', 'midtrans'),
+            'payload' => [
+                'upgrade' => true,
+                'original_plan_id' => $currentPlan?->id,
+                'original_plan_name' => $currentPlan?->name,
+                'original_amount' => $currentPlan?->price ?? 0,
+                'prorated_credit' => $proratedCredit,
+                'full_plan_amount' => $plan->price,
+            ],
+        ]);
+
+        if (config('payment.default_gateway', 'midtrans') === 'local' && $finalAmount > 0) {
+            return response()->json([
+                'snap_token' => null,
+                'order_id' => $orderId,
+                'final_amount' => $finalAmount,
+                'payment_method' => 'local',
+                'redirect' => route('payment.local.index', ['order_id' => $orderId]),
+            ]);
+        }
+
+        if ($finalAmount <= 0) {
+            Subscription::updateOrCreate(
+                ['user_id' => $user->id],
+                [
+                    'subscription_plan_id' => $plan->id,
+                    'start_date' => now(),
+                    'end_date' => now()->addDays($plan->duration),
+                    'is_active' => true,
+                ]
+            );
+
+            return response()->json([
+                'snap_token' => null,
+                'order_id' => $orderId,
+                'final_amount' => 0,
+                'redirect' => route('subscribe.page'),
+                'message' => 'Paket berhasil di-upgrade tanpa biaya tambahan.',
+            ]);
+        }
+
+        try {
+            $baseUrl = rtrim(config('app.url'), '/');
+            $params = [
+                'transaction_details' => [
+                    'order_id' => $orderId,
+                    'gross_amount' => $finalAmount,
+                ],
+                'customer_details' => [
+                    'first_name' => $user->name,
+                    'email' => $user->email,
+                ],
+                'finish_redirect_url' => $baseUrl.'/api/payment/success?order_id='.$orderId,
+                'pending_redirect_url' => $baseUrl.'/api/payment/pending?order_id='.$orderId,
+                'error_redirect_url' => $baseUrl.'/api/payment/failed?order_id='.$orderId,
+            ];
+
+            $snapToken = Snap::getSnapToken($params);
+
+            return response()->json([
+                'snap_token' => $snapToken,
+                'order_id' => $orderId,
+                'final_amount' => $finalAmount,
+            ]);
+        } catch (\Throwable $e) {
+            Log::error('Midtrans Snap token failed on upgrade', [
+                'message' => $e->getMessage(),
+                'order_id' => $orderId,
+            ]);
+
+            return response()->json([
+                'snap_token' => null,
+                'order_id' => $orderId,
+                'final_amount' => $finalAmount,
+                'error' => 'Gagal membuat token pembayaran. Silakan coba lagi.',
+            ], 500);
+        }
+    }
+
     public function validateCoupon(Request $request)
     {
         $request->validate([
@@ -599,7 +762,7 @@ class SubscriptionPlanController extends Controller
                 $subscription = Subscription::where('user_id', $payment->user_id)->first();
 
                 if ($subscription && $subscription->end_date && $subscription->end_date->isFuture()) {
-                    $startDate = $subscription->start_date;
+                    $startDate = $subscription->end_date;
                     $endDate = $subscription->end_date->addDays($plan->duration);
                 } else {
                     $startDate = now();
@@ -806,7 +969,7 @@ class SubscriptionPlanController extends Controller
 
         $subscription = $user->subscription;
         if ($subscription && $subscription->end_date && $subscription->end_date->isFuture()) {
-            $startDate = $subscription->start_date;
+            $startDate = $subscription->end_date;
             $endDate = $subscription->end_date->addDays($duration);
         } else {
             $startDate = now();
@@ -1037,16 +1200,16 @@ class SubscriptionPlanController extends Controller
         if ($request->status === 'paid') {
             $plan = SubscriptionPlan::find($payment->subscription_plan_id);
 
-            if ($plan) {
-                $subscription = Subscription::where('user_id', $payment->user_id)->first();
+                if ($plan) {
+                    $subscription = Subscription::where('user_id', $payment->user_id)->first();
 
-                if ($subscription && $subscription->end_date && $subscription->end_date->isFuture()) {
-                    $startDate = $subscription->start_date;
-                    $endDate = $subscription->end_date->addDays($plan->duration);
-                } else {
-                    $startDate = now();
-                    $endDate = now()->addDays($plan->duration);
-                }
+                    if ($subscription && $subscription->end_date && $subscription->end_date->isFuture()) {
+                        $startDate = $subscription->end_date;
+                        $endDate = $subscription->end_date->addDays($plan->duration);
+                    } else {
+                        $startDate = now();
+                        $endDate = now()->addDays($plan->duration);
+                    }
 
                 Subscription::updateOrCreate(
                     ['user_id' => $payment->user_id],
