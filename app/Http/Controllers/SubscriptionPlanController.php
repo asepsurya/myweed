@@ -81,12 +81,14 @@ class SubscriptionPlanController extends Controller
             'invitation_limit' => 'required|integer|min:1',
             'description' => 'nullable|string',
             'is_free' => 'nullable|boolean',
+            'template_type_access' => 'nullable|integer|min:1|max:3',
         ]);
 
         $validated['is_free'] = $request->has('is_free');
         $validated['price'] = $validated['is_free'] ? 0 : $validated['price'];
         $validated['original_price'] = $validated['is_free'] ? null : ($request->input('original_price') ?: null);
         $validated['badge_text'] = $request->input('badge_text') ?: null;
+        $validated['template_type_access'] = (int) ($request->input('template_type_access') ?: 1);
 
         if ($request->filled('description')) {
             $validated['description'] = json_encode(
@@ -120,12 +122,14 @@ class SubscriptionPlanController extends Controller
             'invitation_limit' => 'required|integer|min:1',
             'description' => 'nullable|string',
             'is_free' => 'nullable|boolean',
+            'template_type_access' => 'nullable|integer|min:1|max:3',
         ]);
 
         $validated['is_free'] = $request->has('is_free');
         $validated['price'] = $validated['is_free'] ? 0 : $validated['price'];
         $validated['original_price'] = $validated['is_free'] ? null : ($request->input('original_price') ?: null);
         $validated['badge_text'] = $request->input('badge_text') ?: null;
+        $validated['template_type_access'] = (int) ($request->input('template_type_access') ?: 1);
 
         if ($request->filled('description')) {
             $validated['description'] = json_encode(

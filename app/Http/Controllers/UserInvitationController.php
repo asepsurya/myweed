@@ -84,7 +84,16 @@ class UserInvitationController extends Controller
         }
 
         $music = Music::where('is_active', true)->get();
-        $templates = Template::where('is_active', true)->paginate(6);
+        $templates = Template::where('is_active', true)
+            ->with('category', 'templateType')
+            ->get()
+            ->filter(function ($template) use ($user) {
+                if ($template->template_type_id && ! $user->canAccessTemplateType($template->template_type_id)) {
+                    return false;
+                }
+
+                return true;
+            });
         $selectedTemplateId = $request->template_id;
 
         return view('dashboard.invitation.create', compact('templates', 'music', 'selectedTemplateId'));
@@ -137,6 +146,23 @@ class UserInvitationController extends Controller
         }
 
         $templateId = $request->template_id ?? 2;
+
+        if ($templateId) {
+            $template = Template::find($templateId);
+
+            if ($template && $template->template_type_id && ! $user->canAccessTemplateType($template->template_type_id)) {
+                if ($request->wantsJson() || $request->ajax()) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Template ini hanya tersedia untuk paket berbayar. Upgrade untuk mengakses semua tema.',
+                    ], 403);
+                }
+
+                return redirect()
+                    ->back()
+                    ->with('error', 'Template ini hanya tersedia untuk paket berbayar. Upgrade untuk mengakses semua tema.');
+            }
+        }
 
         $invitation = Invitation::updateOrCreate(
             [
@@ -627,7 +653,16 @@ class UserInvitationController extends Controller
 
         $music = Music::where('is_active', true)->get();
         $youtubeMusic = \App\Models\YoutubeMusic::where('is_active', true)->get();
-        $templates = Template::where('is_active', true)->with('category', 'templateType')->get();
+        $templates = Template::where('is_active', true)
+            ->with('category', 'templateType')
+            ->get()
+            ->filter(function ($template) use ($user) {
+                if ($template->template_type_id && ! $user->canAccessTemplateType($template->template_type_id)) {
+                    return false;
+                }
+
+                return true;
+            });
         $templateTypes = TemplateType::orderBy('name')->get();
 
         return view('dashboard.invitation.edit', compact('invitation', 'music', 'youtubeMusic', 'templates', 'templateTypes'));
@@ -644,10 +679,18 @@ class UserInvitationController extends Controller
         if ($user->id === $invitation->partner_user_id && ! $invitation->partner_can_edit) {
             abort(403, 'Anda hanya memiliki akses melihat undangan ini.');
         }
-
         // Check Template Access
         $template = Template::findOrFail($request->template_id);
+
         if (! $user->hasFeature('all_themes') && $template->slug !== 'simple-theme') {
+            return redirect()->back()->with('error', 'Template ini hanya tersedia untuk paket berbayar. Upgrade untuk mengakses semua tema.');
+        }
+
+        if ($template->template_type_id && ! $user->canAccessTemplateType($template->template_type_id)) {
+            return redirect()->back()->with('error', 'Template ini hanya tersedia untuk paket berbayar. Upgrade untuk mengakses semua tema.');
+        }
+
+        if ($template->template_type_id && ! $user->canAccessTemplateType($template->template_type_id)) {
             return redirect()->back()->with('error', 'Template ini hanya tersedia untuk paket berbayar. Upgrade untuk mengakses semua tema.');
         }
 

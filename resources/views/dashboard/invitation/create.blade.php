@@ -558,16 +558,42 @@
 </div>
 
 <script>
-function selectTemplateCard(card) {
-    document.querySelectorAll('#modal_template_selector .template-option').forEach(c => {
-        c.style.borderColor = '#ddd';
-        c.style.boxShadow = 'none';
-    });
-    card.style.borderColor = '#FF6B81';
-    card.style.boxShadow = '0 0 0 0.25rem rgba(255, 107, 129, 0.25)';
-    const radio = card.closest('label').querySelector('input[type="radio"]');
-    if (radio) radio.checked = true;
-}
+ function selectTemplateCard(card) {
+     document.querySelectorAll('#modal_template_selector .template-option').forEach(c => {
+         c.style.borderColor = '#ddd';
+         c.style.boxShadow = 'none';
+     });
+     card.style.borderColor = '#FF6B81';
+     card.style.boxShadow = '0 0 0 0.25rem rgba(255, 107, 129, 0.25)';
+     const radio = card.closest('label').querySelector('input[type="radio"]');
+     if (radio) radio.checked = true;
+ }
+
+ function selectCreateTemplate(card, templateId) {
+     document.querySelectorAll('#template-selector .template-option').forEach(c => {
+         c.classList.remove('selected-template');
+     });
+     card.classList.add('selected-template');
+     const hiddenInput = document.getElementById('template_id');
+     if (hiddenInput) hiddenInput.value = templateId;
+ }
+
+ window.showPremiumAlert = function () {
+     Swal.fire({
+         title: 'Tema Premium! ðŸ’Ž',
+         text: 'Tema ini hanya tersedia untuk pengguna Premium. Upgrade paket Anda sekarang untuk membuka semua tema eksklusif!',
+         icon: 'warning',
+         showCancelButton: true,
+         confirmButtonColor: '#C6A962',
+         cancelButtonColor: '#6c757d',
+         confirmButtonText: 'Upgrade Sekarang',
+         cancelButtonText: 'Mungkin Nanti'
+     }).then((result) => {
+         if (result.isConfirmed) {
+             window.location.href = "{{ route('subscribe.page') }}";
+         }
+     });
+ }
 </script>
 
 @include('dashboard.invitation.mobile')
@@ -793,20 +819,35 @@ function selectTemplateCard(card) {
                                             @foreach ($templates as $template)
                                             @php
                                                     $templateColor = $defaultThemeColors[$template->slug] ?? $template->primary_color ?? '#FF6B81';
+                                                    $user = auth()->user();
+                                                    $isLocked = false;
+                                                    if ($template->template_type_id) {
+                                                        $isLocked = ! $user->canAccessTemplateType($template->template_type_id);
+                                                    } elseif ($template->is_premium && ! $user->hasFeature('all_themes')) {
+                                                        $isLocked = true;
+                                                    } elseif ($template->slug !== 'simple-theme' && ! $user->hasFeature('all_themes')) {
+                                                        $isLocked = true;
+                                                    }
                                             @endphp
                                             <div class="col-6 col-md-4">
-                                                <div class="template-option card cursor-pointer border-2"
+                                                <div class="template-option card cursor-pointer border-2 {{ $isLocked ? 'locked opacity-75' : '' }}"
                                                      data-template-id="{{ $template->id }}"
                                                      data-preview="{{ Storage::url($template->preview) }}"
                                                      data-slug="{{ $template->slug }}"
-                                                     data-theme-color="{{ $templateColor }}">
-                                                    <div class="position-relative">
-                                                        <img src="{{ Storage::url($template->preview) }}" class="card-img-top" style="height: 150px; object-fit: cover;">
-                                                    </div>
-                                                    <div class="card-body p-2">
-                                                        <h6 class="mb-0 text-center">{{ $template->name }}</h6>
-                                                    </div>
-                                                </div>
+                                                     data-theme-color="{{ $templateColor }}"
+                                                     onclick="{{ $isLocked ? 'showPremiumAlert()' : 'selectCreateTemplate(this, ' . $template->id . ')' }}">
+                                                     <div class="position-relative">
+                                                         <img src="{{ Storage::url($template->preview) }}" class="card-img-top" style="height: 150px; object-fit: cover;">
+                                                         @if($isLocked)
+                                                             <div class="position-absolute top-50 start-50 translate-middle">
+                                                                 <i class="bi bi-lock-fill fs-2 text-white shadow-lg"></i>
+                                                             </div>
+                                                         @endif
+                                                     </div>
+                                                     <div class="card-body p-2">
+                                                         <h6 class="mb-0 text-center">{{ $template->name }}</h6>
+                                                     </div>
+                                                 </div>
                                             </div>
                             @endforeach
                             {{ $templates->links() }}

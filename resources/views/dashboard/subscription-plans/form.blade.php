@@ -133,6 +133,18 @@
                         </div>
                         <div class="col-md-4">
                             <div class="mb-3">
+                                <label class="form-label fw-semibold">Akses Tipe Template</label>
+                                <select name="template_type_access" id="template_type_access" class="form-select">
+                                    <option value="1" {{ old('template_type_access', isset($subscriptionPlan) ? ($subscriptionPlan->template_type_access ?? 1) : 1) == 1 ? 'selected' : '' }}>Basic (Template Type 1)</option>
+                                    <option value="2" {{ old('template_type_access', isset($subscriptionPlan) ? ($subscriptionPlan->template_type_access ?? 1) : 1) == 2 ? 'selected' : '' }}>Premium (Template Type 1 + 2)</option>
+                                    <option value="3" {{ old('template_type_access', isset($subscriptionPlan) ? ($subscriptionPlan->template_type_access ?? 1) : 1) == 3 ? 'selected' : '' }}>Luxury (Semua Template Type)</option>
+                                </select>
+                                <div class="form-text">Tentukan tingkat akses template yang diperbolehkan untuk paket ini.</div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="mb-3">
                                 <label class="form-label fw-semibold">Paket Gratis</label>
                                 <div class="form-check form-switch mt-2">
                                     <input class="form-check-input" type="checkbox" name="is_free" id="is_free" value="1" {{ old('is_free', isset($subscriptionPlan) && $subscriptionPlan->is_free ? 'checked' : '') ? 'checked' : '' }}>

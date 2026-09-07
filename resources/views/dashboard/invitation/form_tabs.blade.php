@@ -507,7 +507,17 @@
 
             <div class="row g-3" id="templateGallery">
                 @foreach ($templates as $template)
-                    @php $isLocked = !auth()->user()->hasFeature('all_themes') && $template->slug !== 'simple-theme'; @endphp
+                    @php
+                        $user = auth()->user();
+                        $isLocked = false;
+                        if ($template->template_type_id) {
+                            $isLocked = ! $user->canAccessTemplateType($template->template_type_id);
+                        } elseif ($template->is_premium && ! $user->hasFeature('all_themes')) {
+                            $isLocked = true;
+                        } elseif ($template->slug !== 'simple-theme' && ! $user->hasFeature('all_themes')) {
+                            $isLocked = true;
+                        }
+                    @endphp
                     <div class="col-6 template-selector-item" data-category="{{ $template->category->name ?? 'modern' }}"
                         data-name="{{ strtolower($template->name) }}"
                         data-color="{{ $template->primary_color ?? '#0d9488' }}" data-template-id="{{ $template->id }}"

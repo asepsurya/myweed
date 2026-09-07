@@ -170,6 +170,33 @@ class User extends Authenticatable implements MustVerifyEmail
         return false;
     }
 
+    public function canAccessTemplateType(int $templateTypeId): bool
+    {
+        if ($this->isAdmin()) {
+            return true;
+        }
+
+        $maxTypeId = 1;
+
+        if ($this->isSubscribed() && $this->subscription && $this->subscription->plan) {
+            $plan = $this->subscription->plan;
+
+            $maxTypeId = $plan->maxAccessibleTemplateTypeId();
+        } else {
+            $partnerOwner = $this->getPartnerSubscriptionOwner();
+
+            if ($partnerOwner && $partnerOwner->subscription && $partnerOwner->subscription->plan) {
+                $plan = $partnerOwner->subscription->plan;
+
+                $maxTypeId = $plan->maxAccessibleTemplateTypeId();
+            } else {
+                $maxTypeId = 1;
+            }
+        }
+
+        return $templateTypeId <= $maxTypeId;
+    }
+
     public function getPartnerSubscriptionOwner(): ?User
     {
         if ($this->subscription && $this->subscription->is_active && $this->subscription->end_date && $this->subscription->end_date->isFuture() && !$this->subscription->plan->is_free) {
