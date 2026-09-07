@@ -188,14 +188,14 @@
                     </a>
                 </li>
 
-                <li class="nav-item">
+                <!-- <li class="nav-item">
                     <a class="nav-link {{ request()->routeIs('documentation.index') ? 'active' : '' }}"
                         href="{{ route('documentation.index') }}" data-bs-toggle="tooltip" data-bs-placement="right"
                         title="Dokumentasi">
                         <i class="menu-icon bi bi-book me-2"></i>
                         <span class="menu-name">Dokumentasi</span>
                     </a>
-                </li>
+                </li> -->
 
                 @role('admin')
                 <li class="nav-item">

@@ -108,7 +108,24 @@
                     })
                 });
 
-                const data = await response.json();
+                if (!response.ok) {
+                    if (response.status === 419) {
+                        alert('Sesi Anda telah berakhir. Silakan muat ulang halaman dan coba lagi.');
+                    } else if (response.status === 401 || response.status === 403) {
+                        alert('Anda tidak memiliki akses. Silakan login kembali.');
+                    } else {
+                        alert('Gagal memproses permintaan (HTTP ' + response.status + '). Silakan coba lagi.');
+                    }
+                    return;
+                }
+
+                let data;
+                try {
+                    data = await response.json();
+                } catch (e) {
+                    alert('Respons server tidak valid. Silakan coba lagi atau muat ulang halaman.');
+                    return;
+                }
 
                 if (data.redirect) {
                     window.location.href = data.redirect;
