@@ -12,7 +12,6 @@ use App\Services\WhatsAppService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Storage;
 use Midtrans\Notification;
 use Midtrans\Snap;
 
@@ -23,6 +22,11 @@ class SubscriptionPlanController extends Controller
         $plans = SubscriptionPlan::all();
 
         return view('dashboard.subscriptions.index', compact('plans'));
+    }
+
+    public function voucherPage()
+    {
+        return view('dashboard.subscriptions.voucher');
     }
 
     public function adminIndex()
@@ -295,7 +299,7 @@ class SubscriptionPlanController extends Controller
 
         // Notifikasi WhatsApp ke admin: ada pembayaran baru yang perlu dikonfirmasi
         try {
-            $wa = new WhatsAppService();
+            $wa = new WhatsAppService;
             $adminUser = User::role('admin')->first();
             $adminPhone = $adminUser ? $adminUser->phone : null;
             $adminPhone = $adminPhone ?: config('services.admin_whatsapp');
@@ -316,17 +320,17 @@ class SubscriptionPlanController extends Controller
             $adminMsg .= "Total: Rp {$amountFormatted}\n";
             $adminMsg .= "Metode: {$methodLabel}\n";
             $adminMsg .= "Status: MENUNGGU PEMBAYARAN\n\n";
-            $adminMsg .= "User telah membuat order. ";
+            $adminMsg .= 'User telah membuat order. ';
             if ($paymentMethod === 'local') {
-                $adminMsg .= "Menunggu upload bukti transfer dari user.";
+                $adminMsg .= 'Menunggu upload bukti transfer dari user.';
             } else {
-                $adminMsg .= "Menunggu penyelesaian pembayaran Midtrans.";
+                $adminMsg .= 'Menunggu penyelesaian pembayaran Midtrans.';
             }
-            $adminMsg .= "\nLink: " . config('app.url') . "/payments/status";
+            $adminMsg .= "\nLink: ".config('app.url').'/payments/status';
 
             $wa->sendToUser($adminPhone, $adminMsg);
         } catch (\Throwable $notifyError) {
-            Log::warning('WhatsApp notification on initiate payment failed: ' . $notifyError->getMessage());
+            Log::warning('WhatsApp notification on initiate payment failed: '.$notifyError->getMessage());
         }
 
         // LOCAL PAYMENT (QRIS) — Midtrans tidak disentuh
@@ -375,6 +379,145 @@ class SubscriptionPlanController extends Controller
             return response()->json([
                 'snap_token' => null,
                 'order_id' => $orderId,
+                'final_amount' => $finalAmount,
+                'discount' => $discount,
+                'coupon_code' => $coupon ? $coupon->code : null,
+                'error' => 'Gagal membuat token pembayaran. Silakan coba lagi.',
+            ], 500);
+        }
+    }
+
+    public function retryPayment($orderId, Request $request)
+    {
+        $payment = Payment::with('subscriptionPlan', 'coupon')
+            ->where('order_id', $orderId)
+            ->where('user_id', auth()->id())
+            ->firstOrFail();
+
+        if ($payment->status === 'paid') {
+            return response()->json(['error' => 'Pembayaran ini sudah lunas.'], 400);
+        }
+
+        $plan = $payment->subscriptionPlan;
+
+        if (! $plan) {
+            return response()->json(['error' => 'Paket langganan tidak ditemukan.'], 404);
+        }
+
+        $paymentMethod = $payment->payment_method ?: config('payment.default_gateway', 'midtrans');
+        $coupon = $payment->coupon;
+        $discount = 0;
+        $finalAmount = $payment->amount;
+
+        if ($coupon && ! $plan->is_free) {
+            if ($coupon->type === 'percentage') {
+                $discount = (int) floor($plan->price * $coupon->value / 100);
+            } else {
+                $discount = min($coupon->value, $plan->price);
+            }
+            $finalAmount = max(0, $plan->price - $discount);
+        }
+
+        if ($plan->is_free || $finalAmount <= 0) {
+            $newOrderId = 'FREE-'.time().'-'.auth()->id();
+
+            $newPayment = Payment::create([
+                'user_id' => auth()->id(),
+                'subscription_plan_id' => $plan->id,
+                'coupon_id' => $coupon ? $coupon->id : null,
+                'order_id' => $newOrderId,
+                'amount' => 0,
+                'status' => 'paid',
+                'payment_gateway' => 'midtrans',
+                'paid_at' => now(),
+            ]);
+
+            Subscription::updateOrCreate(
+                ['user_id' => auth()->id()],
+                [
+                    'subscription_plan_id' => $plan->id,
+                    'start_date' => now(),
+                    'end_date' => now()->addDays($plan->duration),
+                    'is_active' => true,
+                ]
+            );
+
+            $user = User::find(auth()->id());
+            $user->notify(new SubscriptionSuccessNotification($plan, $newPayment, 'paid'));
+
+            return response()->json([
+                'snap_token' => null,
+                'order_id' => $newOrderId,
+                'final_amount' => 0,
+                'discount' => $discount,
+                'coupon_code' => $coupon ? $coupon->code : null,
+                'redirect' => route('dashboard'),
+            ]);
+        }
+
+        $newOrderId = 'SUB-'.time().'-'.auth()->id();
+
+        $newPayment = Payment::create([
+            'user_id' => auth()->id(),
+            'subscription_plan_id' => $plan->id,
+            'coupon_id' => $coupon ? $coupon->id : null,
+            'order_id' => $newOrderId,
+            'amount' => $finalAmount,
+            'status' => 'pending',
+            'payment_gateway' => $paymentMethod,
+            'payment_type' => $paymentMethod === 'local' ? 'qris' : null,
+            'payment_method' => $paymentMethod,
+        ]);
+
+        if ($coupon) {
+            $coupon->increment('used_count');
+        }
+
+        if ($paymentMethod === 'local' && $finalAmount > 0) {
+            return response()->json([
+                'snap_token' => null,
+                'order_id' => $newOrderId,
+                'final_amount' => $finalAmount,
+                'discount' => $discount,
+                'coupon_code' => $coupon ? $coupon->code : null,
+                'payment_method' => 'local',
+            ]);
+        }
+
+        try {
+            $baseUrl = rtrim(config('app.url'), '/');
+            $params = [
+                'transaction_details' => [
+                    'order_id' => $newOrderId,
+                    'gross_amount' => $finalAmount,
+                ],
+                'customer_details' => [
+                    'first_name' => auth()->user()->name,
+                    'email' => auth()->user()->email,
+                ],
+                'finish_redirect_url' => $baseUrl.'/api/payment/success?order_id='.$newOrderId,
+                'pending_redirect_url' => $baseUrl.'/api/payment/pending?order_id='.$newOrderId,
+                'error_redirect_url' => $baseUrl.'/api/payment/failed?order_id='.$newOrderId,
+            ];
+
+            $snapToken = Snap::getSnapToken($params);
+
+            return response()->json([
+                'snap_token' => $snapToken,
+                'order_id' => $newOrderId,
+                'final_amount' => $finalAmount,
+                'discount' => $discount,
+                'coupon_code' => $coupon ? $coupon->code : null,
+            ]);
+        } catch (\Throwable $e) {
+            Log::error('Midtrans Snap token failed on retry', [
+                'message' => $e->getMessage(),
+                'order_id' => $newOrderId,
+            ]);
+
+            return response()->json([
+                'snap_token' => null,
+                'order_id' => $newOrderId,
                 'final_amount' => $finalAmount,
                 'discount' => $discount,
                 'coupon_code' => $coupon ? $coupon->code : null,
@@ -741,7 +884,7 @@ class SubscriptionPlanController extends Controller
             ->first();
 
         if (! $voucher) {
-            return redirect()->route('subscribe.page')->with('error', 'Voucher tidak valid atau sudah kadaluarsa.');
+            return redirect()->route('subscribe.voucher')->with('error', 'Voucher tidak valid atau sudah kadaluarsa.');
         }
 
         $plan = $voucher->plan;
@@ -750,7 +893,7 @@ class SubscriptionPlanController extends Controller
             $plan = SubscriptionPlan::where('is_free', false)->first();
 
             if (! $plan) {
-                return redirect()->route('subscribe.page')->with('error', 'Voucher tidak memiliki paket yang valid.');
+                return redirect()->route('subscribe.voucher')->with('error', 'Voucher tidak memiliki paket yang valid.');
             }
         }
 
@@ -767,7 +910,7 @@ class SubscriptionPlanController extends Controller
         $finalAmount = max(0, $plan->price - $discount);
 
         if ($finalAmount > 0) {
-            return redirect()->route('subscribe.page')->with('error', 'Voucher ini tidak memberikan potongan 100%. Silakan gunakan fitur checkout untuk menerapkan kupon ini.');
+            return redirect()->route('subscribe.voucher')->with('error', 'Voucher ini tidak memberikan potongan 100%. Silakan gunakan fitur checkout untuk menerapkan kupon ini.');
         }
 
         $orderId = 'VOUCHER-'.time().'-'.$user->id;
@@ -849,7 +992,7 @@ class SubscriptionPlanController extends Controller
         ]);
 
         // Kirim notifikasi WhatsApp ke admin
-        $whatsapp = new WhatsAppService();
+        $whatsapp = new WhatsAppService;
         $adminUser = User::role('admin')->first();
         $adminPhone = $adminUser ? $adminUser->phone : null;
         $adminPhone = $adminPhone ?: config('services.admin_whatsapp');
@@ -868,7 +1011,7 @@ class SubscriptionPlanController extends Controller
         $message .= "Paket: {$planName}\n";
         $message .= "Total: Rp {$amount}\n\n";
         $message .= "Bukti transfer telah di-upload. Silakan verifikasi dan konfirmasi di panel admin.\n";
-        $message .= "Link: " . config('app.url') . "/payments/status";
+        $message .= 'Link: '.config('app.url').'/payments/status';
 
         $whatsapp->sendToUser($adminPhone, $message);
 
@@ -934,7 +1077,7 @@ class SubscriptionPlanController extends Controller
             }
 
             // Notifikasi WhatsApp ke user bahwa pembayaran disetujui
-            $whatsapp = new WhatsAppService();
+            $whatsapp = new WhatsAppService;
             $userName = $payment->user->name ?? 'Customer';
             $planName = $payment->subscriptionPlan->name ?? '-';
             $amount = number_format($payment->amount, 0, ',', '.');
@@ -943,7 +1086,7 @@ class SubscriptionPlanController extends Controller
             $userMessage .= "Order ID: `{$payment->order_id}`\n";
             $userMessage .= "Paket: {$planName}\n";
             $userMessage .= "Total: Rp {$amount}\n\n";
-            $userMessage .= "Pembayaran Anda telah dikonfirmasi dan langganan telah diaktifkan. Terima kasih!";
+            $userMessage .= 'Pembayaran Anda telah dikonfirmasi dan langganan telah diaktifkan. Terima kasih!';
 
             if ($payment->user->phone) {
                 $whatsapp->sendToUser($payment->user->phone, $userMessage);
@@ -959,8 +1102,8 @@ class SubscriptionPlanController extends Controller
             $adminMessage .= "\nPaket: {$planName}\n";
             $adminMessage .= "Total: Rp {$amount}\n";
             $adminMessage .= "Status: LUNAS\n";
-            $adminMessage .= "Diproses oleh: " . (auth()->user()->name ?? 'Admin') . "\n";
-            $adminMessage .= "Link: " . config('app.url') . "/payments/status";
+            $adminMessage .= 'Diproses oleh: '.(auth()->user()->name ?? 'Admin')."\n";
+            $adminMessage .= 'Link: '.config('app.url').'/payments/status';
 
             $whatsapp->sendAdminNotification($adminMessage);
 
@@ -975,7 +1118,7 @@ class SubscriptionPlanController extends Controller
                 ]),
             ]);
 
-            $whatsapp = new WhatsAppService();
+            $whatsapp = new WhatsAppService;
             $userName = $payment->user->name ?? 'Customer';
             $amount = number_format($payment->amount, 0, ',', '.');
 
@@ -986,8 +1129,8 @@ class SubscriptionPlanController extends Controller
                 $adminMessage .= " ({$payment->user->email})";
             }
             $adminMessage .= "\nTotal: Rp {$amount}\n";
-            $adminMessage .= "Bukti transfer ditolak. Silakan hubungi customer.";
-            $adminMessage .= "\nLink: " . config('app.url') . "/payments/status";
+            $adminMessage .= 'Bukti transfer ditolak. Silakan hubungi customer.';
+            $adminMessage .= "\nLink: ".config('app.url').'/payments/status';
 
             $whatsapp->sendAdminNotification($adminMessage);
 

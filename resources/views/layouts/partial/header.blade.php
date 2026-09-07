@@ -176,7 +176,7 @@
                                 </a>
 
                                 <a class="dropdown-item d-flex align-items-center gap-2"
-                                    href="{{ route('subscribe.page') }}">
+                                    href="{{ route('subscribe.voucher') }}">
                                     <i class="bi bi-ticket-perforated fs-6"></i>
                                     Klaim Voucher
                                 </a>

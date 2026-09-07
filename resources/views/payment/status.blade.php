@@ -143,6 +143,7 @@
                                                     <th>Tanggal</th>
                                                     <th class="text-end">Jumlah</th>
                                                     <th class="text-center">Status</th>
+                                                    <th>Metode</th>
                                                     <th class="text-center">Aksi</th>
                                                 </tr>
                                             </thead>
@@ -161,11 +162,18 @@
                                                                 <span class="badge bg-danger">FAILED</span>
                                                             @endif
                                                         </td>
+                                                        <td>{{ $payment->paymentMethodLabel() }}</td>
                                                         <td class="text-center">
                                                             <a href="{{ route('payment.invoice', ['order_id' => $payment->order_id]) }}"
-                                                                class="btn btn-sm btn-outline-primary" target="_blank">
+                                                                class="btn btn-sm btn-outline-primary me-1" target="_blank">
                                                                 <i class="bi bi-printer"></i> Invoice
                                                             </a>
+                                                            <button class="btn btn-sm btn-success retry-payment-btn"
+                                                                data-order-id="{{ $payment->order_id }}"
+                                                                data-payment-method="{{ $payment->payment_method }}"
+                                                                data-plan-id="{{ $payment->subscriptionPlan->id ?? '' }}">
+                                                                <i class="bi bi-arrow-repeat"></i> Bayar
+                                                            </button>
                                                         </td>
                                                     </tr>
                                                 @endforeach
@@ -216,8 +224,8 @@
                                                                 <a href="{{ asset('storage/' . $payment->proof_image) }}" target="_blank" class="d-inline-block">
                                                                     <img src="{{ asset('storage/' . $payment->proof_image) }}" alt="Bukti"
                                                                         style="max-width: 80px; max-height: 80px; object-fit: cover; border-radius: 0.375rem; border: 1px solid #e0e0e0;">
-                                                            </a>
-                                                            @endif
+                                                                </a>
+                                                                @endif
                                                         </td>
                                                         <td class="text-center">
                                                             <div class="dropdown">
@@ -269,4 +277,96 @@
             </div>
         </div>
     </div>
+
+    @push('scripts')
+    <script>
+        function loadMidtransSnap() {
+            return new Promise((resolve, reject) => {
+                if (typeof snap !== 'undefined') {
+                    resolve();
+                    return;
+                }
+                const script = document.createElement('script');
+                script.src = '{{ config("midtrans.is_production") ? "https://app.midtrans.com/snap/snap.js" : "https://app.sandbox.midtrans.com/snap/snap.js" }}';
+                script.setAttribute('data-client-key', '{{ config('midtrans.client_key') }}');
+                script.onload = resolve;
+                script.onerror = reject;
+                document.body.appendChild(script);
+            });
+        }
+
+        document.querySelectorAll('.retry-payment-btn').forEach(btn => {
+            btn.addEventListener('click', async function () {
+                const orderId = this.getAttribute('data-order-id');
+                const paymentMethod = this.getAttribute('data-payment-method');
+                const planId = this.getAttribute('data-plan-id');
+
+                if (!orderId) return;
+
+                this.disabled = true;
+                const originalHtml = this.innerHTML;
+                this.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Memproses...';
+
+                try {
+                    if (paymentMethod === 'local') {
+                        window.location.href = '{{ route('payment.local.index') }}?order_id=' + encodeURIComponent(orderId);
+                        return;
+                    }
+
+                    let snapLoaded = false;
+                    if (typeof snap === 'undefined') {
+                        await loadMidtransSnap();
+                        snapLoaded = true;
+                    }
+
+                    const response = await fetch('{{ route('checkout.retry', ['orderId' => '__ORDER_ID__']) }}'.replace('__ORDER_ID__', orderId), {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        body: JSON.stringify({
+                            plan_id: planId ? parseInt(planId) : null,
+                            payment_method: 'midtrans'
+                        })
+                    });
+
+                    const data = await response.json();
+
+                    if (data.redirect) {
+                        window.location.href = data.redirect;
+                        return;
+                    }
+
+                    if (!data.snap_token) {
+                        alert(data.error || 'Gagal membuat token pembayaran. Silakan coba lagi.');
+                        return;
+                    }
+
+                    snap.pay(data.snap_token, {
+                        onSuccess: function (result) {
+                            window.location.href = "{{ config('app.url') }}/api/payment/success?order_id=" + result.order_id;
+                        },
+                        onPending: function (result) {
+                            window.location.href =
+                                "{{ config('app.url') }}/api/payment/pending?order_id=" + result.order_id;
+                        },
+                        onError: function (result) {
+                            window.location.href =
+                                "{{ config('app.url') }}/api/payment/failed?order_id=" + (result.order_id || '');
+                        },
+                        onClose: function () {
+                            console.log('Popup ditutup');
+                        }
+                    });
+                } catch (e) {
+                    alert('Terjadi kesalahan. Silakan coba lagi.');
+                } finally {
+                    this.disabled = false;
+                    this.innerHTML = originalHtml;
+                }
+            });
+        });
+    </script>
+    @endpush
 </x-app-layout>

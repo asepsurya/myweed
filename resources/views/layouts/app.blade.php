@@ -520,7 +520,7 @@
     @stack('styles')
 </head>
 
-<body class="main-bg main-bg-opac main-bg-blur adminuiux-sidebar-fill-white adminuiux-sidebar-boxed theme-gold"
+<body class="main-bg main-bg-opac main-bg-blur theme-gold @if($showSidebar) adminuiux-sidebar-fill-white adminuiux-sidebar-boxed @endif"
     data-theme="theme-gold" data-sidebarfill="adminuiux-sidebar-fill-white"
     data-headerlayout="adminuiux-header-standard" data-sidebarlayout="adminuiux-sidebar-iconic" data-bs-spy="scroll"
     data-bs-target="#list-example" data-bs-smooth-scroll="true" tabindex="0">
@@ -531,10 +531,12 @@
     <div class="adminuiux-wrap">
 
         {{-- Sidebar --}}
-        @include('layouts.partial.user_sidebar')
+        @if($showSidebar)
+            @include('layouts.partial.user_sidebar')
+        @endif
 
         {{-- Main Content --}}
-        <main class="adminuiux-content has-sidebar" onclick="contentClick()" style="padding-top: 68px;">
+        <main class="adminuiux-content @if($showSidebar) has-sidebar @endif" onclick="contentClick()" @if($showSidebar) style="padding-top: 68px;" @endif>
             <div class="container-fluid mt-4" id="main-content">
 
               

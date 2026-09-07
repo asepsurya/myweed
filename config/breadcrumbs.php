@@ -205,6 +205,11 @@ return [
         ['label' => 'Dashboard', 'icon' => 'bi-house-door', 'route' => 'dashboard'],
         ['label' => 'Paket & Harga', 'icon' => 'bi-tags'],
     ],
+    'subscribe.voucher' => [
+        ['label' => 'Dashboard', 'icon' => 'bi-house-door', 'route' => 'dashboard'],
+        ['label' => 'Paket & Harga', 'icon' => 'bi-tags', 'route' => 'subscription-plans.index'],
+        ['label' => 'Klaim Voucher', 'icon' => null],
+    ],
     'subscription-plans.create' => [
         ['label' => 'Dashboard', 'icon' => 'bi-house-door', 'route' => 'dashboard'],
         ['label' => 'Paket & Harga', 'icon' => 'bi-tags', 'route' => 'subscription-plans.index'],

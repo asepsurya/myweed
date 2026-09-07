@@ -1,4 +1,4 @@
-<x-app-layout>
+<x-app-layout :showSidebar="false">
 <div class="container py-5">
     <div class="row justify-content-center">
         <div class="col-md-6 text-center">
@@ -35,9 +35,12 @@
                     </div>
                 </div>
 
-                <a href="{{ $payment->subscriptionPlan ? route('subscribe', $payment->subscriptionPlan->id) : route('subscribe.page') }}" class="btn btn-warning btn-lg me-2">
-                    Coba Bayar Lagi
-                </a>
+                <button class="btn btn-warning btn-lg me-2 retry-payment-btn"
+                    data-order-id="{{ $payment->order_id }}"
+                    data-payment-method="{{ $payment->payment_method ?? 'midtrans' }}"
+                    data-plan-id="{{ $payment->subscriptionPlan->id ?? '' }}">
+                    <i class="bi bi-arrow-repeat me-1"></i> Coba Bayar Lagi
+                </button>
             @else
                 <a href="{{ route('subscribe.page') }}" class="btn btn-warning btn-lg">
                     Coba Bayar Lagi
@@ -51,5 +54,97 @@
         </div>
     </div>
 </div>
+
+@push('scripts')
+<script>
+    function loadMidtransSnap() {
+        return new Promise((resolve, reject) => {
+            if (typeof snap !== 'undefined') {
+                resolve();
+                return;
+            }
+            const script = document.createElement('script');
+            script.src = '{{ config("midtrans.is_production") ? "https://app.midtrans.com/snap/snap.js" : "https://app.sandbox.midtrans.com/snap/snap.js" }}';
+            script.setAttribute('data-client-key', '{{ config('midtrans.client_key') }}');
+            script.onload = resolve;
+            script.onerror = reject;
+            document.body.appendChild(script);
+        });
+    }
+
+    document.querySelectorAll('.retry-payment-btn').forEach(btn => {
+        btn.addEventListener('click', async function () {
+            const orderId = this.getAttribute('data-order-id');
+            const paymentMethod = this.getAttribute('data-payment-method');
+            const planId = this.getAttribute('data-plan-id');
+
+            if (!orderId) return;
+
+            this.disabled = true;
+            const originalHtml = this.innerHTML;
+            this.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Memproses...';
+
+            try {
+                if (paymentMethod === 'local') {
+                    window.location.href = '{{ route('payment.local.index') }}?order_id=' + encodeURIComponent(orderId);
+                    return;
+                }
+
+                let snapLoaded = false;
+                if (typeof snap === 'undefined') {
+                    await loadMidtransSnap();
+                    snapLoaded = true;
+                }
+
+                const response = await fetch('{{ route('checkout.retry', ['orderId' => '__ORDER_ID__']) }}'.replace('__ORDER_ID__', orderId), {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({
+                        plan_id: planId ? parseInt(planId) : null,
+                        payment_method: 'midtrans'
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.redirect) {
+                    window.location.href = data.redirect;
+                    return;
+                }
+
+                if (!data.snap_token) {
+                    alert(data.error || 'Gagal membuat token pembayaran. Silakan coba lagi.');
+                    return;
+                }
+
+                snap.pay(data.snap_token, {
+                    onSuccess: function (result) {
+                        window.location.href = "{{ config('app.url') }}/api/payment/success?order_id=" + result.order_id;
+                    },
+                    onPending: function (result) {
+                        window.location.href =
+                            "{{ config('app.url') }}/api/payment/pending?order_id=" + result.order_id;
+                    },
+                    onError: function (result) {
+                        window.location.href =
+                            "{{ config('app.url') }}/api/payment/failed?order_id=" + (result.order_id || '');
+                    },
+                    onClose: function () {
+                        console.log('Popup ditutup');
+                    }
+                });
+            } catch (e) {
+                alert('Terjadi kesalahan. Silakan coba lagi.');
+            } finally {
+                this.disabled = false;
+                this.innerHTML = originalHtml;
+            }
+        });
+    });
+</script>
+@endpush
 </x-app-layout>
 

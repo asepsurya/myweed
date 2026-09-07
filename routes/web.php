@@ -29,12 +29,15 @@ use App\Http\Controllers\TemplateCreatorController;
 use App\Http\Controllers\TemplateTypeController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserInvitationController;
-use App\Http\Controllers\YoutubeMusicController;
 use App\Http\Controllers\VendorPaymentController;
 use App\Http\Controllers\WeddingController;
 use App\Http\Controllers\WeedingPlanController;
+use App\Http\Controllers\YoutubeMusicController;
+use App\Models\Guest;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
+use Rap2hpoutre\LaravelLogViewer\LogViewerController;
 
 Route::get('/', [LandingController::class, 'index'])->name('landing');
 
@@ -82,14 +85,14 @@ Route::middleware(['auth'])->group(function () {
     Route::get('invitation/create', [UserInvitationController::class, 'create'])->name('invitation.create');
     Route::post('invitation/quick-create', [UserInvitationController::class, 'quickCreate'])->name('invitation.quick-create');
     Route::get('invitation/import-kontak', function () {
-        $guests = \App\Models\Guest::where('user_id', auth()->id())
+        $guests = Guest::where('user_id', auth()->id())
             ->orderBy('created_at', 'desc')
             ->get();
 
         return view('dashboard.invitation.import-kontak', compact('guests'));
     })->name('invitation.import-kontak');
 
-    Route::post('invitation/import-kontak', function (\Illuminate\Http\Request $request) {
+    Route::post('invitation/import-kontak', function (Request $request) {
         $validated = $request->validate([
             'contacts' => 'required|array|min:1',
             'contacts.*.name' => 'required|string|max:255',
@@ -100,7 +103,7 @@ Route::middleware(['auth'])->group(function () {
 
         $saved = [];
         foreach ($contacts as $contact) {
-            $saved[] = \App\Models\Guest::create([
+            $saved[] = Guest::create([
                 'user_id' => auth()->id(),
                 'name' => $contact['name'],
                 'phone' => $contact['phone'],
@@ -110,17 +113,17 @@ Route::middleware(['auth'])->group(function () {
         if ($request->wantsJson()) {
             return response()->json([
                 'success' => true,
-                'message' => count($saved) . ' kontak berhasil disimpan',
+                'message' => count($saved).' kontak berhasil disimpan',
                 'count' => count($saved),
                 'data' => $saved,
             ]);
         }
 
         return redirect()->route('invitation.import-kontak')
-            ->with('success', count($saved) . ' kontak berhasil disimpan!');
+            ->with('success', count($saved).' kontak berhasil disimpan!');
     })->name('invitation.import-kontak.store');
 
-    Route::delete('invitation/import-kontak/guest/{guest}', function (\App\Models\Guest $guest) {
+    Route::delete('invitation/import-kontak/guest/{guest}', function (Guest $guest) {
         $invitationId = $guest->invitation_id;
         $guest->delete();
 
@@ -129,7 +132,7 @@ Route::middleware(['auth'])->group(function () {
     })->name('invitation.import-kontak.destroy');
 
     Route::get('invitation/import-kontak/guests', function () {
-        $guests = \App\Models\Guest::where('user_id', auth()->id())
+        $guests = Guest::where('user_id', auth()->id())
             ->orderBy('created_at', 'desc')
             ->get(['id', 'name', 'phone']);
 
@@ -253,6 +256,7 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/rsvp/{rsvp}', [RsvpController::class, 'destroy'])->name('rsvp.destroy')->middleware('subscription');
 
     Route::get('/subscription-plans', [SubscriptionPlanController::class, 'index'])->name('subscribe.page');
+    Route::get('/subscription-plans/voucher', [SubscriptionPlanController::class, 'voucherPage'])->name('subscribe.voucher');
     Route::get('/subscription-plans/{planId}', [SubscriptionPlanController::class, 'subscribe'])->name('subscribe');
     Route::post('/subscription/cancel', [SubscriptionPlanController::class, 'cancel'])->name('subscription.cancel')->middleware('auth');
     Route::get('/payments/status', [SubscriptionPlanController::class, 'paymentStatus'])->name('payments.status');
@@ -260,6 +264,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/payment/invoice', [SubscriptionPlanController::class, 'invoice'])->name('payment.invoice');
     Route::get('/payment/invoice/pdf', [SubscriptionPlanController::class, 'invoicePdf'])->name('payment.invoice.pdf');
     Route::post('/checkout/initiate-payment', [SubscriptionPlanController::class, 'initiatePayment'])->middleware('auth')->name('checkout.initiate-payment');
+    Route::post('/checkout/retry/{orderId}', [SubscriptionPlanController::class, 'retryPayment'])->middleware('auth')->name('checkout.retry');
     Route::post('/coupons/validate', [SubscriptionPlanController::class, 'validateCoupon'])->name('coupons.validate');
     Route::post('/voucher/redeem', [SubscriptionPlanController::class, 'redeemVoucher'])->middleware('auth')->name('voucher.redeem');
 
@@ -274,7 +279,7 @@ Route::middleware(['auth'])->group(function () {
     });
 
     Route::middleware('role:admin')->prefix('admin/logs')->name('logs.')->group(function () {
-        Route::get('/', [\Rap2hpoutre\LaravelLogViewer\LogViewerController::class, 'index'])->name('index');
+        Route::get('/', [LogViewerController::class, 'index'])->name('index');
     });
 
     Route::middleware('role:admin')->prefix('admin/subscription-plans')->name('subscription-plans.')->group(function () {
