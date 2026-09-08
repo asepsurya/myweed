@@ -513,7 +513,6 @@
         }
 
         .wedding-item:hover {
-            transform: translateY(-10px);
             box-shadow: 0 25px 60px rgba(27, 42, 74, 0.12);
         }
 
@@ -609,99 +608,55 @@
             font-weight: 500;
         }
 
-        /* Responsive Mobile - 1 Item Slide Horizontal */
-        @media (max-width: 768px) {
-            .real-wedding-section {
-                padding: 70px 0;
-            }
-
-            .section-title {
-                font-size: 2rem;
-            }
-
-            .wedding-slider {
-                flex-wrap: nowrap;
-                /* Cegah turun baris */
-                overflow-x: auto;
-                /* Aktifkan swipe horizontal */
-                justify-content: flex-start;
-                /* Mulai dari kiri */
-                scroll-snap-type: x mandatory;
-                /* Snap saat geser */
-                gap: 16px;
-                padding: 10px 15px 30px;
-                /* Ruang agar tak ketabrak layar */
-                margin: 0 -15px;
-                /* Tarik ke tepi layar */
-                -webkit-overflow-scrolling: touch;
-                /* Halus di iOS */
-                scrollbar-width: none;
-                /* Sembunyikan scrollbar Firefox */
-            }
-
-            .wedding-slider::-webkit-scrollbar {
-                display: none;
-                /* Sembunyikan scrollbar Chrome/Safari */
-            }
-
-            .wedding-item {
-                flex: 0 0 85%;
-                /* Lebar 85% layar, sisanya mengintip */
-                max-width: 85%;
-                scroll-snap-align: center;
-                /* Selalu di tengah saat di swipe */
-                padding: 12px;
-            }
-
-            .couple-avatar-group {
-                height: 220px;
-            }
-
-            .avatar-1 {
-                left: 30px;
-            }
-
-            .avatar-2 {
-                right: 30px;
-            }
-        }
-
         /* ===== Wedding Slider Carousel ===== */
         .wedding-slider-wrapper {
             position: relative;
-            max-width: 1100px;
+            max-width: 1200px;
             margin: 0 auto;
+            padding: 0 60px;
+            overflow: hidden;
         }
 
         .wedding-slider {
             display: flex;
             flex-wrap: nowrap;
-            gap: 40px;
+            justify-content: flex-start;
+            gap: 30px;
             margin-top: 50px;
-            overflow: hidden;
-            scroll-behavior: smooth;
+            transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+            will-change: transform;
         }
 
         .wedding-item {
-            flex: 0 0 calc(33.333% - 27px);
-            max-width: calc(33.333% - 27px);
+            flex: 0 0 calc(33.333% - 20px);
+            max-width: calc(33.333% - 20px);
+            transition: all 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+            transform: scale(0.88);
+            opacity: 0.5;
+            filter: blur(1px);
+        }
+
+        .wedding-item.active {
+            transform: scale(1);
+            opacity: 1;
+            filter: blur(0);
         }
 
         .wedding-slider-btn {
             position: absolute;
             top: 50%;
             transform: translateY(-50%);
-            width: 44px;
-            height: 44px;
+            width: 50px;
+            height: 50px;
             border-radius: 50%;
-            border: 1px solid var(--border);
+            border: 2px solid var(--border);
             background: var(--white);
             color: var(--navy);
-            font-size: 1.2rem;
+            font-size: 1.4rem;
             cursor: pointer;
             z-index: 10;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-            transition: all 0.25s ease;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
             display: inline-flex;
             align-items: center;
             justify-content: center;
@@ -711,27 +666,28 @@
             background: var(--navy);
             color: var(--white);
             border-color: var(--navy);
-            box-shadow: 0 6px 20px rgba(27, 42, 74, 0.2);
+            transform: translateY(-50%) scale(1.1);
+            box-shadow: 0 8px 30px rgba(27, 42, 74, 0.25);
         }
 
         .wedding-slider-prev {
-            left: -20px;
+            left: 0;
         }
 
         .wedding-slider-next {
-            right: -20px;
+            right: 0;
         }
 
         .wedding-slider-dots {
             display: flex;
             justify-content: center;
-            gap: 8px;
-            margin-top: 30px;
+            gap: 10px;
+            margin-top: 40px;
         }
 
         .wedding-slider-dot {
-            width: 10px;
-            height: 10px;
+            width: 12px;
+            height: 12px;
             border-radius: 50%;
             border: none;
             background: var(--border);
@@ -742,11 +698,16 @@
 
         .wedding-slider-dot.active {
             background: var(--gold);
-            width: 28px;
-            border-radius: 10px;
+            width: 32px;
+            border-radius: 12px;
+            box-shadow: 0 0 15px rgba(198, 169, 98, 0.5);
         }
 
         @media (max-width: 768px) {
+            .wedding-slider-wrapper {
+                padding: 0 45px;
+            }
+
             .wedding-slider {
                 gap: 16px;
                 margin-top: 30px;
@@ -755,10 +716,28 @@
             .wedding-item {
                 flex: 0 0 85%;
                 max-width: 85%;
+                transform: scale(0.92);
+                opacity: 0.6;
+            }
+
+            .wedding-item.active {
+                transform: scale(1);
+                opacity: 1;
             }
 
             .wedding-slider-btn {
-                display: none;
+                width: 40px;
+                height: 40px;
+                font-size: 1.1rem;
+            }
+
+            .wedding-slider-dot {
+                width: 10px;
+                height: 10px;
+            }
+
+            .wedding-slider-dot.active {
+                width: 24px;
             }
         }
 
@@ -1624,10 +1603,7 @@
             const items = weddingSlider.querySelectorAll('.wedding-item');
 
             let currentIndex = 0;
-            let itemsPerView = 3;
             let autoScrollInterval;
-            let isDragging = false;
-            let startX, scrollLeftPos;
 
             const getItemsPerView = () => {
                 return window.innerWidth <= 768 ? 1 : 3;
@@ -1643,8 +1619,19 @@
                 const item = items[0];
                 if (!item) return 320;
                 const style = window.getComputedStyle(weddingSlider);
-                const gap = parseFloat(style.gap) || 40;
+                const gap = parseFloat(style.gap) || 30;
                 return item.offsetWidth + gap;
+            };
+
+            const updateSlider = () => {
+                const offset = -currentIndex * getItemWidth();
+                weddingSlider.style.transform = `translateX(${offset}px)`;
+
+                items.forEach((item, index) => {
+                    item.classList.toggle('active', index === currentIndex);
+                });
+
+                updateDots();
             };
 
             const updateDots = () => {
@@ -1663,9 +1650,7 @@
             const goToSlide = (index) => {
                 const totalSlides = getTotalSlides();
                 currentIndex = Math.max(0, Math.min(index, totalSlides - 1));
-                const scrollAmount = currentIndex * getItemWidth();
-                weddingSlider.scrollTo({ left: scrollAmount, behavior: 'smooth' });
-                updateDots();
+                updateSlider();
                 resetAutoScroll();
             };
 
@@ -1689,7 +1674,7 @@
 
             const startAutoScroll = () => {
                 stopAutoScroll();
-                autoScrollInterval = setInterval(nextSlide, 3000);
+                autoScrollInterval = setInterval(nextSlide, 4000);
             };
 
             const stopAutoScroll = () => {
@@ -1706,49 +1691,18 @@
 
             weddingSlider.addEventListener('mouseenter', stopAutoScroll);
             weddingSlider.addEventListener('mouseleave', startAutoScroll);
-            weddingSlider.addEventListener('touchstart', stopAutoScroll, { passive: true });
-            weddingSlider.addEventListener('touchend', () => setTimeout(startAutoScroll, 3000));
-
-            weddingSlider.addEventListener('scroll', () => {
-                const itemWidth = getItemWidth();
-                const newIndex = Math.round(weddingSlider.scrollLeft / itemWidth);
-                if (newIndex !== currentIndex) {
-                    currentIndex = newIndex;
-                    updateDots();
-                }
-            });
-
-            weddingSlider.addEventListener('mousedown', (e) => {
-                isDragging = true;
-                startX = e.pageX - weddingSlider.offsetLeft;
-                scrollLeftPos = weddingSlider.scrollLeft;
-                stopAutoScroll();
-            });
-
-            weddingSlider.addEventListener('mouseleave', () => {
-                if (isDragging) {
-                    isDragging = false;
-                    setTimeout(startAutoScroll, 2000);
-                }
-            });
-
-            weddingSlider.addEventListener('mouseup', () => {
-                if (isDragging) {
-                    isDragging = false;
-                    setTimeout(startAutoScroll, 2000);
-                }
-            });
-
-            weddingSlider.addEventListener('mousemove', (e) => {
-                if (!isDragging) return;
-                e.preventDefault();
-                const x = e.pageX - weddingSlider.offsetLeft;
-                const walk = (x - startX) * 1.5;
-                weddingSlider.scrollLeft = scrollLeftPos - walk;
-            });
 
             updateDots();
+            updateSlider();
             startAutoScroll();
+
+            let resizeTimeout;
+            window.addEventListener('resize', () => {
+                clearTimeout(resizeTimeout);
+                resizeTimeout = setTimeout(() => {
+                    updateSlider();
+                }, 150);
+            });
         }
     </script>
 

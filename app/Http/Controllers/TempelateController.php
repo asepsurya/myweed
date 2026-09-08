@@ -204,42 +204,29 @@ class TempelateController extends Controller
 
     public function preview($slug, $id, Request $request)
     {
-        $invitation = Invitation::with([
-            'template',
-            'galleries',
-            'rsvps',
-        ])
-            ->where('slug', $slug)
-            ->first();
-
-        if (! $invitation) {
-            try {
-                $invitation = Invitation::create([
-                    'user_id' => 1,
-                    'template_id' => $id,
-                    'slug' => $slug,
-                    'is_default' => true,
-                    'groom_name' => 'Romeo',
-                    'groom_nickname' => 'Romeo',
-                    'groom_father_name' => 'Tuan Montague',
-                    'groom_mother_name' => 'Nyonya Montague',
-                    'bride_name' => 'Juliet',
-                    'bride_nickname' => 'Juliet',
-                    'bride_father_name' => 'Tuan Capulet',
-                    'bride_mother_name' => 'Nyonya Capulet',
-                    'wedding_date' => date('Y-m-d'),
-                    'enable_rsvp' => true,
-                    'enable_gift' => true,
-                    'enable_gallery' => true,
-                    'enable_music' => true,
-                    'enable_video' => true,
-                    'enable_love_story' => true,
-                ]);
-            } catch (\Throwable $e) {
-                \Log::error('Template preview create failed: ' . $e->getMessage());
-                abort(500, 'Gagal memuat preview template.');
-            }
-        }
+        $invitation = Invitation::updateOrCreate(
+            ['slug' => $slug],
+            [
+                'user_id' => 1,
+                'template_id' => $id,
+                'is_default' => true,
+                'groom_name' => 'Romeo',
+                'groom_nickname' => 'Romeo',
+                'groom_father_name' => 'Tuan Montague',
+                'groom_mother_name' => 'Nyonya Montague',
+                'bride_name' => 'Juliet',
+                'bride_nickname' => 'Juliet',
+                'bride_father_name' => 'Tuan Capulet',
+                'bride_mother_name' => 'Nyonya Capulet',
+                'wedding_date' => date('Y-m-d'),
+                'enable_rsvp' => true,
+                'enable_gift' => true,
+                'enable_gallery' => true,
+                'enable_music' => true,
+                'enable_video' => true,
+                'enable_love_story' => true,
+            ]
+        );
 
         $template = Template::findOrFail($id);
         $template->increment('views_count');

@@ -37,6 +37,7 @@ class LandingController extends Controller
         $templates = $query->get();
 
         $invitations = Invitation::with(['template', 'galleries'])
+            ->where('status', Invitation::STATUS_PUBLISHED)
             ->latest()
             ->take(12)
             ->get();
