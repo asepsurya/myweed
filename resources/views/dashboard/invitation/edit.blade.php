@@ -432,11 +432,11 @@
 
             /* --- Floating Nav Wrapper --- */
             .mobile-next-prev-wrap {
-                
+
                 flex-shrink: 0;
                 padding: 0.5rem 0.875rem calc(1.25rem + env(safe-area-inset-bottom, 0px));
                 background: transparent;
-                margin-bottom: 1.5rem;
+                margin-bottom: 1.9rem;
             }
 
             .mobile-next-prev {

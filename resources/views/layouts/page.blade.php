@@ -185,6 +185,68 @@
         .social-btn:hover { background: var(--navy); color: var(--white); transform: translateY(-5px) rotate(5deg); box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); }
         .footer-bottom { border-top: 1px solid var(--border); margin-top: 60px; padding-top: 30px; text-align: center; color: var(--text-muted); font-size: 0.85rem; }
 
+        /* ===== Midtrans Security Badge ===== */
+        .midtrans-security {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 18px;
+            border-radius: 50px;
+            background: #f0f7ff;
+            border: 1px solid #cce5ff;
+            color: #004085;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .midtrans-security:hover {
+            background: #e0f0ff;
+            border-color: #0068FF;
+            color: #0068FF;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 104, 255, 0.15);
+        }
+
+        .midtrans-security .midtrans-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: #0068FF;
+            color: #fff;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        .midtrans-security .midtrans-logo-text {
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            color: #0068FF;
+        }
+
+        .midtrans-security .midtrans-label {
+            font-weight: 500;
+            color: #004085;
+        }
+
+        @media (max-width: 768px) {
+            .midtrans-security {
+                font-size: 0.75rem;
+                padding: 8px 14px;
+                gap: 6px;
+            }
+
+            .midtrans-security .midtrans-icon {
+                width: 24px;
+                height: 24px;
+                font-size: 12px;
+            }
+        }
+
         /* ===== WhatsApp Float: provided by components.wa-chat (floating round button) ===== */
 
         @media (max-width: 991px) {
@@ -292,6 +354,16 @@
             </div>
             <div class="footer-bottom">
                 <p>&copy; {{ date('Y') }} RuangUndang Digital Invitation. Dibuat dengan <i class="bi bi-heart-fill text-danger"></i> di Indonesia.</p>
+            </div>
+
+            <div class="text-center mt-4">
+                <a href="https://midtrans.com" target="_blank" rel="noopener noreferrer" class="midtrans-security" title="Pembayaran aman diproses oleh Midtrans">
+                    <span class="midtrans-icon">
+                        <i class="bi bi-shield-lock-fill"></i>
+                    </span>
+                    <span class="midtrans-label">Pembayaran Aman</span>
+                    <span class="midtrans-logo-text">Midtrans</span>
+                </a>
             </div>
         </div>
     </footer>

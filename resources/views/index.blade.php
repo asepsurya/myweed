@@ -1056,6 +1056,68 @@
             font-size: 0.85rem;
         }
 
+        /* ===== Midtrans Security Badge ===== */
+        .midtrans-security {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 18px;
+            border-radius: 50px;
+            background: #f0f7ff;
+            border: 1px solid #cce5ff;
+            color: #004085;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .midtrans-security:hover {
+            background: #e0f0ff;
+            border-color: #0068FF;
+            color: #0068FF;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 104, 255, 0.15);
+        }
+
+        .midtrans-security .midtrans-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: #0068FF;
+            color: #fff;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        .midtrans-security .midtrans-logo-text {
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            color: #0068FF;
+        }
+
+        .midtrans-security .midtrans-label {
+            font-weight: 500;
+            color: #004085;
+        }
+
+        @media (max-width: 768px) {
+            .midtrans-security {
+                font-size: 0.75rem;
+                padding: 8px 14px;
+                gap: 6px;
+            }
+
+            .midtrans-security .midtrans-icon {
+                width: 24px;
+                height: 24px;
+                font-size: 12px;
+            }
+        }
+
         /* Tag Wrapper Animation */
         .tag-wrapper {
             width: 100%;
@@ -1405,7 +1467,8 @@
             </div>
 
             <div class="template-grid">
-                @foreach($templates as $template)
+                @php $featuredTemplates = $templates->take(4); @endphp
+                @foreach($featuredTemplates as $template)
                     <div class="template-card reveal">
                         <div class="template-img-container">
                             <img src="{{ template_thumbnail_url($template, $template->updated_at->timestamp) }}"
@@ -1442,12 +1505,17 @@
                 @endforeach
             </div>
 
-            @if($templates->isEmpty())
+            @if($featuredTemplates->isEmpty())
                 <div class="text-center py-5">
                     <i class="bi bi-search text-muted display-1 opacity-25"></i>
                     <h3 class="text-muted mt-3">Tema tidak ditemukan</h3>
                     <p>Coba gunakan kata kunci lain atau lihat semua tema.</p>
-                    <a href="{{ route('landing') }}" class="btn btn-outline-dark mt-2 rounded-pill px-4">Lihat Semua
+                    <a href="{{ route('pages.cari-tema') }}" class="btn btn-outline-dark mt-2 rounded-pill px-4">Lihat Semua
+                        Tema</a>
+                </div>
+            @else
+                <div class="text-center mt-4">
+                    <a href="{{ route('pages.cari-tema') }}" class="btn btn-outline-dark rounded-pill px-4">Lihat Semua
                         Tema</a>
                 </div>
             @endif
@@ -1511,11 +1579,7 @@
                         <li><a href="{{ route('pages.faq') }}">Pertanyaan (FAQ)</a></li>
                         <li><a href="{{ route('pages.syarat-ketentuan') }}">Syarat & Ketentuan</a></li>
                         <li><a href="{{ route('pages.kebijakan-privasi') }}">Kebijakan Privasi</a></li>
-                        <li><a href="https://www.freewebsubmission.com">
-                                <img src="https://www.freewebsubmission.com/images/fwsbutton10.gif" width="88"
-                                    height="31" border="0"
-                                    alt="Submit Your Site To The Web's Top 50 Search Engines for Free!"></a>
-                        </li>
+                       
                     </ul>
                 </div>
             </div>
@@ -1523,6 +1587,16 @@
                 <p>&copy; 2024 RuangUndang Digital Invitation. Dibuat dengan <i
                         class="bi bi-heart-fill text-danger"></i>
                     di Indonesia.</p>
+            </div>
+
+            <div class="text-center mt-4">
+                <a href="https://midtrans.com" target="_blank" rel="noopener noreferrer" class="midtrans-security" title="Pembayaran aman diproses oleh Midtrans">
+                    <span class="midtrans-icon">
+                        <i class="bi bi-shield-lock-fill"></i>
+                    </span>
+                    <span class="midtrans-label">Pembayaran Aman</span>
+                    <span class="midtrans-logo-text">Midtrans</span>
+                </a>
             </div>
         </div>
     </footer>

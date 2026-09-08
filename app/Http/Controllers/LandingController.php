@@ -16,7 +16,8 @@ class LandingController extends Controller
         $realCategories = Category::orderBy('name')->get();
 
         $query = Template::where('is_active', true)
-            ->with('category', 'templateType');
+            ->with('category', 'templateType')
+            ->orderByDesc('id');
 
         if ($request->has('search')) {
             $search = $request->search;
@@ -171,7 +172,8 @@ class LandingController extends Controller
         $realCategories = Category::orderBy('name')->get();
 
         $query = Template::where('is_active', true)
-            ->with('category', 'templateType');
+            ->with('category', 'templateType')
+            ->orderByDesc('id');
 
         if ($request->has('search')) {
             $search = $request->search;
