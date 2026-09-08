@@ -1,4 +1,4 @@
-<x-app-layout>
+﻿<x-app-layout>
     <style>
         .readcrumb-card {
             display: none !important;
@@ -432,9 +432,11 @@
 
             /* --- Floating Nav Wrapper --- */
             .mobile-next-prev-wrap {
+                
                 flex-shrink: 0;
-                padding: 0.5rem 0.875rem calc(0.75rem + env(safe-area-inset-bottom, 0px));
+                padding: 0.5rem 0.875rem calc(1.25rem + env(safe-area-inset-bottom, 0px));
                 background: transparent;
+                margin-bottom: 1.5rem;
             }
 
             .mobile-next-prev {
@@ -442,7 +444,7 @@
                 align-items: center;
                 justify-content: space-between;
                 gap: 0.5rem;
-                padding: 0.6rem 0.6rem;
+                padding: 0.6rem;
                 background: var(--bs-card-bg);
                 border: 1px solid rgba(var(--bs-border-color-rgb, 0,0,0), 0.1);
                 border-radius: 1.5rem;
@@ -455,30 +457,17 @@
             }
 
             .mobile-next-prev .btn-mobile-nav {
-                flex: 1;
-                min-width: 0;
                 display: inline-flex;
                 align-items: center;
                 justify-content: center;
-                gap: 0.2rem;
-                height: 36px;
-                border-radius: 1rem;
-                font-size: 11px;
-                font-weight: 600;
+                width: 38px;
+                height: 38px;
+                border-radius: 0.75rem;
+                padding: 0;
                 transition: all 0.18s ease;
-                letter-spacing: 0.01em;
-                padding: 0 0.5rem;
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
             }
 
             .btn-mobile-prev {
-                flex: 0 0 auto;
-                width: auto;
-                min-width: 0;
-                max-width: 45%;
-                padding: 0 0.5rem;
                 background: var(--bs-tertiary-bg);
                 border: 1px solid var(--bs-border-color);
                 color: var(--bs-secondary-color);
@@ -494,8 +483,6 @@
             }
 
             .btn-mobile-next {
-                flex: 1 1 auto;
-                min-width: 0;
                 background: linear-gradient(135deg, #b8931f 0%, #e2c47a 55%, #b8931f 100%);
                 background-size: 200% 200%;
                 border: none;
@@ -915,12 +902,11 @@
                 <div class="mobile-next-prev-wrap">
                     <div class="mobile-next-prev">
 
-                        {{-- Prev: pill with icon + text --}}
+                        {{-- Prev: icon only --}}
                         <button type="button" id="mobilePrevBtn"
                             class="btn btn-mobile-nav btn-mobile-prev"
                             title="Sebelumnya">
-                            <i class="bi bi-chevron-left" style="font-size:12px;"></i>
-                            Sebelumnya
+                            <i class="bi bi-chevron-left" style="font-size:14px;"></i>
                         </button>
 
                         {{-- Step info center --}}
@@ -929,11 +915,10 @@
                             <div id="mobileStepDots" class="mobile-step-dots"></div>
                         </div>
 
-                        {{-- Next: pill with text + icon --}}
+                        {{-- Next: icon only --}}
                         <button type="button" id="mobileNextBtn"
                             class="btn btn-mobile-nav btn-mobile-next">
-                            Selanjutnya
-                            <i class="bi bi-chevron-right" style="font-size:12px;"></i>
+                            <i class="bi bi-chevron-right" style="font-size:14px;"></i>
                         </button>
 
                     </div>
