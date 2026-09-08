@@ -338,7 +338,8 @@
 
             .builder-wrapper {
                 flex-direction: column;
-                height: 100vh !important;
+                height: 100vh;
+                height: 100dvh;
                 width: 100vw !important;
                 margin: 0 !important;
                 border-radius: 0 !important;
@@ -456,6 +457,18 @@
             }
 
             #partnerModal .modal-backdrop {
+                z-index: 10000 !important;
+            }
+
+            #youtubeLightboxModal,
+            #youtubeLightboxModal .modal-dialog,
+            #pixabayModal,
+            #pixabayModal .modal-dialog {
+                z-index: 10001 !important;
+            }
+
+            #youtubeLightboxModal .modal-backdrop,
+            #pixabayModal .modal-backdrop {
                 z-index: 10000 !important;
             }
         }
@@ -1933,6 +1946,34 @@
             window.addEventListener('resize', () => {
                 clearTimeout(resizeTimer);
                 resizeTimer = setTimeout(scaleLivePreview, 100);
+            });
+
+            if (window.innerWidth <= 991) {
+                const builderWrapper = document.querySelector('.builder-wrapper');
+                if (builderWrapper) {
+                    builderWrapper.style.height = window.innerHeight + 'px';
+                    document.body.style.overflow = 'hidden';
+                }
+            }
+
+            window.addEventListener('resize', () => {
+                if (window.innerWidth <= 991) {
+                    const builderWrapper = document.querySelector('.builder-wrapper');
+                    if (builderWrapper) {
+                        builderWrapper.style.height = window.innerHeight + 'px';
+                    }
+                }
+            });
+
+            window.addEventListener('orientationchange', () => {
+                setTimeout(() => {
+                    if (window.innerWidth <= 991) {
+                        const builderWrapper = document.querySelector('.builder-wrapper');
+                        if (builderWrapper) {
+                            builderWrapper.style.height = window.innerHeight + 'px';
+                        }
+                    }
+                }, 100);
             });
         });
 
