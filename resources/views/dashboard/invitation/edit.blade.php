@@ -1,5 +1,8 @@
 <x-app-layout>
     <style>
+        .readcrumb-card {
+            display: none !important;
+        }
         /* =============================================
            LAYOUT & BUILDER WRAPPER
         ============================================= */
@@ -51,6 +54,7 @@
             display: flex;
             flex-direction: column;
             overflow: hidden;
+            min-height: 0;
         }
 
         [data-theme=dark] .sidebar-content-pane {
@@ -404,8 +408,15 @@
                 flex: 1;
                 overflow-y: auto;
                 min-height: 0;
-                padding: 1.25rem 1rem !important;
+                padding: 1.25rem 1rem 1rem !important;
                 background: rgba(var(--bs-tertiary-bg-rgb), 0.3);
+            }
+
+            .sidebar-content-pane {
+                overflow: hidden;
+                padding: 0 !important;
+                display: flex;
+                flex-direction: column;
             }
 
             .form-control,
@@ -419,27 +430,132 @@
                 font-size: 13px !important;
             }
 
+            /* --- Floating Nav Wrapper --- */
+            .mobile-next-prev-wrap {
+                flex-shrink: 0;
+                padding: 0.5rem 0.875rem calc(0.75rem + env(safe-area-inset-bottom, 0px));
+                background: transparent;
+            }
+
             .mobile-next-prev {
                 display: flex !important;
                 align-items: center;
                 justify-content: space-between;
                 gap: 0.5rem;
-                padding: 0.75rem;
+                padding: 0.6rem 0.6rem;
                 background: var(--bs-card-bg);
-                border-top: 1px solid var(--bs-border-color);
+                border: 1px solid rgba(var(--bs-border-color-rgb, 0,0,0), 0.1);
+                border-radius: 1.5rem;
+                box-shadow:
+                    0 4px 6px -1px rgba(0,0,0,0.07),
+                    0 10px 28px -4px rgba(0,0,0,0.10),
+                    0 0 0 1px rgba(255,255,255,0.04);
+                backdrop-filter: blur(16px);
+                -webkit-backdrop-filter: blur(16px);
             }
 
-            .mobile-next-prev .btn {
+            .mobile-next-prev .btn-mobile-nav {
                 flex: 1;
+                min-width: 0;
                 display: inline-flex;
                 align-items: center;
                 justify-content: center;
+                gap: 0.2rem;
+                height: 36px;
+                border-radius: 1rem;
+                font-size: 11px;
+                font-weight: 600;
+                transition: all 0.18s ease;
+                letter-spacing: 0.01em;
+                padding: 0 0.5rem;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
             }
 
-            .mobile-next-prev #mobileTabLabel {
+            .btn-mobile-prev {
                 flex: 0 0 auto;
-                text-align: center;
-                min-width: 50px;
+                width: auto;
+                min-width: 0;
+                max-width: 45%;
+                padding: 0 0.5rem;
+                background: var(--bs-tertiary-bg);
+                border: 1px solid var(--bs-border-color);
+                color: var(--bs-secondary-color);
+            }
+
+            .btn-mobile-prev:active:not(:disabled) {
+                transform: scale(0.93);
+            }
+
+            .btn-mobile-prev:disabled {
+                opacity: 0.25;
+                cursor: not-allowed;
+            }
+
+            .btn-mobile-next {
+                flex: 1 1 auto;
+                min-width: 0;
+                background: linear-gradient(135deg, #b8931f 0%, #e2c47a 55%, #b8931f 100%);
+                background-size: 200% 200%;
+                border: none;
+                color: #fff;
+                text-shadow: 0 1px 2px rgba(0,0,0,0.18);
+                box-shadow: 0 3px 12px rgba(198,169,98,0.40);
+            }
+
+            .btn-mobile-next:active:not(:disabled) {
+                transform: scale(0.96);
+                box-shadow: 0 2px 6px rgba(198,169,98,0.3);
+            }
+
+            .btn-mobile-next:disabled {
+                opacity: 0.3;
+                cursor: not-allowed;
+                box-shadow: none;
+            }
+
+            .mobile-step-info {
+                flex: 0 0 auto;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 4px;
+                padding: 0 0.25rem;
+            }
+
+            .mobile-step-label {
+                font-size: 11px;
+                font-weight: 700;
+                color: var(--bs-body-color);
+                letter-spacing: 0.03em;
+                text-transform: uppercase;
+                white-space: nowrap;
+                max-width: 100px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            .mobile-step-dots {
+                display: flex;
+                align-items: center;
+                gap: 4px;
+            }
+
+            .mobile-step-dots .dot {
+                width: 5px;
+                height: 5px;
+                border-radius: 50%;
+                background: var(--bs-border-color);
+                transition: all 0.22s cubic-bezier(0.34,1.56,0.64,1);
+                flex-shrink: 0;
+            }
+
+            .mobile-step-dots .dot.active {
+                width: 18px;
+                border-radius: 4px;
+                background: linear-gradient(90deg, #c6a962, #e2c47a);
+                box-shadow: 0 0 6px rgba(198,169,98,0.5);
             }
 
             #cropModal,
@@ -464,12 +580,7 @@
             #youtubeLightboxModal .modal-dialog,
             #pixabayModal,
             #pixabayModal .modal-dialog {
-                z-index: 10001 !important;
-            }
-
-            #youtubeLightboxModal .modal-backdrop,
-            #pixabayModal .modal-backdrop {
-                z-index: 10000 !important;
+                z-index: 2147483647 !important;
             }
         }
 
@@ -801,11 +912,31 @@
                     </form>
                 </div>
 
-                <div class="mobile-next-prev">
-                    <button type="button" id="mobilePrevBtn"
-                        class="btn btn-outline-secondary btn-sm">Sebelumnya</button>
-                    <span id="mobileTabLabel" class="small fw-semibold text-muted">Tema</span>
-                    <button type="button" id="mobileNextBtn" class="btn btn-sm btn-builder-next">Selanjutnya</button>
+                <div class="mobile-next-prev-wrap">
+                    <div class="mobile-next-prev">
+
+                        {{-- Prev: pill with icon + text --}}
+                        <button type="button" id="mobilePrevBtn"
+                            class="btn btn-mobile-nav btn-mobile-prev"
+                            title="Sebelumnya">
+                            <i class="bi bi-chevron-left" style="font-size:12px;"></i>
+                            Sebelumnya
+                        </button>
+
+                        {{-- Step info center --}}
+                        <div class="mobile-step-info">
+                            <span id="mobileTabLabel" class="mobile-step-label">Tema</span>
+                            <div id="mobileStepDots" class="mobile-step-dots"></div>
+                        </div>
+
+                        {{-- Next: pill with text + icon --}}
+                        <button type="button" id="mobileNextBtn"
+                            class="btn btn-mobile-nav btn-mobile-next">
+                            Selanjutnya
+                            <i class="bi bi-chevron-right" style="font-size:12px;"></i>
+                        </button>
+
+                    </div>
                 </div>
             </div>
 
@@ -998,13 +1129,13 @@
     </div>
 
     <!-- YOUTUBE LIGHTBOX MODAL -->
-    <div class="modal fade" id="youtubeLightboxModal" tabindex="-1">
-        <div class="modal-dialog modal-xl modal-dialog-centered">
-            <div class="modal-content border-0 shadow-lg rounded-4 bg-black">
+    <div class="modal fade" id="youtubeLightboxModal" tabindex="-1" aria-hidden="true" style="position: fixed;">
+        <div class="modal-dialog modal-xl modal-dialog-centered" style="z-index: 2147483647;">
+            <div class="modal-content border-0 shadow-lg rounded-4 bg-black" style="z-index: 2147483647;">
                 <div class="modal-body p-0 position-relative" style="background:#000;">
-                    <button type="button" class="btn btn-close btn-close-white position-absolute top-0 end-0 m-3 z-3" data-bs-dismiss="modal" aria-label="Close"></button>
-                    <div style="position:relative; padding-bottom:56.25%; height:0; overflow:hidden; background:#000;">
-                        <iframe id="youtubeLightboxIframe" src="" frameborder="0" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen style="position:absolute; top:0; left:0; width:100%; height:100%;"></iframe>
+                    <button type="button" class="btn btn-close btn-close-white position-absolute top-0 end-0 m-3" style="z-index: 2147483647; pointer-events: auto; font-size: 2rem; width: 50px; height: 50px;" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <div id="youtubeIframeWrap" style="position:relative; padding-bottom:56.25%; height:0; overflow:hidden; background:#000;">
+                        <iframe id="youtubeLightboxIframe" src="" frameborder="0" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen style="position:absolute; top:0; left:0; width:100%; height:100%; pointer-events: auto;"></iframe>
                     </div>
                 </div>
             </div>
@@ -1019,12 +1150,43 @@
         let galleryFiles = [];
 
         window.openYoutubeLightbox = function(youtubeId, title) {
-            const modal = bootstrap.Modal.getInstance(document.getElementById('youtubeLightboxModal')) || new bootstrap.Modal(document.getElementById('youtubeLightboxModal'));
+            const modalEl = document.getElementById('youtubeLightboxModal');
             const iframe = document.getElementById('youtubeLightboxIframe');
             if (youtubeId) {
                 iframe.src = 'https://www.youtube.com/embed/' + youtubeId + '?autoplay=1&rel=0&modestbranding=1';
             }
+
+            if (window.innerWidth <= 991) {
+                const builderWrapper = document.querySelector('.builder-wrapper');
+                if (builderWrapper) {
+                    builderWrapper.style.pointerEvents = 'none';
+                }
+            }
+
+            const modal = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl, {
+                backdrop: true,
+                keyboard: true,
+                focus: true
+            });
             modal.show();
+
+            const fixBackdrop = () => {
+                const backdrop = document.querySelector('.modal-backdrop');
+                if (backdrop) {
+                    backdrop.style.zIndex = '2147483646';
+                }
+            };
+
+            modalEl.addEventListener('shown.bs.modal', fixBackdrop, { once: true });
+
+            const restoreBuilder = () => {
+                const builderWrapper = document.querySelector('.builder-wrapper');
+                if (builderWrapper) {
+                    builderWrapper.style.pointerEvents = '';
+                }
+            };
+
+            modalEl.addEventListener('hidden.bs.modal', restoreBuilder, { once: true });
         };
 
         document.getElementById('youtubeLightboxModal')?.addEventListener('hidden.bs.modal', function () {
@@ -1070,6 +1232,24 @@
         function updateMobileTabLabel(tabId) {
             const label = document.getElementById('mobileTabLabel');
             if (label && tabId && tabLabels[tabId]) label.textContent = tabLabels[tabId];
+
+            // Render step dots
+            const dotsContainer = document.getElementById('mobileStepDots');
+            if (dotsContainer && tabOrder.length) {
+                const currentIdx = tabOrder.indexOf(tabId);
+                dotsContainer.innerHTML = tabOrder.map(function(_, i) {
+                    return '<span class="dot' + (i === currentIdx ? ' active' : '') + '"></span>';
+                }).join('');
+            }
+
+            // Update Prev/Next button disabled state
+            const prevBtn = document.getElementById('mobilePrevBtn');
+            const nextBtn = document.getElementById('mobileNextBtn');
+            if (prevBtn && nextBtn && tabOrder.length) {
+                const idx = tabOrder.indexOf(tabId);
+                prevBtn.disabled = idx <= 0;
+                nextBtn.disabled = idx >= tabOrder.length - 1;
+            }
         }
 
         function getCurrentTabId() {
@@ -1078,7 +1258,7 @@
         }
 
         function goToTab(tabId) {
-            const link = document.querySelector(`.nav-vertical-link[data-tab="${tabId}"]`);
+            const link = document.querySelector('.nav-vertical-link[data-tab="' + tabId + '"]');
             if (link) link.click();
         }
 
