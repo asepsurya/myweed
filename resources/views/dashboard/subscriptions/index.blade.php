@@ -467,7 +467,7 @@
 
         {{-- ================= UPGRADE / GANTI PAKET ================= --}}
         <div class="container upgrade-section">
-            <div class="premium-card status-card">
+            <div class="premium-card">
                 <div class="status-icon admin">
                     <i class="bi bi-arrow-repeat"></i>
                 </div>
