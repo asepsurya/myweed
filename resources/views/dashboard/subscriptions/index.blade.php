@@ -603,13 +603,25 @@
             <div class="row row-cols-1 row-cols-md-3 g-4 align-items-stretch justify-content-center">
                 @foreach($plans as $plan)
                     <div class="col">
+                        
                         <div class="premium-card pricing-card {{ $plan->slug === 'pro' ? 'popular' : '' }}">
                             @if($plan->slug === 'pro')
                                 <div class="badge-popular">Paling Populer</div>
                             @endif
 
                             <div class="plan-name">{{ $plan->name }}</div>
-                            
+                              @if(!$plan->is_free && $plan->original_price && $plan->original_price > $plan->price)
+                                    <div class="d-flex align-items-center justify-content-center gap-2 mb-1">
+                                        <span class="text-muted text-decoration-line-through small">
+                                            Rp {{ number_format($plan->original_price, 0, ',', '.') }}
+                                        </span>
+                                        @if($plan->badge_text)
+                                            <span class="badge bg-danger-subtle text-danger px-2 py-1" style="font-size: 0.65rem;">
+                                                <i class="bi bi-fire me-1"></i>{{ $plan->badge_text }}
+                                            </span>
+                                        @endif
+                                    </div>
+                                @endif
                             <div class="plan-price">
                                 @if($plan->price > 0)
                                     Rp {{ number_format($plan->price, 0, ',', '.') }}
@@ -656,7 +668,7 @@
             </div>
 
             <!-- Guarantee Section -->
-            <div class="guarantee-box">
+            <div class="guarantee-box w-full">
                 <div class="guarantee-icon">
                     <i class="bi bi-shield-check"></i>
                 </div>

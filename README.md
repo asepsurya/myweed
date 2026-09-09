@@ -166,8 +166,10 @@ Midtrans menggunakan **Notification URL** untuk mengirim status pembayaran secar
 2. Buka **Settings** > **Configuration**
 3. Pada bagian **Payment Notification**, isi URL:
     ```
-    https://yourdomain.com/payment/notification
+    https://yourdomain.com/api/midtrans/callback
     ```
+
+**Catatan:** Saat ini URL ini sudah diset otomatis di setiap transaksi Snap token, jadi meskipun ada ketidakcocokan pengaturan di dashboard Midtrans, callback tetap dikirim ke endpoint yang benar.
 4. Atau bisa diatur di setiap transaksi Snap token
 
 **Catatan:** Midtrans mengirim POST request ke URL ini dengan parameter `signature_key` untuk verifikasi keamanan.

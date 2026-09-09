@@ -391,6 +391,7 @@ class SubscriptionPlanController extends Controller
                 'finish_redirect_url' => $baseUrl.'/api/payment/success?order_id='.$orderId,
                 'pending_redirect_url' => $baseUrl.'/api/payment/pending?order_id='.$orderId,
                 'error_redirect_url' => $baseUrl.'/api/payment/failed?order_id='.$orderId,
+                'notification_url' => $baseUrl.'/api/midtrans/callback',
             ];
 
             $snapToken = Snap::getSnapToken($params);
@@ -530,6 +531,7 @@ class SubscriptionPlanController extends Controller
                 'finish_redirect_url' => $baseUrl.'/api/payment/success?order_id='.$newOrderId,
                 'pending_redirect_url' => $baseUrl.'/api/payment/pending?order_id='.$newOrderId,
                 'error_redirect_url' => $baseUrl.'/api/payment/failed?order_id='.$newOrderId,
+                'notification_url' => $baseUrl.'/api/midtrans/callback',
             ];
 
             $snapToken = Snap::getSnapToken($params);
@@ -669,6 +671,7 @@ class SubscriptionPlanController extends Controller
                 'finish_redirect_url' => $baseUrl.'/api/payment/success?order_id='.$orderId,
                 'pending_redirect_url' => $baseUrl.'/api/payment/pending?order_id='.$orderId,
                 'error_redirect_url' => $baseUrl.'/api/payment/failed?order_id='.$orderId,
+                'notification_url' => $baseUrl.'/api/midtrans/callback',
             ];
 
             $snapToken = Snap::getSnapToken($params);
