@@ -1,3 +1,4 @@
+@if($active ?? false)
 <style>
     .auto-scroll-btn {
         position: fixed;
@@ -52,7 +53,6 @@
 
 <button type="button" id="autoScrollBtn" class="auto-scroll-btn" title="Auto Scroll" aria-label="Toggle Auto Scroll">
     <svg id="scrollIcon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-        <!-- Play / Scroll Down Icon -->
         <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 13.5L7.5 11l1.42-1.41L12 12.67l3.08-3.08L16.5 11 12 15.5z"/>
     </svg>
 </button>
@@ -64,21 +64,16 @@
         let isScrolling = false;
         let scrollAnimationId = null;
 
-        // Path Icon untuk Play (Mulai Scroll)
         const playPath = "M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 13.5L7.5 11l1.42-1.41L12 12.67l3.08-3.08L16.5 11 12 15.5z";
-        // Path Icon untuk Pause (Berhenti Scroll)
         const pausePath = "M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 12H9V10h2v4zm4 0h-2V10h2v4z";
 
         let scrollableElements = [];
 
         function findScrollableElements() {
-            scrollableElements = [window]; // Default
-            
-            // Cari elemen wrapper yang mungkin digunakan sebagai scroll container di template tertentu
+            scrollableElements = [window];
             const elements = document.querySelectorAll('*');
             for (let i = 0; i < elements.length; i++) {
                 const el = elements[i];
-                // Fokus pada elemen besar (container utama)
                 if (el.clientHeight > 200 && el.scrollHeight > el.clientHeight) {
                     const style = window.getComputedStyle(el);
                     if (style.overflowY === 'auto' || style.overflowY === 'scroll') {
@@ -90,16 +85,12 @@
 
         function step() {
             if (!isScrolling) return;
-            
             let didScroll = false;
-            
-            // Scroll ke semua elemen yang bisa di-scroll (window + container)
             for (let i = 0; i < scrollableElements.length; i++) {
                 const el = scrollableElements[i];
                 if (el === window) {
                     const before = window.scrollY;
                     window.scrollBy(0, 1);
-                    // Cek desimal untuk DPI tinggi
                     if (Math.abs(window.scrollY - before) > 0.1) didScroll = true;
                 } else {
                     const before = el.scrollTop;
@@ -107,8 +98,6 @@
                     if (Math.abs(el.scrollTop - before) > 0.1) didScroll = true;
                 }
             }
-            
-            // Jika tidak ada elemen yang bergerak, berarti semua sudah mentok bawah
             if (!didScroll) {
                 stopScroll();
             } else {
@@ -119,7 +108,7 @@
         function stopScroll() {
             isScrolling = false;
             btn.classList.remove('active');
-            icon.innerHTML = `<path d="${playPath}"/>`;
+            icon.innerHTML = '<path d="' + playPath + '"/>';
             if (scrollAnimationId) {
                 window.cancelAnimationFrame(scrollAnimationId);
                 scrollAnimationId = null;
@@ -129,11 +118,8 @@
         function startScroll() {
             isScrolling = true;
             btn.classList.add('active');
-            icon.innerHTML = `<path d="${pausePath}"/>`;
-            
-            // Cari elemen yang scrollable sebelum mulai
+            icon.innerHTML = '<path d="' + pausePath + '"/>';
             findScrollableElements();
-            
             scrollAnimationId = window.requestAnimationFrame(step);
         }
 
@@ -147,10 +133,9 @@
             });
         }
 
-        // Auto-start scroll setelah delay (bukan pada first interaction agar tidak konflik)
         let autoScrollStarted = false;
         let userInteracted = false;
-        const autoScrollDelay = setTimeout(() => {
+        const autoScrollDelay = setTimeout(function() {
             if (!userInteracted && !autoScrollStarted) {
                 autoScrollStarted = true;
                 startScroll();
@@ -165,18 +150,17 @@
         document.addEventListener('touchstart', cancelAutoScroll, { once: false });
         document.addEventListener('wheel', cancelAutoScroll, { once: false });
 
-        // Hentikan scroll otomatis jika pengguna scroll manual (scroll wheel mouse / sentuhan layar)
-        // Gunakan timeout agar klik tombol tidak langsung memicu stopScroll
         let interactionTimeout;
         function handleUserInteraction() {
             if (!isScrolling) return;
             clearTimeout(interactionTimeout);
-            interactionTimeout = setTimeout(() => {
+            interactionTimeout = setTimeout(function() {
                 stopScroll();
-            }, 50); // delay kecil untuk membedakan scroll dari sistem vs user
+            }, 50);
         }
 
         window.addEventListener('wheel', handleUserInteraction, { passive: true });
         window.addEventListener('touchmove', handleUserInteraction, { passive: true });
     })();
 </script>
+@endif

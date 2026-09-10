@@ -428,6 +428,9 @@
     </section>
     @endif
     @endif
+    @if($invitation->user && $invitation->user->hasFeature('auto_scroll'))
+        <x-auto-scroll :active="true" />
+    @endif
 </script>
 
 </body>
