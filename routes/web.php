@@ -410,10 +410,10 @@ Route::get('/bantuan', [LandingController::class, 'bantuan'])->name('pages.bantu
 
 Route::get('/kebijakan-privasi', [LandingController::class, 'kebijakanPrivasi'])->name('pages.kebijakan-privasi');
 
+Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
+
 Route::get('/{slug}', [WeddingController::class, 'show'])->where('slug', '[A-Za-z0-9\-]+')->name('invitation.show');
 
 Route::get('/payment/success', [SubscriptionPlanController::class, 'success'])->name('payment.success');
 Route::get('/payment/failed', [SubscriptionPlanController::class, 'failed'])->name('payment.failed');
 Route::get('/payment/pending', [SubscriptionPlanController::class, 'pending'])->name('payment.pending');
-
-Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
