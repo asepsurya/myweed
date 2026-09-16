@@ -918,6 +918,10 @@
         };
     </script>
 
+    @if($invitation->user && $invitation->user->hasFeature('auto_scroll'))
+        <x-auto-scroll :active="true" />
+    @endif
+
 </body>
 
 </html>

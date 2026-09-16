@@ -13,6 +13,7 @@ class WeddingController extends Controller
             'galleries',
             'rsvps',
             'musicPreset',
+            'user.subscription.plan',
         ])
             ->where('slug', $slug)
             ->first();

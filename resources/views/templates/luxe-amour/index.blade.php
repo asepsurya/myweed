@@ -614,6 +614,10 @@
 
     <x-music-player :invitation="$invitation" />
 
+    @if($invitation->user && $invitation->user->hasFeature('auto_scroll'))
+        <x-auto-scroll :active="true" />
+    @endif
+
     <!-- JavaScript Logic -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {

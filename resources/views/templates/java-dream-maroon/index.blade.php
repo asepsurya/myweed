@@ -1958,6 +1958,10 @@ body.locked {
 
     <x-music-player :invitation="$invitation" />
 
+    @if($invitation->user && $invitation->user->hasFeature('auto_scroll'))
+        <x-auto-scroll :active="true" />
+    @endif
+
     {{-- jQuery + Fancybox for gallery lightbox --}}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js"></script>

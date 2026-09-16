@@ -373,6 +373,42 @@
             font-size: 2rem; 
         }
     }
+
+    /* ===== Upgrade Section ===== */
+    .upgrade-section {
+        margin-top: 3rem;
+        padding-top: 2rem;
+        border-top: 1px solid var(--border);
+    }
+
+    .upgrade-section .status-icon.admin {
+        background: rgba(78, 115, 223, 0.1);
+        color: #4e73df;
+    }
+
+    .upgrade-section .premium-card {
+        background: linear-gradient(180deg, #FFFEF9 0%, var(--white) 100%);
+        border: 2px solid var(--gold-light);
+    }
+
+    [data-bs-theme="dark"] .upgrade-section .premium-card {
+        background: linear-gradient(180deg, #1B2A4A 0%, #172033 100%);
+    }
+
+    .upgrade-section .pricing-card {
+        border: 1px solid var(--border);
+        transition: all 0.3s ease;
+    }
+
+    .upgrade-section .pricing-card:hover {
+        transform: translateY(-5px);
+        border-color: var(--gold);
+        box-shadow: 0 10px 30px rgba(198, 169, 98, 0.15);
+    }
+
+    [data-bs-theme="dark"] .upgrade-section .pricing-card:hover {
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    }
 </style>
 
 <div class="subscription-page">
@@ -426,72 +462,116 @@
                         <i class="bi bi-x-circle me-2"></i> Batalkan Langganan
                     </button>
                 </div>
+            </div>
+        </div>
 
-                <div class="mt-4 pt-3 border-top">
-                    <h5 class="fw-semibold mb-3">Upgrade / Ganti Paket</h5>
-                    <p class="text-muted small mb-3">
-                        <i class="bi bi-info-circle me-1"></i>
-                        Upgrade prorated: Anda hanya bayar selisih harga berdasarkan sisa masa aktif paket saat ini.
-                    </p>
-                    <div class="row g-3">
-                        @foreach($plans as $plan)
-                            @php
-                                $prorated = $upgradeProrated[$plan->id] ?? null;
-                                $isActivePlan = $subscription && $subscription->plan && $plan->id === $subscription->plan->id;
-                            @endphp
-                            @if($isActivePlan)
-                                <div class="col-md-4">
-                                    <div class="premium-card pricing-card text-center">
-                                        <div class="plan-name">{{ $plan->name }}</div>
-                                        <div class="plan-price">
-                                            @if($plan->price > 0)
-                                                Rp {{ number_format($plan->price, 0, ',', '.') }}
-                                            @else
-                                                Gratis
-                                            @endif
-                                        </div>
-                                        <span class="plan-duration">{{ $plan->duration }} Hari aktif</span>
-                                        <button class="btn-disabled-custom" disabled>
-                                            <i class="bi bi-check2 me-2"></i> Paket Aktif
-                                        </button>
-                                    </div>
-                                </div>
-                            @else
-                                <div class="col-md-4">
-                                    <div class="premium-card pricing-card text-center">
-                                        <div class="plan-name">{{ $plan->name }}</div>
-                                        <div class="plan-price">
-                                            @if($plan->price > 0)
-                                                Rp {{ number_format($plan->price, 0, ',', '.') }}
-                                            @else
-                                                Gratis
-                                            @endif
-                                        </div>
-                                        <span class="plan-duration">{{ $plan->duration }} Hari aktif</span>
-                                        @if($prorated && $prorated['credit'] > 0)
-                                            <div class="text-success small mb-2">
-                                                <i class="bi bi-check-circle me-1"></i>
-                                                Kredit sisa paket: -Rp {{ number_format($prorated['credit'], 0, ',', '.') }}
-                                            </div>
-                                            <div class="fw-bold text-primary mb-2">
-                                                Bayar: Rp {{ number_format($prorated['amount'], 0, ',', '.') }}
-                                            </div>
-                                        @endif
-                                        <button class="btn btn-outline-navy w-100 upgrade-plan-btn"
-                                            data-plan-id="{{ $plan->id }}"
-                                            data-plan-name="{{ $plan->name }}"
-                                            data-plan-price="{{ $plan->price }}"
-                                            data-prorated-amount="{{ $prorated['amount'] ?? $plan->price }}"
-                                            data-prorated-credit="{{ $prorated['credit'] ?? 0 }}">
-                                            <i class="bi bi-arrow-repeat me-2"></i> Upgrade ke {{ $plan->name }}
-                                        </button>
-                                    </div>
-                                </div>
-                            @endif
-                        @endforeach
+        {{-- ================= UPGRADE / GANTI PAKET ================= --}}
+        <div class="container upgrade-section">
+            <div class="premium-card p-5">
+    {{-- Header --}}
+    <div class="status-icon admin">
+        <i class="bi bi-arrow-repeat"></i>
+    </div>
+
+    <span class="section-subtitle">Peningkatan Layanan</span>
+
+    <h3 class="status-title">
+        Upgrade / Ganti Paket
+    </h3>
+
+    <p class="text-muted mb-2">
+        Tingkatkan pengalaman pernikahan Anda dengan paket yang lebih lengkap.
+    </p>
+
+    <p class="text-muted small mb-4">
+        <i class="bi bi-info-circle me-1"></i>
+        Upgrade prorated: Anda hanya bayar selisih harga berdasarkan sisa masa
+        aktif paket saat ini.
+    </p>
+
+    {{-- Plans --}}
+    <div class="row g-4 justify-content-center">
+        @foreach ($plans as $plan)
+            @php
+                $prorated = $upgradeProrated[$plan->id] ?? null;
+
+                $isActivePlan =
+                    $subscription &&
+                    $subscription->plan &&
+                    $plan->id === $subscription->plan->id;
+
+                $displayPrice = $plan->price > 0
+                    ? 'Rp ' . number_format($plan->price, 0, ',', '.')
+                    : 'Gratis';
+
+                $proratedAmount = $prorated['amount'] ?? $plan->price;
+                $proratedCredit = $prorated['credit'] ?? 0;
+            @endphp
+
+            <div class="col-md-4">
+                <div class="premium-card pricing-card text-center h-100">
+
+                    {{-- Plan Name --}}
+                    <div class="plan-name">
+                        {{ $plan->name }}
                     </div>
+
+                    {{-- Plan Price --}}
+                    <div class="plan-price">
+                        {{ $displayPrice }}
+                    </div>
+
+                    {{-- Duration --}}
+                    <span class="plan-duration">
+                        {{ $plan->duration }} Hari aktif
+                    </span>
+
+                    @if ($isActivePlan)
+                        {{-- Active Plan --}}
+                        <button
+                            type="button"
+                            class="btn-disabled-custom"
+                            disabled
+                        >
+                            <i class="bi bi-check2 me-2"></i>
+                            Paket Aktif
+                        </button>
+                    @else
+                        {{-- Prorated Credit --}}
+                        @if ($proratedCredit > 0)
+                            <div class="text-success small mb-2">
+                                <i class="bi bi-check-circle me-1"></i>
+                                Kredit sisa paket:
+                                -Rp {{ number_format($proratedCredit, 0, ',', '.') }}
+                            </div>
+
+                            <div class="fw-bold text-primary mb-2">
+                                Bayar:
+                                Rp {{ number_format($proratedAmount, 0, ',', '.') }}
+                            </div>
+                        @endif
+
+                        {{-- Upgrade Button --}}
+                        <button
+                            type="button"
+                            class="btn btn-outline-navy w-100 upgrade-plan-btn"
+                            data-plan-id="{{ $plan->id }}"
+                            data-plan-name="{{ $plan->name }}"
+                            data-plan-price="{{ $plan->price }}"
+                            data-prorated-amount="{{ $proratedAmount }}"
+                            data-prorated-credit="{{ $proratedCredit }}"
+                        >
+                            <i class="bi bi-arrow-repeat me-2"></i>
+                            Upgrade ke {{ $plan->name }}
+                        </button>
+                    @endif
+
                 </div>
             </div>
+        @endforeach
+    </div>
+</div>
+
         </div>
 
         <!-- Upgrade Subscription Modal -->
@@ -603,13 +683,25 @@
             <div class="row row-cols-1 row-cols-md-3 g-4 align-items-stretch justify-content-center">
                 @foreach($plans as $plan)
                     <div class="col">
+                        
                         <div class="premium-card pricing-card {{ $plan->slug === 'pro' ? 'popular' : '' }}">
                             @if($plan->slug === 'pro')
                                 <div class="badge-popular">Paling Populer</div>
                             @endif
 
                             <div class="plan-name">{{ $plan->name }}</div>
-                            
+                              @if(!$plan->is_free && $plan->original_price && $plan->original_price > $plan->price)
+                                    <div class="d-flex align-items-center justify-content-center gap-2 mb-1">
+                                        <span class="text-muted text-decoration-line-through small">
+                                            Rp {{ number_format($plan->original_price, 0, ',', '.') }}
+                                        </span>
+                                        @if($plan->badge_text)
+                                            <span class="badge bg-danger-subtle text-danger px-2 py-1" style="font-size: 0.65rem;">
+                                                <i class="bi bi-fire me-1"></i>{{ $plan->badge_text }}
+                                            </span>
+                                        @endif
+                                    </div>
+                                @endif
                             <div class="plan-price">
                                 @if($plan->price > 0)
                                     Rp {{ number_format($plan->price, 0, ',', '.') }}
@@ -656,7 +748,7 @@
             </div>
 
             <!-- Guarantee Section -->
-            <div class="guarantee-box">
+            <div class="guarantee-box w-full">
                 <div class="guarantee-icon">
                     <i class="bi bi-shield-check"></i>
                 </div>

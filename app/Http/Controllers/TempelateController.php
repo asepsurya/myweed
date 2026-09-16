@@ -235,9 +235,10 @@ class TempelateController extends Controller
             $invitation->update([
                 'template_id' => $template->id,
             ]);
-            $invitation->load('template');
+            $invitation->load('template', 'user.subscription.plan');
         } else {
             $invitation->setRelation('template', $template);
+            $invitation->load('user.subscription.plan');
         }
 
         $themeColor = $request->query('theme_color', '#3b82f6');
@@ -360,7 +361,7 @@ class TempelateController extends Controller
 
         $template->increment('views_count');
 
-        $invitation = Invitation::with(['template', 'galleries', 'rsvps'])->latest()->first();
+        $invitation = Invitation::with(['template', 'galleries', 'rsvps', 'user.subscription.plan'])->latest()->first();
 
         if (! $invitation) {
             $invitation = new Invitation([

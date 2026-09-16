@@ -1,4 +1,4 @@
-<x-app-layout>
+<x-app-layout :showSidebar="false">
     <div class="container py-5">
     <div class="row justify-content-center">
         <div class="col-md-6 text-center">
