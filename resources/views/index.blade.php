@@ -213,6 +213,42 @@
             box-shadow: 0 8px 25px rgba(198, 169, 98, 0.5);
         }
 
+        .user-avatar-circle {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            flex-shrink: 0;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            transition: all var(--speed) ease;
+        }
+
+        .navbar.scrolled .user-avatar-circle {
+            border-color: var(--gold-light);
+        }
+
+        .user-avatar-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .user-avatar-initial {
+            color: var(--white);
+            font-weight: 700;
+            font-size: 0.9rem;
+            line-height: 1;
+        }
+
+        .nav-link .user-avatar-circle:hover {
+            transform: scale(1.1);
+            border-color: var(--gold);
+        }
+
         /* ===== Hero Section ===== */
         .hero-section {
             min-height: 100vh;
@@ -306,7 +342,7 @@
         .hero-section h1 {
             font-size: 4rem;
             font-weight: 600;
-            margin-bottom: 1.5rem;
+            margin-bottom: 1rem;
             letter-spacing: -1px;
             line-height: 1.2;
             animation: fadeInUp 1s ease-out 0.3s forwards;
@@ -321,7 +357,7 @@
         .hero-section p {
             font-size: 1.15rem;
             color: rgba(255, 255, 255, 0.8);
-            margin-bottom: 2.5rem;
+            margin-bottom: 0;
             font-weight: 300;
             line-height: 1.7;
             animation: fadeInUp 1s ease-out 0.6s forwards;
@@ -330,7 +366,7 @@
 
         .search-container {
             max-width: 600px;
-            margin: 0 auto 2.5rem;
+            margin: 2.5rem auto 0;
             position: relative;
             animation: fadeInUp 1s ease-out 0.9s forwards;
             opacity: 0;
@@ -375,6 +411,70 @@
             padding: 0 1.8rem;
             font-weight: 600;
             font-size: 0.9rem;
+        }
+
+        .hero-text-slider {
+            position: relative;
+            min-height: 220px;
+        }
+
+        .hero-slide {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+            pointer-events: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .hero-slide.active {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+
+        .hero-slider-dots {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 1.25rem;
+        }
+
+        .hero-slider-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            border: none;
+            background: rgba(255, 255, 255, 0.4);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            padding: 0;
+        }
+
+        .hero-slider-dot.active {
+            background: var(--gold);
+            width: 28px;
+            border-radius: 12px;
+            box-shadow: 0 0 15px rgba(198, 169, 98, 0.5);
+        }
+
+        @media (max-width: 768px) {
+            .hero-text-slider {
+                min-height: 280px;
+            }
+
+            .hero-slider-dot {
+                width: 8px;
+                height: 8px;
+            }
+
+            .hero-slider-dot.active {
+                width: 22px;
+            }
         }
 
         /* Tags */
@@ -437,9 +537,27 @@
            ART GALLERY WEDDING SECTION
         ========================== */
         .real-wedding-section {
+            position: relative;
             padding: 120px 0;
-            background: var(--bg-alt);
+            background: #1B2A4A;
             border-bottom: 1px solid var(--border);
+            overflow: hidden;
+        }
+
+        .real-wedding-bg {
+            position: absolute;
+            inset: 0;
+            background:
+                linear-gradient(rgba(27, 42, 74, 0.85), rgba(27, 42, 74, 0.95)),
+                url('{{ asset('assets/img/innokurnia-wedding-4297343_1920.jpg') }}') center/cover no-repeat;
+            opacity: 0.35;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .real-wedding-section .container {
+            position: relative;
+            z-index: 1;
         }
 
         .section-header-center {
@@ -462,7 +580,6 @@
             font-size: 3rem;
             font-weight: 400;
             font-style: italic;
-            /* Gaya Gallery Exhibition */
             color: var(--navy);
             margin-bottom: 1rem;
             line-height: 1.2;
@@ -475,269 +592,201 @@
             font-size: 0.95rem;
         }
 
-        .wedding-slider {
+        .real-wedding-section .section-title {
+            color: var(--white);
+        }
+
+        .real-wedding-section .section-desc {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .wedding-showcase {
             display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 40px;
-            margin-top: 50px;
+            gap: 30px;
+            align-items: stretch;
         }
 
-        .wedding-item {
-            flex: 0 1 320px;
-            max-width: 320px;
-            display: flex;
-            flex-direction: column;
-            background: var(--white);
-            border: 1px solid var(--border);
-            padding: 15px;
-            text-decoration: none;
-            text-align: center;
-            cursor: pointer;
-            box-shadow: 0 15px 40px rgba(27, 42, 74, 0.06);
-            transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1);
-            position: relative;
+        .wedding-list-col {
+            flex: 0 0 340px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+            max-height: 540px;
+            overflow-y: auto;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
         }
 
-        .wedding-item::before {
-            content: '';
-            position: absolute;
-            top: 5px;
-            left: 5px;
-            right: 5px;
-            bottom: 5px;
-            border: 1px solid rgba(198, 169, 98, 0.3);
-            pointer-events: none;
-            transition: all 0.5s ease;
-            z-index: 1;
+        .wedding-preview-col {
+            flex: 1;
+            min-width: 0;
         }
 
-        .wedding-item:hover {
-            box-shadow: 0 25px 60px rgba(27, 42, 74, 0.12);
-        }
-
-        .wedding-item:hover::before {
-            border-color: var(--gold);
-            top: 8px;
-            left: 8px;
-            right: 8px;
-            bottom: 8px;
-        }
-
-        .couple-avatar-group {
-            position: relative;
-            width: 100%;
-            height: 250px;
-            background: var(--bg);
-            margin-bottom: 25px;
-            overflow: hidden;
+        .couple-list-item {
             display: flex;
             align-items: center;
-            justify-content: center;
+            gap: 12px;
+            padding: 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            text-decoration: none;
+            color: rgba(255, 255, 255, 0.9);
+            transition: all 0.3s ease;
+            border-radius: 12px;
+            cursor: pointer;
         }
 
-        .couple-avatar {
-            position: absolute;
-            width: 110px;
-            height: 110px;
+        .couple-list-item:last-child {
+            border-bottom: none;
+        }
+
+        .couple-list-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateX(4px);
+        }
+
+        .couple-list-item.active {
+            background: rgba(198, 169, 98, 0.25);
+            border: 1px solid var(--gold-light);
+            padding: 11px;
+        }
+
+        .couple-list-avatar {
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
             object-fit: cover;
-            background: var(--white);
-            border: 5px solid var(--white);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-            transition: all 0.5s ease;
-            z-index: 2;
+            border: 2px solid rgba(255, 255, 255, 0.35);
+            flex-shrink: 0;
+            background: rgba(255, 255, 255, 0.1);
         }
 
-        .avatar-1 {
-            left: 50px;
-            top: 50%;
-            transform: translateY(-50%);
+        .couple-list-info {
+            min-width: 0;
         }
 
-        .avatar-2 {
-            right: 50px;
-            top: 50%;
-            transform: translateY(-50%);
-        }
-
-        .wedding-item:hover .avatar-1 {
-            transform: translateY(-50%) translateX(-8px);
-        }
-
-        .wedding-item:hover .avatar-2 {
-            transform: translateY(-50%) translateX(8px);
-        }
-
-        .wedding-info {
-            padding: 0 10px 15px;
-            position: relative;
-            z-index: 2;
-        }
-
-        .couple-names {
+        .couple-list-names {
             font-family: var(--font-display);
-            font-size: 1.5rem;
-            font-weight: 400;
-            font-style: italic;
-            color: var(--navy);
-            margin-bottom: 15px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--white);
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
         }
 
-        .wedding-divider {
-            width: 40px;
-            height: 1px;
-            background: var(--gold);
-            margin: 0 auto 15px;
-            transition: width 0.5s ease;
-        }
-
-        .wedding-item:hover .wedding-divider {
-            width: 70px;
-        }
-
-        .wedding-date {
-            font-family: var(--font);
+        .couple-list-date {
             font-size: 0.75rem;
-            letter-spacing: 3px;
-            text-transform: uppercase;
-            color: var(--text-muted);
-            font-weight: 500;
+            color: rgba(255, 255, 255, 0.65);
+            margin-top: 2px;
         }
 
-        /* ===== Wedding Slider Carousel ===== */
-        .wedding-slider-wrapper {
-            position: relative;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 60px;
-            overflow: hidden;
-        }
-
-        .wedding-slider {
+        .couple-preview-panel {
+            background: rgba(255, 255, 255, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: var(--radius-lg);
+            padding: 16px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+            height: 100%;
+            min-height: 540px;
             display: flex;
-            flex-wrap: nowrap;
-            justify-content: flex-start;
-            gap: 30px;
-            margin-top: 50px;
-            transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
-            will-change: transform;
+            flex-direction: column;
         }
 
-        .wedding-item {
-            flex: 0 0 calc(33.333% - 20px);
-            max-width: calc(33.333% - 20px);
-            transition: all 0.6s cubic-bezier(0.25, 1, 0.5, 1);
-            transform: scale(0.88);
-            opacity: 0.5;
-            filter: blur(1px);
+        .couple-preview-header {
+            position: relative;
         }
 
-        .wedding-item.active {
-            transform: scale(1);
-            opacity: 1;
-            filter: blur(0);
-        }
-
-        .wedding-slider-btn {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            border: 2px solid var(--border);
-            background: var(--white);
-            color: var(--navy);
-            font-size: 1.4rem;
+        .couple-preview-close {
+            border: 0;
+            background: transparent;
+            color: var(--text-secondary);
+            font-size: 1.1rem;
             cursor: pointer;
-            z-index: 10;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-            transition: all 0.3s ease;
-            display: inline-flex;
+            padding: 4px;
+            line-height: 1;
+            transition: color 0.2s ease;
+        }
+
+        .couple-preview-close:hover {
+            color: var(--navy);
+        }
+
+        .couple-preview-frame-wrapper {
+            position: relative;
+            flex: 1;
+            border-radius: 12px;
+            overflow: hidden;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            min-height: 400px;
+        }
+
+        .couple-preview-frame-wrapper iframe {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+
+        .couple-preview-empty {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
+            color: var(--text-muted);
+            text-align: center;
+            padding: 24px;
+            gap: 12px;
         }
 
-        .wedding-slider-btn:hover {
-            background: var(--navy);
-            color: var(--white);
-            border-color: var(--navy);
-            transform: translateY(-50%) scale(1.1);
-            box-shadow: 0 8px 30px rgba(27, 42, 74, 0.25);
+        .couple-preview-empty i {
+            font-size: 3rem;
+            opacity: 0.4;
         }
 
-        .wedding-slider-prev {
-            left: 0;
+        .couple-preview-empty p {
+            margin: 0;
+            font-size: 0.95rem;
+            max-width: 260px;
         }
 
-        .wedding-slider-next {
-            right: 0;
-        }
+        @media (max-width: 992px) {
+            .wedding-showcase {
+                flex-direction: column;
+            }
 
-        .wedding-slider-dots {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            margin-top: 40px;
-        }
+            .wedding-list-col {
+                flex: 0 0 auto;
+                width: 100%;
+                max-height: none;
+            }
 
-        .wedding-slider-dot {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            border: none;
-            background: var(--border);
-            cursor: pointer;
-            transition: all 0.3s ease;
-            padding: 0;
-        }
-
-        .wedding-slider-dot.active {
-            background: var(--gold);
-            width: 32px;
-            border-radius: 12px;
-            box-shadow: 0 0 15px rgba(198, 169, 98, 0.5);
+            .couple-preview-panel {
+                min-height: 400px;
+            }
         }
 
         @media (max-width: 768px) {
-            .wedding-slider-wrapper {
-                padding: 0 45px;
+            .real-wedding-section {
+                padding: 80px 0;
             }
 
-            .wedding-slider {
-                gap: 16px;
-                margin-top: 30px;
+            .couple-preview-frame-wrapper {
+                min-height: 300px;
             }
 
-            .wedding-item {
-                flex: 0 0 85%;
-                max-width: 85%;
-                transform: scale(0.92);
-                opacity: 0.6;
+            .couple-preview-panel {
+                min-height: 360px;
+                padding: 12px;
             }
 
-            .wedding-item.active {
-                transform: scale(1);
-                opacity: 1;
-            }
-
-            .wedding-slider-btn {
-                width: 40px;
-                height: 40px;
-                font-size: 1.1rem;
-            }
-
-            .wedding-slider-dot {
-                width: 10px;
-                height: 10px;
-            }
-
-            .wedding-slider-dot.active {
-                width: 24px;
+            .section-title {
+                font-size: 1.8rem;
             }
         }
 
@@ -813,6 +862,61 @@
             font-size: 0.9rem;
             line-height: 1.6;
             margin: 0;
+        }
+
+        /* ===== Features Auto Scroll ===== */
+        .features-scroll-wrapper {
+            overflow: hidden;
+            position: relative;
+            width: 100%;
+        }
+
+        .features-scroll-wrapper::before,
+        .features-scroll-wrapper::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 80px;
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        .features-scroll-wrapper::before {
+            left: 0;
+            background: linear-gradient(to right, var(--bg), transparent);
+        }
+
+        .features-scroll-wrapper::after {
+            right: 0;
+            background: linear-gradient(to left, var(--bg), transparent);
+        }
+
+        .features-scroll-track {
+            display: flex;
+            gap: 24px;
+            width: max-content;
+            animation: featuresScroll 40s linear infinite;
+        }
+
+        .features-scroll-track:hover {
+            animation-play-state: paused;
+        }
+
+        .features-scroll-track .feature-card {
+            min-width: 280px;
+            max-width: 320px;
+            flex: 0 0 auto;
+        }
+
+        @keyframes featuresScroll {
+            from {
+                transform: translateX(0);
+            }
+
+            to {
+                transform: translateX(-50%);
+            }
         }
 
         /* ===== Templates Grid ===== */
@@ -1118,8 +1222,137 @@
             }
         }
 
+        /* ===== How It Works Section ===== */
+        .how-it-works-section {
+            padding: 100px 0;
+            background: var(--bg);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .step-card {
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 2.5rem 1.5rem;
+            height: 100%;
+            transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .step-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--gold-light);
+            box-shadow: 0 20px 50px rgba(27, 42, 74, 0.1);
+        }
+
+        .step-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(198, 169, 98, 0.1), rgba(198, 169, 98, 0.05));
+            transition: all 0.5s ease;
+        }
+
+        .step-icon img {
+            width: 48px;
+            height: 48px;
+            object-fit: contain;
+            transition: transform 0.5s ease;
+        }
+
+        .step-card:hover .step-icon {
+            background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+            transform: scale(1.1);
+        }
+
+        .step-card:hover .step-icon img {
+            transform: scale(1.1);
+        }
+
+        .step-number {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--gold);
+            color: var(--white);
+            font-weight: 700;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0.9;
+            transition: all 0.5s ease;
+        }
+
+        .step-card:hover .step-number {
+            background: var(--navy);
+            transform: scale(1.1);
+        }
+
+        .step-title {
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--navy);
+            margin-bottom: 0.75rem;
+        }
+
+        .step-desc {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        @media (max-width: 768px) {
+            .how-it-works-section {
+                padding: 60px 0;
+            }
+
+            .step-card {
+                padding: 2rem 1.25rem;
+            }
+
+            .step-icon {
+                width: 64px;
+                height: 64px;
+            }
+
+            .step-icon img {
+                width: 36px;
+                height: 36px;
+            }
+
+            .step-number {
+                width: 28px;
+                height: 28px;
+                font-size: 0.8rem;
+                top: 10px;
+                right: 10px;
+            }
+
+            .step-title {
+                font-size: 1.1rem;
+            }
+
+            .step-desc {
+                font-size: 0.85rem;
+            }
+        }
+
         /* Tag Wrapper Animation */
         .tag-wrapper {
+
+            margin-top: 50px;
+
             width: 100%;
             overflow: hidden;
             animation: fadeInUp 1s ease-out 1.2s forwards;
@@ -1253,7 +1486,17 @@
                 </ul>
                 <div class="d-flex align-items-center gap-3">
                     @auth
-                        <a href="{{ route('dashboard.user') }}" class="nav-link text-white">Dashboard</a>
+                        <a href="{{ route('dashboard.user') }}" class="nav-link d-flex align-items-center gap-2">
+                            <div class="user-avatar-circle">
+                                @if(Auth::user()->avatar)
+                                    <img src="{{ asset('storage/' . Auth::user()->avatar) }}" alt="{{ Auth::user()->name }}"
+                                        class="user-avatar-img">
+                                @else
+                                    <span class="user-avatar-initial">{{ strtoupper(substr(Auth::user()->name, 0, 1)) }}</span>
+                                @endif
+                            </div>
+                            <span class="d-none d-md-inline">{{ Auth::user()->name }}</span>
+                        </a>
                     @else
                         <a href="{{ route('login') }}" rel="nofollow" class="nav-link">Masuk</a>
                         <a href="{{ route('register') }}" rel="nofollow" class="btn-gold">Mulai Gratis</a>
@@ -1275,9 +1518,25 @@
 
         <div class="container hero-content">
             <span class="hero-tag">Platform Undangan Digital Premium</span>
-            <h1>Unggah Momen Spesial <br> dengan <em>Keindahan Abadi</em></h1>
-            <p>Rancang undangan pernikahan digital yang memikat hati tamu Anda sejak detik pertama. Eksklusif, modern,
-                dan mudah dibagikan.</p>
+            <div class="hero-text-slider">
+                <div class="hero-slide active">
+                    <h1>Unggah Momen Spesial <br> dengan <em>Keindahan Abadi</em></h1>
+                    <p>Rancang undangan pernikahan digital yang memikat hati tamu Anda sejak detik pertama. Eksklusif,
+                        modern,
+                        dan mudah dibagikan.</p>
+                </div>
+                <div class="hero-slide">
+                    <h1>Wujudkan Cinta Anda <br> dalam <em>Tema Eksklusif</em></h1>
+                    <p>Pilih dari koleksi template premium yang dirancang untuk menceritakan kisah cinta Anda dengan
+                        sentuhan personal.</p>
+                </div>
+                <div class="hero-slide">
+                    <h1>Bagikan Kabar Bahagia <br> dengan <em>Sentuhan Modern</em></h1>
+                    <p>Kirim undangan digital ke seluruh tamu dalam hitungan detik. Hemat waktu, tetap elegan, dan
+                        berkesan
+                        forever.</p>
+                </div>
+            </div>
 
             <form action="{{ route('landing') }}#templates" method="GET">
                 <div class="search-container">
@@ -1287,6 +1546,8 @@
                     <button type="submit" class="btn-search">Cari</button>
                 </div>
             </form>
+
+            <div class="hero-slider-dots"></div>
 
             <div class="tag-wrapper">
                 <div class="tag-list">
@@ -1329,133 +1590,6 @@
             <i class="bi bi-chevron-double-down"></i>
         </a>
     </section>
-
-    <!-- Real Wedding Social Proof (Art Gallery Style) -->
-    <section class="real-wedding-section" id="real-weddings">
-        <div class="container">
-            <div class="section-header-center reveal">
-                <span class="section-subtitle">Portofolio Nyata</span>
-                <h2 class="section-title">Karya Cinta Yang Abadi</h2>
-                <p class="section-desc">Setiap pasangan memiliki cerita unik. Biarkan momen sakral Anda menjadi karya
-                    seni yang tak terlupakan.</p>
-            </div>
-
-            <div class="wedding-slider-wrapper reveal">
-                <button class="wedding-slider-btn wedding-slider-prev" aria-label="Sebelumnya">
-                    <i class="bi bi-chevron-left"></i>
-                </button>
-
-                <div class="wedding-slider reveal">
-                    @foreach($invitations as $invitation)
-                        <a href="{{ route('template.frame', ['slug' => $invitation->slug, 'id' => $invitation->template_id]) }}"
-                            rel="nofollow" class="wedding-item">
-                            <div class="couple-avatar-group">
-                                <img src="{{ $invitation->foto_pria ? storage_url_with_fallback($invitation->foto_pria, 'https://ui-avatars.com/api/?name=' . urlencode($invitation->groom_name) . '&background=E8D5A3&color=fff', $invitation->updated_at->timestamp) : 'https://ui-avatars.com/api/?name=' . urlencode($invitation->groom_name) . '&background=E8D5A3&color=fff' }}"
-                                    class="couple-avatar avatar-1" alt="Foto Mempelai Pria">
-                                <img src="{{ $invitation->foto_wanita ? storage_url_with_fallback($invitation->foto_wanita, 'https://ui-avatars.com/api/?name=' . urlencode($invitation->bride_name) . '&background=1B2A4A&color=fff', $invitation->updated_at->timestamp) : 'https://ui-avatars.com/api/?name=' . urlencode($invitation->bride_name) . '&background=1B2A4A&color=fff' }}"
-                                    class="couple-avatar avatar-2" alt="Foto Mempelai Wanita">
-                            </div>
-
-                            <div class="wedding-info">
-                                <div class="couple-names">{{ $invitation->groom_nickname ?? $invitation->groom_name }} &amp;
-                                    {{ $invitation->bride_nickname ?? $invitation->bride_name }}
-                                </div>
-                                <div class="wedding-divider"></div>
-                                <div class="wedding-date">
-                                    {{ \Carbon\Carbon::parse($invitation->wedding_date)->format('d M Y') }}
-                                </div>
-                            </div>
-                        </a>
-                    @endforeach
-
-                    @if($invitations->count() < 3)
-                        @for($i = 0; $i < 3 - $invitations->count(); $i++)
-                            <div class="wedding-item opacity-50">
-                                <div class="couple-avatar-group">
-                                    <img src="https://i.pravatar.cc/150?u={{ $i }}" class="couple-avatar avatar-1" alt="">
-                                    <img src="https://i.pravatar.cc/150?u={{ $i + 10 }}" class="couple-avatar avatar-2" alt="">
-                                </div>
-                                <div class="wedding-info">
-                                    <div class="couple-names">Pasangan Baru</div>
-                                    <div class="wedding-divider"></div>
-                                    <div class="wedding-date">Segera Datang</div>
-                                </div>
-                            </div>
-                        @endfor
-                    @endif
-                </div>
-
-                <button class="wedding-slider-btn wedding-slider-next" aria-label="Berikutnya">
-                    <i class="bi bi-chevron-right"></i>
-                </button>
-
-                <div class="wedding-slider-dots"></div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Features Section -->
-    <section class="features-section" id="features">
-        <div class="container">
-            <div class="section-header-center reveal">
-                <span class="section-subtitle">Keunggulan Kami</span>
-                <h2 class="section-title">Mengapa Memilih RuangUndang?</h2>
-                <p class="section-desc">Memberikan pengalaman terbaik untuk momen sekali seumur hidup Anda.</p>
-            </div>
-
-            <div class="row g-4">
-                <div class="col-lg-4 col-md-6 reveal" style="transition-delay: 0.1s;">
-                    <div class="feature-card">
-                        <div class="feature-icon"><i class="bi bi-phone"></i></div>
-                        <h4>Desain Mobile First</h4>
-                        <p>Tampilan indah dan responsif di semua layar smartphone, tablet, maupun desktop. Tamu Anda
-                            akan kagum saat membukanya.</p>
-                    </div>
-                </div>
-                <div class="col-lg-4 col-md-6 reveal" style="transition-delay: 0.2s;">
-                    <div class="feature-card">
-                        <div class="feature-icon"><i class="bi bi-music-note-beamed"></i></div>
-                        <h4>Background Musik</h4>
-                        <p>Tambahkan lagu favorit Anda sebagai musik latar untuk menciptakan suasana romantis saat
-                            undangan dibuka.</p>
-                    </div>
-                </div>
-                <div class="col-lg-4 col-md-6 reveal" style="transition-delay: 0.3s;">
-                    <div class="feature-card">
-                        <div class="feature-icon"><i class="bi bi-map"></i></div>
-                        <h4>Google Maps Integrasi</h4>
-                        <p>Tamu tidak akan tersesat. Integrasi peta langsung memandu mereka ke lokasi acara dengan satu
-                            klik.</p>
-                    </div>
-                </div>
-                <div class="col-lg-4 col-md-6 reveal" style="transition-delay: 0.1s;">
-                    <div class="feature-card">
-                        <div class="feature-icon"><i class="bi bi-gift"></i></div>
-                        <h4>Kirim Amplop Digital</h4>
-                        <p>Fasilitasi tamu untuk mengirimkan tanda kasih secara digital melalui transfer bank atau
-                            e-wallet dengan aman.</p>
-                    </div>
-                </div>
-                <div class="col-lg-4 col-md-6 reveal" style="transition-delay: 0.2s;">
-                    <div class="feature-card">
-                        <div class="feature-icon"><i class="bi bi-people"></i></div>
-                        <h4>RSVP & Hitung Tamu</h4>
-                        <p>Ketahui pasti berapa tamu yang akan hadir. Sistem RSVP otomatis memudahkan Anda mempersiapkan
-                            acara.</p>
-                    </div>
-                </div>
-                <div class="col-lg-4 col-md-6 reveal" style="transition-delay: 0.3s;">
-                    <div class="feature-card">
-                        <div class="feature-icon"><i class="bi bi-camera-reels"></i></div>
-                        <h4>Galeri Foto & Video</h4>
-                        <p>Bagikan momen pra-pernikan Anda melalui galeri foto interaktif dan video sinematik yang
-                            memukau.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
     <!-- Templates Grid -->
     <section id="templates" class="template-section">
         <div class="container">
@@ -1467,7 +1601,7 @@
             </div>
 
             <div class="template-grid">
-                @php $featuredTemplates = $templates->take(4); @endphp
+                @php $featuredTemplates = $templates->take(8); @endphp
                 @foreach($featuredTemplates as $template)
                     <div class="template-card reveal">
                         <div class="template-img-container">
@@ -1480,9 +1614,10 @@
                             @endif
                             <div class="template-overlay">
                                 <a href="{{ route('template.frame', ['slug' => 'romeo-juliet', 'id' => $template->id]) }}"
-                                    target="_blank" rel="nofollow" class="btn btn-light rounded-pill px-4 fw-bold shadow-sm">Pratinjau</a>
-                                <a href="{{ route('dashboard.user') }}?template_id={{ $template->id }}"
-                                    rel="nofollow" class="btn btn-gold rounded-pill px-4 fw-bold shadow-sm">Gunakan</a>
+                                    target="_blank" rel="nofollow"
+                                    class="btn btn-light rounded-pill px-4 fw-bold shadow-sm">Pratinjau</a>
+                                <a href="{{ route('dashboard.user') }}?template_id={{ $template->id }}" rel="nofollow"
+                                    class="btn btn-gold rounded-pill px-4 fw-bold shadow-sm">Gunakan</a>
                             </div>
                         </div>
                         <div class="template-footer">
@@ -1521,6 +1656,185 @@
             @endif
         </div>
     </section>
+    <!-- How It Works Section -->
+    <section class="how-it-works-section" id="how-it-works">
+        <div class="container">
+            <div class="section-header-center reveal">
+                <span class="section-subtitle">Mudah & Cepat</span>
+                <h2 class="section-title">Cara Membuat Undangan Digital</h2>
+                <p class="section-desc">Hanya 4 langkah sederhana untuk memiliki undangan pernikahan digital yang
+                    memukau.</p>
+            </div>
+
+            <div class="row g-4 mt-4">
+                <div class="col-lg-3 col-md-6 reveal" style="transition-delay: 0.1s;">
+                    <div class="step-card text-center">
+                        <div class="step-icon">
+                            <img src="{{ asset('assets/img/step/Registrasi.png') }}" alt="Registrasi">
+                        </div>
+                        <div class="step-number">1</div>
+                        <h4 class="step-title">Registrasi Akun</h4>
+                        <p class="step-desc">Daftar dan buat akun undangan kamu di sini untuk memulai.</p>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 reveal" style="transition-delay: 0.2s;">
+                    <div class="step-card text-center">
+                        <div class="step-icon">
+                            <img src="{{ asset('assets/img/step/isidata.png') }}" alt="Isi Data">
+                        </div>
+                        <div class="step-number">2</div>
+                        <h4 class="step-title">Isi Data & Upload Foto</h4>
+                        <p class="step-desc">Isi info acara & profile serta upload foto/gallery. Customize undangan
+                            kamu.</p>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 reveal" style="transition-delay: 0.3s;">
+                    <div class="step-card text-center">
+                        <div class="step-icon">
+                            <img src="{{ asset('assets/img/step/design.png') }}" alt="Pilih Design">
+                        </div>
+                        <div class="step-number">3</div>
+                        <h4 class="step-title">Pilih Template</h4>
+                        <p class="step-desc">Pilih preset/template. Lihat daftar template eksklusif kami.</p>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 reveal" style="transition-delay: 0.4s;">
+                    <div class="step-card text-center">
+                        <div class="step-icon">
+                            <img src="{{ asset('assets/img/step/share.png') }}" alt="Sebarkan">
+                        </div>
+                        <div class="step-number">4</div>
+                        <h4 class="step-title">Sebarkan Undangan</h4>
+                        <p class="step-desc">Aktifkan, dan undangan kamu siap untuk disebarkan ke tamu.</p>
+                    </div>
+                </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features-section" id="features">
+        <div class="container">
+            <div class="section-header-center reveal">
+                <span class="section-subtitle">Keunggulan Kami</span>
+                <h2 class="section-title">Mengapa Memilih RuangUndang?</h2>
+                <p class="section-desc">Memberikan pengalaman terbaik untuk momen sekali seumur hidup Anda.</p>
+            </div>
+
+            <div class="features-scroll-wrapper">
+                <div class="features-scroll-track">
+                    <div class="feature-card">
+                        <div class="feature-icon"><i class="bi bi-clock-history"></i></div>
+                        <h4>Hitungan Mundur</h4>
+                        <p>Jangan sampai terlewatkan moment indah kamu, hitung mundur tanggal acara pernikahanmu.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon"><i class="bi bi-phone"></i></div>
+                        <h4>Design Modern dan Responsif</h4>
+                        <p>Say good bye untuk design jadul. Biar undanganmu makin wow.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon"><i class="bi bi-music-note-beamed"></i></div>
+                        <h4>Background Music</h4>
+                        <p>Pilih musik sesuai keinginan kamu agar undanganmu lebih eksklusif dan romantis.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon"><i class="bi bi-chat-heart"></i></div>
+                        <h4>Berbagi Momen Indah dan Ucapan</h4>
+                        <p>Tamu undangan bisa berbagi momen dengan mengirimkan gambar dan ucapan.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon"><i class="bi bi-gift"></i></div>
+                        <h4>Amplop Digital</h4>
+                        <p>Tamu undangan bisa mengirim amplop secara digital dengan mudah.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon"><i class="bi bi-heart"></i></div>
+                        <h4>Love Stories</h4>
+                        <p>Ceritakan Kisah Cinta kamu dengan leluasa.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon"><i class="bi bi-camera-video"></i></div>
+                        <h4>Live Streaming</h4>
+                        <p>Temui acara secara virtual agar jarang tidak membuat keterbatasan.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon"><i class="bi bi-map"></i></div>
+                        <h4>Google Maps Integrasi</h4>
+                        <p>Tamu tidak akan tersesat. Integrasi peta langsung memandu mereka ke lokasi acara dengan satu
+                            klik.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon"><i class="bi bi-people"></i></div>
+                        <h4>RSVP & Hitung Tamu</h4>
+                        <p>Ketahui pasti berapa tamu yang akan hadir. Sistem RSVP otomatis memudahkan Anda mempersiapkan
+                            acara.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon"><i class="bi bi-camera-reels"></i></div>
+                        <h4>Galeri Foto & Video</h4>
+                        <p>Bagikan momen pra-pernikan Anda melalui galeri foto interaktif dan video sinematik yang
+                            memukau.</p>
+                    </div>
+                    <div class="feature-card" aria-hidden="true">
+                        <div class="feature-icon"><i class="bi bi-clock-history"></i></div>
+                        <h4>Hitungan Mundur</h4>
+                        <p>Jangan sampai terlewatkan moment indah kamu, hitung mundur tanggal acara pernikahanmu.</p>
+                    </div>
+                    <div class="feature-card" aria-hidden="true">
+                        <div class="feature-icon"><i class="bi bi-phone"></i></div>
+                        <h4>Design Modern dan Responsif</h4>
+                        <p>Say good bye untuk design jadul. Biar undanganmu makin wow.</p>
+                    </div>
+                    <div class="feature-card" aria-hidden="true">
+                        <div class="feature-icon"><i class="bi bi-music-note-beamed"></i></div>
+                        <h4>Background Music</h4>
+                        <p>Pilih musik sesuai keinginan kamu agar undanganmu lebih eksklusif dan romantis.</p>
+                    </div>
+                    <div class="feature-card" aria-hidden="true">
+                        <div class="feature-icon"><i class="bi bi-chat-heart"></i></div>
+                        <h4>Berbagi Momen Indah dan Ucapan</h4>
+                        <p>Tamu undangan bisa berbagi momen dengan mengirimkan gambar dan ucapan.</p>
+                    </div>
+                    <div class="feature-card" aria-hidden="true">
+                        <div class="feature-icon"><i class="bi bi-gift"></i></div>
+                        <h4>Amplop Digital</h4>
+                        <p>Tamu undangan bisa mengirim amplop secara digital dengan mudah.</p>
+                    </div>
+                    <div class="feature-card" aria-hidden="true">
+                        <div class="feature-icon"><i class="bi bi-heart"></i></div>
+                        <h4>Love Stories</h4>
+                        <p>Ceritakan Kisah Cinta kamu dengan leluasa.</p>
+                    </div>
+                    <div class="feature-card" aria-hidden="true">
+                        <div class="feature-icon"><i class="bi bi-camera-video"></i></div>
+                        <h4>Live Streaming</h4>
+                        <p>Temui acara secara virtual agar jarang tidak membuat keterbatasan.</p>
+                    </div>
+                    <div class="feature-card" aria-hidden="true">
+                        <div class="feature-icon"><i class="bi bi-map"></i></div>
+                        <h4>Google Maps Integrasi</h4>
+                        <p>Tamu tidak akan tersesat. Integrasi peta langsung memandu mereka ke lokasi acara dengan satu
+                            klik.</p>
+                    </div>
+                    <div class="feature-card" aria-hidden="true">
+                        <div class="feature-icon"><i class="bi bi-people"></i></div>
+                        <h4>RSVP & Hitung Tamu</h4>
+                        <p>Ketahui pasti berapa tamu yang akan hadir. Sistem RSVP otomatis memudahkan Anda mempersiapkan
+                            acara.</p>
+                    </div>
+                    <div class="feature-card" aria-hidden="true">
+                        <div class="feature-icon"><i class="bi bi-camera-reels"></i></div>
+                        <h4>Galeri Foto & Video</h4>
+                        <p>Bagikan momen pra-pernikan Anda melalui galeri foto interaktif dan video sinematik yang
+                            memukau.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+
+
 
     <!-- CTA Section -->
     <section class="cta-section">
@@ -1528,7 +1842,8 @@
             <div class="cta-box reveal">
                 <h2>Siap Memulai Perjalanan Anda?</h2>
                 <p>Buat undangan digital impian Anda hari ini. Gratis untuk memulai, tanpa kartu kredit.</p>
-                <a href="{{ route('register') }}" rel="nofollow" class="btn-gold" style="font-size: 1rem; padding: 1rem 2.5rem;">
+                <a href="{{ route('register') }}" rel="nofollow" class="btn-gold"
+                    style="font-size: 1rem; padding: 1rem 2.5rem;">
                     Buat Undangan Sekarang <i class="bi bi-arrow-right ms-2"></i>
                 </a>
             </div>
@@ -1538,14 +1853,57 @@
     <!-- Footer -->
     <footer>
         <div class="container">
+            <!-- Styling Tambahan agar Tampil Rapi -->
+            <style>
+                .footer-payment-icons img {
+                    object-fit: contain;
+                    transition: opacity 0.2s ease-in-out;
+                    opacity: 0.85;
+                    align-self: start;
+                }
+
+                .footer-payment-icons img:hover {
+                    opacity: 1;
+                }
+            </style>
             <div class="row gy-5">
                 <div class="col-lg-4 reveal">
                     <a href="#" class="footer-logo">
                         <img src="{{ asset('assets/logo-new.png') }}" alt="Logo RuangUndang">
                     </a>
-                    <p class="text-secondary small" style="max-width: 350px;">Saat ini kami menyediakan undangan digital
-                        untuk pernikahan. Untuk khitanan, aqiqah, dan momen spesial lainnya akan segera hadir. Praktis,
-                        elegan, dan hemat biaya.</p>
+                    <div
+                        class="footer-payment-icons d-flex align-items-center justify-content-center flex-wrap gap-3 py-3">
+
+                        <!-- GoPay -->
+                        <img src="https://thumb.wikimedia.org/wikipedia/commons/thumb/6/65/Gopay_logo_%282019%29.svg/3840px-Gopay_logo_%282019%29.svg.png?utm_source=id.wikipedia.org&utm_campaign=index&utm_content=thumbnail"
+                            alt="GoPay" height="24" title="GoPay">
+
+                        <!-- QRIS -->
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/e/e1/QRIS_logo.svg" alt="QRIS"
+                            height="26" title="QRIS">
+
+                        <!-- Bank Mandiri -->
+                        <img src="https://thumb.wikimedia.org/wikipedia/commons/thumb/a/ad/Bank_Mandiri_logo_2016.svg/1280px-Bank_Mandiri_logo_2016.svg.png?utm_source=id.wikipedia.org&utm_campaign=index&utm_content=thumbnail"
+                            alt="Mandiri" height="20" title="Bank Mandiri">
+
+                        <!-- Bank BNI -->
+                        <img src="https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f0/Bank_Negara_Indonesia_logo_%282004%29.svg/1280px-Bank_Negara_Indonesia_logo_%282004%29.svg.png?utm_source=id.wikipedia.org&utm_campaign=index&utm_content=thumbnail"
+                            alt="BNI" height="22" title="BNI">
+
+                        <!-- Bank BRI -->
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/5/5b/Logo_Bank_Rakyat_Indonesia.svg?utm_source=id.wikipedia.org&utm_campaign=index&utm_content=original"
+                            alt="BRI" height="20" title="Bank BRI">
+
+                        <!-- Permata Bank -->
+                        <img src="https://upload.wikimedia.org/wikipedia/en/archive/4/48/20250913151534%21PermataBank_logo.svg"
+                            alt="Permata" height="20" title="Permata Bank">
+
+                        <!-- DANA -->
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/5/52/Dana_logo.png?utm_source=id.wikipedia.org&utm_campaign=index&utm_content=original"
+                            alt="Dana" height="24" title="DANA">
+                    </div>
+
+
                     <div class="footer-social">
                         <a href="#" class="social-btn"><i class="bi bi-instagram"></i></a>
                         <a href="#" class="social-btn"><i class="bi bi-facebook"></i></a>
@@ -1579,7 +1937,7 @@
                         <li><a href="{{ route('pages.faq') }}">Pertanyaan (FAQ)</a></li>
                         <li><a href="{{ route('pages.syarat-ketentuan') }}">Syarat & Ketentuan</a></li>
                         <li><a href="{{ route('pages.kebijakan-privasi') }}">Kebijakan Privasi</a></li>
-                       
+
                     </ul>
                 </div>
             </div>
@@ -1590,7 +1948,8 @@
             </div>
 
             <div class="text-center mt-4">
-                <a href="https://midtrans.com" target="_blank" rel="noopener noreferrer" class="midtrans-security" title="Pembayaran aman diproses oleh Midtrans">
+                <a href="https://midtrans.com" target="_blank" rel="noopener noreferrer" class="midtrans-security"
+                    title="Pembayaran aman diproses oleh Midtrans">
                     <span class="midtrans-icon">
                         <i class="bi bi-shield-lock-fill"></i>
                     </span>
@@ -1613,6 +1972,64 @@
                 navbar.classList.remove('scrolled');
             }
         });
+
+        // Hero Text Slider
+        const heroSlides = document.querySelectorAll('.hero-slide');
+        const heroDotsContainer = document.querySelector('.hero-slider-dots');
+        let currentHeroSlide = 0;
+        let heroInterval;
+
+        function createHeroDots() {
+            if (!heroDotsContainer) return;
+            heroDotsContainer.innerHTML = '';
+            heroSlides.forEach((_, index) => {
+                const dot = document.createElement('button');
+                dot.className = 'hero-slider-dot' + (index === 0 ? ' active' : '');
+                dot.setAttribute('aria-label', 'Slide ' + (index + 1));
+                dot.addEventListener('click', () => goToHeroSlide(index));
+                heroDotsContainer.appendChild(dot);
+            });
+        }
+
+        function goToHeroSlide(index) {
+            heroSlides[currentHeroSlide].classList.remove('active');
+            currentHeroSlide = index;
+            heroSlides[currentHeroSlide].classList.add('active');
+            updateHeroDots();
+            resetHeroAutoPlay();
+        }
+
+        function updateHeroDots() {
+            if (!heroDotsContainer) return;
+            const dots = heroDotsContainer.querySelectorAll('.hero-slider-dot');
+            dots.forEach((dot, index) => {
+                dot.classList.toggle('active', index === currentHeroSlide);
+            });
+        }
+
+        function nextHeroSlide() {
+            const next = (currentHeroSlide + 1) % heroSlides.length;
+            goToHeroSlide(next);
+        }
+
+        function startHeroAutoPlay() {
+            stopHeroAutoPlay();
+            heroInterval = setInterval(nextHeroSlide, 5000);
+        }
+
+        function stopHeroAutoPlay() {
+            clearInterval(heroInterval);
+        }
+
+        function resetHeroAutoPlay() {
+            stopHeroAutoPlay();
+            startHeroAutoPlay();
+        }
+
+        if (heroSlides.length > 0) {
+            createHeroDots();
+            startHeroAutoPlay();
+        }
 
         // Scroll Reveal Animation (Intersection Observer)
         const reveals = document.querySelectorAll('.reveal');
@@ -1667,116 +2084,69 @@
             });
         });
 
-        // Wedding Slider Carousel
-        const weddingSlider = document.querySelector('.wedding-slider');
-        const weddingWrapper = document.querySelector('.wedding-slider-wrapper');
-        if (weddingSlider && weddingWrapper) {
-            const prevBtn = weddingWrapper.querySelector('.wedding-slider-prev');
-            const nextBtn = weddingWrapper.querySelector('.wedding-slider-next');
-            const dotsContainer = weddingWrapper.querySelector('.wedding-slider-dots');
-            const items = weddingSlider.querySelectorAll('.wedding-item');
-
-            let currentIndex = 0;
-            let autoScrollInterval;
-
-            const getItemsPerView = () => {
-                return window.innerWidth <= 768 ? 1 : 3;
-            };
-
-            const getTotalSlides = () => {
-                const total = items.length;
-                const perView = getItemsPerView();
-                return Math.max(1, total - perView + 1);
-            };
-
-            const getItemWidth = () => {
-                const item = items[0];
-                if (!item) return 320;
-                const style = window.getComputedStyle(weddingSlider);
-                const gap = parseFloat(style.gap) || 30;
-                return item.offsetWidth + gap;
-            };
-
-            const updateSlider = () => {
-                const offset = -currentIndex * getItemWidth();
-                weddingSlider.style.transform = `translateX(${offset}px)`;
-
-                items.forEach((item, index) => {
-                    item.classList.toggle('active', index === currentIndex);
-                });
-
-                updateDots();
-            };
-
-            const updateDots = () => {
-                if (!dotsContainer) return;
-                dotsContainer.innerHTML = '';
-                const totalSlides = getTotalSlides();
-                for (let i = 0; i < totalSlides; i++) {
-                    const dot = document.createElement('button');
-                    dot.className = 'wedding-slider-dot' + (i === currentIndex ? ' active' : '');
-                    dot.setAttribute('aria-label', 'Slide ' + (i + 1));
-                    dot.addEventListener('click', () => goToSlide(i));
-                    dotsContainer.appendChild(dot);
-                }
-            };
-
-            const goToSlide = (index) => {
-                const totalSlides = getTotalSlides();
-                currentIndex = Math.max(0, Math.min(index, totalSlides - 1));
-                updateSlider();
-                resetAutoScroll();
-            };
-
-            const nextSlide = () => {
-                const totalSlides = getTotalSlides();
-                if (currentIndex >= totalSlides - 1) {
-                    goToSlide(0);
-                } else {
-                    goToSlide(currentIndex + 1);
-                }
-            };
-
-            const prevSlide = () => {
-                const totalSlides = getTotalSlides();
-                if (currentIndex <= 0) {
-                    goToSlide(totalSlides - 1);
-                } else {
-                    goToSlide(currentIndex - 1);
-                }
-            };
-
-            const startAutoScroll = () => {
-                stopAutoScroll();
-                autoScrollInterval = setInterval(nextSlide, 4000);
-            };
-
-            const stopAutoScroll = () => {
-                clearInterval(autoScrollInterval);
-            };
-
-            const resetAutoScroll = () => {
-                stopAutoScroll();
-                startAutoScroll();
-            };
-
-            if (prevBtn) prevBtn.addEventListener('click', prevSlide);
-            if (nextBtn) nextBtn.addEventListener('click', nextSlide);
-
-            weddingSlider.addEventListener('mouseenter', stopAutoScroll);
-            weddingSlider.addEventListener('mouseleave', startAutoScroll);
-
-            updateDots();
-            updateSlider();
-            startAutoScroll();
-
-            let resizeTimeout;
-            window.addEventListener('resize', () => {
-                clearTimeout(resizeTimeout);
-                resizeTimeout = setTimeout(() => {
-                    updateSlider();
-                }, 150);
+        // Features Auto Scroll
+        const featuresScrollWrapper = document.querySelector('.features-scroll-wrapper');
+        const featuresScrollTrack = document.querySelector('.features-scroll-track');
+        if (featuresScrollWrapper && featuresScrollTrack) {
+            featuresScrollWrapper.addEventListener('mouseenter', () => {
+                featuresScrollTrack.style.animationPlayState = 'paused';
             });
+            featuresScrollWrapper.addEventListener('mouseleave', () => {
+                featuresScrollTrack.style.animationPlayState = 'running';
+            });
+        }
+
+        // Couple List Live Preview Toggle
+        const coupleListItems = document.querySelectorAll('.couple-list-item[data-slug]');
+        const previewPanel = document.getElementById('couplePreviewPanel');
+        const previewFrame = document.getElementById('couplePreviewFrame');
+        const previewEmpty = document.getElementById('couplePreviewEmpty');
+        const previewCloseBtn = previewPanel ? previewPanel.querySelector('.couple-preview-close') : null;
+        let activeCoupleItem = null;
+
+        function openCouplePreview(item) {
+            if (!previewPanel || !previewFrame) return;
+
+            const slug = item.getAttribute('data-slug');
+            const templateId = item.getAttribute('data-template-id');
+            const previewUrl = `/template/frame/${slug}/${templateId}`;
+
+            previewFrame.src = previewUrl;
+            previewPanel.classList.remove('d-none');
+            if (previewEmpty) previewEmpty.classList.add('d-none');
+
+            if (activeCoupleItem && activeCoupleItem !== item) {
+                activeCoupleItem.classList.remove('active');
+            }
+            item.classList.add('active');
+            activeCoupleItem = item;
+        }
+
+        function closeCouplePreview() {
+            if (!previewPanel || !previewFrame) return;
+            previewFrame.src = '';
+            previewPanel.classList.add('d-none');
+            if (previewEmpty) previewEmpty.classList.remove('d-none');
+
+            if (activeCoupleItem) {
+                activeCoupleItem.classList.remove('active');
+                activeCoupleItem = null;
+            }
+        }
+
+        coupleListItems.forEach(item => {
+            item.addEventListener('click', function (e) {
+                e.preventDefault();
+                if (activeCoupleItem === this) {
+                    closeCouplePreview();
+                } else {
+                    openCouplePreview(this);
+                }
+            });
+        });
+
+        if (previewCloseBtn) {
+            previewCloseBtn.addEventListener('click', closeCouplePreview);
         }
     </script>
 

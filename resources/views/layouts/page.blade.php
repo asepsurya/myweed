@@ -135,6 +135,42 @@
             box-shadow: 0 8px 25px rgba(198, 169, 98, 0.5);
         }
 
+        .user-avatar-circle {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            flex-shrink: 0;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            transition: all var(--speed) ease;
+        }
+
+        .navbar.scrolled .user-avatar-circle {
+            border-color: var(--gold-light);
+        }
+
+        .user-avatar-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .user-avatar-initial {
+            color: var(--white);
+            font-weight: 700;
+            font-size: 0.9rem;
+            line-height: 1;
+        }
+
+        .nav-link .user-avatar-circle:hover {
+            transform: scale(1.1);
+            border-color: var(--gold);
+        }
+
         /* ===== Page Header ===== */
         .page-header {
             min-height: 50vh;
@@ -296,7 +332,16 @@
                 </ul>
                 <div class="d-flex align-items-center gap-3">
                     @auth
-                        <a href="{{ route('dashboard.user') }}" class="nav-link text-white">Dashboard</a>
+                        <a href="{{ route('dashboard.user') }}" class="nav-link d-flex align-items-center gap-2">
+                            <div class="user-avatar-circle">
+                                @if(Auth::user()->avatar)
+                                    <img src="{{ asset('storage/' . Auth::user()->avatar) }}" alt="{{ Auth::user()->name }}" class="user-avatar-img">
+                                @else
+                                    <span class="user-avatar-initial">{{ strtoupper(substr(Auth::user()->name, 0, 1)) }}</span>
+                                @endif
+                            </div>
+                            <span class="d-none d-md-inline">{{ Auth::user()->name }}</span>
+                        </a>
                     @else
                         <a href="{{ route('login') }}" rel="nofollow" class="nav-link">Masuk</a>
                         <a href="{{ route('register') }}" rel="nofollow" class="btn-gold">Mulai Gratis</a>

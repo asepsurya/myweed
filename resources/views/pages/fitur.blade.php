@@ -69,6 +69,41 @@
                         <p>Bagikan momen pra-pernikahan melalui galeri interaktif dan video sinematik.</p>
                     </div>
                 </div>
+                <div class="col-lg-4 col-md-6 reveal" style="transition-delay: 0.1s;">
+                    <div class="feature-card">
+                        <div class="feature-icon"><i class="bi bi-clock-history"></i></div>
+                        <h4>Hitungan Mundur</h4>
+                        <p>Jangan sampai terlewatkan momen indah, hitung mundur tanggal acara pernikahanmu.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 reveal" style="transition-delay: 0.15s;">
+                    <div class="feature-card">
+                        <div class="feature-icon"><i class="bi bi-chat-heart"></i></div>
+                        <h4>Berbagi Momen Indah dan Ucapan</h4>
+                        <p>Tamu undangan bisa berbagi momen dengan mengirimkan gambar dan ucapan.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 reveal" style="transition-delay: 0.2s;">
+                    <div class="feature-card">
+                        <div class="feature-icon"><i class="bi bi-heart"></i></div>
+                        <h4>Love Stories</h4>
+                        <p>Ceritakan kisah cinta kamu dengan leluasa.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 reveal" style="transition-delay: 0.25s;">
+                    <div class="feature-card">
+                        <div class="feature-icon"><i class="bi bi-camera-video"></i></div>
+                        <h4>Live Streaming</h4>
+                        <p>Tonton acara secara virtual agar jarak tidak menjadi keterbatasan.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 reveal" style="transition-delay: 0.3s;">
+                    <div class="feature-card">
+                        <div class="feature-icon"><i class="bi bi-arrow-repeat"></i></div>
+                        <h4>Live Update</h4>
+                        <p>User bisa melihat update terbaru dari undangan secara langsung tanpa refresh.</p>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
