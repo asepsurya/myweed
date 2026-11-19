@@ -1,5 +1,21 @@
 <x-app-layout>
 
+    @php
+        // Map tipe template -> kategori paling umum (berdasarkan template yang sudah ada)
+        $typeCatCounts = [];
+        foreach ($tempelate as $tpl) {
+            if ($tpl->templateType && $tpl->category) {
+                $typeCatCounts[$tpl->template_type_id][$tpl->id_category] =
+                    ($typeCatCounts[$tpl->template_type_id][$tpl->id_category] ?? 0) + 1;
+            }
+        }
+        $typeCategoryMap = [];
+        foreach ($typeCatCounts as $typeId => $cats) {
+            arsort($cats);
+            $typeCategoryMap[$typeId] = array_key_first($cats);
+        }
+    @endphp
+
     <style>
         .adminuiux-card {
             position: relative;
@@ -53,6 +69,30 @@
             color: #fff;
             pointer-events: none;
             box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+        }
+
+        .type-filter-bar {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: .4rem;
+        }
+
+        .type-filter {
+            cursor: pointer;
+            user-select: none;
+            opacity: .65;
+            border: 1px solid transparent;
+            transition: opacity .15s ease, box-shadow .15s ease;
+        }
+
+        .type-filter:hover {
+            opacity: 1;
+        }
+
+        .type-filter.active {
+            opacity: 1;
+            box-shadow: 0 0 0 2px #fff, 0 0 0 4px rgba(27, 42, 74, .55);
         }
 
         /* CodeMirror */
@@ -453,70 +493,68 @@
         <!-- HERO / WELCOME -->
         <div class="row align-items-center py-4">
             <div class="col-12 col-lg-6 col-xxl-8">
-                <h3 class="fw-normal mb-0 text-secondary">Let's explore best</h3>
-                <h1 class="mb-4">Wedding Invitation Templates</h1>
+                <h5 class="fw-normal mb-1 text-muted" style="font-family: 'Plus Jakarta Sans', sans-serif;">Pilihan Tema Eksklusif</h5>
+                <h1 class="mb-3 fw-bold" style="font-family: 'Plus Jakarta Sans', sans-serif; color: var(--ru-text-title, #1B2A4A);">Template Undangan Digital</h1>
                 <div class="row align-items-center">
                     <div class="col-12 col-md-11 col-xxl-8 mb-4">
-                        <div class="input-group">
-                            <input id="templateSearch" class="form-control border-end-0" type="text"
-                                placeholder="Search template...">
-                            <button class="btn btn-lg btn-theme btn-square">
+                        <div class="input-group shadow-sm rounded-3 overflow-hidden">
+                            <input id="templateSearch" class="form-control border-end-0 py-2" type="text"
+                                placeholder="Cari nama template desain...">
+                            <button class="btn btn-primary px-4" style="background: linear-gradient(135deg, #C6A962, #A68B4B); border: none;">
                                 <i class="bi bi-search"></i>
                             </button>
                         </div>
                     </div>
-                <div class="d-flex flex-wrap align-items-start gap-4 theme-green mb-4">
+                <div class="d-flex flex-wrap align-items-start gap-4 mb-4">
 
-    <div class="hero-features">
-        <div class="d-flex align-items-center">
-            <div class="me-2">
-                <span class="avatar avatar-40 rounded border-theme-1 border text-theme-1">
-                    <i class="bi bi-person-check h5"></i>
-                </span>
-            </div>
-            <div>
-                <p class="text-theme-1 small mb-0">
-                    Professional<br>Designs
-                </p>
+                    <div class="hero-features">
+                        <div class="d-flex align-items-center">
+                            <div class="me-2">
+                                <span class="avatar avatar-40 rounded-3 border d-flex align-items-center justify-content-center" style="background: rgba(198, 169, 98, 0.12); color: #C6A962; border-color: rgba(198, 169, 98, 0.25) !important;">
+                                    <i class="bi bi-palette-fill fs-5"></i>
+                                </span>
+                            </div>
+                            <div>
+                                <p class="small mb-0 fw-semibold">
+                                    Desain Eksklusif<br><span class="text-muted fw-normal">Seni Digital Berkualitas</span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="hero-features">
+                        <div class="d-flex align-items-center">
+                            <div class="me-2">
+                                <span class="avatar avatar-40 rounded-3 border d-flex align-items-center justify-content-center" style="background: rgba(59, 130, 246, 0.12); color: #3B82F6; border-color: rgba(59, 130, 246, 0.25) !important;">
+                                    <i class="bi bi-phone-fill fs-5"></i>
+                                </span>
+                            </div>
+                            <div>
+                                <p class="small mb-0 fw-semibold">
+                                    100% Responsif<br><span class="text-muted fw-normal">Sempurna di Semua Layar</span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="hero-features">
+                        <div class="d-flex align-items-center">
+                            <div class="me-2">
+                                <span class="avatar avatar-40 rounded-3 border d-flex align-items-center justify-content-center" style="background: rgba(16, 185, 129, 0.12); color: #10B981; border-color: rgba(16, 185, 129, 0.25) !important;">
+                                    <i class="bi bi-code-slash fs-5"></i>
+                                </span>
+                            </div>
+                            <div>
+                                <p class="small mb-0 fw-semibold">
+                                    Live Customizer<br><span class="text-muted fw-normal">Pratinjau Instan</span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
             </div>
         </div>
-    </div>
-
-    <div class="hero-features">
-        <div class="d-flex align-items-center">
-            <div class="me-2">
-                <span class="avatar avatar-40 rounded border-theme-1 border text-theme-1">
-                    <i class="bi bi-person-check h5"></i>
-                </span>
-            </div>
-            <div>
-                <p class="text-theme-1 small mb-0">
-                    100+ Best professionals<br>for your support
-                </p>
-            </div>
-        </div>
-    </div>
-
-  <div class="hero-features">
-    <div class="d-flex align-items-center">
-        <div class="me-2">
-            <span class="avatar avatar-40 rounded border-theme-1 border text-theme-1">
-                <i class="bi bi-shield-check h5"></i>
-            </span>
-        </div>
-
-        <div>
-            <p class="text-theme-1 small mb-0">
-                We have Quick, Easy<br>
-                and Trusted partners
-            </p>
-        </div>
-    </div>
-</div>
-
-</div>
-</div>
-</div>
 
 {{-- Promo Card --}}
 <div class="col-12 col-lg-6 col-xl-4 mb-4 hero-card">
@@ -624,21 +662,27 @@
 </div>
 
 </div>
- <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 px-5 mb-4">
-        <h2 class="fw-bold m-0"></h2>
-        <div class="d-flex gap-2 header-actions">
-          
-            <button class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#modaltemplate">
-                <i class="bi bi-plus-lg"></i> Add Template
-            </button>
-        
-            <form action="{{ route('tempelate.sync') }}" method="POST"
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+        <div>
+            <h4 class="fw-bold mb-0" style="font-family: 'Plus Jakarta Sans', sans-serif;">Pustaka Template Desain</h4>
+            <p class="text-muted small mb-0">Kelola tema dan tampilan undangan digital yang siap digunakan</p>
+        </div>
+        <div class="d-flex gap-2 flex-wrap header-actions">
+            <a href="{{ route('template-creator.index') }}" class="btn btn-sm btn-outline-secondary rounded-pill px-3">
+                <i class="bi bi-magic me-1"></i> AI Creator
+            </a>
+            <form action="{{ route('tempelate.sync') }}" method="POST" class="d-inline"
                 onsubmit="return confirm('Sinkronisasi template dari R2? Template yang belum ada di database akan ditambahkan.');">
                 @csrf
-                <button type="submit" class="btn btn-outline-success">
+                <button type="submit" class="btn btn-sm btn-outline-success rounded-pill px-3">
                     <i class="bi bi-arrow-repeat me-1"></i> Sync R2
                 </button>
             </form>
+            <button class="btn btn-sm text-white rounded-pill px-3 fw-semibold shadow-sm"
+                style="background: linear-gradient(135deg, #C6A962 0%, #A68B4B 100%); border: none;"
+                data-bs-toggle="modal" data-bs-target="#modaltemplate">
+                <i class="bi bi-plus-lg me-1"></i> Tambah Template
+            </button>
         </div>
     </div>
         <!-- TEMPLATE CONTENT -->
@@ -675,6 +719,21 @@
                             </div>
                         </a>
                     </div>
+                </div>
+
+                {{-- Filter by Template Type --}}
+                <div class="type-filter-bar mb-3">
+                    <span class="small fw-semibold text-muted me-1">
+                        <i class="bi bi-funnel me-1"></i>Tipe Undangan:
+                    </span>
+                    <a href="javascript:void(0)" onclick="filterType('all')"
+                        class="badge rounded-pill text-bg-secondary type-filter active" data-type="all">Semua</a>
+                    @foreach ($templateTypes as $type)
+                        <a href="javascript:void(0)" onclick="filterType('{{ $type->slug }}')"
+                            class="badge rounded-pill type-filter"
+                            style="background-color: {{ $type->color }}; color: #fff;"
+                            data-type="{{ $type->slug }}">{{ $type->name }}</a>
+                    @endforeach
                 </div>
             </div>
 
@@ -715,8 +774,8 @@
                                 <div class="d-flex justify-content-between align-items-center">
                                     <span class="badge text-bg-success">Active</span>
                                     <div class="d-flex gap-2">
-                                        <a href="{{ route('template.frame', ['slug' => 'romeo-juliet', 'id' => $template->id]) }}"
-                                            target="_blank" class="btn btn-sm btn-outline-primary">
+                                        <a href="{{ route('template.frame', ['slug' => $template->slug, 'id' => $template->id]) }}"
+                                            target="_blank" class="btn btn-sm btn-outline-primary" title="Preview">
                                             <i class="bi bi-eye"></i>
                                         </a>
                                         <button type="button"
@@ -1083,10 +1142,10 @@
                                     <input type="text" id="editTemplateSlug" class="form-control form-control-sm"
                                         readonly>
                                 </div>
-                                <div class="mb-3" hidden>
+                                <div class="mb-3">
                                     <label for="editTemplateCategory"
                                         class="form-label fw-semibold small">Kategori</label>
-                                    <select id="editTemplateCategory" class="form-select form-select-sm" disabled>
+                                    <select id="editTemplateCategory" class="form-select form-select-sm">
                                         <option value="">-- Pilih Kategori --</option>
                                         @foreach($categories as $cat)
                                             <option value="{{ $cat->id }}">{{ $cat->name }}</option>
@@ -1288,6 +1347,20 @@
                         <i class="bi bi-trash"></i>
                     </button>`;
                         list.appendChild(item);
+
+                        const filterBar = document.querySelector('.type-filter-bar');
+                        if (filterBar) {
+                            const pill = document.createElement('a');
+                            pill.href = 'javascript:void(0)';
+                            pill.className = 'badge rounded-pill type-filter';
+                            pill.dataset.type = data.type.slug;
+                            pill.style.backgroundColor = color;
+                            pill.style.color = '#fff';
+                            pill.textContent = name;
+                            pill.onclick = function () { filterType(data.type.slug); };
+                            filterBar.appendChild(pill);
+                        }
+
                         bindDeleteTemplateType();
                     }
                 })
@@ -1571,6 +1644,7 @@
         window.saveTemplateInfo = function () {
             const name = document.getElementById('editTemplateName').value.trim();
             const templateTypeId = document.getElementById('editTemplateType').value;
+            const categoryId = document.getElementById('editTemplateCategory').value;
             const saveBtn = document.getElementById('saveTemplateInfoBtn');
             const originalText = saveBtn.innerHTML;
 
@@ -1589,6 +1663,7 @@
             const formData = new FormData();
             formData.append('_token', '{{ csrf_token() }}');
             formData.append('name', name);
+            formData.append('id_category', categoryId);
             formData.append('template_type_id', templateTypeId);
 
             fetch("{{ route('tempelate.update-info', ['template' => '__ID__']) }}".replace('__ID__', currentEditTemplateId), {
@@ -1641,6 +1716,7 @@
         const searchInput = document.getElementById('templateSearch');
         const noResult = document.getElementById('noResult');
         let activeCategory = 'all';
+        let activeType = 'all';
 
         function filterTemplates() {
             const term = searchInput.value.toLowerCase().trim();
@@ -1650,10 +1726,12 @@
             cards.forEach(card => {
                 const name = card.getAttribute('data-name');
                 const category = card.getAttribute('data-category');
+                const type = card.getAttribute('data-type');
                 const matchesSearch = name.includes(term);
                 const matchesCategory = (activeCategory === 'all' || category === activeCategory);
+                const matchesType = (activeType === 'all' || type === activeType);
 
-                if (matchesSearch && matchesCategory) {
+                if (matchesSearch && matchesCategory && matchesType) {
                     card.style.display = '';
                     visibleCount++;
                 } else {
@@ -1681,7 +1759,54 @@
             filterTemplates();
         };
 
+        window.filterType = function (type) {
+            if (activeType === type && type !== 'all') {
+                activeType = 'all';
+            } else {
+                activeType = type;
+            }
+            document.querySelectorAll('.type-filter').forEach(el => {
+                el.classList.toggle('active', el.dataset.type === activeType);
+            });
+            filterTemplates();
+        };
+
         searchInput.addEventListener('input', filterTemplates);
+    </script>
+
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <!-- SCRIPT: Auto-set Kategori berdasarkan Tipe Template            -->
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <script>
+        const typeCategoryMap = @json($typeCategoryMap ?? []);
+
+        function bindTypeCategoryAutofill(typeSelect, categorySelect) {
+            if (!typeSelect || !categorySelect) return;
+            typeSelect.addEventListener('change', function () {
+                const categoryId = typeCategoryMap[this.value];
+                if (categoryId) {
+                    categorySelect.value = categoryId;
+                }
+            });
+        }
+
+        // Modal Edit Template
+        bindTypeCategoryAutofill(
+            document.getElementById('editTemplateType'),
+            document.getElementById('editTemplateCategory')
+        );
+
+        // Modal Upload — tab ZIP
+        bindTypeCategoryAutofill(
+            document.querySelector('#zip-panel select[name="template_type_id"]'),
+            document.querySelector('#zip-panel select[name="id_category"]')
+        );
+
+        // Modal Upload — tab Import Code
+        bindTypeCategoryAutofill(
+            document.querySelector('#code-panel select[name="template_type_id"]'),
+            document.querySelector('#code-panel select[name="id_category"]')
+        );
     </script>
 
 </x-app-layout>

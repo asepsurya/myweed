@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
+    @php
+        $noIndex = !empty(request('search')) || (!empty(request('category')) && request('category') != 'All');
+    @endphp
+    @include('layouts.partial.seo_head')
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap"
+        rel="stylesheet">
+    <link rel="icon" type="image/png" href="{{ asset('assets/fav-icon.png') }}">
+    <!-- Icons -->
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="{{ asset('assets/css/landing.css') }}">
+
+    @if(config('services.facebook.pixel_id'))
+    <!-- Facebook Pixel Code -->
+    <script>
+        !function(f,b,e,v,n,t,s)
+        {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+        n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+        if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+        n.queue=[];t=b.createElement(e);t.async=!0;
+        t.src=v;s=b.getElementsByTagName(e)[0];
+        s.parentNode.insertBefore(t,s)}(window, document,'script',
+        'https://connect.facebook.net/en_US/fbevents.js');
+        fbq('init', '{{ config('services.facebook.pixel_id') }}');
+        fbq('track', 'PageView');
+    </script>
+    <noscript><img height="1" width="1" style="display:none"
+        src="https://www.facebook.com/tr?id={{ config('services.facebook.pixel_id') }}&ev=PageView&noscript=1"
+        alt=""/></noscript>
+    @endif
+</head>
+
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg" id="mainNav">
+        <div class="container">
+            <a class="navbar-brand" href="{{ route('landing') }}">
+                <img src="{{ asset('assets/logo-new.png') }}" alt="Logo RuangUndang - Platform Undangan Digital"
+                    width="2389" height="447">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav mx-auto">
+                    <li class="nav-item"><a class="nav-link" href="{{ route('pages.cari-tema') }}">Cari Tema</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('pages.fitur') }}">Fitur</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('pages.harga') }}">Harga</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('pages.bantuan') }}">Bantuan</a></li>
+                </ul>
+                <div class="d-flex align-items-center gap-3">
+                    @auth
+                        <a href="{{ route('dashboard.user') }}" class="nav-link d-flex align-items-center gap-2">
+                            <div class="user-avatar-circle">
+                                @if(Auth::user()->avatar)
+                                    <img src="{{ asset('storage/' . Auth::user()->avatar) }}" alt="{{ Auth::user()->name }}"
+                                        class="user-avatar-img">
+                                @else
+                                    <span class="user-avatar-initial">{{ strtoupper(substr(Auth::user()->name, 0, 1)) }}</span>
+                                @endif
+                            </div>
+                            <span class="d-none d-md-inline">{{ Auth::user()->name }}</span>
+                        </a>
+                    @else
+                        <a href="{{ route('login') }}" rel="nofollow" class="nav-link">Masuk</a>
+                        <a href="{{ route('register') }}" rel="nofollow" class="btn-gold">Mulai Gratis</a>
+                    @endauth
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <video class="hero-video" autoplay muted loop playsinline>
+            <source src="{{ asset('assets/189858-886618183_medium.mp4') }}" type="video/mp4">
+        </video>
+        <div class="hero-overlay"></div>
+        <div class="hero-shape shape-1"></div>
+        <div class="hero-shape shape-2"></div>
+        <div class="hero-shape shape-3"></div>
+
+        <div class="container hero-content">
+            <span class="hero-tag">Platform Undangan Digital Premium</span>
+            <div class="hero-text-slider">
+                <div class="hero-slide active">
+                    <h1>Unggah Momen Spesial <br> dengan <em>Keindahan Abadi</em></h1>
+                    <p>Rancang undangan pernikahan digital yang memikat hati tamu Anda sejak detik pertama. Eksklusif,
+                        modern,
+                        dan mudah dibagikan.</p>
+                </div>
+                <div class="hero-slide">
+                    <h2 class="hero-slide-title">Wujudkan Cinta Anda <br> dalam <em>Tema Eksklusif</em></h2>
+                    <p>Pilih dari koleksi template premium yang dirancang untuk menceritakan kisah cinta Anda dengan
+                        sentuhan personal.</p>
+                </div>
+                <div class="hero-slide">
+                    <h2 class="hero-slide-title">Bagikan Kabar Bahagia <br> dengan <em>Sentuhan Modern</em></h2>
+                    <p>Kirim undangan digital ke seluruh tamu dalam hitungan detik. Hemat waktu, tetap elegan, dan
+                        berkesan
+                        forever.</p>
+                </div>
+            </div>
+
+            <form action="{{ route('landing') }}#templates" method="GET">
+                <div class="search-container">
+                    <i class="bi bi-search"></i>
+                    <input type="text" name="search" placeholder="Cari tema impian... (Rustic, Modern, Floral)"
+                        value="{{ request('search') }}">
+                    <button type="submit" class="btn-search">Cari</button>
+                </div>
+            </form>
+
+            <div class="hero-slider-dots"></div>
+
+            <div class="tag-wrapper">
+                <div class="tag-list">
+
+                    {{-- TAG ASLI --}}
+                    <div class="tag-group">
+                        <a href="{{ route('landing') }}#templates"
+                            class="tag-item {{ !request('category') || request('category') == 'All' ? 'active' : '' }}">
+                            Semua Tema
+                        </a>
+
+                        @foreach($categories as $cat)
+                            <a href="{{ route('landing', ['category' => $cat['name']]) }}#templates"
+                                class="tag-item {{ request('category') == $cat['name'] ? 'active' : '' }}">
+                                {{ $cat['name'] }}
+                            </a>
+                        @endforeach
+                    </div>
+
+                    {{-- DUPLIKAT UNTUK LOOP --}}
+                    <div class="tag-group" aria-hidden="true">
+                        <a href="{{ route('landing') }}#templates"
+                            class="tag-item {{ !request('category') || request('category') == 'All' ? 'active' : '' }}">
+                            Semua Tema
+                        </a>
+
+                        @foreach($categories as $cat)
+                            <a href="{{ route('landing', ['category' => $cat['name']]) }}#templates"
+                                class="tag-item {{ request('category') == $cat['name'] ? 'active' : '' }}">
+                                {{ $cat['name'] }}
+                            </a>
+                        @endforeach
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <a href="#real-weddings" class="scroll-down">
+            <i class="bi bi-chevron-double-down"></i>
+        </a>
+    </section>
+    <!-- Templates Grid -->
+    <section id="templates" class="template-section">
+        <div class="container">
+            <div class="section-header-center reveal">
+                <span class="section-subtitle">Galeri Inspirasi</span>
+                <h2 class="section-title">Koleksi Tema Eksklusif</h2>
+                <p class="section-desc">Pilih dari puluhan desain premium yang dirancang oleh desainer profesional kami.
+                </p>
+            </div>
+
+            <div class="template-grid">
+                @php $featuredTemplates = $templates->take(8); @endphp
+                @foreach($featuredTemplates as $template)
+                    <div class="template-card reveal">
+                        <div class="template-img-container">
+                            <img src="{{ template_thumbnail_url($template, $template->updated_at->timestamp) }}"
+                                alt="Template undangan digital {{ $template->name }}" loading="lazy"
+                                decoding="async">
+                            @if($template->templateType)
+                                <div class="type-badge-card" style="background-color: {{ $template->templateType->color }};">
+                                    {{ $template->templateType->name }}
+                                </div>
+                            @endif
+                            <div class="template-overlay">
+                                <a href="{{ route('template.frame', ['slug' => 'romeo-juliet', 'id' => $template->id]) }}"
+                                    target="_blank" rel="nofollow"
+                                    class="btn btn-light rounded-pill px-4 fw-bold shadow-sm">Pratinjau</a>
+                                <a href="{{ route('dashboard.user') }}?template_id={{ $template->id }}" rel="nofollow"
+                                    class="btn btn-gold rounded-pill px-4 fw-bold shadow-sm">Gunakan</a>
+                            </div>
+                        </div>
+                        <div class="template-footer">
+                            <div class="user-info">
+                                <img src="https://ui-avatars.com/api/?name={{urlencode($template->name)}}&background=random"
+                                    class="user-avatar" alt="Avatar {{ $template->name }}" width="24" height="24"
+                                    loading="lazy">
+                                <span class="user-name">{{ $template->name }}</span>
+
+                            </div>
+                            <div class="card-stats">
+                                <span title="Dilihat"><i class="bi bi-eye"></i>
+                                    {{ number_format($template->views_count) }}</span>
+                                <span title="Suka" class="like-btn" data-id="{{ $template->id }}">
+                                    <i class="bi bi-heart-fill text-danger"></i>
+                                    <span class="likes-count">{{ number_format($template->likes_count) }}</span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+
+            @if($featuredTemplates->isEmpty())
+                <div class="text-center py-5">
+                    <i class="bi bi-search text-muted display-1 opacity-25"></i>
+                    <h3 class="text-muted mt-3">Tema tidak ditemukan</h3>
+                    <p>Coba gunakan kata kunci lain atau lihat semua tema.</p>
+                    <a href="{{ route('pages.cari-tema') }}" class="btn btn-outline-dark mt-2 rounded-pill px-4">Lihat Semua
+                        Tema</a>
+                </div>
+            @else
+                <div class="text-center mt-4">
+                    <a href="{{ route('pages.cari-tema') }}" class="btn btn-outline-dark rounded-pill px-4">Lihat Semua
+                        Tema</a>
+                </div>
+            @endif
+        </div>
+    </section>
+    <!-- How It Works Section -->
+    <section class="how-it-works-section" id="how-it-works">
+        <div class="container">
+            <div class="section-header-center reveal">
+                <span class="section-subtitle">Mudah & Cepat</span>
+                <h2 class="section-title">Cara Membuat Undangan Digital</h2>
+                <p class="section-desc">Hanya 4 langkah sederhana untuk memiliki undangan pernikahan digital yang
+                    memukau.</p>
+            </div>
+
+            <div class="row g-4 mt-4">
+                <div class="col-lg-3 col-md-6 reveal reveal-d1">
+                    <div class="step-card text-center">
+                        <div class="step-icon">
+                            <img src="{{ asset('assets/img/step/Registrasi.png') }}" alt="Registrasi akun undangan digital"
+                                width="48" height="48" loading="lazy" decoding="async">
+                        </div>
+                        <div class="step-number">1</div>
+                        <h4 class="step-title">Registrasi Akun</h4>
+                        <p class="step-desc">Daftar dan buat akun undangan kamu di sini untuk memulai.</p>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 reveal reveal-d2">
+                    <div class="step-card text-center">
+                        <div class="step-icon">
+                            <img src="{{ asset('assets/img/step/isidata.png') }}" alt="Isi data dan upload foto undangan"
+                                width="48" height="48" loading="lazy" decoding="async">
+                        </div>
+                        <div class="step-number">2</div>
+                        <h4 class="step-title">Isi Data & Upload Foto</h4>
+                        <p class="step-desc">Isi info acara & profile serta upload foto/gallery. Customize undangan
+                            kamu.</p>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 reveal reveal-d3">
+                    <div class="step-card text-center">
+                        <div class="step-icon">
+                            <img src="{{ asset('assets/img/step/design.png') }}" alt="Pilih desain template undangan"
+                                width="48" height="48" loading="lazy" decoding="async">
+                        </div>
+                        <div class="step-number">3</div>
+                        <h4 class="step-title">Pilih Template</h4>
+                        <p class="step-desc">Pilih preset/template. Lihat daftar template eksklusif kami.</p>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 reveal reveal-d4">
+                    <div class="step-card text-center">
+                        <div class="step-icon">
+                            <img src="{{ asset('assets/img/step/share.png') }}" alt="Sebarkan undangan digital ke tamu"
+                                width="48" height="48" loading="lazy" decoding="async">
+                        </div>
+                        <div class="step-number">4</div>
+                        <h4 class="step-title">Sebarkan Undangan</h4>
+                        <p class="step-desc">Aktifkan, dan undangan kamu siap untuk disebarkan ke tamu.</p>
+                    </div>
+                </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features-section" id="features">
+        <div class="container">
+            <div class="section-header-center reveal">
+                <span class="section-subtitle">Keunggulan Kami</span>
+                <h2 class="section-title">Mengapa Memilih RuangUndang?</h2>
+                <p class="section-desc">Memberikan pengalaman terbaik untuk momen sekali seumur hidup Anda.</p>
+            </div>
+
+            <div class="features-scroll-wrapper">
+                <div class="features-scroll-track">
+                    <div class="feature-card">
+                        <div class="feature-icon"><i class="bi bi-clock-history"></i></div>
+                        <h4>Hitungan Mundur</h4>
+                        <p>Jangan sampai terlewatkan moment indah kamu, hitung mundur tanggal acara pernikahanmu.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon"><i class="bi bi-phone"></i></div>
+                        <h4>Design Modern dan Responsif</h4>
+                        <p>Say good bye untuk design jadul. Biar undanganmu makin wow.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon"><i class="bi bi-music-note-beamed"></i></div>
+                        <h4>Background Music</h4>
+                        <p>Pilih musik sesuai keinginan kamu agar undanganmu lebih eksklusif dan romantis.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon"><i class="bi bi-chat-heart"></i></div>
+                        <h4>Berbagi Momen Indah dan Ucapan</h4>
+                        <p>Tamu undangan bisa berbagi momen dengan mengirimkan gambar dan ucapan.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon"><i class="bi bi-gift"></i></div>
+                        <h4>Amplop Digital</h4>
+                        <p>Tamu undangan bisa mengirim amplop secara digital dengan mudah.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon"><i class="bi bi-heart"></i></div>
+                        <h4>Love Stories</h4>
+                        <p>Ceritakan Kisah Cinta kamu dengan leluasa.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon"><i class="bi bi-camera-video"></i></div>
+                        <h4>Live Streaming</h4>
+                        <p>Temui acara secara virtual agar jarang tidak membuat keterbatasan.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon"><i class="bi bi-map"></i></div>
+                        <h4>Google Maps Integrasi</h4>
+                        <p>Tamu tidak akan tersesat. Integrasi peta langsung memandu mereka ke lokasi acara dengan satu
+                            klik.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon"><i class="bi bi-people"></i></div>
+                        <h4>RSVP & Hitung Tamu</h4>
+                        <p>Ketahui pasti berapa tamu yang akan hadir. Sistem RSVP otomatis memudahkan Anda mempersiapkan
+                            acara.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon"><i class="bi bi-camera-reels"></i></div>
+                        <h4>Galeri Foto & Video</h4>
+                        <p>Bagikan momen pra-pernikan Anda melalui galeri foto interaktif dan video sinematik yang
+                            memukau.</p>
+                    </div>
+                    <div class="feature-card" aria-hidden="true">
+                        <div class="feature-icon"><i class="bi bi-clock-history"></i></div>
+                        <h4>Hitungan Mundur</h4>
+                        <p>Jangan sampai terlewatkan moment indah kamu, hitung mundur tanggal acara pernikahanmu.</p>
+                    </div>
+                    <div class="feature-card" aria-hidden="true">
+                        <div class="feature-icon"><i class="bi bi-phone"></i></div>
+                        <h4>Design Modern dan Responsif</h4>
+                        <p>Say good bye untuk design jadul. Biar undanganmu makin wow.</p>
+                    </div>
+                    <div class="feature-card" aria-hidden="true">
+                        <div class="feature-icon"><i class="bi bi-music-note-beamed"></i></div>
+                        <h4>Background Music</h4>
+                        <p>Pilih musik sesuai keinginan kamu agar undanganmu lebih eksklusif dan romantis.</p>
+                    </div>
+                    <div class="feature-card" aria-hidden="true">
+                        <div class="feature-icon"><i class="bi bi-chat-heart"></i></div>
+                        <h4>Berbagi Momen Indah dan Ucapan</h4>
+                        <p>Tamu undangan bisa berbagi momen dengan mengirimkan gambar dan ucapan.</p>
+                    </div>
+                    <div class="feature-card" aria-hidden="true">
+                        <div class="feature-icon"><i class="bi bi-gift"></i></div>
+                        <h4>Amplop Digital</h4>
+                        <p>Tamu undangan bisa mengirim amplop secara digital dengan mudah.</p>
+                    </div>
+                    <div class="feature-card" aria-hidden="true">
+                        <div class="feature-icon"><i class="bi bi-heart"></i></div>
+                        <h4>Love Stories</h4>
+                        <p>Ceritakan Kisah Cinta kamu dengan leluasa.</p>
+                    </div>
+                    <div class="feature-card" aria-hidden="true">
+                        <div class="feature-icon"><i class="bi bi-camera-video"></i></div>
+                        <h4>Live Streaming</h4>
+                        <p>Temui acara secara virtual agar jarang tidak membuat keterbatasan.</p>
+                    </div>
+                    <div class="feature-card" aria-hidden="true">
+                        <div class="feature-icon"><i class="bi bi-map"></i></div>
+                        <h4>Google Maps Integrasi</h4>
+                        <p>Tamu tidak akan tersesat. Integrasi peta langsung memandu mereka ke lokasi acara dengan satu
+                            klik.</p>
+                    </div>
+                    <div class="feature-card" aria-hidden="true">
+                        <div class="feature-icon"><i class="bi bi-people"></i></div>
+                        <h4>RSVP & Hitung Tamu</h4>
+                        <p>Ketahui pasti berapa tamu yang akan hadir. Sistem RSVP otomatis memudahkan Anda mempersiapkan
+                            acara.</p>
+                    </div>
+                    <div class="feature-card" aria-hidden="true">
+                        <div class="feature-icon"><i class="bi bi-camera-reels"></i></div>
+                        <h4>Galeri Foto & Video</h4>
+                        <p>Bagikan momen pra-pernikan Anda melalui galeri foto interaktif dan video sinematik yang
+                            memukau.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+
+
+
+    <!-- About / Text Content Section -->
+    <section class="about-section" id="tentang">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-12 reveal">
+                    <span class="section-subtitle">Tentang RuangUndang</span>
+                    <h2 class="about-title">Platform Undangan Digital Terbaik untuk Pernikahan Anda</h2>
+                    <p class="about-text">
+                        <strong>RuangUndang</strong> adalah platform pembuatan <strong>undangan digital</strong>
+                        dan <strong>undangan pernikahan online</strong> yang memungkinkan Anda merancang
+                        undangan elegan dalam hitungan menit. Pilih dari koleksi <strong>template undangan
+                            eksklusif</strong> — mulai dari tema modern, rustic, floral, hingga islami —
+                        lalu personalisasi dengan foto, musik latar, dan detail acara Anda.
+                    </p>
+                    <p class="about-text">
+                        Setiap undangan digital dilengkapi fitur <strong>RSVP otomatis</strong>, peta
+                        <strong>Google Maps</strong> menuju lokasi acara, <strong>amplop digital</strong>
+                        untuk hadiah, galeri foto &amp; video, hingga <strong>live streaming</strong>
+                        bagi tamu yang tidak dapat hadir. Bagikan tautan undangan melalui
+                        <strong>WhatsApp</strong> atau media sosial lainnya, dan lacak konfirmasi tamu
+                        secara <strong>real-time</strong> dari dashboard Anda.
+                    </p>
+                    <p class="about-text">
+                        Cocok untuk <strong>pernikahan, aqiqah, ulang tahun, dan acara spesial lainnya</strong>.
+                        Buat undangan gratis hari ini, tanpa kartu kredit, dan bagikan ke seluruh tamu
+                        dalam hitungan detik.
+                    </p>
+
+                    <div class="about-highlights">
+                        <div class="about-highlight">
+                            <h3>Template Eksklusif</h3>
+                            <p>Puluhan desain undangan digital premium yang diperbarui terus oleh desainer profesional.</p>
+                        </div>
+                        <div class="about-highlight">
+                            <h3>Mudah &amp; Cepat</h3>
+                            <p>Buat undangan pernikahan online hanya dalam 4 langkah sederhana tanpa keahlian desain.</p>
+                        </div>
+                        <div class="about-highlight">
+                            <h3>Fitur Lengkap</h3>
+                            <p>RSVP otomatis, amplop digital, musik, Google Maps, dan live streaming dalam satu tautan.</p>
+                        </div>
+                        <div class="about-highlight">
+                            <h3>Gratis Memulai</h3>
+                            <p>Mulai buat undangan digital gratis hari ini tanpa kartu kredit dan tanpa biaya tersembunyi.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="container">
+            <div class="cta-box reveal">
+                <h2>Siap Memulai Perjalanan Anda?</h2>
+                <p>Buat undangan digital impian Anda hari ini. Gratis untuk memulai, tanpa kartu kredit.</p>
+                <a href="{{ route('register') }}" rel="nofollow" class="btn-gold btn-gold-lg">
+                    Buat Undangan Sekarang <i class="bi bi-arrow-right ms-2"></i>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="row gy-5">
+                <div class="col-lg-4 reveal">
+                    <a href="{{ route('landing') }}" class="footer-logo">
+                        <img src="{{ asset('assets/logo-new.png') }}" alt="Logo RuangUndang - Undangan Digital Premium"
+                            width="2389" height="447" loading="lazy" decoding="async">
+                    </a>
+                    <p class="footer-tagline text-secondary small">Platform undangan digital premium untuk pernikahan
+                        dan momen spesial. Praktis, elegan, dan hemat biaya.</p>
+                    <div
+                        class="footer-payment-icons d-flex align-items-center justify-content-center flex-wrap gap-3 py-3">
+
+                        <!-- GoPay -->
+                        <img src="https://thumb.wikimedia.org/wikipedia/commons/thumb/6/65/Gopay_logo_%282019%29.svg/3840px-Gopay_logo_%282019%29.svg.png?utm_source=id.wikipedia.org&utm_campaign=index&utm_content=thumbnail"
+                            alt="GoPay" height="24" width="72" title="GoPay" loading="lazy" decoding="async">
+
+                        <!-- QRIS -->
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/e/e1/QRIS_logo.svg" alt="QRIS"
+                            height="26" width="78" title="QRIS" loading="lazy" decoding="async">
+
+                        <!-- Bank Mandiri -->
+                        <img src="https://thumb.wikimedia.org/wikipedia/commons/thumb/a/ad/Bank_Mandiri_logo_2016.svg/1280px-Bank_Mandiri_logo_2016.svg.png?utm_source=id.wikipedia.org&utm_campaign=index&utm_content=thumbnail"
+                            alt="Mandiri" height="20" width="60" title="Bank Mandiri" loading="lazy" decoding="async">
+
+                        <!-- Bank BNI -->
+                        <img src="https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f0/Bank_Negara_Indonesia_logo_%282004%29.svg/1280px-Bank_Negara_Indonesia_logo_%282004%29.svg.png?utm_source=id.wikipedia.org&utm_campaign=index&utm_content=thumbnail"
+                            alt="BNI" height="22" width="66" title="BNI" loading="lazy" decoding="async">
+
+                        <!-- Bank BRI -->
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/5/5b/Logo_Bank_Rakyat_Indonesia.svg?utm_source=id.wikipedia.org&utm_campaign=index&utm_content=original"
+                            alt="BRI" height="20" width="60" title="Bank BRI" loading="lazy" decoding="async">
+
+                        <!-- Permata Bank -->
+                        <img src="https://upload.wikimedia.org/wikipedia/en/archive/4/48/20250913151534%21PermataBank_logo.svg"
+                            alt="Permata" height="20" width="60" title="Permata Bank" loading="lazy" decoding="async">
+
+                        <!-- DANA -->
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/5/52/Dana_logo.png?utm_source=id.wikipedia.org&utm_campaign=index&utm_content=original"
+                            alt="Dana" height="24" width="72" title="DANA" loading="lazy" decoding="async">
+                    </div>
+
+
+                    <div class="footer-social">
+                        <a href="{{ config('services.socials.instagram') }}" target="_blank" rel="noopener noreferrer"
+                            class="social-btn" aria-label="Instagram RuangUndang"><i class="bi bi-instagram"></i></a>
+                        <a href="{{ config('services.socials.facebook') }}" target="_blank" rel="noopener noreferrer"
+                            class="social-btn" aria-label="Facebook RuangUndang"><i class="bi bi-facebook"></i></a>
+                        <a href="{{ config('services.socials.tiktok') }}" target="_blank" rel="noopener noreferrer"
+                            class="social-btn" aria-label="TikTok RuangUndang"><i class="bi bi-tiktok"></i></a>
+                        <a href="{{ config('services.socials.youtube') }}" target="_blank" rel="noopener noreferrer"
+                            class="social-btn" aria-label="YouTube RuangUndang"><i class="bi bi-youtube"></i></a>
+                        <a href="{{ config('services.socials.x') }}" target="_blank" rel="noopener noreferrer"
+                            class="social-btn" aria-label="X RuangUndang"><i class="bi bi-twitter-x"></i></a>
+                        <a href="{{ config('services.socials.linkedin') }}" target="_blank" rel="noopener noreferrer"
+                            class="social-btn" aria-label="LinkedIn RuangUndang"><i class="bi bi-linkedin"></i></a>
+                    </div>
+                </div>
+                <div class="col-6 col-lg-2 offset-lg-1 reveal reveal-d1">
+                    <h5 class="footer-heading">Layanan</h5>
+                    <ul class="footer-links">
+                        <li><a href="{{ route('pages.cari-tema') }}">Undangan Pernikahan</a></li>
+                        <li><a href="{{ route('pages.cari-tema') }}">Undangan Digital</a></li>
+                        <li><a href="{{ route('pages.cari-tema') }}">Cetak Undangan</a></li>
+                        <li><a href="{{ route('pages.cari-tema') }}">Video Undangan</a></li>
+                    </ul>
+                </div>
+                <div class="col-6 col-lg-2 reveal reveal-d2">
+                    <h5 class="footer-heading">Tema Populer</h5>
+                    <ul class="footer-links">
+                        <li><a href="{{ route('pages.cari-tema', ['category' => 'Modern']) }}">Tema Modern</a></li>
+                        <li><a href="{{ route('pages.cari-tema', ['category' => 'Rustic']) }}">Tema Rustic</a></li>
+                        <li><a href="{{ route('pages.cari-tema', ['category' => 'Floral']) }}">Tema Floral</a></li>
+                        <li><a href="{{ route('pages.cari-tema', ['category' => 'Islami']) }}">Tema Islami</a></li>
+                    </ul>
+                </div>
+                <div class="col-6 col-lg-2 reveal reveal-d3">
+                    <h5 class="footer-heading">Informasi</h5>
+
+                    <ul class="footer-links">
+                        <li><a href="{{ route('pages.cara-pemesanan') }}">Cara Pemesanan</a></li>
+                        <li><a href="{{ route('pages.faq') }}">Pertanyaan (FAQ)</a></li>
+                        <li><a href="{{ route('pages.syarat-ketentuan') }}">Syarat & Ketentuan</a></li>
+                        <li><a href="{{ route('pages.kebijakan-privasi') }}">Kebijakan Privasi</a></li>
+
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; {{ date('Y') }} RuangUndang Digital Invitation. Dibuat dengan <i
+                        class="bi bi-heart-fill text-danger"></i>
+                    di Indonesia.</p>
+            </div>
+
+            <div class="text-center mt-4">
+                <a href="https://midtrans.com" target="_blank" rel="noopener noreferrer" class="midtrans-security"
+                    title="Pembayaran aman diproses oleh Midtrans">
+                    <span class="midtrans-icon">
+                        <i class="bi bi-shield-lock-fill"></i>
+                    </span>
+                    <span class="midtrans-label">Pembayaran Aman</span>
+                    <span class="midtrans-logo-text">Midtrans</span>
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" defer></script>
+    <script>
+        // Navbar Scroll Effect
+        const navbar = document.getElementById('mainNav');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // Hero Text Slider
+        const heroSlides = document.querySelectorAll('.hero-slide');
+        const heroDotsContainer = document.querySelector('.hero-slider-dots');
+        let currentHeroSlide = 0;
+        let heroInterval;
+
+        function createHeroDots() {
+            if (!heroDotsContainer) return;
+            heroDotsContainer.innerHTML = '';
+            heroSlides.forEach((_, index) => {
+                const dot = document.createElement('button');
+                dot.className = 'hero-slider-dot' + (index === 0 ? ' active' : '');
+                dot.setAttribute('aria-label', 'Slide ' + (index + 1));
+                dot.addEventListener('click', () => goToHeroSlide(index));
+                heroDotsContainer.appendChild(dot);
+            });
+        }
+
+        function goToHeroSlide(index) {
+            heroSlides[currentHeroSlide].classList.remove('active');
+            currentHeroSlide = index;
+            heroSlides[currentHeroSlide].classList.add('active');
+            updateHeroDots();
+            resetHeroAutoPlay();
+        }
+
+        function updateHeroDots() {
+            if (!heroDotsContainer) return;
+            const dots = heroDotsContainer.querySelectorAll('.hero-slider-dot');
+            dots.forEach((dot, index) => {
+                dot.classList.toggle('active', index === currentHeroSlide);
+            });
+        }
+
+        function nextHeroSlide() {
+            const next = (currentHeroSlide + 1) % heroSlides.length;
+            goToHeroSlide(next);
+        }
+
+        function startHeroAutoPlay() {
+            stopHeroAutoPlay();
+            heroInterval = setInterval(nextHeroSlide, 5000);
+        }
+
+        function stopHeroAutoPlay() {
+            clearInterval(heroInterval);
+        }
+
+        function resetHeroAutoPlay() {
+            stopHeroAutoPlay();
+            startHeroAutoPlay();
+        }
+
+        if (heroSlides.length > 0) {
+            createHeroDots();
+            startHeroAutoPlay();
+        }
+
+        // Scroll Reveal Animation (Intersection Observer)
+        const reveals = document.querySelectorAll('.reveal');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.15 });
+
+        reveals.forEach(reveal => {
+            observer.observe(reveal);
+        });
+
+        // Like Button Logic
+        document.querySelectorAll('.like-btn').forEach(btn => {
+            btn.addEventListener('click', function (e) {
+                e.preventDefault();
+                const id = this.getAttribute('data-id');
+                const countSpan = this.querySelector('.likes-count');
+                const heartIcon = this.querySelector('i');
+
+                if (this.classList.contains('processing')) return;
+                this.classList.add('processing');
+
+                fetch(`/templates/${id}/like`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                        'Accept': 'application/json'
+                    }
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            countSpan.textContent = data.likes_count.toLocaleString();
+                            heartIcon.classList.remove('bi-heart-fill');
+                            heartIcon.classList.add('bi-heart');
+                            setTimeout(() => {
+                                heartIcon.classList.remove('bi-heart');
+                                heartIcon.classList.add('bi-heart-fill');
+                            }, 200);
+                        }
+                        this.classList.remove('processing');
+                    })
+                    .catch(err => {
+                        console.error(err);
+                        this.classList.remove('processing');
+                    });
+            });
+        });
+
+        // Features Auto Scroll
+        const featuresScrollWrapper = document.querySelector('.features-scroll-wrapper');
+        const featuresScrollTrack = document.querySelector('.features-scroll-track');
+        if (featuresScrollWrapper && featuresScrollTrack) {
+            featuresScrollWrapper.addEventListener('mouseenter', () => {
+                featuresScrollTrack.style.animationPlayState = 'paused';
+            });
+            featuresScrollWrapper.addEventListener('mouseleave', () => {
+                featuresScrollTrack.style.animationPlayState = 'running';
+            });
+        }
+
+        // Couple List Live Preview Toggle
+        const coupleListItems = document.querySelectorAll('.couple-list-item[data-slug]');
+        const previewPanel = document.getElementById('couplePreviewPanel');
+        const previewFrame = document.getElementById('couplePreviewFrame');
+        const previewEmpty = document.getElementById('couplePreviewEmpty');
+        const previewCloseBtn = previewPanel ? previewPanel.querySelector('.couple-preview-close') : null;
+        let activeCoupleItem = null;
+
+        function openCouplePreview(item) {
+            if (!previewPanel || !previewFrame) return;
+
+            const slug = item.getAttribute('data-slug');
+            const templateId = item.getAttribute('data-template-id');
+            const previewUrl = `/template/frame/${slug}/${templateId}`;
+
+            previewFrame.src = previewUrl;
+            previewPanel.classList.remove('d-none');
+            if (previewEmpty) previewEmpty.classList.add('d-none');
+
+            if (activeCoupleItem && activeCoupleItem !== item) {
+                activeCoupleItem.classList.remove('active');
+            }
+            item.classList.add('active');
+            activeCoupleItem = item;
+        }
+
+        function closeCouplePreview() {
+            if (!previewPanel || !previewFrame) return;
+            previewFrame.src = '';
+            previewPanel.classList.add('d-none');
+            if (previewEmpty) previewEmpty.classList.remove('d-none');
+
+            if (activeCoupleItem) {
+                activeCoupleItem.classList.remove('active');
+                activeCoupleItem = null;
+            }
+        }
+
+        coupleListItems.forEach(item => {
+            item.addEventListener('click', function (e) {
+                e.preventDefault();
+                if (activeCoupleItem === this) {
+                    closeCouplePreview();
+                } else {
+                    openCouplePreview(this);
+                }
+            });
+        });
+
+        if (previewCloseBtn) {
+            previewCloseBtn.addEventListener('click', closeCouplePreview);
+        }
+    </script>
+
+    <!-- ============================================================= -->
+
+
+
+    @if($promotions->isNotEmpty())
+        <div class="modal fade" id="promoModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+
+            <div class="modal-dialog modal-dialog-centered modal-lg">
+                <div class="modal-content border-0 shadow-lg promo-modal-content">
+
+                    <div id="promoCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="5000">
+
+                        {{-- Banner --}}
+                        <div class="carousel-inner">
+
+                            @foreach($promotions as $index => $promotion)
+                                <div class="carousel-item {{ $index === 0 ? 'active' : '' }}">
+
+                                    <div class="position-relative">
+
+                                        <img src="{{ asset('storage/' . $promotion->image) }}"
+                                            alt="{{ $promotion->title ?? 'Promosi' }}" class="w-100 promo-image">
+
+                                        {{-- Tombol Close --}}
+                                        <button type="button" class="promo-close" data-bs-dismiss="modal" aria-label="Tutup">
+                                            <span>×</span>
+                                        </button>
+
+                                    </div>
+
+                                </div>
+                            @endforeach
+
+                        </div>
+
+                        {{-- Tombol Previous --}}
+                        @if($promotions->count() > 1)
+                            <button class="carousel-control-prev promo-control" type="button" data-bs-target="#promoCarousel"
+                                data-bs-slide="prev">
+
+                                <span class="promo-arrow">
+                                    ‹
+                                </span>
+
+                                <span class="visually-hidden">
+                                    Sebelumnya
+                                </span>
+                            </button>
+
+                            {{-- Tombol Next --}}
+                            <button class="carousel-control-next promo-control" type="button" data-bs-target="#promoCarousel"
+                                data-bs-slide="next">
+
+                                <span class="promo-arrow">
+                                    ›
+                                </span>
+
+                                <span class="visually-hidden">
+                                    Berikutnya
+                                </span>
+                            </button>
+                        @endif
+
+                        {{-- Indicator --}}
+                        @if($promotions->count() > 1)
+                            <div class="carousel-indicators promo-indicators">
+
+                                @foreach($promotions as $index => $promotion)
+                                    <button type="button" data-bs-target="#promoCarousel" data-bs-slide-to="{{ $index }}"
+                                        class="{{ $index === 0 ? 'active' : '' }}"
+                                        aria-current="{{ $index === 0 ? 'true' : 'false' }}" aria-label="Banner {{ $index + 1 }}">
+                                    </button>
+                                @endforeach
+
+                            </div>
+                        @endif
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    @endif
+
+    <script>
+        @if($promotions->isNotEmpty())
+            document.addEventListener('DOMContentLoaded', function () {
+                setTimeout(function () {
+                    const promoModal = new bootstrap.Modal(document.getElementById('promoModal'));
+                    promoModal.show();
+                }, 1500);
+            });
+        @endif
+    </script>
+
+    @include('components.wa-chat', [
+        'phone' => '6285923431716',
+        'message' => 'Halo RuangUndang, saya ingin bertanya tentang layanan undangan digital.',
+        'title' => 'Chat WhatsApp RuangUndang',
+        'mobileBottom' => 24
+    ])
+</body>
+
+</html>

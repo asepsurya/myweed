@@ -337,10 +337,60 @@
                                                 <i class="bi bi-map"></i> Lihat Lokasi di Google Maps
                                             </a>
                                         </div>
-                                    @endif
-                                </div>
-                            @endif
+@endif
                         </div>
+                    </div>
+                </div>
+                <div class="card adminuiux-card overflow-hidden mb-4">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h6 class="mb-0 fw-bold text-uppercase text-muted">Kamera Tamu Undangan</h6>
+                        <a href="{{ route('guest.camera') }}" class="btn btn-sm btn-outline-primary" target="_blank">
+                            <i class="bi bi-qr-code me-1"></i> Buka Kamera Tamu
+                        </a>
+                    </div>
+                    <div class="card-body p-4">
+                        <!-- QR Codes Row -->
+                        <div class="row mb-4">
+                            <!-- QR Code for Guests -->
+                            <div class="col-md-6 mb-3">
+                                <div class="qr-card rounded-3 p-3 bg-white shadow" style="aspect-ratio: 1/1;">
+                                    <div class="text-center pb-3">
+                                        <i class="bi bi-qr-code fs-1 text-primary mb-3"></i>
+                                        <div id="qrGuest" style="width: 180px; height: 180px;"></div>
+                                        <p class="text-xs text-muted mt-2">Scan untuk buka kamera</p>
+                                    </div>
+                                    <small class="text-muted d-block">QR Code Tamu</small>
+                                </div>
+                            </div>
+                            
+                            <!-- QR Code for Gallery Access -->
+                            <div class="col-md-6 mb-3">
+                                <div class="qr-card rounded-3 p-3 bg-white shadow" style="aspect-ratio: 1/1;">
+                                    <div class="text-center pb-3">
+                                        <i class="bi bi-images fs-1 text-success mb-3"></i>
+                                        <div id="qrGallery" style="width: 180px; height: 180px;"></div>
+                                        <p class="text-xs text-muted mt-2">Scan untuk galeri</p>
+                                    </div>
+                                    <small class="text-muted d-block">QR Code Galeri</small>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Guest Photo Gallery -->
+                        <div class="row" id="guestPhotosContainer">
+                            <div class="col-12 text-center py-4 text-gray-500" id="noPhotosState">
+                                <i class="bi bi-cloud-download fs-3 mb-3"></i>
+                                <p>Tamu belum mengunggah foto</p>
+                            </div>
+                        </div>
+                        
+                        <div class="text-end">
+                            <button class="btn btn-sm btn-outline-primary" onclick="window.open('{{ route('guest.camera') }}', '_blank')">
+                                <i class="bi bi-camera me-1"></i> Tambah Foto Tamu
+                            </button>
+                        </div>
+                    </div>
+                </div>
                     </div>
                 </div>
 
@@ -655,5 +705,51 @@
         isPlaying=!isPlaying;
     }
 </script>
-</x-app-layout>
 
+    // QR Code Generation
+    document.addEventListener('DOMContentLoaded', function() {
+        const eventSlug = "{{ $invitation->slug }}";
+        const eventName = "{{ $invitation->groom_nickname ?? $invitation->groom_name }} & {{ $invitation->bride_nickname ?? $invitation->bride_name }}";
+        const eventDate = "{{ $invitation->wedding_date ?? '' }}";
+        
+        // Generate QR code for guests (camera page) - with retry logic
+        function generateQRCamera() {
+            const qrGuest = document.getElementById('qrGuest');
+            if (qrGuest.parentNode) {
+                qrGuest.parentNode.removeChild(qrGuest);
+            }
+            const newImg = document.createElement('img');
+            newImg.id = 'qrGuest';
+            newImg.style.width = '180px';
+            newImg.style.height = '180px';
+            qrGuest.parentNode.appendChild(newImg);
+            
+            const qrData = window.location.origin + '/guest/camera?event=' + eventSlug;
+            qrcode.toCanvas(newImg, qrData, function(error) {
+                if (error) console.error('QR Guest error:', error);
+            });
+        }
+        
+        // Generate QR code for gallery access - with retry logic
+        function generateQRGallery() {
+            const qrGallery = document.getElementById('qrGallery');
+            if (qrGallery.parentNode) {
+                qrGallery.parentNode.removeChild(qrGallery);
+            }
+            const newImg = document.createElement('img');
+            newImg.id = 'qrGallery';
+            newImg.style.width = '180px';
+            newImg.style.height = '180px';
+            qrGallery.parentNode.appendChild(newImg);
+            
+            const qrData = window.location.origin + '/guest/photos/' + eventSlug;
+            qrcode.toCanvas(newImg, qrData, function(error) {
+                if (error) console.error('QR Gallery error:', error);
+            });
+        }
+        
+        // Generate QR codes after a brief delay to ensure DOM is ready
+        setTimeout(generateQRCamera, 100);
+        setTimeout(generateQRGallery, 200);
+    });
+</x-app-layout>

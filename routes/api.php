@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\GuestPhotoController;
 use App\Http\Controllers\MusicController;
 use App\Http\Controllers\SubscriptionPlanController;
 use App\Http\Controllers\YoutubeMusicController;
@@ -18,3 +19,8 @@ Route::get('/payment/pending', [SubscriptionPlanController::class, 'pending'])->
 Route::get('/music', [MusicController::class, 'apiIndex']);
 Route::get('/music/{music}', [MusicController::class, 'apiShow']);
 Route::get('/youtube-music', [YoutubeMusicController::class, 'apiIndex']);
+
+// Guest Photo API Routes
+Route::post('/api/guest-photos', [GuestPhotoController::class, 'store']);
+Route::get('/api/guest-photos/{event_id}', [GuestPhotoController::class, 'show'])
+    ->middleware('throttle:60,1');

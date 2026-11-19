@@ -66,10 +66,20 @@ class FinancialOverviewSeeder extends Seeder
         ];
 
         foreach ($savingsGoals as $index => $goalData) {
-            $goal = SavingsGoal::create(array_merge($goalData, [
-                'invitation_id' => $invitation->id,
-                'user_id' => $user->id,
-            ]));
+            $goal = SavingsGoal::updateOrCreate(
+                [
+                    'invitation_id' => $invitation->id,
+                    'name' => $goalData['name'],
+                ],
+                array_merge($goalData, [
+                    'invitation_id' => $invitation->id,
+                    'user_id' => $user->id,
+                ])
+            );
+
+            if (SavingsContribution::where('savings_goal_id', $goal->id)->exists()) {
+                continue;
+            }
 
             $contributionCount = rand(3, 6);
 
@@ -93,6 +103,10 @@ class FinancialOverviewSeeder extends Seeder
             $categories = BudgetCategory::where('budget_id', $budget->id)->get();
 
             foreach ($categories->take(5) as $category) {
+                if (VendorPayment::where('budget_category_id', $category->id)->exists()) {
+                    continue;
+                }
+
                 VendorPayment::create([
                     'invitation_id' => $invitation->id,
                     'budget_category_id' => $category->id,

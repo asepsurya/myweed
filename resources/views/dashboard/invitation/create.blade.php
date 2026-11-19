@@ -486,53 +486,116 @@
 
 <!-- Modal: New Invitation -->
 <div class="modal fade" id="newInvitationModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
-    <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content">
             <form id="quickCreateForm">
                 @csrf
                 <div class="modal-header">
                     <h5 class="modal-title mb-0">
-                        <i class="bi bi-heart-heart me-2"></i>
-                        Undangan Baru
+                        <i class="bi bi-heart-heart me-2"></i> Undangan Baru
                     </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Tutup"></button>
                 </div>
                 <div class="modal-body">
                     <p class="text-muted small mb-3">Masukkan nama pengantin dan pilih template untuk memulai.</p>
 
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold">Nama Mempelai Pria</label>
-                        <input type="text" id="modal_groom_name" class="form-control" placeholder="Nama lengkap">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold">Nama Panggilan Pria</label>
-                        <input type="text" id="modal_groom_nickname" class="form-control" placeholder="Nama panggilan (opsional)">
+                    {{-- Step 1: Category Selection --}}
+                    <div id="modalStepCategory" class="modal-step active">
+                        <div class="text-center mb-4">
+                            <h6 class="fw-bold mb-1">Pilih Kategori Acara</h6>
+                            <small class="text-muted">Pilih jenis acara untuk melihat template yang sesuai</small>
+                        </div>
+                        <div class="row g-3" id="modalCategorySelector">
+                            @php
+                                $categories = $templates->load('category')->pluck('category')->filter()->unique('id')->values();
+                            @endphp
+                            @foreach($categories as $category)
+                            <div class="col-6 col-md-4">
+                                <label class="d-block category-option card border-2 cursor-pointer h-100"
+                                     data-category-id="{{ $category->id }}"
+                                     style="border-color: #ddd;"
+                                     onclick="selectCategoryCard(this, {{ $category->id }}, '{{ $category->name }}')">
+                                    <div class="position-relative">
+                                        <div class="d-flex align-items-center justify-content-center bg-light" style="height: 100px;">
+                                            <i class="bi {{ $category->icon ?? 'bi-heart' }} fs-1 text-primary"></i>
+                                        </div>
+                                    </div>
+                                    <div class="card-body p-2 text-center">
+                                        <small class="fw-medium">{{ ucfirst($category->name) }}</small>
+                                    </div>
+                                </label>
+                            </div>
+                            @endforeach
+                        </div>
+                        <input type="hidden" id="modal_category_id" name="category_id">
                     </div>
 
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold">Nama Mempelai Wanita</label>
-                        <input type="text" id="modal_bride_name" class="form-control" placeholder="Nama lengkap">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold">Nama Panggilan Wanita</label>
-                        <input type="text" id="modal_bride_nickname" class="form-control" placeholder="Nama panggilan (opsional)">
+                    {{-- Step 2: Names Input --}}
+                    <div id="modalStepNames" class="modal-step d-none">
+                        <div class="text-center mb-3">
+                            <h6 class="fw-bold mb-1">Nama Mempelai</h6>
+                            <small class="text-muted">Masukkan nama lengkap dan panggilan</small>
+                        </div>
+                        <div class="row g-3">
+                            <div class="col-6">
+                                <label class="form-label fw-semibold small">Mempelai Pria</label>
+                                <input type="text" id="modal_groom_name" name="groom_name" class="form-control form-control-sm" placeholder="Nama lengkap" required>
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label fw-semibold small">Mempelai Wanita</label>
+                                <input type="text" id="modal_bride_name" name="bride_name" class="form-control form-control-sm" placeholder="Nama lengkap" required>
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label fw-semibold small">Nama Panggilan Pria</label>
+                                <input type="text" id="modal_groom_nickname" name="groom_nickname" class="form-control form-control-sm" placeholder="Nama panggilan (opsional)">
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label fw-semibold small">Nama Panggilan Wanita</label>
+                                <input type="text" id="modal_bride_nickname" name="bride_nickname" class="form-control form-control-sm" placeholder="Nama panggilan (opsional)">
+                            </div>
+                        </div>
+                        <div class="text-center mt-3">
+                            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="goToModalStep('category')">Kembali</button>
+                            <button type="button" class="btn btn-sm btn-primary ms-2" onclick="goToModalStep('template')">Lanjut ke Template</button>
+                        </div>
                     </div>
 
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold">Pilih Template</label>
+                    {{-- Step 3: Template Selection --}}
+                    <div id="modalStepTemplate" class="modal-step d-none">
+                        <div class="text-center mb-3">
+                            <h6 class="fw-bold mb-1">Pilih Template</h6>
+                            <small class="text-muted" id="modalSelectedCategoryName"></small>
+                        </div>
                         <div class="row g-3" id="modal_template_selector">
                             @foreach ($templates as $template)
-                            <div class="col-6">
+                            @php
+                                $user = auth()->user();
+                                $isLocked = false;
+                                if ($user->isOnFreePlan() && $template->slug !== 'simple-theme') {
+                                    $isLocked = true;
+                                } elseif ($template->template_type_id) {
+                                    $isLocked = ! $user->canAccessTemplateType($template->template_type_id);
+                                } elseif ($template->is_premium && ! $user->hasFeature('all_themes')) {
+                                    $isLocked = true;
+                                }
+                            @endphp
+                            <div class="col-6 modal-template-item" data-category="{{ $template->category->name ?? 'modern' }}">
                                 <label class="d-block">
                                     <input type="radio"
                                            name="modal_template_id"
                                            value="{{ $template->id }}"
                                            class="d-none template-radio"
                                            onchange="document.getElementById('modal_template_id_hidden').value = this.value">
-                                    <div class="template-option card border-2 cursor-pointer h-100"
+                                    <div class="template-option card border-2 cursor-pointer h-100 {{ $isLocked ? 'locked opacity-75' : '' }}"
                                          style="border-color: #ddd;"
-                                         onclick="selectTemplateCard(this)">
+                                         onclick="{{ $isLocked ? 'showPremiumAlert()' : 'selectTemplateCard(this)' }}">
                                         <div class="position-relative">
                                             <img src="{{ Storage::url($template->preview) }}" class="card-img-top" style="height: 120px; object-fit: cover;">
+                                            @if($isLocked)
+                                                <div class="position-absolute top-50 start-50 translate-middle">
+                                                    <i class="bi bi-lock-fill fs-2 text-white shadow-lg"></i>
+                                                </div>
+                                            @endif
                                         </div>
                                         <div class="card-body p-2 text-center">
                                             <small class="fw-medium">{{ $template->name }}</small>
@@ -540,15 +603,18 @@
                                     </div>
                                 </label>
                             </div>
-                                            @endforeach
-                                            {{ $templates->links() }}
-                                        </div>
+                            @endforeach
+                            {{ $templates->links() }}
+                        </div>
                         <input type="hidden" id="modal_template_id_hidden" name="template_id">
+                        <div class="text-center mt-3">
+                            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="goToModalStep('names')">Kembali</button>
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Batal</button>
-                    <button type="submit" class="btn btn-primary" id="quickCreateBtn">
+                    <button type="submit" class="btn btn-primary" id="quickCreateBtn" disabled>
                         <i class="bi bi-plus-lg me-1"></i> Buat Undangan
                     </button>
                 </div>
@@ -567,6 +633,7 @@
      card.style.boxShadow = '0 0 0 0.25rem rgba(255, 107, 129, 0.25)';
      const radio = card.closest('label').querySelector('input[type="radio"]');
      if (radio) radio.checked = true;
+     validateModalForm();
  }
 
  function selectCreateTemplate(card, templateId) {
@@ -576,6 +643,96 @@
      card.classList.add('selected-template');
      const hiddenInput = document.getElementById('template_id');
      if (hiddenInput) hiddenInput.value = templateId;
+ }
+
+ function selectCategoryCard(card, categoryId, categoryName) {
+     document.querySelectorAll('#modalCategorySelector .category-option').forEach(c => {
+         c.style.borderColor = '#ddd';
+         c.style.boxShadow = 'none';
+     });
+     card.style.borderColor = '#FF6B81';
+     card.style.boxShadow = '0 0 0 0.25rem rgba(255, 107, 129, 0.25)';
+     document.getElementById('modal_category_id').value = categoryId;
+     document.getElementById('modalSelectedCategoryName').textContent = 'Kategori: ' + categoryName;
+     goToModalStep('names');
+ }
+
+ function goToModalStep(step) {
+     document.querySelectorAll('.modal-step').forEach(s => s.classList.add('d-none'));
+     document.getElementById('modalStep' + step.charAt(0).toUpperCase() + step.slice(1)).classList.remove('d-none');
+     validateModalForm();
+ }
+
+ function validateModalForm() {
+     const categoryId = document.getElementById('modal_category_id')?.value;
+     const groomName = document.getElementById('modal_groom_name')?.value;
+     const brideName = document.getElementById('modal_bride_name')?.value;
+     const templateId = document.getElementById('modal_template_id_hidden')?.value;
+     
+     const isValid = categoryId && groomName && brideName && templateId;
+     document.getElementById('quickCreateBtn').disabled = !isValid;
+ }
+
+ // Initialize modal form validation
+ document.addEventListener('DOMContentLoaded', () => {
+     const groomInput = document.getElementById('modal_groom_name');
+     const brideInput = document.getElementById('modal_bride_name');
+     if (groomInput) groomInput.addEventListener('input', validateModalForm);
+     if (brideInput) brideInput.addEventListener('input', validateModalForm);
+ });
+
+ // --- Template Gallery Filter Logic ---
+ const ITEMS_PER_PAGE = 6;
+ let currentPage = 1;
+
+ function filterTemplates() {
+     const query = document.getElementById('searchTemplate')?.value.toLowerCase() || '';
+     const cat = document.getElementById('categorySelect')?.value || 'all';
+     const type = document.getElementById('typeSelect')?.value || 'all';
+     const items = Array.from(document.querySelectorAll('.template-selector-item'));
+
+     items.forEach(item => {
+         const matchesQuery = item.dataset.name.includes(query);
+         const matchesCat = (cat === 'all' || item.dataset.category === cat);
+         const matchesType = (type === 'all' || item.dataset.type == type);
+         item.classList.toggle('d-none', !(matchesQuery && matchesCat && matchesType));
+     });
+     currentPage = 1;
+     renderPagination();
+ }
+
+ function renderPagination() {
+     const gallery = document.getElementById('template-selector');
+     if (!gallery) return;
+     const items = Array.from(gallery.querySelectorAll('.template-selector-item'));
+     const visibleItems = items.filter(item => !item.classList.contains('d-none'));
+     const totalPages = Math.max(1, Math.ceil(visibleItems.length / ITEMS_PER_PAGE));
+
+     if (currentPage > totalPages) currentPage = 1;
+
+     visibleItems.forEach(function (item, index) {
+         const pageIndex = Math.floor(index / ITEMS_PER_PAGE) + 1;
+         item.classList.toggle('d-none', pageIndex !== currentPage);
+     });
+
+     const pageInfo = document.getElementById('pageInfo');
+     if (pageInfo) pageInfo.textContent = 'Halaman ' + currentPage + ' dari ' + totalPages;
+
+     const prevBtn = document.getElementById('prevPage');
+     const nextBtn = document.getElementById('nextPage');
+     if (prevBtn) prevBtn.disabled = (currentPage <= 1);
+     if (nextBtn) nextBtn.disabled = (currentPage >= totalPages);
+ }
+
+ // Filter modal templates by category
+ function filterModalTemplates() {
+     const categoryId = document.getElementById('modal_category_id')?.value;
+     const items = Array.from(document.querySelectorAll('.modal-template-item'));
+     
+     items.forEach(item => {
+         const matchesCategory = !categoryId || item.dataset.category === categoryId;
+         item.classList.toggle('d-none', !matchesCategory);
+     });
  }
 
  window.showPremiumAlert = function () {
@@ -594,6 +751,19 @@
          }
      });
  }
+
+ // Initialize filters on DOM ready
+ document.addEventListener('DOMContentLoaded', () => {
+     const categorySelect = document.getElementById('categorySelect');
+     const typeSelect = document.getElementById('typeSelect');
+     const searchTemplate = document.getElementById('searchTemplate');
+     if (categorySelect) categorySelect.onchange = filterTemplates;
+     if (typeSelect) typeSelect.onchange = filterTemplates;
+     if (searchTemplate) searchTemplate.oninput = filterTemplates;
+
+     // Initialize pagination
+     renderPagination();
+ });
 </script>
 
 @include('dashboard.invitation.mobile')
@@ -796,63 +966,104 @@
                                     </div>
                                     <h6 class="mb-0">Tema & Warna</h6>
                                 </div>
-                                <div class="card-body">
-                                    <div class="mb-3">
-                                        <label class="form-label fw-semibold">Pilih Template</label>
-                                        <input type="hidden" name="template_id" id="template_id" value="">
-                                        @php
-                                            $defaultThemeColors = [
-                                                'simple-theme' => '#c8a97e',
-                                                'elegant-theme' => '#1A3C34',
-                                                'royal-gold' => '#FF6B81',
-                                                'floral-botanical' => '#8B6F5E',
-                                                'anime' => '#FF6B81',
-                                                'adat' => '#1A4D2E',
-                                                'element' => '#8E7F7F',
-                                                'sample' => '#D4AF37',
-                                                'elegant_tempelate' => '#1A3C34',
-                                                'sweet-lovely' => '#0d9488',
-                                                'luxe-amour' => '#0d9488',
-                                            ];
-                                        @endphp
-                                        <div class="row g-3" id="template-selector">
-                                            @foreach ($templates as $template)
+<div class="card-body">
+                                        <div class="mb-3">
+                                            <label class="form-label fw-semibold">Pilih Template</label>
+                                            <input type="hidden" name="template_id" id="template_id" value="">
                                             @php
-                                                    $templateColor = $defaultThemeColors[$template->slug] ?? $template->primary_color ?? '#FF6B81';
-                                                    $user = auth()->user();
-                                                    $isLocked = false;
-                                                    if ($user->isOnFreePlan() && $template->slug !== 'simple-theme') {
-                                                        $isLocked = true;
-                                                    } elseif ($template->template_type_id) {
-                                                        $isLocked = ! $user->canAccessTemplateType($template->template_type_id);
-                                                    } elseif ($template->is_premium && ! $user->hasFeature('all_themes')) {
-                                                        $isLocked = true;
-                                                    }
+                                                $defaultThemeColors = [
+                                                    'simple-theme' => '#c8a97e',
+                                                    'elegant-theme' => '#1A3C34',
+                                                    'royal-gold' => '#FF6B81',
+                                                    'floral-botanical' => '#8B6F5E',
+                                                    'anime' => '#FF6B81',
+                                                    'adat' => '#1A4D2E',
+                                                    'element' => '#8E7F7F',
+                                                    'sample' => '#D4AF37',
+                                                    'elegant_tempelate' => '#1A3C34',
+                                                    'sweet-lovely' => '#0d9488',
+                                                    'luxe-amour' => '#0d9488',
+                                                ];
+                                                $templateTypes = $templateTypes ?? \App\Models\TemplateType::orderBy('name')->get();
                                             @endphp
-                                            <div class="col-6 col-md-4">
-                                                <div class="template-option card cursor-pointer border-2 {{ $isLocked ? 'locked opacity-75' : '' }}"
-                                                     data-template-id="{{ $template->id }}"
-                                                     data-preview="{{ Storage::url($template->preview) }}"
-                                                     data-slug="{{ $template->slug }}"
-                                                     data-theme-color="{{ $templateColor }}"
-                                                     onclick="{{ $isLocked ? 'showPremiumAlert()' : 'selectCreateTemplate(this, ' . $template->id . ')' }}">
-                                                     <div class="position-relative">
-                                                         <img src="{{ Storage::url($template->preview) }}" class="card-img-top" style="height: 150px; object-fit: cover;">
-                                                         @if($isLocked)
-                                                             <div class="position-absolute top-50 start-50 translate-middle">
-                                                                 <i class="bi bi-lock-fill fs-2 text-white shadow-lg"></i>
-                                                             </div>
-                                                         @endif
-                                                     </div>
-                                                     <div class="card-body p-2">
-                                                         <h6 class="mb-0 text-center">{{ $template->name }}</h6>
-                                                     </div>
-                                                 </div>
+                                            <div class="mb-3">
+                                                <label class="form-label fw-semibold mb-2">Kategori Acara</label>
+                                                <select id="categorySelect" class="form-select">
+                                                    <option value="all">Semua Kategori</option>
+                                                    @php $categories = $templates->load('category')->pluck('category.name')->filter()->unique()->sort(); @endphp
+                                                    @foreach($categories as $cat)
+                                                        <option value="{{ $cat }}">{{ ucfirst($cat) }}</option>
+                                                    @endforeach
+                                                </select>
                                             </div>
-                            @endforeach
-                            {{ $templates->links() }}
-                        </div>
-                                     </div>
+
+                                            <div class="mb-3">
+                                                <label class="form-label fw-semibold mb-2">Tipe Template</label>
+                                                <select id="typeSelect" class="form-select">
+                                                    <option value="all">Semua Tipe</option>
+                                                    @foreach($templateTypes as $type)
+                                                        <option value="{{ $type->id }}">{{ $type->name }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+
+<div class="row g-3" id="template-selector">
+                                                @foreach ($templates as $template)
+                                                @php
+                                                        $templateColor = $defaultThemeColors[$template->slug] ?? $template->primary_color ?? '#FF6B81';
+                                                        $user = auth()->user();
+                                                        $isLocked = false;
+                                                        if ($user->isOnFreePlan() && $template->slug !== 'simple-theme') {
+                                                            $isLocked = true;
+                                                        } elseif ($template->template_type_id) {
+                                                            $isLocked = ! $user->canAccessTemplateType($template->template_type_id);
+                                                        } elseif ($template->is_premium && ! $user->hasFeature('all_themes')) {
+                                                            $isLocked = true;
+                                                        }
+                                                @endphp
+                                                <div class="col-6 col-md-4 template-selector-item" data-category="{{ $template->category->name ?? 'modern' }}"
+                                                    data-name="{{ strtolower($template->name) }}"
+                                                    data-color="{{ $templateColor }}" data-template-id="{{ $template->id }}"
+                                                    data-type="{{ $template->templateType->id ?? 'all' }}">
+                                                    <div class="template-option card cursor-pointer border-2 h-100 {{ $isLocked ? 'locked opacity-75' : '' }}"
+                                                         data-template-id="{{ $template->id }}"
+                                                         data-preview="{{ Storage::url($template->preview) }}"
+                                                         data-slug="{{ $template->slug }}"
+                                                         data-theme-color="{{ $templateColor }}"
+                                                         onclick="{{ $isLocked ? 'showPremiumAlert()' : 'selectCreateTemplate(this, ' . $template->id . ')' }}">
+                                                        <div class="position-relative">
+                                                            <img src="{{ Storage::url($template->preview) }}" class="card-img-top" style="height: 150px; object-fit: cover;">
+                                                            @if($isLocked)
+                                                                <div class="position-absolute top-50 start-50 translate-middle">
+                                                                    <i class="bi bi-lock-fill fs-2 text-white shadow-lg"></i>
+                                                                </div>
+                                                            @endif
+                                                        </div>
+                                                        <div class="card-body p-2">
+                                                            <h6 class="mb-0 text-center">{{ $template->name }}</h6>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                @endforeach
+                                                {{ $templates->links() }}
+                                            </div>
+
+                                            <!-- Search & Pagination Controls -->
+                                            <div class="mb-3">
+                                                <label class="form-label fw-semibold mb-2">Cari Template</label>
+                                                <input type="text" id="searchTemplate" class="form-control" placeholder="Cari nama template...">
+                                            </div>
+
+                                            <div class="d-flex justify-content-center align-items-center gap-3 mt-4 mb-4">
+                                                <button type="button" id="prevPage" class="btn btn-sm btn-outline-secondary" disabled>
+                                                    <i class="bi bi-chevron-left"></i> Sebelumnya
+                                                </button>
+                                                <span id="pageInfo" class="small text-muted" style="font-size: 10px;">Halaman 1 dari 1</span>
+                                                <button type="button" id="nextPage" class="btn btn-sm btn-outline-secondary" disabled>
+                                                    Selanjutnya <i class="bi bi-chevron-right"></i>
+                                                </button>
+                                            </div>
+                                      </div>
 
                             <div class="mb-4">
                                 <label for="theme_type" class="form-label fw-semibold">Jenis Tema</label>
@@ -2048,9 +2259,9 @@
                 }
                 if (ok && data.success) {
                     showSaveSuccess();
-                    if (data.invitation && data.invitation.id) {
-                        window.location.href = '/invitation/' + data.invitation.id + '/edit';
-                    } else if (data.redirect_to_edit && data.invitation.slug) {
+                    if (data.invitation && data.invitation.slug) {
+                        window.location.href = '/invitation/' + data.invitation.slug + '/edit';
+                    } else if (data.invitation && data.invitation.id) {
                         window.location.href = '/invitation/' + data.invitation.id + '/edit';
                     }
                 } else {
@@ -2189,10 +2400,10 @@
                 .then(data => {
                     btn.disabled = false;
                     btn.innerHTML = originalText;
-                    if (data.success && data.invitation && data.invitation.id) {
-                        window.location.href = '/invitation/' + data.invitation.id + '/edit';
-                    } else if (data.invitation && data.invitation.slug) {
+                    if (data.success && data.invitation && data.invitation.slug) {
                         window.location.href = '/invitation/' + data.invitation.slug + '/edit';
+                    } else if (data.invitation && data.invitation.id) {
+                        window.location.href = '/invitation/' + data.invitation.id + '/edit';
                     } else {
                         alert(data.message || 'Gagal membuat undangan');
                     }

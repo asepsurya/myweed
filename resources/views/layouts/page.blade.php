@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     @php
@@ -11,409 +11,59 @@
     @endphp
     @include('layouts.partial.seo_head')
 
+    <!-- Evite Inspired Typography: Plus Jakarta Sans & Playfair Display -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
         rel="stylesheet">
     <link rel="icon" type="image/png" href="{{ asset('assets/fav-icon.png') }}">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+    <!-- Icons -->
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+
+    <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
-    <style>
-        :root {
-            --gold: #C6A962;
-            --gold-light: #E8D5A3;
-            --gold-dark: #A68B4B;
-            --navy: #1B2A4A;
-            --navy-light: #2A3F6A;
-            --white: #FFFFFF;
-            --bg: #F7F5F2;
-            --bg-alt: #FDFBF7;
-            --border: #E8E4DE;
-            --text: #1B2A4A;
-            --text-secondary: #6B7280;
-            --text-muted: #9CA3AF;
-            --radius: 12px;
-            --radius-lg: 20px;
-            --speed: 0.4s;
-            --font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            --font-display: 'Playfair Display', Georgia, serif;
-        }
+    <!-- Evite Design System CSS -->
+    <link rel="stylesheet" href="{{ asset('assets/css/landing.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/page.css') }}">
 
-        * { box-sizing: border-box; }
-        html { scroll-behavior: smooth; }
-        body {
-            font-family: var(--font);
-            color: var(--text);
-            background-color: var(--bg);
-            margin: 0;
-            padding: 0;
-            -webkit-font-smoothing: antialiased;
-            overflow-x: hidden;
-        }
-        a { text-decoration: none; color: inherit; transition: all var(--speed) ease; }
-        h1, h2, h3, h4 { font-family: var(--font-display); }
-
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes fadeInDown {
-            from { opacity: 0; transform: translateY(-20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes float {
-            0%, 100% { transform: translateY(0) translateX(0); }
-            50% { transform: translateY(-15px) translateX(5px); }
-        }
-        @keyframes pulseSoft {
-            0%, 100% { transform: scale(1); opacity: 0.5; }
-            50% { transform: scale(1.05); opacity: 0.8; }
-        }
-
-        .reveal {
-            opacity: 0;
-            transform: translateY(40px);
-            transition: opacity 0.8s cubic-bezier(0.25, 1, 0.5, 1), transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
-        }
-        .reveal.active { opacity: 1; transform: translateY(0); }
-
-        /* ===== Navbar ===== */
-        .navbar {
-            padding: 1.5rem 0;
-            background: transparent;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            z-index: 1000;
-            transition: all var(--speed) ease;
-        }
-        .navbar.scrolled {
-            padding: 1rem 0;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(12px);
-            border-bottom: 1px solid var(--border);
-            box-shadow: 0 4px 20px rgba(27, 42, 74, 0.05);
-        }
-        .navbar-brand {
-            display: inline-block;
-            padding: 0;
-            margin: 0;
-        }
-        .navbar-brand img {
-            height: 40px;
-            width: auto;
-            filter: brightness(0) invert(1);
-            transition: filter var(--speed) ease;
-        }
-        .navbar.scrolled .navbar-brand img { filter: none; }
-        .nav-link {
-            font-weight: 500;
-            color: rgba(255, 255, 255, 0.8) !important;
-            margin: 0 0.8rem;
-            font-size: 0.9rem;
-            position: relative;
-        }
-        .navbar.scrolled .nav-link { color: var(--text-secondary) !important; }
-        .nav-link:hover { color: var(--gold-light) !important; }
-        .navbar.scrolled .nav-link:hover { color: var(--gold-dark) !important; }
-        .btn-gold {
-            background: linear-gradient(135deg, var(--gold), var(--gold-dark));
-            color: var(--white) !important;
-            border-radius: 50px;
-            padding: 0.6rem 1.5rem;
-            font-weight: 600;
-            font-size: 0.85rem;
-            border: none;
-            transition: all var(--speed);
-            box-shadow: 0 4px 15px rgba(198, 169, 98, 0.3);
-        }
-        .btn-gold:hover {
-            transform: translateY(-3px) scale(1.02);
-            box-shadow: 0 8px 25px rgba(198, 169, 98, 0.5);
-        }
-
-        .user-avatar-circle {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--gold), var(--gold-dark));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-            flex-shrink: 0;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            transition: all var(--speed) ease;
-        }
-
-        .navbar.scrolled .user-avatar-circle {
-            border-color: var(--gold-light);
-        }
-
-        .user-avatar-img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .user-avatar-initial {
-            color: var(--white);
-            font-weight: 700;
-            font-size: 0.9rem;
-            line-height: 1;
-        }
-
-        .nav-link .user-avatar-circle:hover {
-            transform: scale(1.1);
-            border-color: var(--gold);
-        }
-
-        /* ===== Page Header ===== */
-        .page-header {
-            min-height: 50vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            background: linear-gradient(rgba(27, 42, 74, 0.8), rgba(27, 42, 74, 0.95)), url('https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=2070&auto=format&fit=crop') center/cover no-repeat;
-            color: var(--white);
-            position: relative;
-            overflow: hidden;
-            padding: 120px 0 80px;
-        }
-        .page-header-shape {
-            position: absolute;
-            border-radius: 50%;
-            border: 1px solid rgba(198, 169, 98, 0.2);
-            z-index: 1;
-            animation: float 10s infinite ease-in-out;
-        }
-        .page-header-shape.shape-1 { width: 300px; height: 300px; top: -80px; left: -80px; }
-        .page-header-shape.shape-2 { width: 200px; height: 200px; bottom: -40px; right: -40px; border-color: rgba(255, 255, 255, 0.1); animation-direction: reverse; animation-duration: 12s; }
-        .page-header-content { position: relative; z-index: 2; max-width: 700px; }
-        .page-header h1 { font-size: 3rem; font-weight: 600; margin-bottom: 1rem; letter-spacing: -1px; animation: fadeInUp 1s ease-out forwards; }
-        .page-header p { font-size: 1.1rem; color: rgba(255, 255, 255, 0.8); font-weight: 300; animation: fadeInUp 1s ease-out 0.3s forwards; opacity: 0; }
-        .breadcrumb { justify-content: center; animation: fadeInUp 1s ease-out 0.5s forwards; opacity: 0; }
-        .breadcrumb-item a { color: var(--gold-light); }
-        .breadcrumb-item.active { color: rgba(255, 255, 255, 0.7); }
-
-        /* ===== Content Sections ===== */
-        .content-section { padding: 80px 0; background: var(--white); }
-        .content-section.alt { background: var(--bg); }
-        .section-title { font-size: 2.2rem; font-weight: 600; color: var(--navy); margin-bottom: 1rem; }
-        .section-subtitle { color: var(--gold-dark); font-weight: 600; font-size: 0.85rem; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 0.5rem; display: block; }
-        .section-desc { color: var(--text-secondary); max-width: 600px; margin: 0 auto; line-height: 1.7; }
-
-        /* ===== Footer ===== */
-        footer { background: var(--bg-alt); border-top: 1px solid var(--border); padding: 80px 0 30px; }
-        .footer-logo { display: inline-block; margin-bottom: 1.5rem; }
-        .footer-logo img { height: 40px; width: auto; }
-        .footer-links { list-style: none; padding: 0; }
-        .footer-links li { margin-bottom: 0.8rem; font-size: 0.9rem; }
-        .footer-links li a { color: var(--text-secondary); display: inline-block; transition: transform 0.2s ease; }
-        .footer-links li a:hover { color: var(--gold-dark); transform: translateX(5px); }
-        .footer-heading { font-family: var(--font); font-weight: 700; color: var(--navy); margin-bottom: 1.5rem; font-size: 0.95rem; text-transform: uppercase; letter-spacing: 1px; }
-        .footer-social { display: flex; gap: 12px; margin-top: 1.5rem; }
-        .social-btn { width: 40px; height: 40px; border-radius: 50%; background: var(--bg); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; color: var(--navy); font-size: 1rem; transition: all var(--speed); }
-        .social-btn:hover { background: var(--navy); color: var(--white); transform: translateY(-5px) rotate(5deg); box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); }
-        .footer-bottom { border-top: 1px solid var(--border); margin-top: 60px; padding-top: 30px; text-align: center; color: var(--text-muted); font-size: 0.85rem; }
-
-        /* ===== Midtrans Security Badge ===== */
-        .midtrans-security {
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            padding: 10px 18px;
-            border-radius: 50px;
-            background: #f0f7ff;
-            border: 1px solid #cce5ff;
-            color: #004085;
-            font-size: 0.85rem;
-            font-weight: 600;
-            text-decoration: none;
-            transition: all 0.3s ease;
-        }
-
-        .midtrans-security:hover {
-            background: #e0f0ff;
-            border-color: #0068FF;
-            color: #0068FF;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 104, 255, 0.15);
-        }
-
-        .midtrans-security .midtrans-icon {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            background: #0068FF;
-            color: #fff;
-            font-size: 14px;
-            flex-shrink: 0;
-        }
-
-        .midtrans-security .midtrans-logo-text {
-            font-weight: 800;
-            letter-spacing: 0.5px;
-            color: #0068FF;
-        }
-
-        .midtrans-security .midtrans-label {
-            font-weight: 500;
-            color: #004085;
-        }
-
-        @media (max-width: 768px) {
-            .midtrans-security {
-                font-size: 0.75rem;
-                padding: 8px 14px;
-                gap: 6px;
-            }
-
-            .midtrans-security .midtrans-icon {
-                width: 24px;
-                height: 24px;
-                font-size: 12px;
-            }
-        }
-
-        /* ===== WhatsApp Float: provided by components.wa-chat (floating round button) ===== */
-
-        @media (max-width: 991px) {
-            .navbar-collapse {
-                background: rgba(27, 42, 74, 0.98);
-                backdrop-filter: blur(20px);
-                border-radius: var(--radius-lg);
-                padding: 1.5rem;
-                margin-top: 1rem;
-                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-                border: 1px solid rgba(198, 169, 98, 0.2);
-            }
-            .navbar-nav { gap: 0.5rem; }
-            .nav-link { padding: 0.75rem 1rem !important; border-radius: var(--radius); text-align: center; color: rgba(255, 255, 255, 0.9) !important; }
-            .nav-link:hover { background: rgba(198, 169, 98, 0.15); color: var(--gold-light) !important; }
-            .navbar .d-flex { flex-direction: column; gap: 0.75rem; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(198, 169, 98, 0.2); }
-            .navbar .d-flex .nav-link, .navbar .d-flex .btn-gold { width: 100%; justify-content: center; text-align: center; }
-        }
-
-        @media (max-width: 768px) {
-            .page-header h1 { font-size: 2rem; }
-            .section-title { font-size: 1.8rem; }
-        }
-    </style>
+    @if(config('services.facebook.pixel_id'))
+    <!-- Facebook Pixel Code -->
+    <script>
+        !function(f,b,e,v,n,t,s)
+        {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+        n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+        if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+        n.queue=[];t=b.createElement(e);t.async=!0;
+        t.src=v;s=b.getElementsByTagName(e)[0];
+        s.parentNode.insertBefore(t,s)}(window, document,'script',
+        'https://connect.facebook.net/en_US/fbevents.js');
+        fbq('init', '{{ config('services.facebook.pixel_id') }}');
+        fbq('track', 'PageView');
+    </script>
+    <noscript><img height="1" width="1" style="display:none"
+        src="https://www.facebook.com/tr?id={{ config('services.facebook.pixel_id') }}&ev=PageView&noscript=1"
+        alt=""/></noscript>
+    @endif
 
     @stack('styles')
 </head>
 
 <body>
 
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg" id="mainNav">
-        <div class="container">
-            <a class="navbar-brand" href="{{ route('landing') }}">
-                <img src="{{ asset('assets/logo-new.png') }}" alt="Logo RuangUndang">
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                style="border-color: rgba(255,255,255,0.3);">
-                <span class="navbar-toggler-icon" style="filter: invert(1);"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav mx-auto">
-                    <li class="nav-item"><a class="nav-link" href="{{ route('pages.cari-tema') }}">Cari Tema</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ route('pages.fitur') }}">Fitur</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ route('pages.harga') }}">Harga</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ route('pages.bantuan') }}">Bantuan</a></li>
-                </ul>
-                <div class="d-flex align-items-center gap-3">
-                    @auth
-                        <a href="{{ route('dashboard.user') }}" class="nav-link d-flex align-items-center gap-2">
-                            <div class="user-avatar-circle">
-                                @if(Auth::user()->avatar)
-                                    <img src="{{ asset('storage/' . Auth::user()->avatar) }}" alt="{{ Auth::user()->name }}" class="user-avatar-img">
-                                @else
-                                    <span class="user-avatar-initial">{{ strtoupper(substr(Auth::user()->name, 0, 1)) }}</span>
-                                @endif
-                            </div>
-                            <span class="d-none d-md-inline">{{ Auth::user()->name }}</span>
-                        </a>
-                    @else
-                        <a href="{{ route('login') }}" rel="nofollow" class="nav-link">Masuk</a>
-                        <a href="{{ route('register') }}" rel="nofollow" class="btn-gold">Mulai Gratis</a>
-                    @endauth
-                </div>
-            </div>
-        </div>
-    </nav>
+    @include('layouts.partial.ev-header')
+    @include('layouts.partial.ev-search-modal')
 
-    @yield('content')
+    <main id="mainContent">
+        @yield('content')
+    </main>
 
-    <!-- Footer -->
-    <footer>
-        <div class="container">
-            <div class="row gy-5">
-                <div class="col-lg-4 reveal">
-                    <a href="{{ route('landing') }}" class="footer-logo">
-                        <img src="{{ asset('assets/logo-new.png') }}" alt="Logo RuangUndang">
-                    </a>
-                    <p class="text-secondary small" style="max-width: 350px;">Platform undangan digital premium untuk pernikahan dan momen spesial. Praktis, elegan, dan hemat biaya.</p>
-                    <div class="footer-social">
-                        <a href="https://wa.me/6285923431716" target="_blank" rel="noopener noreferrer" class="social-btn"><i class="bi bi-whatsapp"></i></a>
-                        <a href="#" class="social-btn"><i class="bi bi-instagram"></i></a>
-                        <a href="#" class="social-btn"><i class="bi bi-facebook"></i></a>
-                        <a href="#" class="social-btn"><i class="bi bi-tiktok"></i></a>
-                    </div>
-                </div>
-                <div class="col-6 col-lg-2 offset-lg-1 reveal" style="transition-delay: 0.1s;">
-                    <h5 class="footer-heading">Layanan</h5>
-                    <ul class="footer-links">
-                        <li><a href="{{ route('pages.cari-tema') }}">Undangan Pernikahan</a></li>
-                        <li><a href="{{ route('pages.cari-tema') }}">Undangan Digital</a></li>
-                        <li><a href="{{ route('pages.cari-tema') }}">Cetak Undangan</a></li>
-                        <li><a href="{{ route('pages.cari-tema') }}">Video Undangan</a></li>
-                    </ul>
-                </div>
-                <div class="col-6 col-lg-2 reveal" style="transition-delay: 0.2s;">
-                    <h5 class="footer-heading">Tema Populer</h5>
-                    <ul class="footer-links">
-                        <li><a href="{{ route('pages.cari-tema', ['category' => 'Modern']) }}">Tema Modern</a></li>
-                        <li><a href="{{ route('pages.cari-tema', ['category' => 'Rustic']) }}">Tema Rustic</a></li>
-                        <li><a href="{{ route('pages.cari-tema', ['category' => 'Floral']) }}">Tema Floral</a></li>
-                        <li><a href="{{ route('pages.cari-tema', ['category' => 'Islami']) }}">Tema Islami</a></li>
-                    </ul>
-                </div>
-                <div class="col-6 col-lg-2 reveal" style="transition-delay: 0.3s;">
-                    <h5 class="footer-heading">Informasi</h5>
-                    <ul class="footer-links">
-                        <li><a href="{{ route('pages.cara-pemesanan') }}">Cara Pemesanan</a></li>
-                        <li><a href="{{ route('pages.faq') }}">Pertanyaan (FAQ)</a></li>
-                        <li><a href="{{ route('pages.syarat-ketentuan') }}">Syarat & Ketentuan</a></li>
-                        <li><a href="{{ route('pages.kebijakan-privasi') }}">Kebijakan Privasi</a></li>
-                    </ul>
-                </div>
-            </div>
-            <div class="footer-bottom">
-                <p>&copy; {{ date('Y') }} RuangUndang Digital Invitation. Dibuat dengan <i class="bi bi-heart-fill text-danger"></i> di Indonesia.</p>
-            </div>
+    @include('layouts.partial.ev-footer')
 
-            <div class="text-center mt-4">
-                <a href="https://midtrans.com" target="_blank" rel="noopener noreferrer" class="midtrans-security" title="Pembayaran aman diproses oleh Midtrans">
-                    <span class="midtrans-icon">
-                        <i class="bi bi-shield-lock-fill"></i>
-                    </span>
-                    <span class="midtrans-label">Pembayaran Aman</span>
-                    <span class="midtrans-logo-text">Midtrans</span>
-                </a>
-            </div>
-        </div>
-    </footer>
-
-    <!-- WhatsApp Float (floating round button) -->
+    <!-- WhatsApp Floating Chat Component -->
     @include('components.wa-chat', [
         'phone' => '6285923431716',
         'message' => 'Halo RuangUndang, saya ingin bertanya tentang layanan undangan digital.',
@@ -421,20 +71,174 @@
         'mobileBottom' => 24
     ])
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Bootstrap 5 Bundle JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" defer></script>
+
+    <!-- Evite Interactive Scripts -->
     <script>
-        const navbar = document.getElementById('mainNav');
-        window.addEventListener('scroll', () => {
-            if (window.scrollY > 50) { navbar.classList.add('scrolled'); }
-            else { navbar.classList.remove('scrolled'); }
-        });
-        const reveals = document.querySelectorAll('.reveal');
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) { entry.target.classList.add('active'); observer.unobserve(entry.target); }
+        document.addEventListener('DOMContentLoaded', function () {
+            const header = document.getElementById('mainHeader');
+            if (header) {
+                window.addEventListener('scroll', () => {
+                    if (window.scrollY > 30) {
+                        header.classList.add('scrolled');
+                    } else {
+                        header.classList.remove('scrolled');
+                    }
+                }, { passive: true });
+            }
+
+            const drawer = document.getElementById('mobileDrawer');
+            const backdrop = document.getElementById('drawerBackdrop');
+            const openBtn = document.getElementById('mobileDrawerOpenBtn');
+            const closeBtn = document.getElementById('mobileDrawerCloseBtn');
+
+            function openDrawer() {
+                if (drawer) drawer.classList.add('is-open');
+                if (backdrop) backdrop.classList.add('is-open');
+                document.body.style.overflow = 'hidden';
+            }
+
+            function closeDrawer() {
+                if (drawer) drawer.classList.remove('is-open');
+                if (backdrop) backdrop.classList.remove('is-open');
+                document.body.style.overflow = '';
+            }
+
+            if (openBtn) openBtn.addEventListener('click', openDrawer);
+            if (closeBtn) closeBtn.addEventListener('click', closeDrawer);
+            if (backdrop) backdrop.addEventListener('click', closeDrawer);
+
+            const searchModal = document.getElementById('searchModal');
+            const searchModalBackdrop = document.getElementById('searchModalBackdrop');
+            const searchTriggerBtn = document.getElementById('searchTriggerBtn');
+            const mobileSearchBtn = document.getElementById('mobileSearchBtn');
+            const searchModalClose = document.getElementById('searchModalClose');
+            const searchModalInput = document.getElementById('searchModalInput');
+            const searchModalClear = document.getElementById('searchModalClear');
+            const searchModalForm = document.getElementById('searchModalForm');
+            const searchRecentList = document.getElementById('searchRecentList');
+            const searchRecentSection = document.getElementById('searchRecentSection');
+
+            const RECENT_KEY = 'ru_recent_searches';
+
+            function getRecentSearches() {
+                try { return JSON.parse(localStorage.getItem(RECENT_KEY) || '[]'); } catch { return []; }
+            }
+
+            function saveRecentSearch(query) {
+                if (!query.trim()) return;
+                let arr = getRecentSearches().filter(q => q !== query);
+                arr.unshift(query);
+                arr = arr.slice(0, 5);
+                localStorage.setItem(RECENT_KEY, JSON.stringify(arr));
+            }
+
+            function renderRecent() {
+                const arr = getRecentSearches();
+                if (!searchRecentList || !searchRecentSection) return;
+                if (arr.length === 0) {
+                    searchRecentSection.style.display = 'none';
+                    return;
+                }
+                searchRecentSection.style.display = 'block';
+                searchRecentList.innerHTML = arr.map(q => `
+                    <li class="ev-search-recent-item">
+                        <button type="button" class="ev-search-recent-btn" data-query="${q}">
+                            <i class="bi bi-clock-history"></i>
+                            <span>${q}</span>
+                        </button>
+                        <button type="button" class="ev-search-recent-remove" data-query="${q}" aria-label="Hapus">
+                            <i class="bi bi-x"></i>
+                        </button>
+                    </li>
+                `).join('');
+
+                searchRecentList.querySelectorAll('.ev-search-recent-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const q = btn.getAttribute('data-query');
+                        if (searchModalInput) searchModalInput.value = q;
+                        if (searchModalForm) searchModalForm.submit();
+                    });
+                });
+                searchRecentList.querySelectorAll('.ev-search-recent-remove').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const q = btn.getAttribute('data-query');
+                        let arr2 = getRecentSearches().filter(x => x !== q);
+                        localStorage.setItem(RECENT_KEY, JSON.stringify(arr2));
+                        renderRecent();
+                    });
+                });
+            }
+
+            function openSearchModal() {
+                if (!searchModal) return;
+                searchModal.classList.add('is-open');
+                if (searchModalBackdrop) searchModalBackdrop.classList.add('is-open');
+                document.body.style.overflow = 'hidden';
+                renderRecent();
+                setTimeout(() => { if (searchModalInput) searchModalInput.focus(); }, 80);
+            }
+
+            function closeSearchModal() {
+                if (!searchModal) return;
+                searchModal.classList.remove('is-open');
+                if (searchModalBackdrop) searchModalBackdrop.classList.remove('is-open');
+                document.body.style.overflow = '';
+            }
+
+            if (searchTriggerBtn) searchTriggerBtn.addEventListener('click', openSearchModal);
+            if (mobileSearchBtn) mobileSearchBtn.addEventListener('click', openSearchModal);
+            if (searchModalClose) searchModalClose.addEventListener('click', closeSearchModal);
+            if (searchModalBackdrop) searchModalBackdrop.addEventListener('click', closeSearchModal);
+
+            if (searchModalInput && searchModalClear) {
+                searchModalInput.addEventListener('input', () => {
+                    searchModalClear.style.display = searchModalInput.value ? 'flex' : 'none';
+                });
+                searchModalClear.addEventListener('click', () => {
+                    searchModalInput.value = '';
+                    searchModalClear.style.display = 'none';
+                    searchModalInput.focus();
+                });
+            }
+
+            if (searchModalForm && searchModalInput) {
+                searchModalForm.addEventListener('submit', () => {
+                    saveRecentSearch(searchModalInput.value);
+                });
+            }
+
+            document.addEventListener('keydown', (e) => {
+                if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+                    e.preventDefault();
+                    if (searchModal && searchModal.classList.contains('is-open')) {
+                        closeSearchModal();
+                    } else {
+                        openSearchModal();
+                    }
+                }
+                if (e.key === 'Escape' && searchModal && searchModal.classList.contains('is-open')) {
+                    closeSearchModal();
+                }
             });
-        }, { threshold: 0.15 });
-        reveals.forEach(reveal => observer.observe(reveal));
+
+            const reveals = document.querySelectorAll('.reveal');
+            if ('IntersectionObserver' in window) {
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('active');
+                            observer.unobserve(entry.target);
+                        }
+                    });
+                }, { threshold: 0.12 });
+
+                reveals.forEach(el => observer.observe(el));
+            } else {
+                reveals.forEach(el => el.classList.add('active'));
+            }
+        });
     </script>
 
     @stack('scripts')

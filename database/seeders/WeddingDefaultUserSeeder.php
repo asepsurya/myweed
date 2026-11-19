@@ -20,31 +20,28 @@ class WeddingDefaultUserSeeder extends Seeder
         $guestRole = Role::firstOrCreate(['name' => 'user']);
 
         // Admin (1x)
-        if (! User::where('email', 'admin@wedding.com')->exists()) {
-            $admin = User::create([
+        $admin = User::updateOrCreate(
+            ['email' => 'admin@wedding.com'],
+            [
                 'name' => 'Admin Wedding',
-                'email' => 'admin@wedding.com',
                 'role' => 'admin',
                 'password' => Hash::make('password123'), // ganti sesuai kebutuhan
                 'email_verified_at' => now(),
-            ]);
-            $admin->assignRole($adminRole);
-        }
+            ]
+        );
+        $admin->assignRole($adminRole);
 
         // Guest/User (1x)
-        if (! User::where('email', 'user@wedding.com')->exists()) {
-            $guest = User::create([
+        $guest = User::updateOrCreate(
+            ['email' => 'user@wedding.com'],
+            [
                 'name' => 'Tamu Undangan',
-                'email' => 'user@wedding.com',
                 'role' => 'user',
                 'password' => Hash::make('password123'), // ganti sesuai kebutuhan
-            ]);
-            $guest->assignRole($guestRole);
-        }
+            ]
+        );
+        $guest->assignRole($guestRole);
 
-        $admin = User::where('email', 'admin@wedding.com')->first();
-        if ($admin) {
-            $admin->givePermissionTo(Permission::all());
-        }
+        $admin->givePermissionTo(Permission::all());
     }
 }

@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Blog;
 use App\Models\Category;
 use App\Models\Invitation;
 use App\Models\Promotion;
 use App\Models\SubscriptionPlan;
 use App\Models\Template;
+use App\Models\TemplateType;
 use Illuminate\Http\Request;
 
 class LandingController extends Controller
@@ -46,6 +48,7 @@ class LandingController extends Controller
         $categories = $realCategories->map(function ($cat) {
             return [
                 'name' => $cat->name,
+                'icon' => $cat->icon,
                 'count' => Template::where('id_category', $cat->id)->count().'+',
                 'img' => 'https://picsum.photos/seed/'.strtolower($cat->name).'/400/300',
             ];
@@ -54,6 +57,12 @@ class LandingController extends Controller
         $promotions = Promotion::where('is_active', true)
             ->orderBy('sort_order')
             ->orderByDesc('id')
+            ->get();
+
+        $blogs = Blog::where('is_active', true)
+            ->orderBy('sort_order')
+            ->orderByDesc('id')
+            ->take(4)
             ->get();
 
         $seoTitle = 'RuangUndang - Platform Undangan Digital Premium & Elegant';
@@ -85,12 +94,54 @@ class LandingController extends Controller
                 'url' => config('app.url'),
                 'logo' => asset('assets/logo-new.png'),
                 'description' => 'Platform undangan digital premium untuk pernikahan dan momen spesial.',
-                'sameAs' => [],
+                'sameAs' => [
+                    config('services.socials.facebook'),
+                    config('services.socials.instagram'),
+                    config('services.socials.tiktok'),
+                    config('services.socials.youtube'),
+                    config('services.socials.x'),
+                    config('services.socials.linkedin'),
+                ],
                 'contactPoint' => [
                     '@type' => 'ContactPoint',
                     'telephone' => '+62-859-2343-1716',
                     'contactType' => 'customer service',
                     'availableLanguage' => ['Indonesian'],
+                ],
+            ],
+            [
+                '@context' => 'https://schema.org',
+                '@type' => 'LocalBusiness',
+                'name' => 'RuangUndang - Platform Undangan Digital',
+                'description' => 'Platform pembuatan undangan digital dan undangan pernikahan online premium. Pilih template eksklusif, bagikan via WhatsApp, dan lacak RSVP tamu secara real-time.',
+                'url' => config('app.url'),
+                'logo' => asset('assets/logo-new.png'),
+                'image' => asset('assets/og-image.png'),
+                'telephone' => '+62-859-2343-1716',
+                'priceRange' => '$$',
+                'address' => [
+                    '@type' => 'PostalAddress',
+                    'addressCountry' => 'ID',
+                    'addressLocality' => 'Indonesia',
+                ],
+                'geo' => [
+                    '@type' => 'GeoCoordinates',
+                    'latitude' => '-6.2088',
+                    'longitude' => '106.8456',
+                ],
+                'sameAs' => [
+                    config('services.socials.facebook'),
+                    config('services.socials.instagram'),
+                    config('services.socials.tiktok'),
+                    config('services.socials.youtube'),
+                    config('services.socials.x'),
+                    config('services.socials.linkedin'),
+                ],
+                'openingHoursSpecification' => [
+                    '@type' => 'OpeningHoursSpecification',
+                    'dayOfWeek' => ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+                    'opens' => '00:00',
+                    'closes' => '23:59',
                 ],
             ],
             [
@@ -111,7 +162,7 @@ class LandingController extends Controller
         ];
 
         return view('index', compact(
-            'templates', 'categories', 'invitations', 'promotions',
+            'templates', 'categories', 'invitations', 'promotions', 'blogs',
             'seoTitle', 'seoDescription', 'seoKeywords', 'seoImage', 'jsonLd'
         ));
     }
@@ -170,6 +221,7 @@ class LandingController extends Controller
     public function cariTema(Request $request)
     {
         $realCategories = Category::orderBy('name')->get();
+        $realTypes = TemplateType::orderBy('name')->get();
 
         $query = Template::where('is_active', true)
             ->with('category', 'templateType')
@@ -181,6 +233,9 @@ class LandingController extends Controller
                 $q->where('name', 'like', "%$search%")
                     ->orWhereHas('category', function ($q2) use ($search) {
                         $q2->where('name', 'like', "%$search%");
+                    })
+                    ->orWhereHas('templateType', function ($q3) use ($search) {
+                        $q3->where('name', 'like', "%$search%");
                     });
             });
         }
@@ -191,7 +246,26 @@ class LandingController extends Controller
             });
         }
 
-        $templates = $query->get();
+        if ($request->filled('is_premium') && $request->is_premium !== '') {
+            $query->where('is_premium', (bool) $request->is_premium);
+        }
+
+        if ($request->filled('type') && $request->type !== '') {
+            $query->whereHas('templateType', function ($q) use ($request) {
+                $q->where('slug', $request->type);
+            });
+        }
+
+        $sort = $request->query('sort', 'newest');
+        if ($sort === 'popular') {
+            $query->orderByDesc('views_count')->orderByDesc('likes_count');
+        } elseif ($sort === 'name_asc') {
+            $query->orderBy('name');
+        } elseif ($sort === 'name_desc') {
+            $query->orderByDesc('name');
+        }
+
+        $templates = $query->paginate(24)->withQueryString();
 
         $categories = $realCategories->map(function ($cat) {
             return [
@@ -200,8 +274,30 @@ class LandingController extends Controller
             ];
         });
 
+        $templateTypes = $realTypes->map(function ($type) {
+            return [
+                'name' => $type->name,
+                'slug' => $type->slug,
+                'color' => $type->color,
+                'count' => Template::where('template_type_id', $type->id)->count(),
+            ];
+        });
+
         $searchQuery = $request->search;
-        $categoryFilter = request('category');
+        $categoryFilter = $request->category;
+        $isPremiumFilter = $request->is_premium;
+        $typeFilter = $request->type;
+        $sortField = $sort;
+        $baseParams = $request->except(['_token', 'page']);
+
+        if ($request->ajax()) {
+            return response()
+                ->view('pages.partials.cari-tema-results', compact(
+                    'templates', 'categories', 'templateTypes', 'searchQuery', 'categoryFilter',
+                    'isPremiumFilter', 'typeFilter', 'sortField', 'baseParams'
+                ))
+                ->header('X-Total-Count', (string) $templates->total());
+        }
 
         $canonicalUrl = route('pages.cari-tema');
         $noIndex = ! empty($searchQuery);
@@ -226,12 +322,13 @@ class LandingController extends Controller
                 '@type' => 'CollectionPage',
                 'name' => 'Koleksi Template Undangan Digital',
                 'description' => $seoDescription,
-                'numberOfItems' => $templates->count(),
+                'numberOfItems' => $templates->total(),
             ],
         ];
 
         return view('pages.cari-tema', compact(
-            'templates', 'categories', 'searchQuery', 'categoryFilter',
+            'templates', 'categories', 'templateTypes', 'searchQuery', 'categoryFilter',
+            'isPremiumFilter', 'typeFilter', 'sortField', 'baseParams',
             'seoTitle', 'seoDescription', 'seoKeywords', 'jsonLd', 'canonicalUrl', 'noIndex'
         ));
     }

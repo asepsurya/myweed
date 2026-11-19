@@ -1,0 +1,39 @@
+> RuangUndang — Platform Undangan Digital Premium
+
+RuangUndang adalah platform pembuatan undangan digital dan undangan pernikahan online premium untuk pernikahan, aqiqah, ulang tahun, dan acara spesial lainnya. Pilih dari puluhan template eksklusif (modern, rustic, floral, islami), personalisasi dengan foto dan musik, bagikan via WhatsApp, dan lacak RSVP tamu secara real-time.
+
+> Core Pages
+
+* [Beranda](https://ruangundang.my.id/): Landing page RuangUndang — platform undangan digital premium
+* [Cari Tema](https://ruangundang.my.id/cari-tema): Jelajahi dan filter koleksi template undangan digital
+* [Fitur](https://ruangundang.my.id/fitur): Fitur lengkap — RSVP otomatis, Google Maps, amplop digital, musik, live streaming
+* [Harga](https://ruangundang.my.id/harga): Paket harga undangan digital — Gratis, Basic, dan Pro
+* [Bantuan](https://ruangundang.my.id/bantuan): Pusat bantuan dan kontak support RuangUndang
+* [Cara Pemesanan](https://ruangundang.my.id/cara-pemesanan): Panduan langkah demi langkah membuat undangan digital
+* [FAQ](https://ruangundang.my.id/faq): Pertanyaan umum seputar undangan digital
+
+> Legal
+
+* [Syarat & Ketentuan](https://ruangundang.my.id/syarat-ketentuan)
+* [Kebijakan Privasi](https://ruangundang.my.id/kebijakan-privasi)
+
+> Technical
+
+* [Sitemap XML](https://ruangundang.my.id/sitemap.xml): Daftar semua halaman yang dapat diindeks
+* [Robots.txt](https://ruangundang.my.id/robots.txt): Aturan crawler dan pengindeksan
+
+> Optional
+
+* [Daftar Gratis](https://ruangundang.my.id/register): Buat akun undangan digital gratis tanpa kartu kredit
+* [Masuk](https://ruangundang.my.id/login): Masuk ke dashboard RuangUndang
+
+> Contact
+
+* WhatsApp: +62 859-2343-1716
+* Email: hello@ruangundang.my.id
+* Instagram: @ruangundang
+* Facebook: /ruangundang
+* TikTok: @ruangundang
+* YouTube: @ruangundang
+* X: @ruangundang
+* LinkedIn: /company/ruangundang

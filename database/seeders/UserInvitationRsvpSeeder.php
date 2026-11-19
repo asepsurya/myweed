@@ -8,7 +8,6 @@ use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
-use Faker\Factory as Faker;
 
 class UserInvitationRsvpSeeder extends Seeder
 {
@@ -18,48 +17,23 @@ class UserInvitationRsvpSeeder extends Seeder
     public function run(): void
     {
         $data = $this->couples();
-        $faker = Faker::create('id_ID');
 
         foreach ($data as $couple) {
-            // Generate nama Indonesia secara acak untuk setiap pasangan.
-            $groomName = $faker->name('male');
-            $brideName = $faker->name('female');
+            $user = User::updateOrCreate(
+                ['email' => $couple['email']],
+                [
+                    'name' => $couple['groom_nickname'] . ' & ' . $couple['bride_nickname'],
+                    'email' => $couple['email'],
+                    'email_verified_at' => now(),
+                    'password' => Hash::make('password'),
+                    'role' => 'user',
+                    'avatar' => $couple['avatar'],
+                ]
+            );
 
-            $groomParts = preg_split('/\s+/', trim($groomName));
-            $brideParts = preg_split('/\s+/', trim($brideName));
-
-            $groomNickname = $groomParts[0];
-            $brideNickname = $brideParts[0];
-
-            $couple['groom_name'] = $groomName;
-            $couple['groom_nickname'] = $groomNickname;
-            $couple['groom_father'] = $faker->name('male');
-            $couple['groom_mother'] = $faker->name('female');
-
-            $couple['bride_name'] = $brideName;
-            $couple['bride_nickname'] = $brideNickname;
-            $couple['bride_father'] = $faker->name('male');
-            $couple['bride_mother'] = $faker->name('female');
-
-            $couple['email'] = Str::slug($groomNickname . '.' . $brideNickname)
-                . '.' . $faker->unique()->numberBetween(1000, 9999)
-                . '@example.com';
-
-            foreach ($couple['rsvps'] as &$rsvp) {
-                $rsvp['name'] = $faker->firstName();
-            }
-            unset($rsvp);
-
-            $user = User::create([
-                'name' => $couple['groom_nickname'] . ' & ' . $couple['bride_nickname'],
-                'email' => $couple['email'],
-                'email_verified_at' => now(),
-                'password' => Hash::make('password'),
-                'role' => 'user',
-                'avatar' => $couple['avatar'],
-            ]);
-
-            $invitation = Invitation::create([
+            $invitation = Invitation::updateOrCreate(
+                ['slug' => Str::slug($couple['groom_nickname'] . '-' . $couple['bride_nickname'])],
+                [
                 'user_id' => $user->id,
                 'template_id' => 2,
                 'slug' => Str::slug($couple['groom_nickname'] . '-' . $couple['bride_nickname']),
@@ -101,12 +75,18 @@ class UserInvitationRsvpSeeder extends Seeder
             ]);
 
             foreach ($couple['rsvps'] as $rsvp) {
-                Rsvp::create([
-                    'invitation_id' => $invitation->id,
-                    'name' => $rsvp['name'],
-                    'message' => $rsvp['message'],
-                    'attending' => $rsvp['attending'],
-                ]);
+                Rsvp::updateOrCreate(
+                    [
+                        'invitation_id' => $invitation->id,
+                        'name' => $rsvp['name'],
+                    ],
+                    [
+                        'invitation_id' => $invitation->id,
+                        'name' => $rsvp['name'],
+                        'message' => $rsvp['message'],
+                        'attending' => $rsvp['attending'],
+                    ]
+                );
             }
         } // <-- Tanda kurung kurawal foreach dipindahkan ke sini
     }

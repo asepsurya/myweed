@@ -70,70 +70,116 @@
         .form-check {
             margin-bottom: 0 !important;
         }
-        
+
+        /* Modal Custom Styles */
+        .modal-theme-navy .modal-header {
+            background: linear-gradient(135deg, #1B2A4A 0%, #2A3F6A 100%);
+            color: #fff;
+            border-bottom: 2px solid var(--adminuiux-theme-1, #C6A962);
+            padding: 1.25rem 1.5rem;
+        }
+        .modal-theme-navy .modal-title {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+        }
+        .modal-theme-navy .modal-body {
+            background-color: var(--adminuiux-bg-2, #FFFFFF);
+        }
+        .modal-theme-navy .modal-footer {
+            background-color: var(--adminuiux-bg-2, #FFFFFF);
+            border-top: 1px solid var(--bs-border-color);
+            padding: 1rem 1.5rem;
+        }
+
+        /* Category Card Selector */
+        .category-option-card {
+            border: 2px solid var(--bs-border-color);
+            border-radius: 14px;
+            background: var(--adminuiux-bg-1, #f8fafc);
+            transition: all 0.25s ease;
+            cursor: pointer;
+            overflow: hidden;
+        }
+        .category-option-card:hover {
+            border-color: rgba(198, 169, 98, 0.6);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 18px rgba(198, 169, 98, 0.15);
+        }
+        .category-option-card.selected {
+            border-color: var(--adminuiux-theme-1, #C6A962) !important;
+            background: rgba(198, 169, 98, 0.06);
+            box-shadow: 0 0 0 0.2rem rgba(198, 169, 98, 0.25) !important;
+        }
     </style>
 
     <!-- TAB 1: Aktivitas Undangan -->
     <div class="tab-pane fade show active" id="tab1" role="tabpanel" aria-labelledby="tab1-tab">
-        <div class="py-10">
+        <div class="py-3 py-md-4">
             <div class="container-fluid">
 
-                <div
-                    class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4 gap-3">
+                @php
+                    $user = auth()->user();
+                    $subscriptionStatus = $user->subscriptionStatus();
+                    $canCreateMore = $user->isAdmin() || $user->isSubscribed() || $user->invitations->count() < 1;
+                    $partnerOwner = $user->getPartnerSubscriptionOwner();
+                    $publishedCount = $invitations->where('status', 'published')->count();
+                    $draftCount = $invitations->where('status', 'draft')->count();
+                @endphp
+
+                <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4 gap-3">
                     <div>
-                        <h4 class="mb-1">Aktivitas Undangan Terbaru</h4>
-                        @php $status = auth()->user()->subscriptionStatus(); @endphp
-                        @if($status == 'active')
-                            <span class="badge bg-warning text-dark small">
-                                <i class="bi bi-star-fill me-1"></i> Premium
-                                @if(auth()->user()->isAdmin())
-                                    (Admin Access)
-                                @elseif(auth()->user()->subscription)
-                                    (Aktif s/d: {{ auth()->user()->subscription->end_date->format('d M Y') }})
-                                @endif
-                            </span>
-                            @php $partnerOwner = auth()->user()->getPartnerSubscriptionOwner(); @endphp
-                            @if($partnerOwner)
-                                <span class="badge bg-info text-dark small ms-1">
-                                    <i class="bi bi-people me-1"></i> Aku bersama {{ $partnerOwner->name }}
-                                </span>
-                            @endif
-                        @else
-                            @php $partnerOwner = auth()->user()->getPartnerSubscriptionOwner(); @endphp
-                            @if($partnerOwner)
-                                <span class="badge bg-info text-dark small">
-                                    <i class="bi bi-people me-1"></i> Aku bersama {{ $partnerOwner->name }}
+                        <div class="d-flex align-items-center gap-2 flex-wrap mb-1">
+                            <h4 class="mb-0 fw-bold" style="font-family: 'Plus Jakarta Sans', sans-serif;">Daftar Pasangan & Undangan</h4>
+                            @if($subscriptionStatus == 'active')
+                                <span class="badge rounded-pill bg-warning text-dark small px-2 py-1">
+                                    <i class="bi bi-star-fill me-1"></i> Premium
+                                    @if(auth()->user()->isAdmin())
+                                        (Admin Access)
+                                    @elseif(auth()->user()->subscription)
+                                        (Aktif s/d: {{ auth()->user()->subscription->end_date->format('d M Y') }})
+                                    @endif
                                 </span>
                             @else
-                                <span class="badge bg-light text-dark border small">Free Plan (Limit 1 Undangan)</span>
+                                <span class="badge rounded-pill bg-light text-dark border small px-2 py-1">Free Plan</span>
                             @endif
-                        @endif
+                        </div>
+                        <p class="text-muted small mb-0">Kelola semua undangan pernikahan digital yang telah dibuat di sistem</p>
                     </div>
 
-                    <div class="w-md-100 d-flex justify-content-md-end">
-                        @php
-                            $user = auth()->user();
-                            $canCreateMore = $user->isAdmin() || $user->isSubscribed() || $user->invitations->count() < 1;
-                        @endphp
-
+                    <div class="w-md-100 d-flex justify-content-md-end gap-2">
                         @if($canCreateMore)
-                            <button type="button" class="btn btn-sm btn-outline-primary w-100 w-md-auto"
-                                data-bs-toggle="modal" data-bs-target="#newInvitationModal">
-                                <i class="bi bi-plus-circle me-1"></i> Buat Undangan
+                            <button type="button" class="btn btn-sm text-white px-3 py-2 rounded-3 fw-semibold shadow-sm w-100 w-md-auto"
+                                    style="background: linear-gradient(135deg, #C6A962 0%, #A68B4B 100%); border: none;"
+                                    data-bs-toggle="modal" data-bs-target="#newInvitationModal">
+                                <i class="bi bi-plus-circle-fill me-1"></i> Buat Undangan
                             </button>
                         @else
-                            <button type="button" class="btn btn-sm btn-warning w-100 w-md-auto" data-bs-toggle="modal"
+                            <button type="button" class="btn btn-sm btn-warning w-100 w-md-auto rounded-3 fw-semibold shadow-sm" data-bs-toggle="modal"
                                 data-bs-target="#upgradeModal">
-                                <i class="bi bi-star me-1"></i> Upgrade ke Premium
+                                <i class="bi bi-star-fill me-1"></i> Upgrade ke Premium
                             </button>
                         @endif
                     </div>
                 </div>
 
-                <form id="bulkDeleteForm" action="{{ route('invitation.bulk-delete') }}" method="POST">
-                    @csrf
+                {{-- Card Kontainer --}}
+                <div class="card border-0 rounded-4 shadow-sm overflow-hidden mb-4" style="background-color: var(--bs-card-bg, #FFFFFF);">
+                    <div class="card-header bg-transparent py-3 px-3 px-md-4 border-bottom d-flex align-items-center justify-content-between">
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="bi bi-gem text-warning-emphasis fs-5"></i>
+                            <h5 class="mb-0 fw-bold fs-6" style="font-family: 'Plus Jakarta Sans', sans-serif;">Daftar Semua Pasangan</h5>
+                        </div>
+                        <span class="badge bg-secondary-subtle text-secondary-emphasis rounded-pill px-2 py-1 small">
+                            Total: {{ $invitations->count() }}
+                        </span>
+                    </div>
 
-                    @if($invitations->isNotEmpty())
+                    <div class="card-body p-0">
+                        <form id="bulkDeleteForm" action="{{ route('invitation.bulk-delete') }}" method="POST">
+                            @csrf
+
+                            @if($invitations->isNotEmpty())
                         <div class="d-flex flex-nowrap align-items-center justify-content-between w-100 mb-2 px-2 py-2 rounded border"
                             style="background-color: rgba(198, 169, 98, 0.1); border-color: rgba(198, 169, 98, 0.2) !important;">
 
@@ -301,9 +347,11 @@
                         @endforelse
                     </ul>
                 </form>
-
             </div>
         </div>
+
+    </div>
+</div>
 
         <!-- Hidden Divs untuk Menyimpan Template Pesan WhatsApp (Mencegah DOM bloat) -->
         @foreach ($invitations as $inv)
@@ -312,101 +360,169 @@
             </div>
         @endforeach
 
-        <!-- Modal: New Invitation -->
-        <div class="modal fade" id="newInvitationModal" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content"
-                    style="border: none; border-radius: 16px; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.2);">
+        <!-- Modal: New Invitation (Category -> Form) -->
+        <div class="modal fade modal-theme-navy" id="newInvitationModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg">
+                <div class="modal-content border-0 rounded-4 overflow-hidden shadow-lg">
                     <form id="quickCreateForm" action="{{ route('invitation.quick-create') }}" method="POST">
                         @csrf
 
-                        <div class="modal-header text-center"
-                            style="background-color: #053B2D; color: #D4AF37; border-bottom: 3px solid #D4AF37; padding: 20px;">
-                            <h5 class="modal-title w-100 fw-bold"
-                                style="font-family: 'Cinzel', serif; letter-spacing: 1px;">
-                                <i class="bi bi-suit-heart-fill me-2" style="color: #D4AF37;"></i> Bangun Mimpimu
+                        <div class="modal-header d-flex align-items-center justify-content-between px-4 py-3">
+                            <h5 class="modal-title mb-0 d-flex align-items-center gap-2" id="modalStepTitle">
+                                <i class="bi bi-suit-heart-fill" style="color: var(--gold-primary, #C6A962);"></i>
+                                <span>Pilih Kategori Undangan</span>
                             </h5>
-                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                                aria-label="Tutup" style="opacity: 0.8;"></button>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Tutup"></button>
                         </div>
 
-                        <div class="modal-body p-4 p-md-5" style="background-color: #F7FDF9;">
-                            <p class="text-muted small text-center mb-4" style="font-style: italic;">Mulai perjalanan
-                                indah Anda dengan mengisi data berikut.</p>
+                        <div class="modal-body p-4 p-md-4" style="max-height: 72vh; overflow-y: auto;">
 
-                            <div class="mb-4">
-                                <h6 class="text-uppercase mb-3 d-flex align-items-center"
-                                    style="color: #053B2D; font-weight: 700; letter-spacing: 1px; font-size: 0.85rem;">
-                                    <i class="bi bi-gender-male me-2" style="font-size: 1.2rem; color: #10B981;"></i>
-                                    Mempelai Pria
-                                </h6>
-                                <div class="input-group mb-2">
-                                    <span class="input-group-text bg-white border-end-0"
-                                        style="border-color: #d1ede1; border-radius: 10px 0 0 10px;">
-                                        <i class="bi bi-person" style="color: #10B981;"></i>
-                                    </span>
-                                    <input type="text" name="groom_name" class="form-control border-start-0 py-2"
-                                        placeholder="Nama lengkap" required
-                                        style="border-color: #d1ede1; border-radius: 0 10px 10px 0;">
+                            {{-- Step 1: Category Selection --}}
+                            <div id="modalStepCategory" class="modal-step active">
+                                <div class="text-center mb-4">
+                                    <h6 class="fw-bold mb-1">Mulai Perjalanan Undangan Anda</h6>
+                                    <p class="text-muted small mb-0">Pilih jenis momen atau acara yang ingin Anda rayakan:</p>
                                 </div>
-                                <div class="input-group">
-                                    <span class="input-group-text bg-white border-end-0"
-                                        style="border-color: #d1ede1; border-radius: 10px 0 0 10px;">
-                                        <i class="bi bi-person-badge" style="color: #10B981;"></i>
-                                    </span>
-                                    <input type="text" name="groom_nickname" class="form-control border-start-0 py-2"
-                                        placeholder="Nama panggilan (opsional)"
-                                        style="border-color: #d1ede1; border-radius: 0 10px 10px 0;">
+
+                                <div class="row g-3" id="homeCategorySelector">
+                                    @php
+                                        $homeCategories = App\Models\Category::active()->ordered()->withCount(['templates as template_count' => function ($q) {
+                                            $q->where('is_active', true);
+                                        }])->get();
+                                    @endphp
+                                    @foreach($homeCategories as $category)
+                                    <div class="col-6 col-md-4 col-lg-3">
+                                        <div class="category-option category-option-card h-100 p-3 text-center d-flex flex-column align-items-center justify-content-between"
+                                             data-category-id="{{ $category->id }}"
+                                             onclick="homeSelectCategory(this, {{ $category->id }}, '{{ addslashes($category->name) }}', {{ $category->template_count }})">
+                                            <div class="rounded-3 d-flex align-items-center justify-content-center mb-2"
+                                                 style="width: 60px; height: 60px; background: rgba(198, 169, 98, 0.12);">
+                                                @if($category->thumbnail_url)
+                                                    <img src="{{ $category->thumbnail_url }}" alt="{{ $category->name }}" style="max-width: 44px; max-height: 44px; object-fit: contain;">
+                                                @else
+                                                    <i class="bi {{ $category->icon ?? 'bi-folder' }} fs-3" style="color: #A68B4B;"></i>
+                                                @endif
+                                            </div>
+                                            <div>
+                                                <h6 class="fw-bold mb-1 small text-dark">{{ ucfirst($category->name) }}</h6>
+                                                <span class="badge bg-light text-muted border" style="font-size: 0.68rem;">
+                                                    {{ $category->template_count }} Template
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    @endforeach
                                 </div>
+                                <input type="hidden" id="home_category_id" name="category_id">
                             </div>
 
-                            <div class="text-center my-3">
-                                <div
-                                    style="display: inline-block; background: #F7FDF9; padding: 0 15px; margin-top: -25px; position: relative; z-index: 2;">
-                                    <i class="bi bi-suit-heart-fill" style="color: #D4AF37; font-size: 1.4rem;"></i>
+                            {{-- Step 2: Form Fields --}}
+                            <div id="modalStepForm" class="modal-step d-none">
+                                <div class="d-flex align-items-center justify-content-between mb-4 pb-2 border-bottom">
+                                    <div>
+                                        <h6 class="fw-bold mb-0 text-dark" id="homeFormTitle">Data Undangan</h6>
+                                        <small class="text-muted" id="homeFormSubtitle">Lengkapi informasi dasar untuk undangan Anda</small>
+                                    </div>
+                                    <button type="button" class="btn btn-outline-secondary btn-sm rounded-pill px-3" onclick="homeGoToStep('category')">
+                                        <i class="bi bi-arrow-left me-1"></i> Ganti Kategori
+                                    </button>
                                 </div>
-                                <hr style="margin-top: -12px; border-color: #D4AF37; opacity: 0.3;">
+
+                                {{-- Wedding fields --}}
+                                <div id="homeFormWedding" class="d-none">
+                                    {{-- Mempelai Pria --}}
+                                    <div class="mb-4 p-3 rounded-3" style="background: rgba(198, 169, 98, 0.05); border: 1px solid rgba(198, 169, 98, 0.2);">
+                                        <div class="d-flex align-items-center gap-2 mb-3">
+                                            <div class="d-inline-flex align-items-center justify-content-center rounded-circle"
+                                                 style="width: 28px; height: 28px; background: #C6A962; color: #fff;">
+                                                <i class="bi bi-gender-male"></i>
+                                            </div>
+                                            <h6 class="fw-bold mb-0 text-dark text-uppercase small" style="letter-spacing: 0.5px;">Mempelai Pria</h6>
+                                        </div>
+
+                                        <div class="row g-2">
+                                            <div class="col-12 col-md-7">
+                                                <label class="form-label small fw-semibold mb-1">Nama Lengkap <span class="text-danger">*</span></label>
+                                                <div class="input-group">
+                                                    <span class="input-group-text"><i class="bi bi-person"></i></span>
+                                                    <input type="text" name="groom_name" id="wedding_groom_name" class="form-control" placeholder="Contoh: Raden Surya" required>
+                                                </div>
+                                            </div>
+                                            <div class="col-12 col-md-5">
+                                                <label class="form-label small fw-semibold mb-1">Nama Panggilan</label>
+                                                <div class="input-group">
+                                                    <span class="input-group-text"><i class="bi bi-person-badge"></i></span>
+                                                    <input type="text" name="groom_nickname" id="wedding_groom_nickname" class="form-control" placeholder="Surya">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {{-- Heart Divider --}}
+                                    <div class="text-center my-3 position-relative">
+                                        <hr class="my-0" style="border-color: rgba(198, 169, 98, 0.4);">
+                                        <span class="position-absolute top-50 start-50 translate-middle px-3 bg-white text-gold"
+                                              style="font-size: 1.2rem; background-color: var(--adminuiux-bg-2, #FFFFFF) !important;">
+                                            <i class="bi bi-suit-heart-fill"></i>
+                                        </span>
+                                    </div>
+
+                                    {{-- Mempelai Wanita --}}
+                                    <div class="mb-3 p-3 rounded-3" style="background: rgba(198, 169, 98, 0.05); border: 1px solid rgba(198, 169, 98, 0.2);">
+                                        <div class="d-flex align-items-center gap-2 mb-3">
+                                            <div class="d-inline-flex align-items-center justify-content-center rounded-circle"
+                                                 style="width: 28px; height: 28px; background: #C6A962; color: #fff;">
+                                                <i class="bi bi-gender-female"></i>
+                                            </div>
+                                            <h6 class="fw-bold mb-0 text-dark text-uppercase small" style="letter-spacing: 0.5px;">Mempelai Wanita</h6>
+                                        </div>
+
+                                        <div class="row g-2">
+                                            <div class="col-12 col-md-7">
+                                                <label class="form-label small fw-semibold mb-1">Nama Lengkap <span class="text-danger">*</span></label>
+                                                <div class="input-group">
+                                                    <span class="input-group-text"><i class="bi bi-person"></i></span>
+                                                    <input type="text" name="bride_name" id="wedding_bride_name" class="form-control" placeholder="Contoh: Putri Ayuningtyas" required>
+                                                </div>
+                                            </div>
+                                            <div class="col-12 col-md-5">
+                                                <label class="form-label small fw-semibold mb-1">Nama Panggilan</label>
+                                                <div class="input-group">
+                                                    <span class="input-group-text"><i class="bi bi-person-badge"></i></span>
+                                                    <input type="text" name="bride_nickname" id="wedding_bride_nickname" class="form-control" placeholder="Putri">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {{-- Non-wedding generic fields --}}
+                                <div id="homeFormGeneric" class="d-none">
+                                    <div class="mb-3">
+                                        <label class="form-label fw-semibold">Nama Kegiatan / Acara <span class="text-danger">*</span></label>
+                                        <input type="text" name="groom_name" id="generic_groom_name" class="form-control py-2" placeholder="Contoh: Perayaan Ulang Tahun, Seminar, dll" disabled>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label fw-semibold">Deskripsi Acara (opsional)</label>
+                                        <textarea name="bride_name" id="generic_bride_name" class="form-control py-2" rows="3" placeholder="Tuliskan sekilas tentang acara Anda..." disabled></textarea>
+                                        <div class="form-text small">Informasi ini akan ditampilkan pada pembuka undangan digital Anda.</div>
+                                    </div>
+                                </div>
+
+                                <div id="home_form_error" class="alert alert-danger d-none mt-3 rounded-3"></div>
                             </div>
 
-                            <div class="mb-3">
-                                <h6 class="text-uppercase mb-3 d-flex align-items-center"
-                                    style="color: #053B2D; font-weight: 700; letter-spacing: 1px; font-size: 0.85rem;">
-                                    <i class="bi bi-gender-female me-2" style="font-size: 1.2rem; color: #10B981;"></i>
-                                    Mempelai Wanita
-                                </h6>
-                                <div class="input-group mb-2">
-                                    <span class="input-group-text bg-white border-end-0"
-                                        style="border-color: #d1ede1; border-radius: 10px 0 0 10px;">
-                                        <i class="bi bi-person" style="color: #10B981;"></i>
-                                    </span>
-                                    <input type="text" name="bride_name" class="form-control border-start-0 py-2"
-                                        placeholder="Nama lengkap" required
-                                        style="border-color: #d1ede1; border-radius: 0 10px 10px 0;">
-                                </div>
-                                <div class="input-group">
-                                    <span class="input-group-text bg-white border-end-0"
-                                        style="border-color: #d1ede1; border-radius: 10px 0 0 10px;">
-                                        <i class="bi bi-person-badge" style="color: #10B981;"></i>
-                                    </span>
-                                    <input type="text" name="bride_nickname" class="form-control border-start-0 py-2"
-                                        placeholder="Nama panggilan (opsional)"
-                                        style="border-color: #d1ede1; border-radius: 0 10px 10px 0;">
-                                </div>
-                            </div>
-
-                            <div id="modal_error" class="alert alert-danger d-none mt-3" style="border-radius: 10px;">
-                            </div>
                         </div>
 
-                        <div class="modal-footer d-flex justify-content-between align-items-center"
-                            style="background-color: #F7FDF9; border-top: none; padding: 0 2rem 2rem 2rem;">
-                            <button type="button" class="btn btn-link text-decoration-none text-muted"
-                                data-bs-dismiss="modal" style="font-weight: 600;">
+                        <div class="modal-footer d-flex justify-content-between align-items-center px-4 py-3">
+                            <button type="button" class="btn btn-outline-secondary rounded-pill px-4" id="homeModalBackBtn" data-bs-dismiss="modal" style="display: none;">
                                 Batal
                             </button>
-                            <button type="submit" class="btn px-4 py-2 fw-bold shadow-sm" id="quickCreateBtn"
-                                style="background-color: #053B2D; color: #D4AF37; border-radius: 50px; letter-spacing: 1px; font-size: 0.9rem;">
-                                <i class="bi bi-stars me-1"></i> Buat Undangan
+                            <button type="submit" class="btn text-white rounded-pill px-4 py-2 fw-semibold shadow-sm ms-auto"
+                                    id="homeQuickCreateBtn"
+                                    style="background: linear-gradient(135deg, #C6A962 0%, #A68B4B 100%); border: none;"
+                                    disabled>
+                                <i class="bi bi-stars me-1"></i> Buat Undangan Sekarang
                             </button>
                         </div>
                     </form>
@@ -417,22 +533,50 @@
         <!-- Modal: Upgrade to Premium -->
         <div class="modal fade" id="upgradeModal" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-header bg-warning text-white">
-                        <h5 class="modal-title"><i class="bi bi-star me-2"></i> Upgrade ke Premium</h5>
-                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                            aria-label="Tutup"></button>
+                <div class="modal-content border-0 rounded-4 overflow-hidden shadow-lg">
+                    <div class="modal-header px-4 py-3" style="background: linear-gradient(135deg, #1B2A4A 0%, #2A3F6A 100%); border-bottom: 2px solid #C6A962;">
+                        <h5 class="modal-title text-white fw-bold d-flex align-items-center gap-2 mb-0">
+                            <i class="bi bi-star-fill text-gold" style="color: #C6A962;"></i>
+                            <span>Upgrade ke Paket Premium</span>
+                        </h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Tutup"></button>
                     </div>
-                    <div class="modal-body">
-                        <p>Anda telah mencapai batas maksimal <strong>1 undangan</strong> untuk akun gratis.</p>
-                        <p>Upgrade ke berlangganan premium untuk membuat undangan tanpa batas dan mengakses fitur
-                            eksklusif lainnya.</p>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Nanti</button>
-                        <a href="{{ route('subscribe.page') }}" class="btn btn-warning text-white">
-                            <i class="bi bi-star me-1"></i> Lihat Paket Premium
-                        </a>
+                    <div class="modal-body p-4 text-center">
+                        <div class="d-inline-flex align-items-center justify-content-center rounded-circle mb-3"
+                             style="width: 72px; height: 72px; background: rgba(198, 169, 98, 0.15); color: #C6A962;">
+                            <i class="bi bi-gem fs-1"></i>
+                        </div>
+                        <h5 class="fw-bold mb-2">Buka Semua Potensi Momen Bahagiamu</h5>
+                        <p class="text-muted small mb-4">
+                            Akun gratis dibatasi maksimal 1 undangan. Dapatkan fitur tak terbatas dengan berlangganan:
+                        </p>
+
+                        <div class="text-start bg-light p-3 rounded-3 mb-4 border">
+                            <div class="d-flex align-items-center gap-2 mb-2 small">
+                                <i class="bi bi-check-circle-fill text-success"></i>
+                                <span class="fw-semibold">Buat Undangan Tanpa Batas</span>
+                            </div>
+                            <div class="d-flex align-items-center gap-2 mb-2 small">
+                                <i class="bi bi-check-circle-fill text-success"></i>
+                                <span>Akses Semua Tema Eksklusif & Musik Latar</span>
+                            </div>
+                            <div class="d-flex align-items-center gap-2 mb-2 small">
+                                <i class="bi bi-check-circle-fill text-success"></i>
+                                <span>Buku Tamu WhatsApp & Check-in QR</span>
+                            </div>
+                            <div class="d-flex align-items-center gap-2 small">
+                                <i class="bi bi-check-circle-fill text-success"></i>
+                                <span>Bebas Watermark & Domain Kustom</span>
+                            </div>
+                        </div>
+
+                        <div class="d-flex gap-2 justify-content-end">
+                            <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Nanti Saja</button>
+                            <a href="{{ route('subscribe.page') }}" class="btn text-white rounded-pill px-4 fw-semibold shadow-sm"
+                               style="background: linear-gradient(135deg, #C6A962 0%, #A68B4B 100%); border: none;">
+                                <i class="bi bi-rocket-takeoff me-1"></i> Lihat Paket Premium
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -490,63 +634,238 @@
 
         <script>
             document.addEventListener('DOMContentLoaded', function () {
-                // Handle Quick Create Form
-                const quickCreateForm = document.getElementById('quickCreateForm');
-                if (quickCreateForm) {
-                    quickCreateForm.addEventListener('submit', async function (e) {
-                        e.preventDefault();
-                        const errorDiv = document.getElementById('modal_error');
-                        errorDiv.classList.add('d-none');
-                        errorDiv.innerHTML = '';
-                        const formData = new FormData(this);
+                // ===== New Invitation Modal: Category -> Form =====
+                const homeModalEl = document.getElementById('newInvitationModal');
+                const homeFormTitle = document.getElementById('homeFormTitle');
+                const homeFormSubtitle = document.getElementById('homeFormSubtitle');
+                const homeFormWedding = document.getElementById('homeFormWedding');
+                const homeFormGeneric = document.getElementById('homeFormGeneric');
+                const homeQuickCreateBtn = document.getElementById('homeQuickCreateBtn');
+                const homeModalBackBtn = document.getElementById('homeModalBackBtn');
+                const homeModalStepTitle = document.getElementById('modalStepTitle');
 
-                        try {
-                            const response = await fetch(this.action, {
-                                method: 'POST',
-                                headers: {
-                                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                                    'X-Requested-With': 'XMLHttpRequest',
-                                    'Accept': 'application/json',
-                                },
-                                body: formData,
-                            });
+                let homeSelectedCategoryId = null;
 
-                            const result = await response.json();
+                function homeGoToStep(step) {
+                    document.querySelectorAll('#newInvitationModal .modal-step').forEach(s => s.classList.add('d-none'));
+                    const targetStep = document.getElementById('modalStep' + step.charAt(0).toUpperCase() + step.slice(1));
+                    if (targetStep) targetStep.classList.remove('d-none');
 
-                            if (!response.ok) {
-                                let errorMsg = result.message || 'Terjadi kesalahan.';
-                                if (result.errors) {
-                                    errorMsg += '<br><ul class="mb-0">' + Object.values(result.errors).map(function (e) { return '<li>' + e[0] + '</li>'; }).join('') + '</ul>';
-                                }
-                                errorDiv.innerHTML = errorMsg;
-                                errorDiv.classList.remove('d-none');
-                                return;
-                            }
+                    if (step === 'category') {
+                        if (homeModalStepTitle) homeModalStepTitle.innerHTML = '<i class="bi bi-suit-heart-fill me-2" style="color: var(--gold-primary, #C6A962);"></i> Pilih Kategori Undangan';
+                        if (homeQuickCreateBtn) homeQuickCreateBtn.disabled = true;
+                        if (homeModalBackBtn) homeModalBackBtn.style.display = 'none';
+                    } else if (step === 'form') {
+                        if (homeModalStepTitle) homeModalStepTitle.innerHTML = '<i class="bi bi-pencil-square me-2" style="color: var(--gold-primary, #C6A962);"></i> Isi Data Undangan';
+                        if (homeModalBackBtn) homeModalBackBtn.style.display = 'inline-block';
+                        homeValidateForm();
+                    }
+                }
 
-                            const modalEl = document.getElementById('newInvitationModal');
-                            const modal = bootstrap.Modal.getInstance(modalEl);
-                            modal.hide();
+                function homeSelectCategory(card, categoryId, categoryName, templateCount) {
+                    document.querySelectorAll('#homeCategorySelector .category-option').forEach(c => {
+                        c.classList.remove('selected');
+                        c.style.borderColor = '';
+                        c.style.boxShadow = '';
+                    });
+                    card.classList.add('selected');
+                    const catIdInput = document.getElementById('home_category_id');
+                    if (catIdInput) catIdInput.value = categoryId;
+                    homeSelectedCategoryId = categoryId;
 
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Berhasil!',
-                                text: result.message || 'Undangan berhasil dibuat.',
-                                confirmButtonColor: '#FF6B81',
-                                timer: 1500,
-                                showConfirmButton: false,
-                            }).then(function () {
-                                window.location.href = '/home';
-                            });
+                    // Set form fields based on category
+                    const catLower = (categoryName || '').toLowerCase();
+                    if (homeFormTitle) homeFormTitle.textContent = categoryName ? 'Data ' + categoryName : 'Data Undangan';
+                    if (homeFormSubtitle) homeFormSubtitle.textContent = 'Isi informasi undangan Anda sebelum dipublikasikan.';
 
-                        } catch (error) {
-                            console.error(error);
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Gagal!',
-                                text: 'Terjadi kesalahan saat membuat undangan.',
-                                confirmButtonColor: '#FF6B81',
+                    const isWeddingLike = catLower.includes('wedding') || catLower.includes('engagement') || catLower.includes('nikah') || catLower.includes('pernikahan') || catLower.includes('lamaran');
+
+                    if (isWeddingLike) {
+                        if (homeFormWedding) homeFormWedding.classList.remove('d-none');
+                        if (homeFormGeneric) homeFormGeneric.classList.add('d-none');
+
+                        // Enable wedding inputs & set required
+                        if (homeFormWedding) {
+                            homeFormWedding.querySelectorAll('input').forEach(i => i.disabled = false);
+                        }
+                        const groomInput = document.getElementById('wedding_groom_name');
+                        const brideInput = document.getElementById('wedding_bride_name');
+                        if (groomInput) groomInput.required = true;
+                        if (brideInput) brideInput.required = true;
+
+                        // Disable generic inputs & remove required
+                        if (homeFormGeneric) {
+                            homeFormGeneric.querySelectorAll('input, textarea').forEach(i => {
+                                i.disabled = true;
+                                i.required = false;
                             });
                         }
+                    } else {
+                        if (homeFormGeneric) homeFormGeneric.classList.remove('d-none');
+                        if (homeFormWedding) homeFormWedding.classList.add('d-none');
+
+                        // Enable generic inputs & set required
+                        if (homeFormGeneric) {
+                            homeFormGeneric.querySelectorAll('input, textarea').forEach(i => i.disabled = false);
+                        }
+                        const genericGroom = document.getElementById('generic_groom_name');
+                        if (genericGroom) genericGroom.required = true;
+
+                        // Disable wedding inputs & remove required
+                        if (homeFormWedding) {
+                            homeFormWedding.querySelectorAll('input').forEach(i => {
+                                i.disabled = true;
+                                i.required = false;
+                            });
+                        }
+                    }
+
+                    homeGoToStep('form');
+                    homeValidateForm();
+                }
+
+                function homeValidateForm() {
+                    const categoryId = document.getElementById('home_category_id')?.value;
+                    let formValid = false;
+
+                    const stepForm = document.getElementById('modalStepForm');
+                    if (stepForm && !stepForm.classList.contains('d-none')) {
+                        // Cek hanya field yang aktif/terlihat
+                        if (homeFormWedding && !homeFormWedding.classList.contains('d-none')) {
+                            const groomVal = document.getElementById('wedding_groom_name')?.value.trim();
+                            const brideVal = document.getElementById('wedding_bride_name')?.value.trim();
+                            formValid = !!(groomVal && brideVal);
+                        } else {
+                            const eventName = document.getElementById('generic_groom_name')?.value.trim();
+                            formValid = !!eventName;
+                        }
+                    } else {
+                        formValid = !!categoryId;
+                    }
+
+                    if (homeQuickCreateBtn) {
+                        homeQuickCreateBtn.disabled = !formValid;
+                    }
+                }
+
+                // Pasang event listener ke seluruh input form
+                document.querySelectorAll('#modalStepForm input, #modalStepForm textarea').forEach(el => {
+                    el.addEventListener('input', homeValidateForm);
+                    el.addEventListener('change', homeValidateForm);
+                    el.addEventListener('keyup', homeValidateForm);
+                });
+
+                // Reset modal state when hidden
+                if (homeModalEl) {
+                    homeModalEl.addEventListener('hidden.bs.modal', function () {
+                        document.querySelectorAll('#newInvitationModal .modal-step').forEach(s => s.classList.add('d-none'));
+                        const stepCat = document.getElementById('modalStepCategory');
+                        if (stepCat) stepCat.classList.remove('d-none');
+                        if (homeModalStepTitle) homeModalStepTitle.innerHTML = '<i class="bi bi-suit-heart-fill me-2" style="color: var(--gold-primary, #C6A962);"></i> Pilih Kategori Undangan';
+                        if (homeQuickCreateBtn) homeQuickCreateBtn.disabled = true;
+                        if (homeModalBackBtn) homeModalBackBtn.style.display = 'none';
+                        homeSelectedCategoryId = null;
+                        const catIdInput = document.getElementById('home_category_id');
+                        if (catIdInput) catIdInput.value = '';
+                        document.querySelectorAll('#homeCategorySelector .category-option').forEach(c => {
+                            c.classList.remove('selected');
+                            c.style.borderColor = '';
+                            c.style.boxShadow = '';
+                        });
+                        const formInputs = document.querySelectorAll('#modalStepForm input, #modalStepForm textarea');
+                        formInputs.forEach(i => i.value = '');
+                        if (homeFormWedding) {
+                            homeFormWedding.classList.add('d-none');
+                            homeFormWedding.querySelectorAll('input').forEach(i => i.disabled = false);
+                        }
+                        if (homeFormGeneric) {
+                            homeFormGeneric.classList.add('d-none');
+                            homeFormGeneric.querySelectorAll('input, textarea').forEach(i => i.disabled = true);
+                        }
+                    });
+                }
+
+                // Expose handlers for inline onclick in template
+                window.homeSelectCategory = homeSelectCategory;
+                window.homeGoToStep = homeGoToStep;
+
+                // Handle Quick Create Form Submission
+                const quickCreateForm = document.getElementById('quickCreateForm');
+                if (quickCreateForm) {
+                    quickCreateForm.addEventListener('submit', function (e) {
+                        e.preventDefault();
+                        const errorDiv = document.getElementById('home_form_error') || document.getElementById('modal_error');
+                        if (errorDiv) {
+                            errorDiv.classList.add('d-none');
+                            errorDiv.innerHTML = '';
+                        }
+                        const btn = document.getElementById('homeQuickCreateBtn') || document.getElementById('quickCreateBtn');
+                        if (btn) {
+                            btn.disabled = true;
+                            btn.innerHTML = '<i class="bi bi-arrow-repeat spin me-1"></i> Memproses...';
+                        }
+
+                        const formData = new FormData(this);
+
+                        fetch(this.action, {
+                            method: 'POST',
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'Accept': 'application/json',
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || ''
+                            },
+                            body: formData
+                        })
+                        .then(function (response) {
+                            if (response.status === 422) {
+                                return response.json().then(function (data) {
+                                    throw data;
+                                });
+                            }
+                            if (!response.ok) {
+                                return response.json().then(function (data) {
+                                    throw data;
+                                }).catch(function () {
+                                    throw { message: 'Terjadi kesalahan saat membuat undangan.' };
+                                });
+                            }
+                            return response.json();
+                        })
+                        .then(function (data) {
+                            if (btn) {
+                                btn.innerHTML = '<i class="bi bi-check2 me-1"></i> Berhasil';
+                            }
+                            setTimeout(function () {
+                                const modalEl = document.getElementById('newInvitationModal');
+                                if (modalEl) {
+                                    const modal = bootstrap.Modal.getInstance(modalEl);
+                                    if (modal) modal.hide();
+                                }
+                                window.location.href = data.redirect_url || data.redirect || window.location.href;
+                            }, 800);
+                        })
+                        .catch(function (data) {
+                            if (btn) {
+                                btn.disabled = false;
+                                btn.innerHTML = '<i class="bi bi-stars me-1"></i> Buat Undangan Sekarang';
+                            }
+                            if (data && data.errors) {
+                                let firstMsg = '';
+                                Object.keys(data.errors).some(function (key) {
+                                    firstMsg = data.errors[key][0];
+                                    return true;
+                                });
+                                if (errorDiv) {
+                                    errorDiv.textContent = firstMsg || 'Periksa kembali data yang diinput.';
+                                    errorDiv.classList.remove('d-none');
+                                }
+                            } else {
+                                if (errorDiv) {
+                                    errorDiv.textContent = (data && data.message) ? data.message : 'Terjadi kesalahan saat memproses.';
+                                    errorDiv.classList.remove('d-none');
+                                }
+                            }
+                        });
                     });
                 }
 

@@ -69,19 +69,62 @@ Disallow: /*&to=
 Disallow: /*?theme_color=
 Disallow: /*&theme_color=
 
+# AI crawlers (GEO) - allowed to index content for AI answers
 User-agent: GPTBot
-Disallow: /
+Allow: /
 
 User-agent: ChatGPT-User
-Disallow: /
+Allow: /
 
 User-agent: CCBot
-Disallow: /
+Allow: /
 
 User-agent: anthropic-ai
-Disallow: /
+Allow: /
 
 User-agent: ClaudeBot
-Disallow: /
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Bytespider
+Allow: /
+
+User-agent: Amazonbot
+Allow: /
+
+User-agent: Applebot
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+User-agent: cohere-ai
+Allow: /
+
+User-agent: Diffbot
+Allow: /
+
+User-agent: FacebookBot
+Allow: /
+
+User-agent: Meta-ExternalAgent
+Allow: /
+
+User-agent: OpenAI-User
+Allow: /
+
+User-agent: TikTokBot
+Allow: /
+
+User-agent: X-Robots-Tag
+Allow: /
 
 Sitemap: https://ruangundang.my.id/sitemap.xml

@@ -12,17 +12,36 @@ class DashboardController extends Controller
 {
     public function index()
     {
+        $totalGuests = Rsvp::count();
+        $rsvpYes = Rsvp::where('attending', '1')->count();
+        $rsvpNo = Rsvp::where('attending', '2')->count();
+        $rsvpMaybe = Rsvp::where('attending', '3')->count();
+
         return view('dashboard', [
             'totalInvitations' => Invitation::count(),
-            'totalGuests' => Rsvp::count(),
-            'rsvpYes' => Rsvp::where('attending', '1')->count(),
-            'rsvpNo' => Rsvp::where('attending', '2')->count(),
-            'invitations' => Invitation::latest()->take(5)->get(),
-            'recentRsvps' => Rsvp::latest()->take(5)->get(),
+            'publishedInvitations' => Invitation::where('status', 'published')->count(),
+            'draftInvitations' => Invitation::where('status', 'draft')->count(),
+            'totalGuests' => $totalGuests,
+            'rsvpYes' => $rsvpYes,
+            'rsvpNo' => $rsvpNo,
+            'rsvpMaybe' => $rsvpMaybe,
+            'invitations' => Invitation::with(['template', 'category'])
+                ->withCount('rsvps')
+                ->latest()
+                ->take(6)
+                ->get(),
+            'recentRsvps' => Rsvp::with('invitation')
+                ->latest()
+                ->take(6)
+                ->get(),
             'totalMusic' => Music::count(),
             'activeMusic' => Music::where('is_active', true)->count(),
             'inactiveMusic' => Music::where('is_active', false)->count(),
             'totalMusicSize' => Music::sum('file_size') ?? 0,
+            'topTemplates' => Template::where('is_active', true)
+                ->orderByDesc('views_count')
+                ->take(5)
+                ->get(['name', 'views_count']),
         ]);
     }
 
@@ -36,6 +55,17 @@ class DashboardController extends Controller
         $templates = Template::where('is_active', true)->get();
 
         return view('guest.index', compact('invitations', 'templates'));
+    }
+
+    public function publishedDashboard()
+    {
+        $user = auth()->user();
+        $invitations = Invitation::where('user_id', $user->id)
+            ->orWhere('partner_user_id', $user->id)
+            ->latest()
+            ->get();
+
+        return view('dashboard.invitation.published', compact('invitations'));
     }
 
     public function temaIndex()

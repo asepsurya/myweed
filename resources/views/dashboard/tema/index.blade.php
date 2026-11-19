@@ -80,10 +80,20 @@
     </style>
 
     <div class="container-fluid py-3 py-md-4" style="padding-bottom: 100px;">
-        <div class="row mb-3 mb-md-4">
-            <div class="col-12">
-                <h4 class="fw-bold mb-1 fs-5 fs-md-4">Pilih Tema Undangan</h4>
-                <p class="text-muted mb-0 small">Pilih template yang sesuai dengan momen spesial Anda</p>
+        <div class="row mb-3 mb-md-4 align-items-center">
+            <div class="col-12 col-md-8">
+                <div class="d-flex align-items-center gap-2 mb-1">
+                    <h4 class="fw-bold mb-0 fs-5 fs-md-4" style="font-family: 'Plus Jakarta Sans', sans-serif;">Katalog Tema Undangan</h4>
+                    <span class="badge bg-gold-subtle text-warning-emphasis rounded-pill px-2 py-1 small">
+                        {{ $templates->total() ?? $templates->count() }} Desain
+                    </span>
+                </div>
+                <p class="text-muted mb-0 small">Pilih template elegan yang sesuai dengan tema pernikahan dan momen spesial Anda</p>
+            </div>
+            <div class="col-12 col-md-4 text-md-end mt-2 mt-md-0">
+                <a href="{{ route('pages.cari-tema') }}" class="btn btn-sm btn-outline-secondary rounded-pill px-3" target="_blank">
+                    <i class="bi bi-compass me-1"></i> Eksplorasi Publik
+                </a>
             </div>
         </div>
 
@@ -93,9 +103,11 @@
                     $canAccess = auth()->user()->hasFeature('all_themes') || $template->slug === 'simple-theme';
                 @endphp
                 <div class="col-12 col-sm-6 col-md-4 col-lg-3">
-                    <div class="card tema-card h-100 shadow-sm {{ !$canAccess ? 'opacity-75' : '' }}">
+                    <div class="card tema-card h-100 shadow-sm border {{ !$canAccess ? 'opacity-75' : '' }}" style="border-radius: 16px; overflow: hidden;">
                         @if($template->is_premium)
-                            <span class="badge bg-warning premium-badge">Premium</span>
+                            <span class="badge bg-warning text-dark premium-badge shadow-sm">
+                                <i class="bi bi-star-fill me-1"></i> Premium
+                            </span>
                         @endif
                         @if(!$canAccess)
                             <div class="lock-overlay">
@@ -111,25 +123,36 @@
                              height="450"
                              class="card-img-top" 
                              alt="{{ $template->name }}">
-                        <div class="card-body d-flex flex-column">
-                            <h6 class="fw-semibold mb-2 text-truncate">{{ $template->name }}</h6>
-                            <p class="text-muted small mb-3 text-truncate">{{ $template->category->name ?? 'Template' }}</p>
-                            @if($canAccess)
-                            <button type="button" 
-                                    class="btn btn-primary btn-gunakan mt-auto w-100" 
-                                    data-bs-toggle="modal" 
-                                    data-bs-target="#createInvitationModal"
-                                    data-template-id="{{ $template->id }}"
-                                    data-template-name="{{ $template->name }}">
-                                <i class="bi bi-check-circle me-1"></i> Gunakan
-                            </button>
-                            @else
-                            <button type="button" 
-                                    class="btn btn-secondary btn-gunakan mt-auto w-100" 
-                                    onclick="showTemplateLockAlert()">
-                                <i class="bi bi-lock me-1"></i> Tertutup
-                            </button>
-                            @endif
+                        <div class="card-body d-flex flex-column p-3">
+                            <h6 class="fw-bold mb-1 text-truncate" style="font-family: 'Plus Jakarta Sans', sans-serif;">{{ $template->name }}</h6>
+                            <p class="text-muted small mb-3 text-truncate">{{ $template->category->name ?? 'Wedding Template' }}</p>
+
+                            <div class="mt-auto d-flex gap-2">
+                                <a href="{{ route('template.demo', $template->slug) }}" 
+                                   target="_blank" 
+                                   class="btn btn-sm btn-outline-secondary rounded-pill px-3 flex-grow-1"
+                                   title="Lihat Pratinjau Tema">
+                                    <i class="bi bi-eye me-1"></i> Demo
+                                </a>
+
+                                @if($canAccess)
+                                    <button type="button" 
+                                            class="btn btn-sm rounded-pill text-white flex-grow-1 fw-semibold shadow-sm"
+                                            style="background: linear-gradient(135deg, #C6A962, #A68B4B); border: none;"
+                                            data-bs-toggle="modal" 
+                                            data-bs-target="#createInvitationModal"
+                                            data-template-id="{{ $template->id }}"
+                                            data-template-name="{{ $template->name }}">
+                                        <i class="bi bi-check-circle me-1"></i> Gunakan
+                                    </button>
+                                @else
+                                    <button type="button" 
+                                            class="btn btn-sm btn-secondary rounded-pill flex-grow-1" 
+                                            onclick="showTemplateLockAlert()">
+                                        <i class="bi bi-lock me-1"></i> Terkunci
+                                    </button>
+                                @endif
+                            </div>
                         </div>
                     </div>
                 </div>

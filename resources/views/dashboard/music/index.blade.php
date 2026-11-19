@@ -61,78 +61,88 @@
 
     <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4 gap-3">
         <div>
-            <h4 class="fw-bold mb-1">Music Library</h4>
-            <p class="text-muted mb-0">Kelola lagu latar untuk undangan pernikahan</p>
+            <div class="d-flex align-items-center gap-2 mb-1">
+                <h4 class="fw-bold mb-0" style="font-family: 'Plus Jakarta Sans', sans-serif;">Pustaka Musik Latar</h4>
+                <span class="badge rounded-pill px-2.5 py-1 small" style="background: rgba(198, 169, 98, 0.15); color: #A68B4B; border: 1px solid rgba(198, 169, 98, 0.3);">
+                    {{ $stats['total'] }} Lagu
+                </span>
+            </div>
+            <p class="text-muted mb-0 small">Kelola koleksi musik romantis untuk memeriahkan website undangan pernikahan</p>
         </div>
-        <div class="d-flex gap-2 w-100 w-md-auto">
-            <button type="button" class="btn btn-outline-secondary flex-grow-1 flex-md-grow-0" id="syncLocalBtn" onclick="syncLocal()">
+        <div class="d-flex gap-2 flex-wrap w-100 w-md-auto">
+            <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill px-3" id="syncLocalBtn" onclick="syncLocal()">
                 <i class="bi bi-arrow-clockwise me-1"></i> Sinkron Lokal
             </button>
-            <a href="{{ route('youtube-music.index') }}" class="btn btn-outline-danger flex-grow-1 flex-md-grow-0 text-white">
+            <a href="{{ route('youtube-music.index') }}" class="btn btn-sm btn-outline-danger rounded-pill px-3">
                 <i class="bi bi-youtube me-1"></i> YouTube Music
             </a>
-            <a href="{{ route('music.create') }}" class="btn btn-primary flex-grow-1 flex-md-grow-0 text-white">
+            <a href="{{ route('music.create') }}" class="btn btn-sm text-white rounded-pill px-3 fw-semibold shadow-sm"
+               style="background: linear-gradient(135deg, #C6A962 0%, #A68B4B 100%); border: none;">
                 <i class="bi bi-plus-lg me-1"></i> Tambah Lagu
             </a>
         </div>
     </div>
 
-    <div class="row g-3 mb-4">
-        <div class="col-6 col-md-3">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-body">
+    <div class="row g-3 mb-4 row-cols-2 row-cols-md-4">
+        <div class="col">
+            <div class="card border-0 rounded-4 shadow-sm h-100" style="background-color: var(--bs-card-bg, #FFFFFF);">
+                <div class="card-body p-3">
                     <div class="d-flex align-items-center gap-3">
-                        <div class="stat-icon blue" style="width:48px;height:48px;font-size:1.2rem;">
+                        <div class="d-flex align-items-center justify-content-center rounded-3 text-primary flex-shrink-0"
+                             style="width: 44px; height: 44px; background: rgba(59, 130, 246, 0.12); font-size: 1.2rem;">
                             <i class="bi bi-music-note-list"></i>
                         </div>
                         <div>
-                            <div class="fw-bold fs-5">{{ $stats['total'] }}</div>
-                            <div class="text-muted small">Total Lagu</div>
+                            <div class="fw-bold fs-5 mb-0" style="font-family: 'Plus Jakarta Sans', sans-serif;">{{ $stats['total'] }}</div>
+                            <div class="text-muted small">Total Koleksi</div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col-6 col-md-3">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-body">
+        <div class="col">
+            <div class="card border-0 rounded-4 shadow-sm h-100" style="background-color: var(--bs-card-bg, #FFFFFF);">
+                <div class="card-body p-3">
                     <div class="d-flex align-items-center gap-3">
-                        <div class="stat-icon green" style="width:48px;height:48px;font-size:1.2rem;">
+                        <div class="d-flex align-items-center justify-content-center rounded-3 text-success flex-shrink-0"
+                             style="width: 44px; height: 44px; background: rgba(16, 185, 129, 0.12); font-size: 1.2rem;">
                             <i class="bi bi-check-circle-fill"></i>
                         </div>
                         <div>
-                            <div class="fw-bold fs-5">{{ $stats['active'] }}</div>
-                            <div class="text-muted small">Aktif</div>
+                            <div class="fw-bold fs-5 mb-0 text-success" style="font-family: 'Plus Jakarta Sans', sans-serif;">{{ $stats['active'] }}</div>
+                            <div class="text-muted small">Musik Aktif</div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col-6 col-md-3">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-body">
+        <div class="col">
+            <div class="card border-0 rounded-4 shadow-sm h-100" style="background-color: var(--bs-card-bg, #FFFFFF);">
+                <div class="card-body p-3">
                     <div class="d-flex align-items-center gap-3">
-                        <div class="stat-icon red" style="width:48px;height:48px;font-size:1.2rem;">
+                        <div class="d-flex align-items-center justify-content-center rounded-3 text-danger flex-shrink-0"
+                             style="width: 44px; height: 44px; background: rgba(239, 68, 68, 0.12); font-size: 1.2rem;">
                             <i class="bi bi-x-circle-fill"></i>
                         </div>
                         <div>
-                            <div class="fw-bold fs-5">{{ $stats['inactive'] }}</div>
+                            <div class="fw-bold fs-5 mb-0 text-danger" style="font-family: 'Plus Jakarta Sans', sans-serif;">{{ $stats['inactive'] }}</div>
                             <div class="text-muted small">Nonaktif</div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col-6 col-md-3">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-body">
+        <div class="col">
+            <div class="card border-0 rounded-4 shadow-sm h-100" style="background-color: var(--bs-card-bg, #FFFFFF);">
+                <div class="card-body p-3">
                     <div class="d-flex align-items-center gap-3">
-                        <div class="stat-icon teal" style="width:48px;height:48px;font-size:1.2rem;">
-                            <i class="bi bi-hdd"></i>
+                        <div class="d-flex align-items-center justify-content-center rounded-3 text-info flex-shrink-0"
+                             style="width: 44px; height: 44px; background: rgba(14, 165, 233, 0.12); font-size: 1.2rem;">
+                            <i class="bi bi-hdd-fill"></i>
                         </div>
                         <div>
-                            <div class="fw-bold fs-5">{{ $stats['storage'] }}</div>
-                            <div class="text-muted small">Total Penyimpanan</div>
+                            <div class="fw-bold fs-5 mb-0" style="font-family: 'Plus Jakarta Sans', sans-serif;">{{ $stats['storage'] }}</div>
+                            <div class="text-muted small">Penyimpanan</div>
                         </div>
                     </div>
                 </div>
@@ -140,7 +150,7 @@
         </div>
     </div>
 
-    <div class="card border-0 shadow-sm">
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
         <div class="card-header bg-transparent border-0 py-3">
             <div class="d-flex flex-column flex-md-row justify-content-between align-items-stretch align-items-md-center gap-3">
                 <div class="input-group flex-grow-1 flex-md-grow-0" style="max-width: 320px;">

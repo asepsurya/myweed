@@ -36,6 +36,9 @@ class Invitation extends Model
     protected $fillable = [
         'user_id',
         'template_id',
+        'category_id',
+        'invitation_type',
+        'custom_data',
         'public_id',
         'slug',
         'is_default',
@@ -115,17 +118,69 @@ class Invitation extends Model
 
     public function resolveRouteBinding($value, $field = null)
     {
-        return static::where('public_id', $value)->orWhere('id', $value)->first();
+        return static::where('slug', $value)
+            ->orWhere('public_id', $value)
+            ->orWhere('id', $value)
+            ->first();
     }
 
     public function getRouteKeyName(): string
     {
-        return 'public_id';
+        return 'slug';
+    }
+
+    public function getQrCodeUrlAttribute()
+    {
+        if ($this->qr_code_path) {
+            return asset('storage/' . $this->qr_code_path);
+        }
+        return null;
     }
 
     public function template()
     {
         return $this->belongsTo(Template::class);
+    }
+
+    public function category()
+    {
+        return $this->belongsTo(Category::class, 'category_id');
+    }
+
+    /**
+     * Get the value of a dynamic field by its name.
+     */
+    public function getDynamicField(string $fieldName)
+    {
+        $data = $this->custom_data ?? [];
+
+        if (is_string($data)) {
+            $data = json_decode($data, true) ?? [];
+        }
+
+        return data_get($data, $fieldName);
+    }
+
+    /**
+     * Get all dynamic field values as an array.
+     */
+    public function getDynamicFieldsAttribute(): array
+    {
+        $data = $this->custom_data ?? [];
+
+        if (is_string($data)) {
+            $data = json_decode($data, true) ?? [];
+        }
+
+        return is_array($data) ? $data : [];
+    }
+
+    /**
+     * Determine if the invitation uses a non-wedding category.
+     */
+    public function isNonWedding(): bool
+    {
+        return $this->invitation_type !== 'wedding' || optional($this->category)->slug !== 'wedding';
     }
 
     public function galleries()

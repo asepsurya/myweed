@@ -32,11 +32,17 @@
             margin-bottom: 2rem;
         }
         .stat-card {
-            background: #fff;
-            border-radius: 1rem;
+            background: var(--bs-card-bg, #FFFFFF);
+            border-radius: 18px;
             padding: 1.5rem;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            border: 1px solid var(--bs-border-color);
+            box-shadow: 0 4px 20px rgba(27, 42, 74, 0.05);
+            border: 1px solid rgba(27, 42, 74, 0.08);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        [data-bs-theme="dark"] .stat-card {
+            background: #111827;
+            border-color: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
         }
         .stat-card .stat-icon {
             width: 48px;
@@ -74,15 +80,20 @@
             border-collapse: collapse;
         }
         .guest-table th {
-            background: #f8f9fa;
+            background: rgba(27, 42, 74, 0.03);
             font-weight: 600;
             font-size: 0.8rem;
-            color: #6c757d;
+            color: #1B2A4A;
             padding: 1rem 1.5rem;
-            border-bottom: 2px solid #e9ecef;
+            border-bottom: 1px solid rgba(27, 42, 74, 0.08);
             text-transform: uppercase;
             letter-spacing: 0.5px;
             white-space: nowrap;
+        }
+        [data-bs-theme="dark"] .guest-table th {
+            background: rgba(255, 255, 255, 0.03);
+            color: #E5E7EB;
+            border-bottom-color: rgba(255, 255, 255, 0.08);
         }
         .guest-table td {
             padding: 1rem 1.5rem;

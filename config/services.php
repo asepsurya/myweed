@@ -51,4 +51,19 @@ return [
 
     'admin_whatsapp' => env('ADMIN_WHATSAPP', '087731402487'),
 
+    'facebook' => [
+        'pixel_id' => env('FACEBOOK_PIXEL_ID'),
+    ],
+
+    'socials' => [
+        'facebook' => env('SOCIAL_FACEBOOK_URL', 'https://www.facebook.com/ruangundang'),
+        'instagram' => env('SOCIAL_INSTAGRAM_URL', 'https://www.instagram.com/ruangundang'),
+        'tiktok' => env('SOCIAL_TIKTOK_URL', 'https://www.tiktok.com/@ruangundang'),
+        'youtube' => env('SOCIAL_YOUTUBE_URL', 'https://www.youtube.com/@ruangundang'),
+        'x' => env('SOCIAL_X_URL', 'https://x.com/ruangundang'),
+        'linkedin' => env('SOCIAL_LINKEDIN_URL', 'https://www.linkedin.com/company/ruangundang'),
+        'tokopedia' => env('SOCIAL_TOKOPEDIA_URL', 'https://tokopedia.com'),
+        'shopee' => env('SOCIAL_SHOPEE_URL', 'https://shopee.co.id'),
+    ],
+
 ];

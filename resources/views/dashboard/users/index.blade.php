@@ -1,115 +1,168 @@
 <x-app-layout>
+    <div class="container-fluid py-3 py-md-4">
+        {{-- Page Header --}}
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4 gap-3">
+            <div>
+                <h4 class="mb-1 fw-bold" style="font-family: 'Plus Jakarta Sans', sans-serif;">
+                    <i class="bi bi-people-fill me-2" style="color: #C6A962;"></i> Manajemen Pengguna
+                </h4>
+                <p class="text-muted small mb-0">Kelola akun pengguna, peran akses, dan tautan login mandiri (Magic Link)</p>
+            </div>
+            <a href="{{ route('user.create') }}" class="btn text-white btn-sm px-3 py-2 fw-semibold rounded-3 shadow-sm"
+               style="background: linear-gradient(135deg, #C6A962, #A68B4B); border: none;">
+                <i class="bi bi-person-plus-fill me-1"></i> Tambah Pengguna
+            </a>
+        </div>
 
-    <div class="card adminuiux-card mt-4 mb-0">
-        <div class="card-body">
-            
-            <!-- Header -->
-            <div class="row mb-3 align-items-center">
-                <div class="col">
-                    <h6 class="fw-medium mb-0">Daftar Pengguna</h6>
-                </div>
-                <div class="col-auto">
-                    <a href="{{ route('user.create') }}" class="btn btn-primary btn-sm">
-                        <i class="bi bi-plus-lg me-1"></i> Tambah Pengguna
-                    </a>
+        {{-- Mini Stats --}}
+        <div class="row g-3 mb-4">
+            <div class="col-6 col-md-4">
+                <div class="card border-0 rounded-4 shadow-sm h-100 p-3" style="background-color: var(--bs-card-bg, #FFFFFF);">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="d-inline-flex align-items-center justify-content-center rounded-3 flex-shrink-0"
+                             style="width: 44px; height: 44px; background: rgba(198, 169, 98, 0.15); color: #C6A962;">
+                            <i class="bi bi-people fs-5"></i>
+                        </div>
+                        <div>
+                            <div class="text-muted small">Total Pengguna</div>
+                            <div class="fs-5 fw-bold">{{ $users->count() }}</div>
+                        </div>
+                    </div>
                 </div>
             </div>
+            <div class="col-6 col-md-4">
+                <div class="card border-0 rounded-4 shadow-sm h-100 p-3" style="background-color: var(--bs-card-bg, #FFFFFF);">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="d-inline-flex align-items-center justify-content-center rounded-3 flex-shrink-0"
+                             style="width: 44px; height: 44px; background: rgba(27, 42, 74, 0.1); color: #1B2A4A;">
+                            <i class="bi bi-shield-check fs-5"></i>
+                        </div>
+                        <div>
+                            <div class="text-muted small">Administrator</div>
+                            <div class="fs-5 fw-bold">{{ $users->filter(fn($u) => $u->hasRole('admin'))->count() }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-4">
+                <div class="card border-0 rounded-4 shadow-sm h-100 p-3" style="background-color: var(--bs-card-bg, #FFFFFF);">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="d-inline-flex align-items-center justify-content-center rounded-3 flex-shrink-0"
+                             style="width: 44px; height: 44px; background: rgba(25, 135, 84, 0.12); color: #198754;">
+                            <i class="bi bi-person-check fs-5"></i>
+                        </div>
+                        <div>
+                            <div class="text-muted small">Member Terdaftar</div>
+                            <div class="fs-5 fw-bold">{{ $users->filter(fn($u) => !$u->hasRole('admin'))->count() }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-            <!-- Table -->
-            <table id="dataTable" class="dataTable table w-100 nowrap">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th data-breakpoints="xs sm">User Name</th>
-                        <th data-breakpoints="xs sm md">Contact info</th>
-                        <th data-breakpoints="xs sm">Role</th>
-                        <th class="all">Schedule</th>
-                        <th data-breakpoints="xs sm">Status</th>
-                        <th class="all">Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @php $no = 1; @endphp
-                    @foreach ($users as $user)
-                        <tr>
-                            <td>{{ $no++ }}</td>
+        {{-- Card Table --}}
+        <div class="card border-0 rounded-4 shadow-sm overflow-hidden" style="background-color: var(--bs-card-bg, #FFFFFF);">
+            <div class="card-body p-3 p-md-4">
+                <div class="table-responsive">
+                    <table id="dataTable" class="dataTable table align-middle w-100 nowrap">
+                        <thead>
+                            <tr class="text-uppercase small text-muted" style="border-bottom: 2px solid rgba(27, 42, 74, 0.08);">
+                                <th style="width: 50px;">No</th>
+                                <th data-breakpoints="xs sm">Nama Pengguna</th>
+                                <th data-breakpoints="xs sm md">Kontak & Email</th>
+                                <th data-breakpoints="xs sm">Peran (Role)</th>
+                                <th class="all">Terdaftar</th>
+                                <th data-breakpoints="xs sm">Status</th>
+                                <th class="all text-end">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @php $no = 1; @endphp
+                            @foreach ($users as $user)
+                                <tr>
+                                    <td class="text-muted small">{{ $no++ }}</td>
 
-                            <td>
-                                <div class="row align-items-center flex-nowrap">
-                                    <div class="col-auto">
-                                        <figure class="avatar avatar-40 mb-0 coverimg rounded-circle">
-                                            <img src="{{ asset('tempelate/user_default.jpg') }}" alt="Avatar">
-                                        </figure>
-                                    </div>
-                                    <div class="col ps-0">
-                                        <p class="mb-0 fw-medium">{{ $user->name }}</p>
-                                        <p class="text-secondary small mb-0">
-                                            Registered {{ $user->created_at->diffForHumans() }}
-                                        </p>
-                                    </div>
-                                </div>
-                            </td>
+                                    <td>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <div class="rounded-circle d-inline-flex align-items-center justify-content-center text-white fw-bold flex-shrink-0"
+                                                 style="width: 38px; height: 38px; background: {{ $user->hasRole('admin') ? '#1B2A4A' : '#C6A962' }}; font-size: 0.85rem;">
+                                                {{ strtoupper(substr($user->name ?? 'U', 0, 1)) }}
+                                            </div>
+                                            <div>
+                                                <div class="fw-semibold">{{ $user->name }}</div>
+                                                <small class="text-muted" style="font-size: 0.75rem;">
+                                                    {{ $user->created_at ? $user->created_at->diffForHumans() : '' }}
+                                                </small>
+                                            </div>
+                                        </div>
+                                    </td>
 
-                            <td>
-                                <p class="mb-0">{{ $user->email }}</p>
-                                @if($user->phone)
-                                    <p class="mb-0 text-muted small">{{ $user->phone }}</p>
-                                @endif
-                            </td>
+                                    <td>
+                                        <div>{{ $user->email }}</div>
+                                        @if($user->phone)
+                                            <small class="text-muted d-flex align-items-center gap-1" style="font-size: 0.78rem;">
+                                                <i class="bi bi-telephone text-success"></i> {{ $user->phone }}
+                                            </small>
+                                        @endif
+                                    </td>
 
-                            <td>
-                                <span class="badge rounded-pill text-bg-primary">
-                                    {{ $user->role ?? 'User' }}
-                                </span>
-                            </td>
+                                    <td>
+                                        @if($user->hasRole('admin'))
+                                            <span class="badge rounded-pill px-2 py-1" style="background: rgba(27, 42, 74, 0.12); color: #1B2A4A; border: 1px solid rgba(27, 42, 74, 0.2);">
+                                                <i class="bi bi-shield-lock-fill me-1"></i> Admin
+                                            </span>
+                                        @else
+                                            <span class="badge rounded-pill px-2 py-1" style="background: rgba(198, 169, 98, 0.15); color: #A68B4B; border: 1px solid rgba(198, 169, 98, 0.3);">
+                                                <i class="bi bi-person me-1"></i> User
+                                            </span>
+                                        @endif
+                                    </td>
 
-                            <td>
-                                <p class="mb-0">
-                                    {{ $user->created_at->format('d M Y') }}
-                                </p>
-                            </td>
+                                    <td class="small text-muted">
+                                        {{ $user->created_at ? $user->created_at->format('d M Y') : '-' }}
+                                    </td>
 
-                            <td>
-                                <span class="badge rounded-pill text-bg-success">
-                                    Active
-                                </span>
-                            </td>
+                                    <td>
+                                        <span class="badge rounded-pill bg-success-subtle text-success border border-success-subtle px-2 py-1">
+                                            <i class="bi bi-check-circle me-1"></i> Aktif
+                                        </span>
+                                    </td>
 
-                            <td>
-                                <div class="dropdown d-inline-block">
-                                    <a class="btn btn-link no-caret" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                        <i class="bi bi-three-dots"></i>
-                                    </a>
-                                    <ul class="dropdown-menu dropdown-menu-end">
-                                       
-                                            <li>
-                                                <button type="button" class="dropdown-item wa-share-trigger" data-user-id="{{ $user->id }}" data-user-name="{{ $user->name }}" data-user-phone="{{ $user->phone }}">
-                                                    <i class="bi bi-whatsapp me-2"></i> Kirim WhatsApp
-                                                </button>
-                                            </li>
-                                        <li>
-                                            <button type="button" class="dropdown-item qr-trigger" data-user-id="{{ $user->id }}" data-user-name="{{ $user->name }}">
-                                                <i class="bi bi-qr-code me-2"></i> Generate QR Code
+                                    <td class="text-end">
+                                        <div class="dropdown d-inline-block">
+                                            <button class="btn btn-sm btn-light rounded-circle p-2" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="width: 32px; height: 32px; display: inline-flex; align-items: center; justify-content: center;">
+                                                <i class="bi bi-three-dots-vertical"></i>
                                             </button>
-                                        </li>
-                                        <li>
-                                            <a class="dropdown-item" href="{{ route('user.edit', $user) }}">
-                                                <i class="bi bi-pencil-square me-2"></i> Edit
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <button type="button" class="dropdown-item magic-link-trigger" data-user-id="{{ $user->id }}" data-user-name="{{ $user->name }}">
-                                                <i class="bi bi-link-45deg me-2"></i> Link Login
-                                            </button>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </td>
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
-
+                                            <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 rounded-3">
+                                                <li>
+                                                    <button type="button" class="dropdown-item py-2 wa-share-trigger" data-user-id="{{ $user->id }}" data-user-name="{{ $user->name }}" data-user-phone="{{ $user->phone }}">
+                                                        <i class="bi bi-whatsapp text-success me-2"></i> Kirim WhatsApp
+                                                    </button>
+                                                </li>
+                                                <li>
+                                                    <button type="button" class="dropdown-item py-2 qr-trigger" data-user-id="{{ $user->id }}" data-user-name="{{ $user->name }}">
+                                                        <i class="bi bi-qr-code text-primary me-2"></i> Generate QR Code
+                                                    </button>
+                                                </li>
+                                                <li>
+                                                    <a class="dropdown-item py-2" href="{{ route('user.edit', $user) }}">
+                                                        <i class="bi bi-pencil-square text-warning me-2"></i> Edit Akun
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <button type="button" class="dropdown-item py-2 magic-link-trigger" data-user-id="{{ $user->id }}" data-user-name="{{ $user->name }}">
+                                                        <i class="bi bi-link-45deg text-info me-2"></i> Link Login (Magic)
+                                                    </button>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
 

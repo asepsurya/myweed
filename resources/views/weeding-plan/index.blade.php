@@ -102,17 +102,20 @@
         }
     </style>
 
-    <div
-        class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4 gap-3">
-        <div>
-            <h4 class="mb-1">Rencana Pernikahan</h4>
-            <p class="text-muted mb-0">Kelola dan pantau persiapan pernikahanmu</p>
+    <div class="container-fluid py-3 py-md-4">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4 gap-3">
+            <div>
+                <h4 class="mb-1 fw-bold" style="font-family: 'Plus Jakarta Sans', sans-serif;">
+                    <i class="bi bi-journal-check me-2" style="color: #C6A962;"></i> Rencana Pernikahan
+                </h4>
+                <p class="text-muted small mb-0">Kelola dan pantau seluruh timeline persiapan pernikahan Anda</p>
+            </div>
+            <a href="{{ route('weeding-plan.create') }}"
+                class="btn text-white px-4 py-2 fw-semibold rounded-3 shadow-sm"
+                style="background: linear-gradient(135deg, #C6A962, #A68B4B); border: none;">
+                <i class="bi bi-plus-lg me-1"></i> Tambah Rencana
+            </a>
         </div>
-        <a href="{{ route('weeding-plan.create') }}"
-            class="btn btn-primary flex-grow-1 flex-md-grow-0 px-4 py-2 fw-bold" style="border-radius: 12px;">
-            <i class="bi bi-plus-lg me-1"></i> Tambah Rencana
-        </a>
-    </div>
 
     <!-- Statistik Cards -->
     <div class="row g-3 mb-4">

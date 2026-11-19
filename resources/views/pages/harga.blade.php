@@ -2,28 +2,26 @@
 
 @section('content')
     <!-- Page Header -->
-    <section class="page-header">
-        <div class="page-header-shape shape-1"></div>
-        <div class="page-header-shape shape-2"></div>
-        <div class="container page-header-content">
+    <section class="ev-page-hero">
+        <div class="container ev-page-hero-content">
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="{{ route('landing') }}">Beranda</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">Harga</li>
+                    <li class="breadcrumb-item"><a href="{{ route('landing') }}"><i class="bi bi-house-door me-1"></i> Beranda</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Harga Paket</li>
                 </ol>
             </nav>
-            <h1>Harga Paket</h1>
-            <p>Pilih paket yang sesuai dengan kebutuhan undangan impian Anda.</p>
+            <h1>Pilihan Paket Undangan Digital</h1>
+            <p>Pilih paket fleksibel yang sesuai dengan kebutuhan dan momen istimewa Anda.</p>
         </div>
     </section>
 
     <!-- Pricing Cards Section -->
-    <section class="content-section">
+    <section class="ev-section-light">
         <div class="container">
             <div class="text-center mb-5 reveal">
-                <span class="section-subtitle">Investasi Momen</span>
-                <h2 class="section-title">Paket yang Fleksibel</h2>
-                <p class="section-desc">Mulai dari gratis, upgrade kapan saja sesuai kebutuhan.</p>
+                <span class="ev-section-subtitle">Investasi Momen</span>
+                <h2 class="ev-section-title">Paket yang Fleksibel</h2>
+                <p class="ev-section-desc">Mulai dari gratis, upgrade kapan saja sesuai kebutuhan.</p>
             </div>
 
             <div class="row g-4">
@@ -31,13 +29,14 @@
                     @php
                         $features = json_decode($plan->description ?? '[]', true) ?: [];
                         $isFeatured = $plan->slug === 'pro' || $index === 1;
-                        $delay = 0.1 + ($index * 0.1);
+                        $delayClass = 'reveal-d' . min(1 + $index, 4);
                     @endphp
-                    <div class="col-lg-4 col-md-6 reveal" style="transition-delay: {{ $delay }}s;">
-                        <div class="pricing-card {{ $isFeatured ? 'featured' : '' }}">
-                            <div class="pricing-header">
-                                <div class="pricing-icon">
-                                    <i class="bi bi-{{ $plan->is_free ? 'gift' : ($plan->slug === 'pro' ? 'award' : 'gem') }}"></i>
+                    <div class="col-lg-4 col-md-6 reveal {{ $delayClass }}">
+                        <div class="ev-pricing-card {{ $isFeatured ? 'featured' : '' }}">
+                            <div class="ev-pricing-header">
+                                <div class="ev-pricing-icon">
+                                    <i
+                                        class="bi bi-{{ $plan->is_free ? 'gift' : ($plan->slug === 'pro' ? 'award' : 'gem') }}"></i>
                                 </div>
                                 <h4>{{ $plan->name }}</h4>
                                 @if(!$plan->is_free && $plan->original_price && $plan->original_price > $plan->price)
@@ -45,18 +44,18 @@
                                         <span class="text-muted text-decoration-line-through small">
                                             Rp {{ number_format($plan->original_price, 0, ',', '.') }}
                                         </span>
-                                        <span class="badge bg-danger-subtle text-danger px-2 py-1" style="font-size: 0.65rem;">
+                                        <span class="ev-badge-sale">
                                             <i class="bi bi-fire me-1"></i>{{ $plan->badge_text ?: 'Spesial Launching' }}
                                         </span>
                                     </div>
                                 @endif
-                                <div class="pricing-price">
+                                <div class="ev-pricing-price">
                                     {{ $plan->is_free ? 'Gratis' : 'Rp ' . number_format($plan->price, 0, ',', '.') }}
                                     <span>{{ $plan->is_free ? '' : '/undangan' }}</span>
                                 </div>
-                                <p class="pricing-desc">{{ $plan->duration }} Hari aktif</p>
+                                <p class="ev-pricing-desc">{{ $plan->duration }} Hari aktif</p>
                             </div>
-                            <ul class="pricing-features">
+                            <ul class="ev-pricing-features">
                                 @php
                                     $sortedFeatures = $features;
                                     usort($sortedFeatures, function ($a, $b) {
@@ -71,13 +70,13 @@
                                         $isYes = preg_match('/:\s*Yes$/', $feature);
                                         $isNo = preg_match('/:\s*No$/', $feature);
                                     @endphp
-                                    <li class="{{ $isNo ? 'text-muted' : '' }}">
+                                    <li class="{{ $isNo ? 'disabled' : '' }}">
                                         @if($isYes)
-                                            <i class="bi bi-check-circle-fill text-gold"></i>
+                                            <i class="bi bi-check-circle-fill text-success"></i>
                                         @elseif($isNo)
-                                            <i class="bi bi-x-circle text-muted-custom"></i>
+                                            <i class="bi bi-x-circle text-muted"></i>
                                         @else
-                                            <i class="bi bi-check-circle-fill text-gold"></i>
+                                            <i class="bi bi-check-circle-fill text-success"></i>
                                         @endif
                                         {{ $featureName }}
                                     </li>
@@ -86,7 +85,7 @@
                                 @endforelse
                             </ul>
                             <a href="{{ route('subscribe', $plan->id) }}"
-                                class="btn {{ $isFeatured ? 'btn-gold' : 'btn-outline-dark' }} w-100 rounded-pill py-2 fw-semibold">
+                                class="ev-btn-primary w-100 justify-content-center mt-auto">
                                 {{ $plan->is_free ? 'Mulai Gratis' : 'Pilih ' . $plan->name }}
                             </a>
                         </div>
@@ -103,17 +102,17 @@
     </section>
 
     <!-- Feature Comparison Table -->
-    <section class="content-section comparison-section">
+    <section class="ev-comparison-section">
         <div class="container">
             <div class="text-center mb-5 reveal">
-                <span class="section-subtitle">Detail Perbandingan</span>
-                <h2 class="section-title">Fitur Semua Paket</h2>
-                <p class="section-desc">Bandingkan fitur setiap paket untuk memilih yang paling sesuai.</p>
+                <span class="ev-section-subtitle">Detail Perbandingan</span>
+                <h2 class="ev-section-title">Fitur Semua Paket</h2>
+                <p class="ev-section-desc">Bandingkan fitur setiap paket untuk memilih yang paling sesuai.</p>
             </div>
 
-            <div class="comparison-table-wrapper reveal">
+            <div class="ev-comparison-wrapper reveal">
                 <div class="table-responsive">
-                    <table class="comparison-table">
+                    <table class="ev-comparison-table">
                         <thead>
                             <tr>
                                 <th class="feature-col">Fitur</th>
@@ -200,14 +199,14 @@
                                                         @if($value == 0)
                                                             <span class="feature-na">-</span>
                                                         @elseif($value == 1)
-                                                            <i class="bi bi-check-circle-fill text-gold"></i>
+                                                            <i class="bi bi-check-circle-fill text-success"></i>
                                                         @else
                                                             <span class="feature-number">{{ $value }}</span>
                                                         @endif
                                                     @elseif($isIncluded)
-                                                        <i class="bi bi-check-circle-fill text-gold"></i>
+                                                        <i class="bi bi-check-circle-fill text-success"></i>
                                                     @else
-                                                        <i class="bi bi-x-circle text-muted-custom"></i>
+                                                        <i class="bi bi-x-circle text-muted"></i>
                                                     @endif
                                                 </td>
                                             @empty
@@ -224,189 +223,66 @@
         </div>
     </section>
 
-    <style>
-        .comparison-section {
-            padding: 100px 0;
-            background: var(--bg-alt);
-        }
-
-        .comparison-table-wrapper {
-            overflow-x: auto;
-            border-radius: var(--radius-lg);
-            box-shadow: 0 20px 60px rgba(27, 42, 74, 0.08);
-            border: 1px solid var(--border);
-        }
-
-        .comparison-table {
-            width: 100%;
-            border-collapse: separate;
-            border-spacing: 0;
-            background: var(--white);
-            min-width: 800px;
-        }
-
-        .comparison-table thead th {
-            background: var(--navy);
-            color: var(--white);
-            padding: 1.5rem 1rem;
-            font-family: var(--font);
-            font-weight: 600;
-            font-size: 0.95rem;
-            text-align: center;
-            border-bottom: 3px solid var(--gold);
-        }
-
-        .comparison-table thead th.feature-col {
-            text-align: left;
-            min-width: 220px;
-            background: var(--navy);
-        }
-
-        .comparison-table thead th.plan-highlight {
-            background: linear-gradient(135deg, var(--gold-dark), var(--gold));
-            color: var(--white);
-        }
-
-        .comparison-table thead th.plan-highlight .plan-price {
-            color: var(--white);
-        }
-
-        .comparison-table .plan-name {
-            font-size: 1.1rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-        }
-
-        .comparison-table .plan-price {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--white);
-            margin-bottom: 0.25rem;
-        }
-
-        .comparison-table .plan-duration {
-            font-size: 0.8rem;
-            color: rgba(255, 255, 255, 0.75);
-        }
-
-        .comparison-table tbody td {
-            padding: 1rem 1rem;
-            border-bottom: 1px solid var(--border);
-            font-size: 0.9rem;
-            color: var(--text-secondary);
-            vertical-align: middle;
-        }
-
-        .comparison-table tbody td.feature-col {
-            font-weight: 600;
-            color: var(--navy);
-            background: var(--bg-alt);
-        }
-
-        .comparison-table tbody td.plan-col {
-            text-align: center;
-        }
-
-        .comparison-table .group-row td {
-            background: linear-gradient(90deg, rgba(198, 169, 98, 0.08), rgba(198, 169, 98, 0.03));
-            padding: 0.75rem 1rem;
-            font-weight: 700;
-            color: var(--navy);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-size: 0.75rem;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .comparison-table .feature-row:hover td {
-            background: rgba(198, 169, 98, 0.04);
-        }
-
-        .comparison-table .text-gold {
-            color: var(--gold-dark) !important;
-            font-size: 1.2rem;
-        }
-
-        .comparison-table .text-muted-custom {
-            color: var(--text-muted) !important;
-            font-size: 1.2rem;
-        }
-
-        .comparison-table .feature-na {
-            color: var(--text-muted);
-            font-size: 0.85rem;
-        }
-
-        .comparison-table .feature-number {
-            color: var(--text-secondary);
-            font-weight: 700;
-            font-size: 0.9rem;
-        }
-
-        @media (max-width: 768px) {
-            .comparison-section {
-                padding: 70px 0;
-            }
-
-            .comparison-table thead th,
-            .comparison-table tbody td {
-                padding: 0.75rem 0.5rem;
-                font-size: 0.8rem;
-            }
-
-            .comparison-table .plan-price {
-                font-size: 1.1rem;
-            }
-        }
-    </style>
-
     <!-- FAQ Section -->
-    <section class="content-section alt">
+    <section class="ev-section-alt">
         <div class="container">
             <div class="text-center mb-5 reveal">
-                <span class="section-subtitle">FAQ Harga</span>
-                <h2 class="section-title">Pertanyaan Umum</h2>
+                <span class="ev-section-subtitle">FAQ Harga</span>
+                <h2 class="ev-section-title">Pertanyaan Umum</h2>
             </div>
             <div class="row justify-content-center">
                 <div class="col-lg-8">
-                    <div class="faq-item reveal">
-                        <h5><i class="bi bi-question-circle text-gold me-2"></i>Apakah ada biaya tersembunyi?</h5>
-                        <p>Tidak ada biaya tersembunyi. Semua yang tercantum adalah biaya final.</p>
-                    </div>
-                    <div class="faq-item reveal" style="transition-delay: 0.1s;">
-                        <h5><i class="bi bi-question-circle text-gold me-2"></i>Bisa upgrade paket nanti?</h5>
-                        <p>Ya, Anda bisa upgrade kapan saja dan hanya membayar selisih harga.</p>
-                    </div>
-                    <div class="faq-item reveal" style="transition-delay: 0.2s;">
-                        <h5><i class="bi bi-question-circle text-gold me-2"></i>Metode pembayaran apa saja?</h5>
-                        <p>Kami menerima transfer bank, e-wallet, kartu kredit, dan QRIS.</p>
+                    <div class="ev-faq-container">
+                        <div class="ev-faq-item is-open reveal reveal-d1">
+                            <button class="ev-faq-question" type="button">
+                                <span>Apakah ada biaya tersembunyi?</span>
+                                <span class="ev-faq-icon"><i class="bi bi-plus-lg"></i></span>
+                            </button>
+                            <div class="ev-faq-answer">
+                                <p>Tidak ada biaya tersembunyi. Semua yang tercantum adalah biaya final.</p>
+                            </div>
+                        </div>
+                        <div class="ev-faq-item reveal reveal-d2">
+                            <button class="ev-faq-question" type="button">
+                                <span>Bisa upgrade paket nanti?</span>
+                                <span class="ev-faq-icon"><i class="bi bi-plus-lg"></i></span>
+                            </button>
+                            <div class="ev-faq-answer">
+                                <p>Ya, Anda bisa upgrade kapan saja dan hanya membayar selisih harga.</p>
+                            </div>
+                        </div>
+                        <div class="ev-faq-item reveal reveal-d3">
+                            <button class="ev-faq-question" type="button">
+                                <span>Metode pembayaran apa saja?</span>
+                                <span class="ev-faq-icon"><i class="bi bi-plus-lg"></i></span>
+                            </button>
+                            <div class="ev-faq-answer">
+                                <p>Kami menerima transfer bank, e-wallet, kartu kredit, dan QRIS.</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <style>
-        .pricing-card { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 2.5rem 2rem; height: 100%; transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1); position: relative; overflow: hidden; }
-        .pricing-card:hover { transform: translateY(-10px); border-color: var(--gold-light); box-shadow: 0 20px 50px rgba(27, 42, 74, 0.1); }
-        .pricing-card.featured { border-color: var(--gold); box-shadow: 0 10px 40px rgba(198, 169, 98, 0.15); }
-        .pricing-card.featured::before { content: 'POPULER'; position: absolute; top: 20px; right: -30px; background: var(--gold); color: var(--white); padding: 0.25rem 2.5rem; font-size: 0.7rem; font-weight: 700; transform: rotate(45deg); letter-spacing: 1px; }
-        .pricing-header { text-align: center; margin-bottom: 2rem; }
-        .pricing-icon { width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(135deg, rgba(198, 169, 98, 0.1), rgba(198, 169, 98, 0.05)); display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; font-size: 1.5rem; color: var(--gold-dark); }
-        .pricing-card h4 { color: var(--navy); margin-bottom: 0.5rem; }
-        .pricing-price { font-size: 2.5rem; font-weight: 700; color: var(--navy); font-family: var(--font); }
-        .pricing-price span { font-size: 1rem; color: var(--text-muted); font-weight: 400; }
-        .pricing-desc { color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1.5rem; }
-        .pricing-features { list-style: none; padding: 0; margin: 0 0 2rem; }
-        .pricing-features li { padding: 0.6rem 0; color: var(--text-secondary); font-size: 0.9rem; display: flex; align-items: center; gap: 0.75rem; }
-        .pricing-features li i { color: var(--gold); }
-        .pricing-features li.disabled { color: var(--text-muted); text-decoration: line-through; }
-        .pricing-features li.disabled i { color: var(--text-muted); }
-        .text-gold { color: var(--gold-dark) !important; }
-        .text-muted-custom { color: var(--text-muted) !important; }
-        .faq-item { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.5rem; margin-bottom: 1rem; transition: all 0.3s ease; }
-        .faq-item:hover { border-color: var(--gold-light); }
-        .faq-item h5 { color: var(--navy); margin-bottom: 0.5rem; }
-        .faq-item p { color: var(--text-secondary); margin: 0; font-size: 0.9rem; }
-    </style>
+    @push('scripts')
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const faqItems = document.querySelectorAll('.ev-faq-item');
+                faqItems.forEach(item => {
+                    const questionBtn = item.querySelector('.ev-faq-question');
+                    if (questionBtn) {
+                        questionBtn.addEventListener('click', () => {
+                            const isOpen = item.classList.contains('is-open');
+                            faqItems.forEach(i => i.classList.remove('is-open'));
+                            if (!isOpen) {
+                                item.classList.add('is-open');
+                            }
+                        });
+                    }
+                });
+            });
+        </script>
+    @endpush
 @endsection

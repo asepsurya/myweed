@@ -1,8 +1,6 @@
 <?php
 
 namespace Database\Seeders;
-
-use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -28,6 +26,7 @@ class DatabaseSeeder extends Seeder
         $this->call([BudgetSeeder::class]);
         $this->call([WeddingPlanSeeder::class]);
         $this->call([FinancialOverviewSeeder::class]);
+        $this->call([BlogSeeder::class]);
 
     }
 }

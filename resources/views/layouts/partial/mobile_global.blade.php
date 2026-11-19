@@ -21,7 +21,7 @@
         border-right: none;
         border-radius: 0;
         box-shadow: 0 -4px 18px rgba(0, 0, 0, 0.05);
-        z-index: 10050;
+        z-index: 1030;
     }
 
     .mobile-bottom-nav .nav-item {

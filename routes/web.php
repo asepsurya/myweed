@@ -2,7 +2,7 @@
 
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\GoogleController;
-use App\Http\Controllers\BudgetCategoryController;
+use App\Http\Controllers\BlogController;
 use App\Http\Controllers\BudgetController;
 use App\Http\Controllers\BudgetExpenseController;
 use App\Http\Controllers\CategoryController;
@@ -34,12 +34,16 @@ use App\Http\Controllers\WeddingController;
 use App\Http\Controllers\WeedingPlanController;
 use App\Http\Controllers\YoutubeMusicController;
 use App\Models\Guest;
+use App\Models\Invitation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Rap2hpoutre\LaravelLogViewer\LogViewerController;
 
 Route::get('/', [LandingController::class, 'index'])->name('landing');
+
+Route::get('/blog', [BlogController::class, 'publicIndex'])->name('blog.index');
+Route::get('/blog/{slug}', [BlogController::class, 'publicShow'])->name('blog.show');
 
 Route::get('/test-import-kontak', function () {
     return '<h1>Import Kontak Test</h1><p>Route ini jalan!</p><a href="/invitation/import-kontak">Buka Import Kontak</a>';
@@ -60,6 +64,10 @@ Route::get('/home', [DashboardController::class, 'indexUser'])
     ->middleware(['auth'])
     ->name('dashboard.user');
 
+Route::get('/dashboard/saya', [DashboardController::class, 'publishedDashboard'])
+    ->middleware(['auth'])
+    ->name('dashboard.saya');
+
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -67,7 +75,7 @@ Route::middleware('auth')->group(function () {
 
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
 
 Route::get('/templates/{slug}/{id}', [TempelateController::class, 'preview'])->name('template.preview');
 Route::get('/demo/{slug}', [TempelateController::class, 'demo'])->name('template.demo');
@@ -83,7 +91,9 @@ Route::middleware(['auth'])->group(function () {
     Route::post('invitation/bulk-delete', [UserInvitationController::class, 'bulkDestroy'])->name('invitation.bulk-delete');
     Route::post('invitation/autosave', [UserInvitationController::class, 'autoSave'])->name('invitation.autosave');
     Route::get('invitation/create', [UserInvitationController::class, 'create'])->name('invitation.create');
-    Route::post('invitation/quick-create', [UserInvitationController::class, 'quickCreate'])->name('invitation.quick-create');
+    Route::get('invitation/categories', [UserInvitationController::class, 'selectCategory'])->name('invitation.categories');
+    Route::get('invitation/create/category/{category}', [UserInvitationController::class, 'createByCategory'])->name('invitation.create.category');
+    Route::match(['get', 'post'], 'invitation/quick-create', [UserInvitationController::class, 'quickCreate'])->name('invitation.quick-create');
     Route::get('invitation/import-kontak', function () {
         $guests = Guest::where('user_id', auth()->id())
             ->orderBy('created_at', 'desc')
@@ -113,14 +123,14 @@ Route::middleware(['auth'])->group(function () {
         if ($request->wantsJson()) {
             return response()->json([
                 'success' => true,
-                'message' => count($saved).' kontak berhasil disimpan',
+                'message' => count($saved) . ' kontak berhasil disimpan',
                 'count' => count($saved),
                 'data' => $saved,
             ]);
         }
 
         return redirect()->route('invitation.import-kontak')
-            ->with('success', count($saved).' kontak berhasil disimpan!');
+            ->with('success', count($saved) . ' kontak berhasil disimpan!');
     })->name('invitation.import-kontak.store');
 
     Route::delete('invitation/import-kontak/guest/{guest}', function (Guest $guest) {
@@ -196,6 +206,16 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/categories', [CategoryController::class, 'store'])->middleware('role:admin')->name('categories.store');
     Route::delete('/categories/{category}', [CategoryController::class, 'destroy'])->middleware('role:admin')->name('categories.destroy');
 
+    Route::middleware(['role:admin'])->prefix('admin/categories')->name('admin.categories.')->group(function () {
+        Route::get('/', [CategoryController::class, 'adminIndex'])->name('index');
+        Route::get('/create', [CategoryController::class, 'adminCreate'])->name('create');
+        Route::post('/', [CategoryController::class, 'adminStore'])->name('store');
+        Route::get('/{category}/edit', [CategoryController::class, 'adminEdit'])->name('edit');
+        Route::put('/{category}', [CategoryController::class, 'adminUpdate'])->name('update');
+        Route::patch('/{category}/toggle', [CategoryController::class, 'toggleStatus'])->name('toggle');
+        Route::delete('/{category}', [CategoryController::class, 'adminDestroy'])->name('destroy');
+    });
+
     Route::get('/template-types', [TemplateTypeController::class, 'index'])->middleware('role:admin')->name('template-types.index');
     Route::post('/template-types', [TemplateTypeController::class, 'store'])->middleware('role:admin')->name('template-types.store');
     Route::delete('/template-types/{templateType}', [TemplateTypeController::class, 'destroy'])->middleware('role:admin')->name('template-types.destroy');
@@ -203,13 +223,13 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/templates/{slug}/{id}', [TempelateController::class, 'previewUpdate'])->name('template.preview.update');
 
     Route::get('/template-assets/{slug}/{path}', function ($slug, $path) {
-        $r2Path = 'templates/'.$slug.'/'.ltrim($path, '/');
+        $r2Path = 'templates/' . $slug . '/' . ltrim($path, '/');
         $publicUrl = rtrim(config('filesystems.disks.r2.public_url', ''), '/');
 
         if ($publicUrl) {
             try {
                 if (Storage::disk('r2')->exists($r2Path)) {
-                    return redirect($publicUrl.'/'.$r2Path);
+                    return redirect($publicUrl . '/' . $r2Path);
                 }
             } catch (Throwable $e) {
                 // Fall through to local check
@@ -217,9 +237,9 @@ Route::middleware(['auth'])->group(function () {
         }
 
         $basePath = resource_path("views/templates/$slug");
-        $filePath = realpath($basePath.'/'.ltrim($path, '/'));
+        $filePath = realpath($basePath . '/' . ltrim($path, '/'));
 
-        if (! $filePath || strpos($filePath, realpath($basePath)) !== 0 || ! File::exists($filePath)) {
+        if (!$filePath || strpos($filePath, realpath($basePath)) !== 0 || !File::exists($filePath)) {
             abort(404);
         }
 
@@ -307,6 +327,16 @@ Route::middleware(['auth'])->group(function () {
         Route::delete('/{promotion}', [PromotionController::class, 'destroy'])->name('destroy');
     });
 
+    Route::middleware('role:admin')->prefix('admin/blogs')->name('admin.blogs.')->group(function () {
+        Route::get('/', [BlogController::class, 'index'])->name('index');
+        Route::get('/create', [BlogController::class, 'create'])->name('create');
+        Route::post('/', [BlogController::class, 'store'])->name('store');
+        Route::get('/{blog}/edit', [BlogController::class, 'edit'])->name('edit');
+        Route::put('/{blog}', [BlogController::class, 'update'])->name('update');
+        Route::patch('/{blog}/toggle', [BlogController::class, 'toggleStatus'])->name('toggle');
+        Route::delete('/{blog}', [BlogController::class, 'destroy'])->name('destroy');
+    });
+
     Route::middleware('role:admin')->prefix('admin/coupons')->name('coupons.')->group(function () {
         Route::get('/', [CouponController::class, 'index'])->name('index');
         Route::get('/create', [CouponController::class, 'create'])->name('create');
@@ -390,9 +420,7 @@ Route::middleware(['auth'])->group(function () {
 
 Route::post('/rsvp/{invitation}', [RsvpController::class, 'store'])->name('rsvp.store');
 
-Route::post('/rsvp/{invitation}', [RsvpController::class, 'store'])->name('rsvp.store');
-
-Route::post('/invitation/{invitation}/rsvp', [RsvpController::class, 'store'])->name('rsvp.store');
+Route::post('/invitation/{invitation}/rsvp', [RsvpController::class, 'store'])->name('rsvp.submit');
 
 Route::get('/invitation/{invitation}/rsvps', [RsvpController::class, 'getRsvps'])->name('rsvp.list');
 
@@ -411,6 +439,21 @@ Route::get('/bantuan', [LandingController::class, 'bantuan'])->name('pages.bantu
 Route::get('/kebijakan-privasi', [LandingController::class, 'kebijakanPrivasi'])->name('pages.kebijakan-privasi');
 
 Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
+
+Route::get('/guest/camera', function () {
+    return view('guest.camera');
+})->name('guest.camera');
+
+Route::get('/guest/photos/{event_id}', function ($event_id) {
+    $invitation = Invitation::where('slug', $event_id)->firstOrFail();
+    $photos = $invitation->galleries;
+    return view('guest.gallery', ['event_id' => $event_id, 'photos' => $photos]);
+})->name('guest.gallery');
+
+// QR Code Generation Route for Camera Access
+Route::get('/dashboard/invitation/{invitation}/qr-code', [UserInvitationController::class, 'generateQrCode'])
+    ->name('invitation.qr-code')
+    ->middleware('auth');
 
 Route::get('/{slug}', [WeddingController::class, 'show'])->where('slug', '[A-Za-z0-9\-]+')->name('invitation.show');
 

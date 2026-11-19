@@ -2,7 +2,7 @@
     <x-slot name="header">
         <div class="d-flex justify-content-between align-items-center">
             <h2 class="fw-bold text-dark m-0" style="font-family: 'Plus Jakarta Sans', sans-serif; color: var(--bs-body-color);">
-                <i class="bi bi-tags me-2" style="color: var(--adminuiux-theme-1);"></i> Manajemen Paket & Harga
+                <i class="bi bi-tags me-2" style="color: #425620;"></i> Manajemen Paket & Harga
             </h2>
             <div class="d-flex gap-2">
                 <a href="{{ route('admin.subscriptions.index') }}" class="btn btn-outline-primary btn-sm px-3 py-2 fw-bold"
@@ -29,17 +29,17 @@
 
         .plan-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(27, 42, 74, 0.08);
-            border-color: rgba(198, 169, 98, 0.4);
+            box-shadow: 0 10px 25px rgba(66, 86, 32, 0.12);
+            border-color: rgba(66, 86, 32, 0.4);
         }
 
         [data-bs-theme="dark"] .plan-card:hover {
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
-            border-color: var(--adminuiux-theme-1);
+            border-color: #425620;
         }
 
         .plan-price {
-            color: var(--adminuiux-theme-1);
+            color: #425620;
             font-family: 'Plus Jakarta Sans', sans-serif;
             font-weight: 800;
             font-size: 1.75rem;
@@ -54,8 +54,8 @@
         }
 
         .feature-list-item i {
-            color: var(--adminuiux-theme-1);
-            /* Gold checkmark */
+            color: #425620;
+            /* Green checkmark */
             margin-top: 2px;
         }
     </style>

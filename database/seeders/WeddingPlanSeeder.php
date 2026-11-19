@@ -162,10 +162,17 @@ class WeddingPlanSeeder extends Seeder
         ];
 
         foreach ($tasks as $task) {
-            WeedingPlan::create(array_merge($task, [
-                'user_id' => $user->id,
-                'invitation_id' => $invitation->id,
-            ]));
+            WeedingPlan::updateOrCreate(
+                [
+                    'task_name' => $task['task_name'],
+                    'user_id' => $user->id,
+                    'invitation_id' => $invitation->id,
+                ],
+                array_merge($task, [
+                    'user_id' => $user->id,
+                    'invitation_id' => $invitation->id,
+                ])
+            );
         }
     }
 }

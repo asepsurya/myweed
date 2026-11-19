@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Models\Payment;
+use App\Models\Template;
 use App\View\TemplateViewFinder;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Pagination\Paginator;
@@ -55,6 +56,28 @@ class AppServiceProvider extends ServiceProvider
             } else {
                 $view->with('pendingPaymentCount', 0);
             }
+        });
+
+        View::composer(['layouts.partial.ev-header', 'layouts.partial.ev-search-modal'], function ($view) {
+            $templates = Template::where('is_active', true)
+                ->with('category', 'templateType')
+                ->orderByDesc('id')
+                ->take(18)
+                ->get();
+
+            $templatesByCategory = [];
+            foreach ($templates as $template) {
+                $catName = $template->category ? $template->category->name : 'Lainnya';
+                if (!isset($templatesByCategory[$catName])) {
+                    $templatesByCategory[$catName] = [];
+                }
+                if (count($templatesByCategory[$catName]) < 3) {
+                    $templatesByCategory[$catName][] = $template;
+                }
+            }
+
+            $view->with('templates', $templates);
+            $view->with('templatesByCategory', $templatesByCategory);
         });
     }
 }

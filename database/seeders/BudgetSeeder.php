@@ -24,14 +24,16 @@ class BudgetSeeder extends Seeder
             return;
         }
 
-        $budget = Budget::create([
-            'invitation_id' => $invitation->id,
-            'user_id' => $user->id,
-            'title' => 'Anggaran Pernikahan 2026',
-            'total_amount' => 150000000,
-            'currency' => 'IDR',
-            'status' => 'active',
-        ]);
+        $budget = Budget::updateOrCreate(
+            ['invitation_id' => $invitation->id],
+            [
+                'user_id' => $user->id,
+                'title' => 'Anggaran Pernikahan 2026',
+                'total_amount' => 150000000,
+                'currency' => 'IDR',
+                'status' => 'active',
+            ]
+        );
 
         $categories = [
             [
@@ -93,9 +95,19 @@ class BudgetSeeder extends Seeder
         ];
 
         foreach ($categories as $index => $categoryData) {
-            $category = BudgetCategory::create(array_merge($categoryData, [
-                'budget_id' => $budget->id,
-            ]));
+            $category = BudgetCategory::updateOrCreate(
+                [
+                    'budget_id' => $budget->id,
+                    'name' => $categoryData['name'],
+                ],
+                array_merge($categoryData, [
+                    'budget_id' => $budget->id,
+                ])
+            );
+
+            if (BudgetExpense::where('budget_category_id', $category->id)->exists()) {
+                continue;
+            }
 
             $expenseCount = rand(1, 3);
 

@@ -47,13 +47,20 @@ class GiftSeeder extends Seeder
         ];
 
         foreach ($gifts as $gift) {
-            Gift::create([
-                'invitation_id' => $invitation->id,
-                'bank' => $gift['bank'],
-                'number' => $gift['number'],
-                'name' => $gift['name'],
-                'qr' => $gift['qr'],
-            ]);
+            Gift::updateOrCreate(
+                [
+                    'invitation_id' => $invitation->id,
+                    'bank' => $gift['bank'],
+                    'number' => $gift['number'],
+                ],
+                [
+                    'invitation_id' => $invitation->id,
+                    'bank' => $gift['bank'],
+                    'number' => $gift['number'],
+                    'name' => $gift['name'],
+                    'qr' => $gift['qr'],
+                ]
+            );
         }
     }
 }

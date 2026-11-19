@@ -688,13 +688,17 @@ class TempelateController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
+            'id_category' => 'required|exists:categories,id',
             'template_type_id' => 'nullable|exists:template_types,id',
         ]);
 
         $template->update([
             'name' => $request->name,
+            'id_category' => $request->id_category,
             'template_type_id' => $request->template_type_id,
         ]);
+
+        $template->load(['category', 'templateType']);
 
         return response()->json([
             'success' => true,

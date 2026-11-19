@@ -1,18 +1,7 @@
 <x-app-layout>
-    <x-slot name="header">
-        <div class="d-flex justify-content-between align-items-center">
-            <h2 class="fw-bold m-0" style="font-family: 'Plus Jakarta Sans', sans-serif; color: var(--bs-body-color);">
-                <i class="bi bi-sliders me-2" style="color: var(--adminuiux-theme-1);"></i> Pengaturan File .env
-            </h2>
-            <span class="badge bg-danger-subtle text-danger border border-danger-subtle px-3 py-2 rounded-3">
-                <i class="bi bi-exclamation-triangle-fill me-1"></i> Area Sensitif
-            </span>
-        </div>
-    </x-slot>
-
     <style>
         .settings-card {
-            background: var(--bs-body-bg);
+            background: var(--bs-card-bg, #ffffff);
             border: 1px solid var(--bs-border-color);
             border-radius: 16px;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
@@ -31,7 +20,7 @@
         }
 
         .nav-pills .nav-link.active {
-            background-color: var(--adminuiux-theme-1, #0d6efd);
+            background: linear-gradient(135deg, #C6A962, #A68B4B);
             color: #ffffff;
         }
 
@@ -53,8 +42,8 @@
         }
 
         .form-control:focus, .form-select:focus {
-            border-color: var(--adminuiux-theme-1, #0d6efd);
-            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
+            border-color: #C6A962;
+            box-shadow: 0 0 0 0.2rem rgba(198, 169, 98, 0.25);
         }
 
         .section-title {
@@ -68,7 +57,19 @@
         }
     </style>
 
-    <div class="container mt-4" style="padding-bottom: 120px;">
+    <div class="container-fluid py-3 py-md-4">
+        {{-- Page Header --}}
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4 gap-3">
+            <div>
+                <h4 class="mb-1 fw-bold" style="font-family: 'Plus Jakarta Sans', sans-serif;">
+                    <i class="bi bi-sliders me-2" style="color: #C6A962;"></i> Konfigurasi Sistem (.env)
+                </h4>
+                <p class="text-muted small mb-0">Kelola environment variables, integrasi API, database, dan mail server</p>
+            </div>
+            <span class="badge bg-danger-subtle text-danger border border-danger-subtle px-3 py-2 rounded-3 fw-semibold">
+                <i class="bi bi-exclamation-triangle-fill me-1"></i> Area Sensitif Admin
+            </span>
+        </div>
         @if(session('success'))
             <div class="alert alert-success alert-dismissible fade show rounded-3 shadow-sm" role="alert">
                 <i class="bi bi-check-circle-fill me-2"></i>
@@ -144,6 +145,11 @@
                         <li class="nav-item" role="presentation">
                             <button class="nav-link" id="storage-tab" data-bs-toggle="pill" data-bs-target="#storage" type="button" role="tab" aria-controls="storage" aria-selected="false">
                                 <i class="bi bi-cloud-arrow-up me-1"></i> Storage
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="social-tab" data-bs-toggle="pill" data-bs-target="#social" type="button" role="tab" aria-controls="social" aria-selected="false">
+                                <i class="bi bi-shop me-1"></i> Marketplace
                             </button>
                         </li>
                     </ul>
@@ -443,6 +449,22 @@
                                 <label for="R2_PUBLIC_URL" class="form-label fw-semibold">R2 Public URL (R2_PUBLIC_URL)</label>
                                 <input type="url" name="R2_PUBLIC_URL" id="R2_PUBLIC_URL" class="form-control" value="{{ old('R2_PUBLIC_URL', $envData['R2_PUBLIC_URL'] ?? 'https://cdn.inopakinstitute.or.id') }}" placeholder="https://cdn.inopakinstitute.or.id">
                                 <div class="form-text">URL publik untuk akses file. Sama dengan R2_URL untuk public bucket.</div>
+                            </div>
+                        </div>
+
+                        <!-- TAB 7: MARKETPLACE -->
+                        <div class="tab-pane fade" id="social" role="tabpanel" aria-labelledby="social-tab">
+                            <h5 class="section-title"><i class="bi bi-shop me-1 text-warning"></i> Tautan Marketplace (Footer)</h5>
+                            <p class="text-muted small">Link toko Tokopedia &amp; Shopee yang tampil pada logo di bagian footer website. Kosongkan untuk menyembunyikan tautan.</p>
+
+                            <div class="mb-3 col-md-8">
+                                <label for="SOCIAL_TOKOPEDIA_URL" class="form-label fw-semibold">Link Tokopedia (SOCIAL_TOKOPEDIA_URL)</label>
+                                <input type="url" name="SOCIAL_TOKOPEDIA_URL" id="SOCIAL_TOKOPEDIA_URL" class="form-control" value="{{ old('SOCIAL_TOKOPEDIA_URL', $envData['SOCIAL_TOKOPEDIA_URL'] ?? '') }}" placeholder="https://tokopedia.com/ namatoko">
+                            </div>
+
+                            <div class="mb-3 col-md-8">
+                                <label for="SOCIAL_SHOPEE_URL" class="form-label fw-semibold">Link Shopee (SOCIAL_SHOPEE_URL)</label>
+                                <input type="url" name="SOCIAL_SHOPEE_URL" id="SOCIAL_SHOPEE_URL" class="form-control" value="{{ old('SOCIAL_SHOPEE_URL', $envData['SOCIAL_SHOPEE_URL'] ?? '') }}" placeholder="https://shopee.co.id/ namatoko">
                             </div>
                         </div>
 

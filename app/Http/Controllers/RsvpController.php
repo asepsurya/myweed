@@ -51,7 +51,10 @@ class RsvpController extends Controller
 
     public function store(Request $request, $invitationId)
     {
-        $invitation = Invitation::findOrFail($invitationId);
+        $invitation = Invitation::where('slug', $invitationId)
+            ->orWhere('public_id', $invitationId)
+            ->orWhere('id', $invitationId)
+            ->firstOrFail();
 
         $request->validate([
             'name' => 'required|string|max:100',
@@ -74,7 +77,10 @@ class RsvpController extends Controller
 
     public function getRsvps($invitationId)
     {
-        $invitation = Invitation::findOrFail($invitationId);
+        $invitation = Invitation::where('slug', $invitationId)
+            ->orWhere('public_id', $invitationId)
+            ->orWhere('id', $invitationId)
+            ->firstOrFail();
         $rsvps = Rsvp::where('invitation_id', $invitation->id)->latest()->get();
 
         return response()->json($rsvps);

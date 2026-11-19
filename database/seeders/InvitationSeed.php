@@ -16,6 +16,7 @@ class InvitationSeed extends Seeder
             ['slug' => 'romeo-juliet'],
             [
                 'user_id' => 1,
+                'public_id' => '1',
                 'template_id' => 2,
                 'is_default' => true,
                 'status' => 'published',
@@ -84,65 +85,70 @@ class InvitationSeed extends Seeder
 
         // Folder
         $base = "invitations/{$invitation->public_id}";
-        Storage::disk('r2')->makeDirectory("$base/pria");
-        Storage::disk('r2')->makeDirectory("$base/wanita");
-        Storage::disk('r2')->makeDirectory("$base/cover");
-        Storage::disk('r2')->makeDirectory("$base/gallery");
-        Storage::disk('r2')->makeDirectory("$base/love_story");
 
-        // Clean up existing galleries to avoid duplicates on re-run
-        Gallery::where('invitation_id', $id)->delete();
+        $alreadyInR2 = Storage::disk('r2')->exists("$base/pria/pria.jpg");
 
-        // Copy images
-        $this->copy(
-            public_path('tempelate/love/assets/images/couple/img-2.jpg'),
-            "$base/pria/pria.jpg"
-        );
+        if (!$alreadyInR2) {
+            Storage::disk('r2')->makeDirectory("$base/pria");
+            Storage::disk('r2')->makeDirectory("$base/wanita");
+            Storage::disk('r2')->makeDirectory("$base/cover");
+            Storage::disk('r2')->makeDirectory("$base/gallery");
+            Storage::disk('r2')->makeDirectory("$base/love_story");
 
-        $this->copy(
-            public_path('tempelate/love/assets/images/couple/img-1.jpg'),
-            "$base/wanita/wanita.jpg"
-        );
+            // Clean up existing galleries to avoid duplicates on re-run
+            Gallery::where('invitation_id', $id)->delete();
 
-        $this->copy(
-            public_path('tempelate/love/assets/images/blog/img-16.jpg'),
-            "$base/cover/cover.jpg"
-        );
+            // Copy images
+            $this->copy(
+                public_path('tempelate/love/assets/images/couple/img-2.jpg'),
+                "$base/pria/pria.jpg"
+            );
 
-        $this->copy(
-            public_path('tempelate/love/assets/images/blog/img-1.jpg'),
-            "$base/love_story/0.jpg"
-        );
+            $this->copy(
+                public_path('tempelate/love/assets/images/couple/img-1.jpg'),
+                "$base/wanita/wanita.jpg"
+            );
 
-        $this->copy(
-            public_path('tempelate/love/assets/images/blog/img-2.jpg'),
-            "$base/love_story/1.jpg"
-        );
+            $this->copy(
+                public_path('tempelate/love/assets/images/blog/img-16.jpg'),
+                "$base/cover/cover.jpg"
+            );
 
-        $files = glob(
-            public_path('tempelate/love/assets/images/blog/*.{jpg,png,webp}'),
-            GLOB_BRACE
-        );
+            $this->copy(
+                public_path('tempelate/love/assets/images/blog/img-1.jpg'),
+                "$base/love_story/0.jpg"
+            );
 
-        $base = "invitations/{$invitation->public_id}";
+            $this->copy(
+                public_path('tempelate/love/assets/images/blog/img-2.jpg'),
+                "$base/love_story/1.jpg"
+            );
 
-        if (! empty($files)) {
-            foreach ($files as $file) {
+            $files = glob(
+                public_path('tempelate/love/assets/images/blog/*.{jpg,png,webp}'),
+                GLOB_BRACE
+            );
 
-                $extension = pathinfo($file, PATHINFO_EXTENSION);
-                $fileName = Str::uuid().'.'.$extension;
+            $base = "invitations/{$invitation->public_id}";
 
-                // simpan file ke storage
-                Storage::disk('r2')->put(
-                    "$base/gallery/$fileName",
-                    file_get_contents($file)
-                );
+            if (!empty($files)) {
+                foreach ($files as $file) {
 
-                // simpan ke database
-                Gallery::create([
-                    'invitation_id' => $invitation->id,
-                    'image' => "$base/gallery/$fileName",
-                ]);
+                    $extension = pathinfo($file, PATHINFO_EXTENSION);
+                    $fileName = Str::uuid() . '.' . $extension;
+
+                    // simpan file ke storage
+                    Storage::disk('r2')->put(
+                        "$base/gallery/$fileName",
+                        file_get_contents($file)
+                    );
+
+                    // simpan ke database
+                    Gallery::create([
+                        'invitation_id' => $invitation->id,
+                        'image' => "$base/gallery/$fileName",
+                    ]);
+                }
             }
         }
 

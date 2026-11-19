@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
 use App\Models\Gallery;
 use App\Models\Gift;
 use App\Models\Invitation;
@@ -94,30 +95,89 @@ class UserInvitationController extends Controller
 
                 return true;
             });
+        $templateTypes = TemplateType::orderBy('name')->get();
         $selectedTemplateId = $request->template_id;
 
-        return view('dashboard.invitation.create', compact('templates', 'music', 'selectedTemplateId'));
+        return view('dashboard.invitation.create', compact('templates', 'music', 'selectedTemplateId', 'templateTypes'));
+    }
+
+    public function selectCategory(Request $request)
+    {
+        $user = auth()->user();
+        $limit = $this->getInvitationLimit($user);
+
+        if ($limit !== null && Invitation::where('user_id', $user->id)->count() >= $limit) {
+            $message = $limit === 1
+                ? 'Versi gratis hanya diperbolehkan membuat 1 undangan. Silakan aktifkan Paket Subscription untuk membuat lebih banyak! ✨'
+                : "Paket Anda hanya diperbolehkan membuat {$limit} undangan. Silakan upgrade paket untuk membuat lebih banyak! ✨";
+            return redirect()->route('dashboard.user')->with('error', $message);
+        }
+
+        $categories = Category::active()->ordered()->withCount(['templates as template_count' => function ($q) {
+            $q->where('is_active', true);
+        }])->get();
+
+        return view('dashboard.invitation.categories', compact('categories'));
+    }
+
+    public function createByCategory(Request $request, Category $category)
+    {
+        $user = auth()->user();
+
+        if (! $category->is_active) {
+            return redirect()->route('invitation.categories')->with('error', 'Kategori tidak aktif.');
+        }
+
+        $limit = $this->getInvitationLimit($user);
+
+        if ($limit !== null && Invitation::where('user_id', $user->id)->count() >= $limit) {
+            $message = $limit === 1
+                ? 'Versi gratis hanya diperbolehkan membuat 1 undangan. Silakan aktifkan Paket Subscription untuk membuat lebih banyak! ✨'
+                : "Paket Anda hanya diperbolehkan membuat {$limit} undangan. Silakan upgrade paket untuk membuat lebih banyak! ✨";
+            return redirect()->route('dashboard.user')->with('error', $message);
+        }
+
+        $music = Music::where('is_active', true)->get();
+        $templates = Template::where('is_active', true)
+            ->where('id_category', $category->id)
+            ->with('category', 'templateType')
+            ->get()
+            ->filter(function ($template) use ($user) {
+                if ($template->template_type_id && ! $user->canAccessTemplateType($template->template_type_id)) {
+                    return false;
+                }
+
+                return true;
+            });
+        $templateTypes = TemplateType::orderBy('name')->get();
+
+        return view('dashboard.invitation.create-by-category', compact('templates', 'music', 'category', 'templateTypes'));
     }
 
     public function quickCreate(Request $request)
     {
-        $request->validate([
-            'groom_name' => 'required|string|max:255',
-            'bride_name' => 'required|string|max:255',
-            'groom_nickname' => 'nullable|string|max:255',
-            'bride_nickname' => 'nullable|string|max:255',
-            'groom_child_order' => 'nullable|string|max:255',
-            'bride_child_order' => 'nullable|string|max:255',
+        $categoryId = $request->input('category_id');
+        $isWedding = optional(Category::find($categoryId))->slug === 'wedding';
+
+        $rules = [
             'template_id' => 'nullable|exists:templates,id',
+            'category_id' => 'nullable|exists:categories,id',
             'theme_type' => 'nullable|string|in:basic,premium_exclusive,luxury',
-        ], [
+        ];
+
+        if ($isWedding) {
+            $rules['groom_name'] = 'required|string|max:255';
+            $rules['bride_name'] = 'required|string|max:255';
+        }
+
+        $request->validate($rules, [
             'groom_name.required' => 'Nama mempelai pria wajib diisi.',
             'bride_name.required' => 'Nama mempelai wanita wajib diisi.',
             'template_id.exists' => 'Template yang dipilih tidak valid.',
         ]);
 
         $baseSlug = Str::slug(
-            ($request->groom_nickname ?: $request->groom_name).'-'.($request->bride_nickname ?: $request->bride_name)
+            ($request->groom_nickname ?: $request->groom_name ?: 'undangan').'-'.($request->bride_nickname ?: $request->bride_name ?: 'acara')
         );
 
         $slug = $baseSlug;
@@ -171,6 +231,7 @@ class UserInvitationController extends Controller
             ],
             [
                 'template_id' => $templateId,
+                'category_id' => $categoryId,
                 'theme_type' => $request->theme_type,
                 'groom_name' => $request->groom_name,
                 'groom_nickname' => $request->groom_nickname,
@@ -445,6 +506,8 @@ class UserInvitationController extends Controller
             $invitation = Invitation::create([
                 'user_id' => auth()->user()->id,
                 'template_id' => $request->template_id,
+                'category_id' => $request->category_id,
+                'invitation_type' => optional(Category::find($request->category_id))->slug ?? 'wedding',
                 'theme_type' => $request->theme_type,
                 'status' => 'published',
                 'slug' => $slug,
@@ -496,6 +559,7 @@ class UserInvitationController extends Controller
                 'rsvp_whatsapp' => $request->rsvp_whatsapp,
                 'primary_color' => $request->primary_color ?? '#0d9488',
 
+                'custom_data' => $request->input('custom_data', []),
             ]);
 
             if ($request->has('enable_video') && $request->enable_video) {
@@ -618,9 +682,23 @@ class UserInvitationController extends Controller
                             \Log::error('Gift QR upload failed: '.$e->getMessage());
                         }
                     }
-
                     Gift::create($giftData);
                 }
+            }
+
+            // Handle dynamic field image uploads
+            if ($request->hasFile('custom_data_file')) {
+                $customData = $request->input('custom_data', []);
+                foreach ($request->file('custom_data_file') as $fieldName => $file) {
+                    try {
+                        $path = "invitations/{$invitation->public_id}/custom/{$fieldName}.webp";
+                        $this->uploadImageAsWebP($file, $path, 1200);
+                        $customData[$fieldName] = $path;
+                    } catch (\Throwable $e) {
+                        \Log::error('Custom field image upload failed: '.$e->getMessage());
+                    }
+                }
+                $invitation->update(['custom_data' => $customData]);
             }
         });
 
@@ -807,6 +885,8 @@ class UserInvitationController extends Controller
 
             $updateData = [
                 'template_id' => $request->template_id,
+                'category_id' => $request->category_id,
+                'invitation_type' => $request->invitation_type ?: (optional(Category::find($request->category_id))->slug ?? 'wedding'),
                 'theme_type' => $request->theme_type,
                 'status' => $request->input('status', 'published'),
                 'primary_color' => $request->primary_color,
@@ -867,9 +947,28 @@ class UserInvitationController extends Controller
             }
 
             $updateData['love_story'] = $stories;
+            $updateData['custom_data'] = $request->input('custom_data', []);
 
             $invitation->update($updateData);
         });
+
+        // Handle dynamic field image uploads
+        if ($request->hasFile('custom_data_file')) {
+            $customData = $invitation->custom_data ?? [];
+            if (is_string($customData)) {
+                $customData = json_decode($customData, true) ?? [];
+            }
+            foreach ($request->file('custom_data_file') as $fieldName => $file) {
+                try {
+                    $path = "invitations/{$invitation->public_id}/custom/{$fieldName}.webp";
+                    $this->uploadImageAsWebP($file, $path, 1200);
+                    $customData[$fieldName] = $path;
+                } catch (\Throwable $e) {
+                    \Log::error('Custom field image upload failed: '.$e->getMessage());
+                }
+            }
+            $invitation->update(['custom_data' => $customData]);
+        }
 
         // ============================================
         // STEP 2: Handle file uploads OUTSIDE transaction
@@ -2048,5 +2147,37 @@ class UserInvitationController extends Controller
         \App\Jobs\PermanentDeleteInvitationJob::dispatch($invitation->id);
 
         return redirect()->back()->with('success', 'Undangan telah dijadwalkan untuk penghapusan permanen.');
+    }
+
+    public function generateQrCode(Invitation $invitation)
+    {
+        // Hanya undangan yang dipublikasikan
+        if ($invitation->status !== 'published') {
+            return back()->with('error', 'Undangan belum dipublikasikan');
+        }
+
+        // URL kamera dengan slug undangan
+        $cameraUrl = 'http://127.0.0.1:8000/guest/camera/' . $invitation->slug;
+
+        // Generate QR code using public API
+        $qrApiUrl = 'https://api.qrserver.com/v1/create-qr-code/?data=' . urlencode($cameraUrl) . '&size=300x300';
+
+        // Download and save QR code image
+        $qrImage = file_get_contents($qrApiUrl);
+
+        if ($qrImage) {
+            $path = 'invitation-qr-codes/' . $invitation->slug . '.png';
+            Storage::put($path, $qrImage);
+
+            // Update invitation with QR code path
+            $invitation->qr_code_path = $path;
+            $invitation->save();
+
+            return back()
+                ->with('success', 'QR code berhasil dibuat!')
+                ->with('qr-code-path', $path);
+        }
+
+        return back()->with('error', 'Gagal membuat QR code');
     }
 }

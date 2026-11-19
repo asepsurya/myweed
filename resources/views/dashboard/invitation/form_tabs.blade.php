@@ -486,7 +486,7 @@
         <div class="card-body p-0">
             <div class="mb-3">
                 <label class="form-label fw-semibold mb-2">Kategori</label>
-                <select id="categorySelect" class="form-select">
+                <select id="categorySelect" class="form-select" disabled>
                     <option value="all">Semua Kategori</option>
                     @php $categories = $templates->load('category')->pluck('category.name')->filter()->unique(); @endphp
                     @foreach($categories as $cat)

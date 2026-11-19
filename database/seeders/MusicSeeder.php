@@ -27,21 +27,20 @@ class MusicSeeder extends Seeder
             $filename = $file->getFilename();
             $path = 'music/'.$filename;
 
-            if (Music::where('audio_url', $path)->exists()) {
-                continue;
-            }
-
             Storage::disk('public')->put($path, File::get($file));
 
-            Music::create([
-                'title' => pathinfo($filename, PATHINFO_FILENAME),
-                'artist' => 'Wedding Music',
-                'audio_url' => $path,
-                'music_url' => $path,
-                'file_size' => $file->getSize(),
-                'mime_type' => File::mimeType($file->getPathname()),
-                'is_active' => true,
-            ]);
+            Music::updateOrCreate(
+                ['audio_url' => $path],
+                [
+                    'title' => pathinfo($filename, PATHINFO_FILENAME),
+                    'artist' => 'Wedding Music',
+                    'audio_url' => $path,
+                    'music_url' => $path,
+                    'file_size' => $file->getSize(),
+                    'mime_type' => File::mimeType($file->getPathname()),
+                    'is_active' => true,
+                ]
+            );
         }
 
     }

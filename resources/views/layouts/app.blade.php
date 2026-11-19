@@ -477,21 +477,187 @@
             border-color: rgba(232, 213, 163, 0.3) !important;
         }
 
-        /* Sidebar dropdown animation */
+        /* Sidebar styling & dropdown animation */
         .adminuiux-sidebar .collapse {
-            transition: all 0.3s ease-in-out;
+            transition: height 0.25s ease;
         }
 
-        .adminuiux-sidebar .nav-item:hover>.collapse {
-            display: block;
-        }
-
-        .adminuiux-sidebar .nav-item>a[data-bs-toggle="collapse"] .bi-chevron-down {
-            transition: transform 0.3s ease;
+        .adminuiux-sidebar .nav-item>a[data-bs-toggle="collapse"] .bi-chevron-down,
+        .adminuiux-sidebar .nav-item>a[aria-expanded] .bi-chevron-down {
+            transition: transform 0.25s ease;
         }
 
         .adminuiux-sidebar .nav-item>a[aria-expanded="true"] .bi-chevron-down {
             transform: rotate(180deg);
+        }
+
+        /* =============================================
+           SIDEBAR MENU STYLING (LIGHT & DARK MODE)
+        ============================================= */
+        .adminuiux-sidebar .nav-link {
+            border-radius: 10px;
+            margin: 2px 8px;
+            padding: 0.6rem 0.85rem !important;
+            transition: all 0.2s ease;
+            font-size: 0.875rem;
+            display: flex;
+            align-items: center;
+        }
+
+        /* Light Mode: Pastikan warna teks & icon kontras tajam (Navy #1B2A4A), BUKAN putih */
+        :root:not([data-bs-theme="dark"]) .adminuiux-sidebar .nav-link,
+        [data-bs-theme="light"] .adminuiux-sidebar .nav-link,
+        .adminuiux-sidebar .nav-link {
+            color: #1B2A4A !important;
+        }
+
+        :root:not([data-bs-theme="dark"]) .adminuiux-sidebar .nav-link .menu-name,
+        [data-bs-theme="light"] .adminuiux-sidebar .nav-link .menu-name,
+        .adminuiux-sidebar .nav-link .menu-name {
+            color: #1B2A4A !important;
+            font-weight: 500;
+        }
+
+        :root:not([data-bs-theme="dark"]) .adminuiux-sidebar .nav-link .menu-icon,
+        [data-bs-theme="light"] .adminuiux-sidebar .nav-link .menu-icon,
+        .adminuiux-sidebar .nav-link .menu-icon,
+        :root:not([data-bs-theme="dark"]) .adminuiux-sidebar .nav-link i,
+        [data-bs-theme="light"] .adminuiux-sidebar .nav-link i,
+        .adminuiux-sidebar .nav-link i {
+            color: #1B2A4A !important;
+        }
+
+        :root:not([data-bs-theme="dark"]) .adminuiux-sidebar .nav-link .bi-chevron-down,
+        [data-bs-theme="light"] .adminuiux-sidebar .nav-link .bi-chevron-down,
+        .adminuiux-sidebar .nav-link .bi-chevron-down {
+            color: #64748B !important;
+        }
+
+        /* Hover State (Light Mode) */
+        :root:not([data-bs-theme="dark"]) .adminuiux-sidebar .nav-link:hover,
+        [data-bs-theme="light"] .adminuiux-sidebar .nav-link:hover {
+            background-color: rgba(198, 169, 98, 0.12) !important;
+            color: #A68B4B !important;
+        }
+
+        :root:not([data-bs-theme="dark"]) .adminuiux-sidebar .nav-link:hover .menu-name,
+        :root:not([data-bs-theme="dark"]) .adminuiux-sidebar .nav-link:hover .menu-icon,
+        :root:not([data-bs-theme="dark"]) .adminuiux-sidebar .nav-link:hover i,
+        [data-bs-theme="light"] .adminuiux-sidebar .nav-link:hover .menu-name,
+        [data-bs-theme="light"] .adminuiux-sidebar .nav-link:hover .menu-icon,
+        [data-bs-theme="light"] .adminuiux-sidebar .nav-link:hover i {
+            color: #A68B4B !important;
+        }
+
+        /* Active State (Light Mode) */
+        :root:not([data-bs-theme="dark"]) .adminuiux-sidebar .nav-link.active,
+        [data-bs-theme="light"] .adminuiux-sidebar .nav-link.active {
+            background: linear-gradient(135deg, rgba(198, 169, 98, 0.2) 0%, rgba(198, 169, 98, 0.08) 100%) !important;
+            color: #8F743E !important;
+            font-weight: 600;
+            border-left: 3px solid #C6A962 !important;
+        }
+
+        :root:not([data-bs-theme="dark"]) .adminuiux-sidebar .nav-link.active .menu-name,
+        :root:not([data-bs-theme="dark"]) .adminuiux-sidebar .nav-link.active .menu-icon,
+        :root:not([data-bs-theme="dark"]) .adminuiux-sidebar .nav-link.active i,
+        [data-bs-theme="light"] .adminuiux-sidebar .nav-link.active .menu-name,
+        [data-bs-theme="light"] .adminuiux-sidebar .nav-link.active .menu-icon,
+        [data-bs-theme="light"] .adminuiux-sidebar .nav-link.active i {
+            color: #8F743E !important;
+        }
+
+        /* Menu Icon Dimensions */
+        .adminuiux-sidebar .nav-link .menu-icon {
+            font-size: 1.15rem;
+            width: 24px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .adminuiux-sidebar .nav-link.ps-3 .menu-name,
+        .adminuiux-sidebar .nav-link.ps-4 .menu-name {
+            font-size: 0.8125rem;
+            opacity: 0.95;
+        }
+
+        .adminuiux-sidebar .menu-group {
+            padding: 0.75rem 1rem 0.25rem;
+        }
+
+        .adminuiux-sidebar .menu-group-label {
+            display: block;
+            font-size: 0.6875rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #A68B4B !important;
+            padding: 0.25rem 0.5rem 0.35rem;
+            border-bottom: 1px solid rgba(27, 42, 74, 0.12);
+            margin-bottom: 0.35rem;
+        }
+
+        /* Dark Mode: Teks & Icon Terang */
+        [data-bs-theme="dark"] .adminuiux-sidebar .nav-link {
+            color: #F1F5F9 !important;
+        }
+
+        [data-bs-theme="dark"] .adminuiux-sidebar .nav-link .menu-name {
+            color: #F1F5F9 !important;
+            font-weight: 500;
+        }
+
+        [data-bs-theme="dark"] .adminuiux-sidebar .nav-link .menu-icon,
+        [data-bs-theme="dark"] .adminuiux-sidebar .nav-link i {
+            color: #F1F5F9 !important;
+        }
+
+        [data-bs-theme="dark"] .adminuiux-sidebar .nav-link .bi-chevron-down {
+            color: #94A3B8 !important;
+        }
+
+        [data-bs-theme="dark"] .adminuiux-sidebar .nav-link:hover {
+            background-color: rgba(232, 213, 163, 0.12) !important;
+            color: #E8D5A3 !important;
+        }
+
+        [data-bs-theme="dark"] .adminuiux-sidebar .nav-link:hover .menu-name,
+        [data-bs-theme="dark"] .adminuiux-sidebar .nav-link:hover .menu-icon,
+        [data-bs-theme="dark"] .adminuiux-sidebar .nav-link:hover i {
+            color: #E8D5A3 !important;
+        }
+
+        [data-bs-theme="dark"] .adminuiux-sidebar .nav-link.active {
+            background: linear-gradient(135deg, rgba(232, 213, 163, 0.22) 0%, rgba(232, 213, 163, 0.08) 100%) !important;
+            color: #E8D5A3 !important;
+            border-left: 3px solid #E8D5A3 !important;
+        }
+
+        [data-bs-theme="dark"] .adminuiux-sidebar .nav-link.active .menu-name,
+        [data-bs-theme="dark"] .adminuiux-sidebar .nav-link.active .menu-icon,
+        [data-bs-theme="dark"] .adminuiux-sidebar .nav-link.active i {
+            color: #E8D5A3 !important;
+        }
+
+        [data-bs-theme="dark"] .adminuiux-sidebar .menu-group-label {
+            color: #E8D5A3 !important;
+            border-bottom-color: rgba(255, 255, 255, 0.08) !important;
+        }
+
+        /* Sembunyikan scrollbar sidebar */
+        .adminuiux-sidebar,
+        .adminuiux-sidebar-inner {
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .adminuiux-sidebar::-webkit-scrollbar,
+        .adminuiux-sidebar-inner::-webkit-scrollbar {
+            display: none;
+            width: 0;
+            height: 0;
         }
 
         .breadcrumb-item+.breadcrumb-item::before {
@@ -500,30 +666,257 @@
             padding-right: 0.5rem;
             color: var(--bs-secondary-color);
         }
+
         [data-bs-theme=dark] .breadcrumb .breadcrumb-item a {
             color: #f9fafb;
         }
+
         .breadcrumb .breadcrumb-item a {
             color: #000000ff;
         }
+
         .breadcrumb .breadcrumb-item.active {
             color: #C6A962;
         }
+
         @media (max-width: 1400px) {
             .readcrumb-card {
                 display: none !important;
             }
         }
-}
+
+        /* =============================================
+           GLOBAL CARD STYLING - Consistent with Dashboard
+           Reference: resources/views/dashboard.blade.php
+        ============================================= */
+        .card,
+        .adminuiux-card,
+        .card.adminuiux-card {
+            background: #FFFFFF !important;
+            border: 1px solid rgba(27, 42, 74, 0.08) !important;
+            border-radius: 18px !important;
+            box-shadow: 0 4px 20px rgba(27, 42, 74, 0.05) !important;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .card:hover,
+        .adminuiux-card:hover {
+            box-shadow: 0 8px 28px rgba(27, 42, 74, 0.08) !important;
+        }
+
+        [data-bs-theme="dark"] .card,
+        [data-bs-theme="dark"] .adminuiux-card,
+        [data-bs-theme="dark"] .card.adminuiux-card {
+            background: #111827 !important;
+            border-color: rgba(255, 255, 255, 0.08) !important;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35) !important;
+        }
+
+        [data-bs-theme="dark"] .card:hover,
+        [data-bs-theme="dark"] .adminuiux-card:hover {
+            box-shadow: 0 8px 28px rgba(0, 0, 0, 0.5) !important;
+        }
+
+        /* Exclude modals, dropdowns, toasts, and special components */
+        .modal-content,
+        .dropdown-menu,
+        .toast,
+        .popover,
+        .offcanvas,
+        .accordion-item {
+            border-radius: revert !important;
+            box-shadow: revert !important;
+        }
+
+        .modal-content {
+            background: var(--bs-modal-bg, #FFFFFF) !important;
+            border: var(--bs-modal-border-width) solid var(--bs-modal-border-color) !important;
+            border-radius: var(--bs-modal-border-radius, 0.5rem) !important;
+            box-shadow: var(--bs-modal-box-shadow) !important;
+        }
+
+        [data-bs-theme="dark"] .modal-content {
+            background: var(--bs-modal-bg, #1f2937) !important;
+        }
+
+        /* Card header & footer consistent styling */
+        .card .card-header,
+        .adminuiux-card .card-header {
+            background: transparent !important;
+            border-bottom: 1px solid rgba(27, 42, 74, 0.06);
+        }
+
+        [data-bs-theme="dark"] .card .card-header,
+        [data-bs-theme="dark"] .adminuiux-card .card-header {
+            border-bottom-color: rgba(255, 255, 255, 0.06);
+        }
+
+        .card .card-footer,
+        .adminuiux-card .card-footer {
+            background: transparent !important;
+            border-top: 1px solid rgba(27, 42, 74, 0.06);
+        }
+
+        [data-bs-theme="dark"] .card .card-footer,
+        [data-bs-theme="dark"] .adminuiux-card .card-footer {
+            border-top-color: rgba(255, 255, 255, 0.06);
+        }
+
+        /* Global table inside cards */
+        .card .table,
+        .adminuiux-card .table {
+            margin-bottom: 0;
+        }
+
+        .card .table thead th {
+            background: rgba(27, 42, 74, 0.03);
+            border-bottom: 1px solid rgba(27, 42, 74, 0.08);
+            color: #1B2A4A;
+            font-weight: 600;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 0.75rem 1rem;
+        }
+
+        [data-bs-theme="dark"] .card .table thead th {
+            background: rgba(255, 255, 255, 0.03);
+            border-bottom-color: rgba(255, 255, 255, 0.08);
+            color: #E5E7EB;
+        }
+
+        .card .table tbody td {
+            padding: 0.75rem 1rem;
+            vertical-align: middle;
+            border-bottom: 1px solid rgba(27, 42, 74, 0.04);
+        }
+
+        [data-bs-theme="dark"] .card .table tbody td {
+            border-bottom-color: rgba(255, 255, 255, 0.04);
+            color: #D1D5DB;
+        }
+
+        /* Global form controls inside cards */
+        .card .form-control:focus,
+        .card .form-select:focus {
+            border-color: #C6A962;
+            box-shadow: 0 0 0 0.2rem rgba(198, 169, 98, 0.15);
+        }
+
+        /* Global badge styling */
+        .badge.bg-success {
+            background: rgba(16, 185, 129, 0.12) !important;
+            color: #059669 !important;
+        }
+
+        .badge.bg-danger {
+            background: rgba(239, 68, 68, 0.12) !important;
+            color: #DC2626 !important;
+        }
+
+        .badge.bg-warning {
+            background: rgba(245, 158, 11, 0.12) !important;
+            color: #D97706 !important;
+        }
+
+        .badge.bg-info {
+            background: rgba(59, 130, 246, 0.12) !important;
+            color: #2563EB !important;
+        }
+
+        .badge.bg-primary {
+            background: rgba(27, 42, 74, 0.12) !important;
+            color: #1B2A4A !important;
+        }
+
+        .badge.bg-secondary {
+            background: rgba(107, 114, 128, 0.12) !important;
+            color: #4B5563 !important;
+        }
+
+        [data-bs-theme="dark"] .badge.bg-success {
+            background: rgba(16, 185, 129, 0.2) !important;
+            color: #34D399 !important;
+        }
+
+        [data-bs-theme="dark"] .badge.bg-danger {
+            background: rgba(239, 68, 68, 0.2) !important;
+            color: #FCA5A5 !important;
+        }
+
+        [data-bs-theme="dark"] .badge.bg-warning {
+            background: rgba(245, 158, 11, 0.2) !important;
+            color: #FCD34D !important;
+        }
+
+        [data-bs-theme="dark"] .badge.bg-info {
+            background: rgba(59, 130, 246, 0.2) !important;
+            color: #93C5FD !important;
+        }
+
+        [data-bs-theme="dark"] .badge.bg-primary {
+            background: rgba(198, 169, 98, 0.2) !important;
+            color: #E8D5A3 !important;
+        }
+
+        [data-bs-theme="dark"] .badge.bg-secondary {
+            background: rgba(107, 114, 128, 0.2) !important;
+            color: #9CA3AF !important;
+        }
+
+        /* Global page container padding consistency */
+        .container-fluid.px-0.py-2,
+        .container-fluid.py-3,
+        .container-fluid.py-3.py-md-4 {
+            padding-left: 0.5rem;
+            padding-right: 0.5rem;
+        }
+
+        /* Global button brand styling */
+        .btn-gold,
+        .btn-brand {
+            background: linear-gradient(135deg, #C6A962, #E8D5A3) !important;
+            color: #1B2A4A !important;
+            border: none !important;
+            font-weight: 600;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-gold:hover,
+        .btn-brand:hover {
+            background: linear-gradient(135deg, #B8993F, #C6A962) !important;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 15px rgba(198, 169, 98, 0.35);
+        }
+
+        /* Empty state consistent styling */
+        .empty-state-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(198, 169, 98, 0.1), rgba(198, 169, 98, 0.05));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+        }
+
+        .empty-state-icon i {
+            font-size: 2rem;
+            color: #C6A962;
+        }
     </style>
 
     @stack('styles')
 </head>
 
-<body class="main-bg main-bg-opac main-bg-blur theme-gold @if($showSidebar) adminuiux-sidebar-fill-white adminuiux-sidebar-boxed @endif"
-    data-theme="theme-gold" data-sidebarfill="adminuiux-sidebar-fill-white"
-    data-headerlayout="adminuiux-header-standard" data-sidebarlayout="adminuiux-sidebar-iconic" data-bs-spy="scroll"
-    data-bs-target="#list-example" data-bs-smooth-scroll="true" tabindex="0">
+<body
+    class="main-bg main-bg-opac main-bg-blur adminuiux-sidebar-fill-white adminuiux-sidebar-boxed  scrollup theme-green  @if($showSidebar) adminuiux-sidebar-fill-white adminuiux-sidebar-boxed @endif"
+    data-theme="theme-green" data-sidebarfill="adminuiux-sidebar-fill-white"
+    data-headerlayout="adminuiux-header-standard" data-sidebarlayout="adminuiux-sidebar-boxed adminuiux-sidebar-iconic"
+    data-bs-spy="scroll" data-bs-target="#list-example" data-bs-smooth-scroll="true" tabindex="0"
+    style="--adminuiux-main-bg: url({{ asset('assets/img/background-image/backgorund-image-8.jpg') }});">
 
     @include('layouts.partial.header')
 
@@ -536,58 +929,23 @@
         @endif
 
         {{-- Main Content --}}
-        <main class="adminuiux-content @if($showSidebar) has-sidebar @endif" onclick="contentClick()" @if($showSidebar) style="padding-top: 68px;" @endif>
+        <main class="adminuiux-content @if($showSidebar) has-sidebar @endif" onclick="contentClick()" @if($showSidebar)
+        style="padding-top: 68px;" @endif>
             <div class="container-fluid mt-4" id="main-content">
 
-              
 
-                {{-- Breadcrumbs dibungkus dalam Card --}}
-                @php
-                    $breadcrumbs = get_breadcrumbs();
-                @endphp
 
-                @if(!empty($breadcrumbs) && count($breadcrumbs) > 1)
-                    <div class="card border-1 mb-4 readcrumb-card"
-                        style="background-color: rgba(198, 169, 98, 0.1); border-color: rgba(198, 169, 98, 0.2) !important;">
-                        <div class="card-body py-2 px-3">
-                            <nav aria-label="breadcrumb" class="mb-0">
-                                <ol class="breadcrumb mb-0 align-items-center">
-                                    @foreach($breadcrumbs as $crumb)
-                                        @if($loop->last)
-                                            <li class="breadcrumb-item active" aria-current="page">
-                                                @if(!empty($crumb['icon']))
-                                                    <i class="bi {{ $crumb['icon'] }} me-1 fs-14"></i>
-                                                @endif
-                                                {{ $crumb['label'] }}
-                                            </li>
-                                        @else
-                                            <li class="breadcrumb-item">
-                                                @if(!empty($crumb['icon']))
-                                                    <i class="bi {{ $crumb['icon'] }} me-1 fs-14"></i>
-                                                @endif
-                                                @if(!empty($crumb['url']))
-                                                    <a href="{{ $crumb['url'] }}">{{ $crumb['label'] }}</a>
-                                                @elseif(!empty($crumb['route']))
-                                                    <a href="{{ route($crumb['route']) }}">{{ $crumb['label'] }}</a>
-                                                @else
-                                                    {{ $crumb['label'] }}
-                                                @endif
-                                            </li>
-                                        @endif
-                                    @endforeach
-                                </ol>
-                            </nav>
-                        </div>
-                    </div>
-                @endif
+                {{-- @include('layouts.partial.breadcrumb') --}}
                 {{-- Notifikasi / Alert Premium Gold --}}
                 @if(session('warning') || (auth()->check() && !auth()->user()->hasVerifiedEmail() && !auth()->user()->isAdmin()) || request()->has('verified'))
                     <div class="mb-3">
-                        
+
                         {{-- 1. Warning Session --}}
                         @if(session('warning'))
-                            <div class="d-flex align-items-center gap-3 p-3 rounded-4 mb-2" style="background-color: rgba(198, 169, 98, 0.15); border: 1px solid rgba(198, 169, 98, 0.4);">
-                                <div class="d-flex align-items-center justify-content-center rounded-circle flex-shrink-0 text-white" style="width: 42px; height: 42px; background: linear-gradient(135deg, #C6A962, #A68B4B);">
+                            <div class="d-flex align-items-center gap-3 p-3 rounded-4 mb-2"
+                                style="background-color: rgba(198, 169, 98, 0.15); border: 1px solid rgba(198, 169, 98, 0.4);">
+                                <div class="d-flex align-items-center justify-content-center rounded-circle flex-shrink-0 text-white"
+                                    style="width: 42px; height: 42px; background: linear-gradient(135deg, #C6A962, #A68B4B);">
                                     <i class="bi bi-exclamation-triangle-fill fs-6"></i>
                                 </div>
                                 <div class="fw-medium" style="color: #8f743e;">
@@ -598,19 +956,24 @@
 
                         {{-- 2. Unverified Email --}}
                         @if(auth()->check() && !auth()->user()->hasVerifiedEmail() && !auth()->user()->isAdmin())
-                            <div class="d-flex flex-column flex-md-row align-items-start align-items-md-center justify-content-between gap-3 p-3 rounded-4 mb-2" style="background-color: rgba(198, 169, 98, 0.15); border: 1px solid rgba(198, 169, 98, 0.4);">
+                            <div class="d-flex flex-column flex-md-row align-items-start align-items-md-center justify-content-between gap-3 p-3 rounded-4 mb-2"
+                                style="background-color: rgba(198, 169, 98, 0.15); border: 1px solid rgba(198, 169, 98, 0.4);">
                                 <div class="d-flex align-items-center gap-3">
-                                    <div class="d-flex align-items-center justify-content-center rounded-circle flex-shrink-0 text-white" style="width: 42px; height: 42px; background: linear-gradient(135deg, #C6A962, #A68B4B);">
+                                    <div class="d-flex align-items-center justify-content-center rounded-circle flex-shrink-0 text-white"
+                                        style="width: 42px; height: 42px; background: linear-gradient(135deg, #C6A962, #A68B4B);">
                                         <i class="bi bi-envelope-exclamation-fill fs-6"></i>
                                     </div>
                                     <div class="fw-medium" style="color: #8f743e;">
                                         Email Anda belum diverifikasi.
-                                        <a href="{{ route('verification.notice') }}" class="fw-bold text-decoration-underline" style="color: #A68B4B;">Verifikasi sekarang</a>
+                                        <a href="{{ route('verification.notice') }}" class="fw-bold text-decoration-underline"
+                                            style="color: #A68B4B;">Verifikasi sekarang</a>
                                     </div>
                                 </div>
                                 <form method="POST" action="{{ route('verification.send') }}" class="d-inline flex-shrink-0">
                                     @csrf
-                                    <button type="submit" class="btn btn-sm fw-semibold rounded-pill px-3 py-2 text-white border-0" style="background: linear-gradient(135deg, #C6A962, #A68B4B);">
+                                    <button type="submit"
+                                        class="btn btn-sm fw-semibold rounded-pill px-3 py-2 text-white border-0"
+                                        style="background: linear-gradient(135deg, #C6A962, #A68B4B);">
                                         <i class="bi bi-send-fill me-1"></i>Kirim Ulang
                                     </button>
                                 </form>
@@ -618,10 +981,13 @@
                         @endif
 
                         {{-- 3. Verified Success --}}
-                        {{-- Untuk sukses, saya tetap menggunakan warna emas agar konsisten dengan tema, namun dengan ikon checklis --}}
+                        {{-- Untuk sukses, saya tetap menggunakan warna emas agar konsisten dengan tema, namun dengan ikon
+                        checklis --}}
                         @if(request()->has('verified'))
-                            <div class="d-flex align-items-center gap-3 p-3 rounded-4" style="background-color: rgba(198, 169, 98, 0.15); border: 1px solid rgba(198, 169, 98, 0.4);">
-                                <div class="d-flex align-items-center justify-content-center rounded-circle flex-shrink-0 text-white" style="width: 42px; height: 42px; background: linear-gradient(135deg, #C6A962, #A68B4B);">
+                            <div class="d-flex align-items-center gap-3 p-3 rounded-4"
+                                style="background-color: rgba(198, 169, 98, 0.15); border: 1px solid rgba(198, 169, 98, 0.4);">
+                                <div class="d-flex align-items-center justify-content-center rounded-circle flex-shrink-0 text-white"
+                                    style="width: 42px; height: 42px; background: linear-gradient(135deg, #C6A962, #A68B4B);">
                                     <i class="bi bi-check-lg fs-5"></i>
                                 </div>
                                 <div class="fw-medium" style="color: #8f743e;">
@@ -642,7 +1008,7 @@
     {{-- Mobile Bottom Nav --}}
     @include('layouts.partial.mobile_global')
 
- 
+
 
     {{-- Page-level scripts (loaded by child views) --}}
     @stack('scripts')
@@ -748,7 +1114,7 @@
 
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="{{ asset('assets/js/component/component-toasts.js') }}"></script>
-        @yield('js')
+    @yield('js')
 
 </body>
 

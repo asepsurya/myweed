@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Category;
 use App\Models\Template;
 use App\Models\TemplateType;
 use Illuminate\Database\Seeder;
@@ -12,15 +13,16 @@ class TempelateSeed extends Seeder
     public function run(): void
     {
         $typeMap = TemplateType::pluck('id', 'slug')->all();
+        $categoryMap = Category::pluck('id', 'slug')->all();
 
         $templates = [
-            ['name' => 'Simple', 'slug' => 'simple-theme', 'template_type_id' => $typeMap['basic'] ?? null],
-            ['name' => 'Luxe Amour', 'slug' => 'luxe-amour', 'template_type_id' => $typeMap['basic'] ?? null],
-            ['name' => 'Romantic Anime Dreams', 'slug' => 'romantic-anime', 'template_type_id' => $typeMap['luxury'] ?? null],
-            ['name' => 'Sweety Lovely', 'slug' => 'sweet-lovely', 'template_type_id' => $typeMap['premium'] ?? null],
-            ['name' => 'Black Gold', 'slug' => 'black-gold', 'template_type_id' => $typeMap['premium'] ?? null],
-            ['name' => 'Red Simple Elegant', 'slug' => 'red-simple-elegant', 'template_type_id' => $typeMap['luxury'] ?? null],
-            ['name' => 'Retro Magazine', 'slug' => 'retro-magazine', 'template_type_id' => $typeMap['luxury'] ?? null],
+            ['name' => 'Simple', 'slug' => 'simple-theme', 'template_type_id' => $typeMap['basic'] ?? null, 'category_slug' => 'wedding'],
+            ['name' => 'Luxe Amour', 'slug' => 'luxe-amour', 'template_type_id' => $typeMap['basic'] ?? null, 'category_slug' => 'wedding'],
+            ['name' => 'Romantic Anime Dreams', 'slug' => 'romantic-anime', 'template_type_id' => $typeMap['luxury'] ?? null, 'category_slug' => 'wedding'],
+            ['name' => 'Sweety Lovely', 'slug' => 'sweet-lovely', 'template_type_id' => $typeMap['premium'] ?? null, 'category_slug' => 'wedding'],
+            ['name' => 'Black Gold', 'slug' => 'black-gold', 'template_type_id' => $typeMap['premium'] ?? null, 'category_slug' => 'wedding'],
+            ['name' => 'Red Simple Elegant', 'slug' => 'red-simple-elegant', 'template_type_id' => $typeMap['luxury'] ?? null, 'category_slug' => 'wedding'],
+            ['name' => 'Retro Magazine', 'slug' => 'retro-magazine', 'template_type_id' => $typeMap['luxury'] ?? null, 'category_slug' => 'wedding'],
         ];
 
         foreach ($templates as $tpl) {
@@ -36,6 +38,7 @@ class TempelateSeed extends Seeder
                     'thumbnail' => $thumb,
                     'preview' => $preview,
                     'template_type_id' => $tpl['template_type_id'] ?? null,
+                    'id_category' => $categoryMap[$tpl['category_slug']] ?? null,
                     'sections' => ['hero', 'couple', 'event', 'gallery', 'rsvp', 'music'],
                     'is_active' => true,
                 ]

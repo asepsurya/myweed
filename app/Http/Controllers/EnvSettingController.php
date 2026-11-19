@@ -73,6 +73,10 @@ class EnvSettingController extends Controller
             'R2_ENDPOINT' => 'nullable|url',
             'R2_URL' => 'nullable|url',
             'R2_PUBLIC_URL' => 'nullable|url',
+
+            // Social media & marketplace links
+            'SOCIAL_TOKOPEDIA_URL' => 'nullable|url',
+            'SOCIAL_SHOPEE_URL' => 'nullable|url',
         ]);
 
         // Save keys

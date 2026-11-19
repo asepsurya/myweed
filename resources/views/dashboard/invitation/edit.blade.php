@@ -896,6 +896,81 @@
                         <input type="hidden" name="id" value="{{ $invitation->id }}">
                         <input type="hidden" name="uploaded_gallery_ids" id="uploadedGalleryIds" value="">
                         @include('dashboard.invitation.form_tabs', ['invitation' => $invitation, 'music' => $music, 'youtubeMusic' => $youtubeMusic, 'templates' => $templates])
+
+                        {{-- Dynamic Fields based on Category --}}
+                        @php
+                            $category = $invitation->category;
+                            $dynamicFields = $category ? ($category->dynamic_fields ?? []) : [];
+                            $customData = $invitation->custom_data ?? [];
+                            if (is_string($customData)) {
+                                $customData = json_decode($customData, true) ?? [];
+                            }
+                        @endphp
+                        @if(count($dynamicFields) > 0)
+                        <div class="tab-content d-none" id="dynamic-fields">
+                            <div class="card">
+                                <div class="card-header p-3 d-flex align-items-center gap-3">
+                                    <div class="islami-icon">
+                                        <i class="bi bi-sliders fs-5"></i>
+                                    </div>
+                                    <h6 class="mb-0">Data Dinamis ({{ $category->name }})</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row g-3">
+                                        @foreach($dynamicFields as $field)
+                                        @php
+                                            $fieldName = $field['name'] ?? '';
+                                            $fieldValue = data_get($customData, $fieldName, old('custom_data.'.$fieldName));
+                                            $isRequired = $field['required'] ?? false;
+                                        @endphp
+                                        <div class="col-md-6">
+                                            <label class="form-label">{{ $field['label'] ?? $fieldName }} @if($isRequired)<span class="text-danger">*</span>@endif</label>
+                                            @switch($field['type'] ?? 'text')
+                                                @case('textarea')
+                                                    <textarea name="custom_data[{{ $fieldName }}]" class="form-control" rows="3">{{ $fieldValue }}</textarea>
+                                                    @break
+                                                @case('number')
+                                                    <input type="number" name="custom_data[{{ $fieldName }}]" class="form-control" value="{{ $fieldValue }}">
+                                                    @break
+                                                @case('date')
+                                                    <input type="date" name="custom_data[{{ $fieldName }}]" class="form-control" value="{{ $fieldValue }}">
+                                                    @break
+                                                @case('time')
+                                                    <input type="time" name="custom_data[{{ $fieldName }}]" class="form-control" value="{{ $fieldValue }}">
+                                                    @break
+                                                @case('email')
+                                                    <input type="email" name="custom_data[{{ $fieldName }}]" class="form-control" value="{{ $fieldValue }}">
+                                                    @break
+                                                @case('url')
+                                                    <input type="url" name="custom_data[{{ $fieldName }}]" class="form-control" value="{{ $fieldValue }}">
+                                                    @break
+                                                @case('image')
+                                                    <input type="file" name="custom_data_file[{{ $fieldName }}]" class="form-control" accept="image/*">
+                                                    @if(isset($fieldValue) && $fieldValue)
+                                                        <div class="mt-2">
+                                                            <img src="{{ storage_url($fieldValue) }}" class="img-fluid" style="max-height: 150px; object-fit: cover; border-radius: 8px;">
+                                                        </div>
+                                                    @endif
+                                                    @break
+                                                @case('boolean')
+                                                    <div class="form-check">
+                                                        <input type="checkbox" name="custom_data[{{ $fieldName }}]" value="1" class="form-check-input" {{ ($fieldValue == 1 || $fieldValue === true || $fieldValue === '1') ? 'checked' : '' }}>
+                                                        <label class="form-check-label">Aktifkan {{ $field['label'] ?? $fieldName }}</label>
+                                                    </div>
+                                                    @break
+                                                @default
+                                                    <input type="text" name="custom_data[{{ $fieldName }}]" class="form-control" value="{{ $fieldValue }}" placeholder="{{ $field['placeholder'] ?? '' }}">
+                                            @endswitch
+                                            @if(isset($field['placeholder']) && $field['placeholder'])
+                                                <div class="form-text small">{{ $field['placeholder'] }}</div>
+                                            @endif
+                                        </div>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        @endif
                     </form>
                 </div>
 
@@ -1985,6 +2060,17 @@
             if (categorySelect) categorySelect.onchange = filterTemplates;
             if (typeSelect) typeSelect.onchange = filterTemplates;
             if (searchTemplate) searchTemplate.oninput = filterTemplates;
+
+            // Default filter kategori mengikuti kategori undangan ini
+            const invitationCategory = @json($invitation->category->name ?? null);
+            if (categorySelect && invitationCategory) {
+                const hasCategoryOption = Array.from(categorySelect.options)
+                    .some(opt => opt.value === invitationCategory);
+                if (hasCategoryOption) {
+                    categorySelect.value = invitationCategory;
+                    filterTemplates();
+                }
+            }
 
             const previewIframe = document.getElementById('livePreviewIframe');
             if (previewIframe) {

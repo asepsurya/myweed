@@ -1,2467 +1,1378 @@
-<!DOCTYPE html>
-<html lang="id">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-
-    @php
-        $noIndex = !empty(request('search')) || (!empty(request('category')) && request('category') != 'All');
-    @endphp
-    @include('layouts.partial.seo_head')
-
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap"
-        rel="stylesheet">
-    <link rel="icon" type="image/png" href="{{ asset('assets/fav-icon.png') }}">
-    <!-- Icons -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-
-    <!-- Bootstrap 5 -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-
-    <style>
-        :root {
-            --gold: #C6A962;
-            --gold-light: #E8D5A3;
-            --gold-dark: #A68B4B;
-            --navy: #1B2A4A;
-            --navy-light: #2A3F6A;
-            --white: #FFFFFF;
-            --bg: #F7F5F2;
-            --bg-alt: #FDFBF7;
-            --border: #E8E4DE;
-            --text: #1B2A4A;
-            --text-secondary: #6B7280;
-            --text-muted: #9CA3AF;
-            --radius: 12px;
-            --radius-lg: 20px;
-            --speed: 0.4s;
-            --font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            --font-display: 'Playfair Display', Georgia, serif;
-        }
-
-        * {
-            box-sizing: border-box;
-        }
-
-        html {
-            scroll-behavior: smooth;
-        }
-
-        body {
-            font-family: var(--font);
-            color: var(--text);
-            background-color: var(--bg);
-            margin: 0;
-            padding: 0;
-            -webkit-font-smoothing: antialiased;
-            overflow-x: hidden;
-        }
-
-        a {
-            text-decoration: none;
-            color: inherit;
-            transition: all var(--speed) ease;
-        }
-
-        h1,
-        h2,
-        h3,
-        h4 {
-            font-family: var(--font-display);
-        }
-
-        /* ===== Keyframes ===== */
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes fadeInDown {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes float {
-
-            0%,
-            100% {
-                transform: translateY(0) translateX(0);
-            }
-
-            50% {
-                transform: translateY(-15px) translateX(5px);
-            }
-        }
-
-        @keyframes pulseSoft {
-
-            0%,
-            100% {
-                transform: scale(1);
-                opacity: 0.5;
-            }
-
-            50% {
-                transform: scale(1.05);
-                opacity: 0.8;
-            }
-        }
-
-        /* ===== Scroll Reveal ===== */
-        .reveal {
-            opacity: 0;
-            transform: translateY(40px);
-            transition: opacity 0.8s cubic-bezier(0.25, 1, 0.5, 1), transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
-        }
-
-        .reveal.active {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        /* ===== Navbar ===== */
-        .navbar {
-            padding: 1.5rem 0;
-            background: transparent;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            z-index: 1000;
-            transition: all var(--speed) ease;
-        }
-
-        .navbar.scrolled {
-            padding: 1rem 0;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(12px);
-            border-bottom: 1px solid var(--border);
-            box-shadow: 0 4px 20px rgba(27, 42, 74, 0.05);
-        }
-
-        .navbar-brand {
-            display: inline-block;
-            padding: 0;
-            margin: 0;
-        }
-
-        .navbar-brand img {
-            height: 40px;
-            width: auto;
-            filter: brightness(0) invert(1);
-            transition: filter var(--speed) ease;
-        }
-
-        .navbar.scrolled .navbar-brand img {
-            filter: none;
-        }
-
-        .nav-link {
-            font-weight: 500;
-            color: rgba(255, 255, 255, 0.8) !important;
-            margin: 0 0.8rem;
-            font-size: 0.9rem;
-            position: relative;
-        }
-
-        .navbar.scrolled .nav-link {
-            color: var(--text-secondary) !important;
-        }
-
-        .nav-link:hover {
-            color: var(--gold-light) !important;
-        }
-
-        .navbar.scrolled .nav-link:hover {
-            color: var(--gold-dark) !important;
-        }
-
-        .btn-gold {
-            background: linear-gradient(135deg, var(--gold), var(--gold-dark));
-            color: var(--white) !important;
-            border-radius: 50px;
-            padding: 0.6rem 1.5rem;
-            font-weight: 600;
-            font-size: 0.85rem;
-            border: none;
-            transition: all var(--speed);
-            box-shadow: 0 4px 15px rgba(198, 169, 98, 0.3);
-        }
-
-        .btn-gold:hover {
-            transform: translateY(-3px) scale(1.02);
-            box-shadow: 0 8px 25px rgba(198, 169, 98, 0.5);
-        }
-
-        .user-avatar-circle {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--gold), var(--gold-dark));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-            flex-shrink: 0;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            transition: all var(--speed) ease;
-        }
-
-        .navbar.scrolled .user-avatar-circle {
-            border-color: var(--gold-light);
-        }
-
-        .user-avatar-img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .user-avatar-initial {
-            color: var(--white);
-            font-weight: 700;
-            font-size: 0.9rem;
-            line-height: 1;
-        }
-
-        .nav-link .user-avatar-circle:hover {
-            transform: scale(1.1);
-            border-color: var(--gold);
-        }
-
-        /* ===== Hero Section ===== */
-        .hero-section {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            color: var(--white);
-            position: relative;
-            overflow: hidden;
-            padding: 120px 0 80px;
-        }
-
-        .hero-video {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            z-index: 0;
-        }
-
-        .hero-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(rgba(27, 42, 74, 0.8), rgba(27, 42, 74, 0.95));
-            z-index: 1;
-        }
-
-        .hero-shape {
-            position: absolute;
-            border-radius: 50%;
-            border: 1px solid rgba(198, 169, 98, 0.2);
-            z-index: 2;
-            animation: float 10s infinite ease-in-out;
-        }
-
-        .shape-1 {
-            width: 400px;
-            height: 400px;
-            top: -100px;
-            left: -100px;
-        }
-
-        .shape-2 {
-            width: 300px;
-            height: 300px;
-            bottom: -50px;
-            right: -50px;
-            border-color: rgba(255, 255, 255, 0.1);
-            animation-direction: reverse;
-            animation-duration: 12s;
-        }
-
-        .shape-3 {
-            width: 150px;
-            height: 150px;
-            top: 20%;
-            right: 15%;
-            background: radial-gradient(circle, rgba(198, 169, 98, 0.2) 0%, transparent 70%);
-            border: none;
-            animation: pulseSoft 6s infinite ease-in-out;
-        }
-
-        .hero-content {
-            position: relative;
-            z-index: 3;
-            max-width: 800px;
-        }
-
-        .hero-tag {
-            display: inline-block;
-            padding: 0.4rem 1.2rem;
-            border-radius: 50px;
-            background: rgba(198, 169, 98, 0.15);
-            border: 1px solid rgba(198, 169, 98, 0.3);
-            color: var(--gold-light);
-            font-size: 0.8rem;
-            font-weight: 500;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            margin-bottom: 1.5rem;
-            animation: fadeInDown 1s ease-out forwards;
-            opacity: 0;
-        }
-
-        .hero-section h1 {
-            font-size: 4rem;
-            font-weight: 600;
-            margin-bottom: 1rem;
-            letter-spacing: -1px;
-            line-height: 1.2;
-            animation: fadeInUp 1s ease-out 0.3s forwards;
-            opacity: 0;
-        }
-
-        .hero-section h1 em {
-            font-style: italic;
-            color: var(--gold-light);
-        }
-
-        .hero-section p {
-            font-size: 1.15rem;
-            color: rgba(255, 255, 255, 0.8);
-            margin-bottom: 0;
-            font-weight: 300;
-            line-height: 1.7;
-            animation: fadeInUp 1s ease-out 0.6s forwards;
-            opacity: 0;
-        }
-
-        .search-container {
-            max-width: 600px;
-            margin: 2.5rem auto 0;
-            position: relative;
-            animation: fadeInUp 1s ease-out 0.9s forwards;
-            opacity: 0;
-        }
-
-        .search-container input {
-            width: 100%;
-            padding: 1.2rem 1.5rem 1.2rem 3.5rem;
-            border-radius: 50px;
-            border: 1.5px solid transparent;
-            background: var(--white);
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
-            font-family: var(--font);
-            font-size: 0.95rem;
-            transition: all var(--speed) ease;
-            outline: none;
-        }
-
-        .search-container input:focus {
-            border-color: var(--gold);
-            box-shadow: 0 0 0 4px rgba(198, 169, 98, 0.2);
-        }
-
-        .search-container i {
-            position: absolute;
-            left: 1.5rem;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--text-muted);
-            font-size: 1.1rem;
-        }
-
-        .search-container .btn-search {
-            position: absolute;
-            right: 8px;
-            top: 8px;
-            bottom: 8px;
-            background: linear-gradient(135deg, var(--gold), var(--gold-dark));
-            color: white;
-            border: none;
-            border-radius: 50px;
-            padding: 0 1.8rem;
-            font-weight: 600;
-            font-size: 0.9rem;
-        }
-
-        .hero-text-slider {
-            position: relative;
-            min-height: 220px;
-        }
-
-        .hero-slide {
-            position: absolute;
-            inset: 0;
-            opacity: 0;
-            transform: translateY(20px);
-            transition: opacity 0.8s ease, transform 0.8s ease;
-            pointer-events: none;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 0.75rem;
-        }
-
-        .hero-slide.active {
-            opacity: 1;
-            transform: translateY(0);
-            pointer-events: auto;
-        }
-
-        .hero-slider-dots {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            margin-top: 1.25rem;
-        }
-
-        .hero-slider-dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            border: none;
-            background: rgba(255, 255, 255, 0.4);
-            cursor: pointer;
-            transition: all 0.3s ease;
-            padding: 0;
-        }
-
-        .hero-slider-dot.active {
-            background: var(--gold);
-            width: 28px;
-            border-radius: 12px;
-            box-shadow: 0 0 15px rgba(198, 169, 98, 0.5);
-        }
-
-        @media (max-width: 768px) {
-            .hero-text-slider {
-                min-height: 280px;
-            }
-
-            .hero-slider-dot {
-                width: 8px;
-                height: 8px;
-            }
-
-            .hero-slider-dot.active {
-                width: 22px;
-            }
-        }
-
-        /* Tags */
-        .tag-list {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        .tag-item {
-            padding: 0.5rem 1.4rem;
-            border-radius: 50px;
-            background: rgba(255, 255, 255, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            color: rgba(255, 255, 255, 0.8);
-            font-size: 0.82rem;
-            font-weight: 500;
-        }
-
-        .tag-item.active,
-        .tag-item:hover {
-            background: var(--gold);
-            color: var(--white);
-            border-color: var(--gold);
-            transform: translateY(-2px);
-        }
-
-        .scroll-down {
-            position: absolute;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            color: rgba(255, 255, 255, 0.6);
-            font-size: 1.5rem;
-            z-index: 3;
-            animation: bounce 2s infinite;
-        }
-
-        @keyframes bounce {
-
-            0%,
-            20%,
-            50%,
-            80%,
-            100% {
-                transform: translateY(0) translateX(-50%);
-            }
-
-            40% {
-                transform: translateY(-10px) translateX(-50%);
-            }
-
-            60% {
-                transform: translateY(-5px) translateX(-50%);
-            }
-        }
-
-        /* =========================
-           ART GALLERY WEDDING SECTION
-        ========================== */
-        .real-wedding-section {
-            position: relative;
-            padding: 120px 0;
-            background: #1B2A4A;
-            border-bottom: 1px solid var(--border);
-            overflow: hidden;
-        }
-
-        .real-wedding-bg {
-            position: absolute;
-            inset: 0;
-            background:
-                linear-gradient(rgba(27, 42, 74, 0.85), rgba(27, 42, 74, 0.95)),
-                url('{{ asset('assets/img/innokurnia-wedding-4297343_1920.jpg') }}') center/cover no-repeat;
-            opacity: 0.35;
-            z-index: 0;
-            pointer-events: none;
-        }
-
-        .real-wedding-section .container {
-            position: relative;
-            z-index: 1;
-        }
-
-        .section-header-center {
-            text-align: center;
-            margin-bottom: 80px;
-        }
-
-        .section-subtitle {
-            font-family: var(--font);
-            color: var(--gold-dark);
-            font-weight: 600;
-            font-size: 0.75rem;
-            letter-spacing: 4px;
-            text-transform: uppercase;
-            margin-bottom: 1rem;
-            display: block;
-        }
-
-        .section-title {
-            font-size: 3rem;
-            font-weight: 400;
-            font-style: italic;
-            color: var(--navy);
-            margin-bottom: 1rem;
-            line-height: 1.2;
-        }
-
-        .section-desc {
-            color: var(--text-secondary);
-            max-width: 500px;
-            margin: 0 auto;
-            font-size: 0.95rem;
-        }
-
-        .real-wedding-section .section-title {
-            color: var(--white);
-        }
-
-        .real-wedding-section .section-desc {
-            color: rgba(255, 255, 255, 0.8);
-        }
-
-        .wedding-showcase {
-            display: flex;
-            gap: 30px;
-            align-items: stretch;
-        }
-
-        .wedding-list-col {
-            flex: 0 0 340px;
-            background: rgba(255, 255, 255, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            border-radius: var(--radius-lg);
-            padding: 24px;
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
-            max-height: 540px;
-            overflow-y: auto;
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-        }
-
-        .wedding-preview-col {
-            flex: 1;
-            min-width: 0;
-        }
-
-        .couple-list-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-            text-decoration: none;
-            color: rgba(255, 255, 255, 0.9);
-            transition: all 0.3s ease;
-            border-radius: 12px;
-            cursor: pointer;
-        }
-
-        .couple-list-item:last-child {
-            border-bottom: none;
-        }
-
-        .couple-list-item:hover {
-            background: rgba(255, 255, 255, 0.1);
-            transform: translateX(4px);
-        }
-
-        .couple-list-item.active {
-            background: rgba(198, 169, 98, 0.25);
-            border: 1px solid var(--gold-light);
-            padding: 11px;
-        }
-
-        .couple-list-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 2px solid rgba(255, 255, 255, 0.35);
-            flex-shrink: 0;
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        .couple-list-info {
-            min-width: 0;
-        }
-
-        .couple-list-names {
-            font-family: var(--font-display);
-            font-weight: 600;
-            font-size: 0.9rem;
-            color: var(--white);
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .couple-list-date {
-            font-size: 0.75rem;
-            color: rgba(255, 255, 255, 0.65);
-            margin-top: 2px;
-        }
-
-        .couple-preview-panel {
-            background: rgba(255, 255, 255, 0.95);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: var(--radius-lg);
-            padding: 16px;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
-            height: 100%;
-            min-height: 540px;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .couple-preview-header {
-            position: relative;
-        }
-
-        .couple-preview-close {
-            border: 0;
-            background: transparent;
-            color: var(--text-secondary);
-            font-size: 1.1rem;
-            cursor: pointer;
-            padding: 4px;
-            line-height: 1;
-            transition: color 0.2s ease;
-        }
-
-        .couple-preview-close:hover {
-            color: var(--navy);
-        }
-
-        .couple-preview-frame-wrapper {
-            position: relative;
-            flex: 1;
-            border-radius: 12px;
-            overflow: hidden;
-            background: var(--bg);
-            border: 1px solid var(--border);
-            min-height: 400px;
-        }
-
-        .couple-preview-frame-wrapper iframe {
-            position: absolute;
-            inset: 0;
-            width: 100%;
-            height: 100%;
-            border: 0;
-        }
-
-        .couple-preview-empty {
-            position: absolute;
-            inset: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            color: var(--text-muted);
-            text-align: center;
-            padding: 24px;
-            gap: 12px;
-        }
-
-        .couple-preview-empty i {
-            font-size: 3rem;
-            opacity: 0.4;
-        }
-
-        .couple-preview-empty p {
-            margin: 0;
-            font-size: 0.95rem;
-            max-width: 260px;
-        }
-
-        @media (max-width: 992px) {
-            .wedding-showcase {
-                flex-direction: column;
-            }
-
-            .wedding-list-col {
-                flex: 0 0 auto;
-                width: 100%;
-                max-height: none;
-            }
-
-            .couple-preview-panel {
-                min-height: 400px;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .real-wedding-section {
-                padding: 80px 0;
-            }
-
-            .couple-preview-frame-wrapper {
-                min-height: 300px;
-            }
-
-            .couple-preview-panel {
-                min-height: 360px;
-                padding: 12px;
-            }
-
-            .section-title {
-                font-size: 1.8rem;
-            }
-        }
-
-        /* ===== Features Section ===== */
-        .features-section {
-            padding: 80px 0;
-            background: var(--bg);
-        }
-
-        .feature-card {
-            background: var(--white);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-lg);
-            padding: 2.5rem 2rem;
-            height: 100%;
-            transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .feature-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 4px;
-            background: linear-gradient(90deg, var(--gold), var(--gold-dark));
-            transform: scaleX(0);
-            transform-origin: left;
-            transition: transform 0.5s ease;
-        }
-
-        .feature-card:hover {
-            transform: translateY(-10px);
-            border-color: var(--gold-light);
-            box-shadow: 0 20px 50px rgba(27, 42, 74, 0.1);
-        }
-
-        .feature-card:hover::before {
-            transform: scaleX(1);
-        }
-
-        .feature-icon {
-            width: 60px;
-            height: 60px;
-            border-radius: 16px;
-            background: linear-gradient(135deg, rgba(198, 169, 98, 0.1), rgba(198, 169, 98, 0.05));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 1.5rem;
-            font-size: 1.5rem;
-            color: var(--gold-dark);
-            transition: all 0.5s ease;
-        }
-
-        .feature-card:hover .feature-icon {
-            transform: scale(1.1) rotate(-5deg);
-            background: linear-gradient(135deg, var(--gold), var(--gold-dark));
-            color: var(--white);
-        }
-
-        .feature-card h4 {
-            font-size: 1.2rem;
-            font-weight: 600;
-            color: var(--navy);
-            margin-bottom: 0.75rem;
-        }
-
-        .feature-card p {
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-            line-height: 1.6;
-            margin: 0;
-        }
-
-        /* ===== Features Auto Scroll ===== */
-        .features-scroll-wrapper {
-            overflow: hidden;
-            position: relative;
-            width: 100%;
-        }
-
-        .features-scroll-wrapper::before,
-        .features-scroll-wrapper::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            bottom: 0;
-            width: 80px;
-            z-index: 2;
-            pointer-events: none;
-        }
-
-        .features-scroll-wrapper::before {
-            left: 0;
-            background: linear-gradient(to right, var(--bg), transparent);
-        }
-
-        .features-scroll-wrapper::after {
-            right: 0;
-            background: linear-gradient(to left, var(--bg), transparent);
-        }
-
-        .features-scroll-track {
-            display: flex;
-            gap: 24px;
-            width: max-content;
-            animation: featuresScroll 40s linear infinite;
-        }
-
-        .features-scroll-track:hover {
-            animation-play-state: paused;
-        }
-
-        .features-scroll-track .feature-card {
-            min-width: 280px;
-            max-width: 320px;
-            flex: 0 0 auto;
-        }
-
-        @keyframes featuresScroll {
-            from {
-                transform: translateX(0);
-            }
-
-            to {
-                transform: translateX(-50%);
-            }
-        }
-
-        /* ===== Templates Grid ===== */
-        .template-section {
-            padding: 80px 0 100px;
-            background: var(--bg-alt);
-        }
-
-        .template-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 30px;
-            padding: 20px 0;
-        }
-
-        .template-card {
-            border-radius: var(--radius);
-            overflow: hidden;
-            transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1);
-            background: transparent;
-        }
-
-        .template-img-container {
-            aspect-ratio: 4/3;
-            border-radius: var(--radius);
-            overflow: hidden;
-            position: relative;
-            background: var(--bg);
-            border: 1px solid var(--border);
-        }
-
-        .template-img-container img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
-        }
-
-        .template-card:hover .template-img-container img {
-            transform: scale(1.08);
-        }
-
-        .template-overlay {
-            position: absolute;
-            inset: 0;
-            background: rgba(27, 42, 74, 0.7);
-            backdrop-filter: blur(3px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            opacity: 0;
-            transition: opacity 0.4s ease;
-            gap: 10px;
-        }
-
-        .template-card:hover .template-overlay {
-            opacity: 1;
-        }
-
-        .template-footer {
-            padding: 12px 4px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .user-avatar {
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            background: var(--border);
-        }
-
-        .user-name {
-            font-size: 0.85rem;
-            font-weight: 700;
-            color: var(--navy);
-        }
-
-        .card-stats {
-            display: flex;
-            gap: 10px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            color: var(--text-secondary);
-        }
-
-        .card-stats i {
-            font-size: 0.85rem;
-        }
-
-        .badge-pro {
-            background: var(--gold);
-            color: white;
-            font-size: 0.65rem;
-            padding: 1px 5px;
-            border-radius: 3px;
-            font-weight: 800;
-        }
-
-        .type-badge-card {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            z-index: 10;
-            font-size: 0.7rem;
-            font-weight: 700;
-            padding: 4px 10px;
-            border-radius: 4px;
-            color: #fff;
-            pointer-events: none;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
-        }
-
-        /* ===== CTA Section ===== */
-        .cta-section {
-            padding: 80px 0;
-            background: var(--navy);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .cta-section::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            right: -10%;
-            width: 500px;
-            height: 500px;
-            background: radial-gradient(circle, rgba(198, 169, 98, 0.15) 0%, transparent 70%);
-            pointer-events: none;
-            animation: pulseSoft 8s infinite ease-in-out;
-        }
-
-        .cta-box {
-            text-align: center;
-            color: var(--white);
-            position: relative;
-            z-index: 2;
-        }
-
-        .cta-box h2 {
-            font-size: 2.5rem;
-            font-weight: 600;
-            margin-bottom: 1rem;
-        }
-
-        .cta-box p {
-            font-size: 1.1rem;
-            color: rgba(255, 255, 255, 0.7);
-            margin-bottom: 2rem;
-            font-weight: 300;
-        }
-
-        /* ===== Footer ===== */
-        footer {
-            background: var(--bg-alt);
-            border-top: 1px solid var(--border);
-            padding: 80px 0 30px;
-        }
-
-        .footer-logo {
-            display: inline-block;
-            margin-bottom: 1.5rem;
-        }
-
-        .footer-logo img {
-            height: 40px;
-            width: auto;
-        }
-
-        .footer-links {
-            list-style: none;
-            padding: 0;
-        }
-
-        .footer-links li {
-            margin-bottom: 0.8rem;
-            font-size: 0.9rem;
-        }
-
-        .footer-links li a {
-            color: var(--text-secondary);
-            display: inline-block;
-            transition: transform 0.2s ease;
-        }
-
-        .footer-links li a:hover {
-            color: var(--gold-dark);
-            transform: translateX(5px);
-        }
-
-        .footer-heading {
-            font-family: var(--font);
-            font-weight: 700;
-            color: var(--navy);
-            margin-bottom: 1.5rem;
-            font-size: 0.95rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .footer-social {
-            display: flex;
-            gap: 12px;
-            margin-top: 1.5rem;
-        }
-
-        .social-btn {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: var(--bg);
-            border: 1px solid var(--border);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--navy);
-            font-size: 1rem;
-        }
-
-        .social-btn:hover {
-            background: var(--navy);
-            color: var(--white);
-            transform: translateY(-5px) rotate(5deg);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .footer-bottom {
-            border-top: 1px solid var(--border);
-            margin-top: 60px;
-            padding-top: 30px;
-            text-align: center;
-            color: var(--text-muted);
-            font-size: 0.85rem;
-        }
-
-        /* ===== Midtrans Security Badge ===== */
-        .midtrans-security {
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            padding: 10px 18px;
-            border-radius: 50px;
-            background: #f0f7ff;
-            border: 1px solid #cce5ff;
-            color: #004085;
-            font-size: 0.85rem;
-            font-weight: 600;
-            text-decoration: none;
-            transition: all 0.3s ease;
-        }
-
-        .midtrans-security:hover {
-            background: #e0f0ff;
-            border-color: #0068FF;
-            color: #0068FF;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 104, 255, 0.15);
-        }
-
-        .midtrans-security .midtrans-icon {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            background: #0068FF;
-            color: #fff;
-            font-size: 14px;
-            flex-shrink: 0;
-        }
-
-        .midtrans-security .midtrans-logo-text {
-            font-weight: 800;
-            letter-spacing: 0.5px;
-            color: #0068FF;
-        }
-
-        .midtrans-security .midtrans-label {
-            font-weight: 500;
-            color: #004085;
-        }
-
-        @media (max-width: 768px) {
-            .midtrans-security {
-                font-size: 0.75rem;
-                padding: 8px 14px;
-                gap: 6px;
-            }
-
-            .midtrans-security .midtrans-icon {
-                width: 24px;
-                height: 24px;
-                font-size: 12px;
-            }
-        }
-
-        /* ===== How It Works Section ===== */
-        .how-it-works-section {
-            padding: 100px 0;
-            background: var(--bg);
-            border-bottom: 1px solid var(--border);
-        }
-
-        .step-card {
-            background: var(--white);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-lg);
-            padding: 2.5rem 1.5rem;
-            height: 100%;
-            transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .step-card:hover {
-            transform: translateY(-10px);
-            border-color: var(--gold-light);
-            box-shadow: 0 20px 50px rgba(27, 42, 74, 0.1);
-        }
-
-        .step-icon {
-            width: 80px;
-            height: 80px;
-            margin: 0 auto 1.5rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            background: linear-gradient(135deg, rgba(198, 169, 98, 0.1), rgba(198, 169, 98, 0.05));
-            transition: all 0.5s ease;
-        }
-
-        .step-icon img {
-            width: 48px;
-            height: 48px;
-            object-fit: contain;
-            transition: transform 0.5s ease;
-        }
-
-        .step-card:hover .step-icon {
-            background: linear-gradient(135deg, var(--gold), var(--gold-dark));
-            transform: scale(1.1);
-        }
-
-        .step-card:hover .step-icon img {
-            transform: scale(1.1);
-        }
-
-        .step-number {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            background: var(--gold);
-            color: var(--white);
-            font-weight: 700;
-            font-size: 0.9rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            opacity: 0.9;
-            transition: all 0.5s ease;
-        }
-
-        .step-card:hover .step-number {
-            background: var(--navy);
-            transform: scale(1.1);
-        }
-
-        .step-title {
-            font-family: var(--font-display);
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: var(--navy);
-            margin-bottom: 0.75rem;
-        }
-
-        .step-desc {
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-            line-height: 1.6;
-            margin: 0;
-        }
-
-        @media (max-width: 768px) {
-            .how-it-works-section {
-                padding: 60px 0;
-            }
-
-            .step-card {
-                padding: 2rem 1.25rem;
-            }
-
-            .step-icon {
-                width: 64px;
-                height: 64px;
-            }
-
-            .step-icon img {
-                width: 36px;
-                height: 36px;
-            }
-
-            .step-number {
-                width: 28px;
-                height: 28px;
-                font-size: 0.8rem;
-                top: 10px;
-                right: 10px;
-            }
-
-            .step-title {
-                font-size: 1.1rem;
-            }
-
-            .step-desc {
-                font-size: 0.85rem;
-            }
-        }
-
-        /* Tag Wrapper Animation */
-        .tag-wrapper {
-
-            margin-top: 50px;
-
-            width: 100%;
-            overflow: hidden;
-            animation: fadeInUp 1s ease-out 1.2s forwards;
-            opacity: 0;
-        }
-
-        .tag-list {
-            display: flex;
-            align-items: center;
-            flex-wrap: nowrap;
-            gap: 10px;
-            width: max-content;
-            animation: tagScroll 25s linear infinite;
-        }
-
-        .tag-item {
-            flex: 0 0 auto;
-            white-space: nowrap;
-            border-radius: 50px;
-            padding: 8px 18px;
-            text-decoration: none;
-            transition: all .3s ease;
-        }
-
-        .tag-item:hover {
-            transform: translateY(-2px);
-        }
-
-        .tag-wrapper:hover .tag-list {
-            animation-play-state: paused;
-        }
-
-        @keyframes tagScroll {
-            from {
-                transform: translateX(0);
-            }
-
-            to {
-                transform: translateX(-50%);
-            }
-        }
-
-        @media (max-width: 768px) {
-            .tag-list {
-                gap: 8px;
-                animation-duration: 20s;
-            }
-
-            .tag-item {
-                padding: 7px 15px;
-            }
-
-            .hero-section h1 {
-                font-size: 2.5rem;
-            }
-
-            .section-title {
-                font-size: 1.8rem;
-            }
-
-            .cta-box h2 {
-                font-size: 2rem;
-            }
-        }
-
-        /* =========================================================== */
-        /* =========================================================== */
-
-        .tag-wrapper {
-            width: 100%;
-            overflow: hidden;
-            position: relative;
-        }
-
-        .tag-list {
-            display: flex;
-            width: max-content;
-            animation: tagLoop 25s linear infinite;
-        }
-
-        /* Jangan ubah style tag-item yang sudah ada */
-        .tag-list .tag-item {
-            flex-shrink: 0;
-            white-space: nowrap;
-        }
-
-        /* Grup kedua untuk looping */
-        .tag-group {
-            display: flex;
-            gap: inherit;
-            flex-shrink: 0;
-        }
-
-        /* Bergerak terus ke kiri */
-        @keyframes tagLoop {
-            from {
-                transform: translateX(0);
-            }
-
-            to {
-                transform: translateX(-50%);
-            }
-        }
-
-        .tag-wrapper:hover .tag-list {
-            animation-play-state: paused;
-        }
-
-        /* ===== WhatsApp Float: provided by components.wa-chat (floating round button) ===== */
-    </style>
-</head>
-
-<body>
-
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg" id="mainNav">
-        <div class="container">
-            <a class="navbar-brand" href="{{ route('landing') }}">
-                <img src="{{ asset('assets/logo-new.png') }}" alt="Logo RuangUndang">
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                style="border-color: rgba(255,255,255,0.3);">
-                <span class="navbar-toggler-icon" style="filter: invert(1);"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav mx-auto">
-                    <li class="nav-item"><a class="nav-link" href="{{ route('pages.cari-tema') }}">Cari Tema</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ route('pages.fitur') }}">Fitur</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ route('pages.harga') }}">Harga</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ route('pages.bantuan') }}">Bantuan</a></li>
-                </ul>
-                <div class="d-flex align-items-center gap-3">
-                    @auth
-                        <a href="{{ route('dashboard.user') }}" class="nav-link d-flex align-items-center gap-2">
-                            <div class="user-avatar-circle">
-                                @if(Auth::user()->avatar)
-                                    <img src="{{ asset('storage/' . Auth::user()->avatar) }}" alt="{{ Auth::user()->name }}"
-                                        class="user-avatar-img">
-                                @else
-                                    <span class="user-avatar-initial">{{ strtoupper(substr(Auth::user()->name, 0, 1)) }}</span>
-                                @endif
-                            </div>
-                            <span class="d-none d-md-inline">{{ Auth::user()->name }}</span>
-                        </a>
-                    @else
-                        <a href="{{ route('login') }}" rel="nofollow" class="nav-link">Masuk</a>
-                        <a href="{{ route('register') }}" rel="nofollow" class="btn-gold">Mulai Gratis</a>
-                    @endauth
-                </div>
-            </div>
-        </div>
-    </nav>
-
-    <!-- Hero Section -->
-    <section class="hero-section">
-        <video class="hero-video" autoplay muted loop playsinline>
-            <source src="{{ asset('assets/189858-886618183_medium.mp4') }}" type="video/mp4">
-        </video>
-        <div class="hero-overlay"></div>
-        <div class="hero-shape shape-1"></div>
-        <div class="hero-shape shape-2"></div>
-        <div class="hero-shape shape-3"></div>
-
-        <div class="container hero-content">
-            <span class="hero-tag">Platform Undangan Digital Premium</span>
-            <div class="hero-text-slider">
-                <div class="hero-slide active">
-                    <h1>Unggah Momen Spesial <br> dengan <em>Keindahan Abadi</em></h1>
-                    <p>Rancang undangan pernikahan digital yang memikat hati tamu Anda sejak detik pertama. Eksklusif,
-                        modern,
-                        dan mudah dibagikan.</p>
-                </div>
-                <div class="hero-slide">
-                    <h1>Wujudkan Cinta Anda <br> dalam <em>Tema Eksklusif</em></h1>
-                    <p>Pilih dari koleksi template premium yang dirancang untuk menceritakan kisah cinta Anda dengan
-                        sentuhan personal.</p>
-                </div>
-                <div class="hero-slide">
-                    <h1>Bagikan Kabar Bahagia <br> dengan <em>Sentuhan Modern</em></h1>
-                    <p>Kirim undangan digital ke seluruh tamu dalam hitungan detik. Hemat waktu, tetap elegan, dan
-                        berkesan
-                        forever.</p>
-                </div>
+@extends('layouts.page')
+@section('content')
+
+    <div class="ev-drawer-backdrop" id="drawerBackdrop"></div>
+    <div class="ev-mobile-drawer" id="mobileDrawer">
+        <div>
+            <div class="ev-drawer-header">
+                <img src="{{ asset('assets/logo-new.png') }}" alt="RuangUndang" height="32">
+                <button class="ev-drawer-close" id="mobileDrawerCloseBtn" aria-label="Tutup Menu">
+                    <i class="bi bi-x-lg"></i>
+                </button>
             </div>
 
-            <form action="{{ route('landing') }}#templates" method="GET">
-                <div class="search-container">
-                    <i class="bi bi-search"></i>
-                    <input type="text" name="search" placeholder="Cari tema impian... (Rustic, Modern, Floral)"
-                        value="{{ request('search') }}">
-                    <button type="submit" class="btn-search">Cari</button>
-                </div>
+            <!-- Mobile Search -->
+            <form action="{{ route('pages.cari-tema') }}" method="GET" class="ev-search-form my-3">
+                <i class="bi bi-search ev-search-icon"></i>
+                <input type="text" name="search" class="ev-search-input" placeholder="Cari tema...">
+                <button type="submit" class="ev-search-submit">Cari</button>
             </form>
 
-            <div class="hero-slider-dots"></div>
-
-            <div class="tag-wrapper">
-                <div class="tag-list">
-
-                    {{-- TAG ASLI --}}
-                    <div class="tag-group">
-                        <a href="{{ route('landing') }}#templates"
-                            class="tag-item {{ !request('category') || request('category') == 'All' ? 'active' : '' }}">
-                            Semua Tema
-                        </a>
-
-                        @foreach($categories as $cat)
-                            <a href="{{ route('landing', ['category' => $cat['name']]) }}#templates"
-                                class="tag-item {{ request('category') == $cat['name'] ? 'active' : '' }}">
-                                {{ $cat['name'] }}
-                            </a>
-                        @endforeach
-                    </div>
-
-                    {{-- DUPLIKAT UNTUK LOOP --}}
-                    <div class="tag-group" aria-hidden="true">
-                        <a href="{{ route('landing') }}#templates"
-                            class="tag-item {{ !request('category') || request('category') == 'All' ? 'active' : '' }}">
-                            Semua Tema
-                        </a>
-
-                        @foreach($categories as $cat)
-                            <a href="{{ route('landing', ['category' => $cat['name']]) }}#templates"
-                                class="tag-item {{ request('category') == $cat['name'] ? 'active' : '' }}">
-                                {{ $cat['name'] }}
-                            </a>
-                        @endforeach
-                    </div>
-
-                </div>
+            <div class="ev-drawer-nav">
+                <a href="{{ route('pages.cari-tema') }}" class="ev-drawer-link">
+                    <span>Koleksi Tema</span>
+                    <i class="bi bi-chevron-right small text-muted"></i>
+                </a>
+                <a href="{{ route('pages.fitur') }}" class="ev-drawer-link">
+                    <span>Fitur Unggulan</span>
+                    <i class="bi bi-chevron-right small text-muted"></i>
+                </a>
+                <a href="{{ route('pages.harga') }}" class="ev-drawer-link">
+                    <span>Paket Harga</span>
+                    <i class="bi bi-chevron-right small text-muted"></i>
+                </a>
+                <a href="{{ route('pages.cara-pemesanan') }}" class="ev-drawer-link">
+                    <span>Cara Pemesanan</span>
+                    <i class="bi bi-chevron-right small text-muted"></i>
+                </a>
+                <a href="{{ route('pages.bantuan') }}" class="ev-drawer-link">
+                    <span>Pusat Bantuan &amp; FAQ</span>
+                    <i class="bi bi-chevron-right small text-muted"></i>
+                </a>
             </div>
         </div>
 
-        <a href="#real-weddings" class="scroll-down">
-            <i class="bi bi-chevron-double-down"></i>
-        </a>
-    </section>
-    <!-- Templates Grid -->
-    <section id="templates" class="template-section">
-        <div class="container">
-            <div class="section-header-center reveal">
-                <span class="section-subtitle">Galeri Inspirasi</span>
-                <h2 class="section-title">Koleksi Tema Eksklusif</h2>
-                <p class="section-desc">Pilih dari puluhan desain premium yang dirancang oleh desainer profesional kami.
-                </p>
-            </div>
+        <div class="pt-3 border-top">
+            @auth
+                <a href="{{ auth()->user()->hasRole('admin') ? route('dashboard') : route('dashboard.user') }}"
+                    class="ev-btn-primary w-100 justify-content-center py-2 mb-2">
+                    <i class="bi bi-speedometer2"></i> Masuk Dashboard
+                </a>
+                <form action="{{ route('logout') }}" method="POST">
+                    @csrf
+                    <button type="submit" class="ev-btn-ghost w-100 text-center py-2 text-danger">
+                        Keluar (Logout)
+                    </button>
+                </form>
+            @else
+                <a href="{{ route('register') }}" class="ev-btn-primary w-100 justify-content-center py-2 mb-2">
+                    Mulai Buat Undangan
+                </a>
+                <a href="{{ route('login') }}" class="ev-btn-ghost w-100 justify-content-center py-2">
+                    Sudah Punya Akun? Masuk
+                </a>
+            @endauth
+        </div>
+    </div>
 
-            <div class="template-grid">
-                @php $featuredTemplates = $templates->take(8); @endphp
-                @foreach($featuredTemplates as $template)
-                    <div class="template-card reveal">
-                        <div class="template-img-container">
-                            <img src="{{ template_thumbnail_url($template, $template->updated_at->timestamp) }}"
-                                alt="{{ $template->name }}" loading="lazy">
-                            @if($template->templateType)
-                                <div class="type-badge-card" style="background-color: {{ $template->templateType->color }};">
-                                    {{ $template->templateType->name }}
-                                </div>
-                            @endif
-                            <div class="template-overlay">
-                                <a href="{{ route('template.frame', ['slug' => 'romeo-juliet', 'id' => $template->id]) }}"
-                                    target="_blank" rel="nofollow"
-                                    class="btn btn-light rounded-pill px-4 fw-bold shadow-sm">Pratinjau</a>
-                                <a href="{{ route('dashboard.user') }}?template_id={{ $template->id }}" rel="nofollow"
-                                    class="btn btn-gold rounded-pill px-4 fw-bold shadow-sm">Gunakan</a>
+    <!-- =======================================================================
+                                                                                                                     SEARCH MODAL (Spotlight-Style)
+                                                                                                                     ======================================================================= -->
+    <div class="ev-search-modal-backdrop" id="searchModalBackdrop"></div>
+    <div class="ev-search-modal" id="searchModal" role="dialog" aria-modal="true" aria-label="Pencarian Tema">
+        <div class="ev-search-modal-header">
+            <h2 class="ev-search-modal-title">Cari Tema Undangan</h2>
+            <button class="ev-search-modal-close" id="searchModalClose" aria-label="Tutup">
+                <i class="bi bi-x-lg"></i>
+            </button>
+        </div>
+
+        <!-- Search Input -->
+        <form action="{{ route('pages.cari-tema') }}" method="GET" id="searchModalForm">
+            <div class="ev-search-modal-input-wrap">
+                <i class="bi bi-search ev-search-modal-icon"></i>
+                <input type="text" name="search" id="searchModalInput" class="ev-search-modal-input"
+                    placeholder="Ketik nama tema atau acara..." autocomplete="off" autofocus>
+                <button type="button" class="ev-search-modal-clear" id="searchModalClear" aria-label="Hapus">
+                    <i class="bi bi-x-circle-fill"></i>
+                </button>
+            </div>
+        </form>
+
+        <!-- Filter Pills -->
+        <div class="ev-search-modal-filters">
+            <span class="ev-search-filter-label">Saya mencari...</span>
+            <div class="ev-search-filter-pills">
+                <a href="{{ route('pages.cari-tema', ['category' => 'Wedding']) }}" class="ev-search-filter-pill active">
+                    <span>💍</span> Pernikahan
+                </a>
+                <a href="{{ route('pages.cari-tema', ['category' => 'Birthday']) }}" class="ev-search-filter-pill">
+                    <span>🎂</span> Ulang Tahun
+                </a>
+                <a href="{{ route('pages.cari-tema', ['category' => 'Aqiqah']) }}" class="ev-search-filter-pill">
+                    <span>🌿</span> Aqiqah
+                </a>
+                <a href="{{ route('pages.cari-tema', ['category' => 'Khitan']) }}" class="ev-search-filter-pill">
+                    <span>🌙</span> Khitanan
+                </a>
+                <a href="{{ route('pages.cari-tema', ['category' => 'Graduation']) }}" class="ev-search-filter-pill">
+                    <span>🎓</span> Wisuda
+                </a>
+                <a href="{{ route('pages.cari-tema', ['category' => 'Seminar']) }}" class="ev-search-filter-pill">
+                    <span>💼</span> Seminar
+                </a>
+            </div>
+        </div>
+
+        <!-- Recent Searches -->
+        <div class="ev-search-modal-section" id="searchRecentSection">
+            <span class="ev-search-section-label">Pencarian Terakhir</span>
+            <ul class="ev-search-recent-list" id="searchRecentList">
+                <!-- JS will populate -->
+            </ul>
+        </div>
+
+        <!-- Trending / Popular Themes -->
+        <div class="ev-search-modal-section">
+            <span class="ev-search-section-label">Tema Populer</span>
+            <div class="ev-search-popular-grid">
+                @forelse($templates->take(12) as $template)
+                    @php
+                        $catSlug = $template->category ? Str::slug($template->category->name) : 'umum';
+                        $thumb = template_thumbnail_url($template, $template->updated_at->timestamp);
+                    @endphp
+                    <a href="{{ route('template.preview', ['slug' => $template->slug, 'id' => $template->id]) }}"
+                        class="ev-search-popular-item" data-category="{{ $catSlug }}">
+                        <div class="ev-search-popular-thumb" style="background-image: url('{{ $thumb }}');"></div>
+                        <span>{{ $template->name }}</span>
+                    </a>
+                @empty
+                    <a href="{{ route('pages.cari-tema', ['category' => 'Wedding']) }}" class="ev-search-popular-item">
+                        <div class="ev-search-popular-icon" style="background:#F4D9C8">💍</div>
+                        <span>Wedding Elegan</span>
+                    </a>
+                @endforelse
+            </div>
+        </div>
+
+        <!-- Keyboard Shortcut Hint -->
+        <div class="ev-search-modal-footer">
+            <span><kbd>↑</kbd><kbd>↓</kbd> Navigasi</span>
+            <span><kbd>↵</kbd> Buka</span>
+            <span><kbd>Esc</kbd> Tutup</span>
+        </div>
+    </div>
+
+    <main id="mainContent">
+
+        <!-- =======================================================================
+                                                                                                                         3. HERO SECTION (Evite Editorial Split Stage)
+                                                                                                                         ======================================================================= -->
+        <section class="ev-hero-section">
+            <div class="container">
+                <div class="ev-hero-grid">
+                    <!-- Left Editorial Content -->
+                    <div class="ev-hero-content reveal">
+                        <span class="ev-hero-tag">
+                            <i class="bi bi-stars"></i> Platform Undangan Digital No. 1
+                        </span>
+                        <h1 class="ev-hero-title">
+                            Undangan Digital &amp; Kartu Acara untuk Setiap <em>Momen Berharga.</em>
+                        </h1>
+                        <p class="ev-hero-desc">
+                            Rancang undangan pernikahan, ulang tahun, dan syukuran dengan desain eksklusif, lagu romantis,
+                            buku tamu real-time, dan amplop digital. Bagikan via WhatsApp dalam hitungan detik.
+                        </p>
+                        <div class="ev-hero-actions">
+                            <a href="#templates" class="ev-btn-hero-primary" id="heroExploreBtn">
+                                <span>Jelajahi Tema Undangan</span>
+                                <i class="bi bi-arrow-right"></i>
+                            </a>
+                            <a href="{{ route('register') }}" class="ev-btn-hero-secondary" id="heroStartFreeBtn">
+                                <i class="bi bi-magic"></i>
+                                <span>Buat Undangan Gratis</span>
+                            </a>
+                        </div>
+                        <div class="ev-hero-trust">
+                            <div class="ev-trust-item">
+                                <i class="bi bi-patch-check-fill"></i>
+                                <span>4.9/5 Rating Pengguna</span>
+                            </div>
+                            <div class="ev-trust-item">
+                                <i class="bi bi-whatsapp"></i>
+                                <span>100% WhatsApp Ready</span>
+                            </div>
+                            <div class="ev-trust-item">
+                                <i class="bi bi-lightning-charge-fill"></i>
+                                <span>Siap dalam 5 Menit</span>
                             </div>
                         </div>
-                        <div class="template-footer">
-                            <div class="user-info">
-                                <img src="https://ui-avatars.com/api/?name={{urlencode($template->name)}}&background=random"
-                                    class="user-avatar" alt="">
-                                <span class="user-name">{{ $template->name }}</span>
+                    </div>
 
+                    <!-- Right Visual Mockup Showcase (Phone Slider) -->
+                    <div class="ev-hero-stage reveal reveal-d2">
+                        <div class="ev-stage-backdrop"></div>
+
+                        @php
+                            $heroSlides = [
+                                [
+                                    'image' => asset('assets/images/hero/undangan-10.webp'),
+                                    'alt' => 'Pratinjau Undangan Digital di dalam bingkai ponsel',
+                                    'url' => route('pages.cari-tema'),
+                                ],
+                                [
+                                    'image' => asset('assets/images/hero/undangan-8.webp'),
+                                    'alt' => 'Pratinjau Undangan Digital di dalam bingkai ponsel',
+                                    'url' => route('pages.cari-tema'),
+                                ],
+                                [
+                                    'image' => asset('assets/images/hero/undangan-9.webp'),
+                                    'alt' => 'Pratinjau Undangan Digital di dalam bingkai ponsel',
+                                    'url' => route('pages.cari-tema'),
+                                ],
+                            ];
+                        @endphp
+
+                        <div class="ev-slider" id="heroSlider" aria-roledescription="carousel"
+                            aria-label="Pratinjau Undangan Digital">
+                            @foreach($heroSlides as $heroSlide)
+                                <a href="{{ $heroSlide['url'] }}" class="ev-slide" aria-label="Lihat pratinjau undangan">
+                                    <span class="ev-slide-device">
+                                        <span class="ev-slide-screen">
+                                            <img src="{{ $heroSlide['image'] }}" alt="{{ $heroSlide['alt'] }}" loading="lazy"
+                                                width="229" height="500">
+                                        </span>
+                                        <span class="ev-slide-frame" aria-hidden="true">
+                                            <img src="{{ asset('assets/images/hero/device-frame.png') }}" alt="" width="720"
+                                                height="1416">
+                                        </span>
+                                    </span>
+                                </a>
+                            @endforeach
+                        </div>
+
+                        <div class="ev-slider-controls">
+                            <button type="button" class="ev-slider-btn" id="heroSliderPrev"
+                                aria-label="Undangan sebelumnya">
+                                <i class="bi bi-chevron-left"></i>
+                            </button>
+                            <div class="ev-slider-dots" id="heroSliderDots"></div>
+                            <button type="button" class="ev-slider-btn" id="heroSliderNext"
+                                aria-label="Undangan berikutnya">
+                                <i class="bi bi-chevron-right"></i>
+                            </button>
+                        </div>
+
+                        <!-- Floating Badges -->
+                        <div class="ev-floating-pill pill-1">
+                            <span class="ev-pill-icon"><i class="bi bi-envelope-open-heart"></i></span>
+                            <span>Amplop Digital &amp; QRIS</span>
+                        </div>
+                        <div class="ev-floating-pill pill-2">
+                            <span class="ev-pill-icon"><i class="bi bi-geo-alt-fill"></i></span>
+                            <span>Google Maps Presisi</span>
+                        </div>
+                        <!-- Floating Music Toggle -->
+                        <button type="button" id="heroMusicToggle" class="ev-floating-pill hero-music-pill"
+                            aria-label="Putar Musik Latar Undangan">
+                            <span class="ev-pill-icon"><i class="bi bi-music-note-beamed"></i></span>
+                            <span>Musik Latar</span>
+                        </button>
+                        <audio id="heroBgMusic" src="{{ asset('assets/audio/Ruang-Undang.mp3') }}" loop
+                            preload="auto"></audio>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- =======================================================================
+                                                                                                                         4. HORIZONTAL CATEGORY CAROUSEL (Evite Invitation Categories)
+                                                                                                                         ======================================================================= -->
+        <section class="ev-category-carousel-section" id="categories">
+            <div class="container">
+                <div class="ev-section-header reveal">
+                    <div class="ev-section-title-wrap">
+                        <span class="ev-section-subtitle">Kategori Undangan</span>
+                        <h2 class="ev-section-title">Temukan Tema Sesuai Momen Spesial Anda</h2>
+                        <p class="ev-section-desc">Pilihan template dirancang oleh desainer profesional untuk menciptakan
+                            kesan pertama yang tak terlupakan.</p>
+                    </div>
+                    <div class="ev-carousel-controls">
+                        <button class="ev-carousel-arrow" id="catScrollPrev" aria-label="Kategori Sebelumnya">
+                            <i class="bi bi-chevron-left"></i>
+                        </button>
+                        <button class="ev-carousel-arrow" id="catScrollNext" aria-label="Kategori Berikutnya">
+                            <i class="bi bi-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Carousel Scroll Track -->
+                <div class="ev-carousel-wrapper reveal reveal-d1">
+                    <div class="ev-carousel-track" id="catTrack">
+                        <!-- Free Templates (All) -->
+                        <div class="ev-category-card">
+                            <a href="{{ route('pages.cari-tema') }}" class="ev-category-card-inner">
+                                <div class="ev-category-icon-box">
+                                    <i class="bi bi-grid"></i>
+                                </div>
+                                <h4 class="ev-category-name">Semua Tema</h4>
+                                <span class="ev-category-count">{{ $templates->count() }}+ Desain</span>
+                            </a>
+                        </div>
+
+                        @foreach($categories as $cat)
+                            <div class="ev-category-card">
+                                <a href="{{ route('pages.cari-tema', ['category' => $cat['name']]) }}"
+                                    class="ev-category-card-inner">
+                                    <div class="ev-category-icon-box">
+                                        @if($cat['icon'])
+                                            <i class="bi {{ $cat['icon'] }}"></i>
+                                        @else
+                                            <img src="{{ $cat['img'] }}" alt="Undangan {{ $cat['name'] }}" loading="lazy">
+                                        @endif
+                                    </div>
+                                    <h4 class="ev-category-name">{{ $cat['name'] }}</h4>
+                                    <span class="ev-category-count">{{ $cat['count'] }}</span>
+                                </a>
                             </div>
-                            <div class="card-stats">
-                                <span title="Dilihat"><i class="bi bi-eye"></i>
-                                    {{ number_format($template->views_count) }}</span>
-                                <span title="Suka" class="like-btn" data-id="{{ $template->id }}" style="cursor: pointer;">
-                                    <i class="bi bi-heart-fill text-danger"></i>
-                                    <span class="likes-count">{{ number_format($template->likes_count) }}</span>
+                        @endforeach
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- =======================================================================
+                                                                                                                         5. "WHAT DO YOU WANT TO DO TODAY?" (Evite 3-Card Value Grid)
+                                                                                                                         ======================================================================= -->
+        <section class="ev-what-today-section">
+            <div class="container">
+                <div class="text-center reveal">
+                    <span class="ev-section-subtitle">Pilihan Praktis</span>
+                    <h2 class="ev-section-title">Apa yang Ingin Anda Buat Hari Ini?</h2>
+                    <p class="ev-section-desc">Pilih kemudahan yang paling cocok untuk rencana perayaan Anda.</p>
+                </div>
+
+                <div class="ev-what-today-grid">
+                    <!-- Card 1: Buat Undangan Digital -->
+                    <div class="ev-action-card card-mint reveal reveal-d1">
+                        <div class="ev-action-card-header">
+                            <span class="ev-action-card-badge">Paling Populer</span>
+                            <h3 class="ev-action-card-title">Buat Undangan Digital</h3>
+                            <p class="ev-action-card-desc">
+                                Pilih tema siap pakai yang elegan. Tambahkan detail acara, bagikan tautan via WhatsApp, dan
+                                pantau RSVP tamu secara otomatis.
+                            </p>
+                        </div>
+                        <div class="ev-action-card-visual">
+                            <img src="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=600&q=80"
+                                alt="Buat Undangan Digital">
+                        </div>
+                        <a href="#templates" class="ev-action-card-cta">
+                            <span>Pilih Tema Sekarang</span>
+                            <i class="bi bi-arrow-right"></i>
+                        </a>
+                    </div>
+
+                    <!-- Card 2: Personalisasi Foto & Musik -->
+                    <div class="ev-action-card card-peach reveal reveal-d2">
+                        <div class="ev-action-card-header">
+                            <span class="ev-action-card-badge">Kreatif &amp; Personal</span>
+                            <h3 class="ev-action-card-title">Upload Foto &amp; Musik</h3>
+                            <p class="ev-action-card-desc">
+                                Ceritakan kisah cinta unik Anda. Unggah galeri foto pre-wedding, atur lagu latar romantis,
+                                dan sertakan video sinematik.
+                            </p>
+                        </div>
+                        <div class="ev-action-card-visual">
+                            <img src="https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&w=600&q=80"
+                                alt="Personalisasi Foto dan Musik">
+                        </div>
+                        <a href="{{ route('register') }}" class="ev-action-card-cta">
+                            <span>Mulai Personalisasi</span>
+                            <i class="bi bi-arrow-right"></i>
+                        </a>
+                    </div>
+
+                    <!-- Card 3: Save The Date & Pengingat -->
+                    <div class="ev-action-card card-buttercream reveal reveal-d3">
+                        <div class="ev-action-card-header">
+                            <span class="ev-action-card-badge">Fitur Eksklusif</span>
+                            <h3 class="ev-action-card-title">Save The Date &amp; RSVP</h3>
+                            <p class="ev-action-card-desc">
+                                Kunci tanggal bahagia Anda di Google Calendar para tamu. Kirim pengingat otomatis menjelang
+                                hari H tanpa repot chat satu per satu.
+                            </p>
+                        </div>
+                        <div class="ev-action-card-visual">
+                            <img src="https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?auto=format&fit=crop&w=600&q=80"
+                                alt="Save the date kalender">
+                        </div>
+                        <a href="{{ route('pages.fitur') }}" class="ev-action-card-cta">
+                            <span>Pelajari Fitur Jadwal</span>
+                            <i class="bi bi-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- =======================================================================
+                                                                                                                          6. PREVIEW DEMO LIVE EDITOR (Evite Signature Feature)
+                                                                                                                          ======================================================================= -->
+        <style>
+            .ev-demo-live-editor-section {
+                background-color: #eef0f5;
+                /* menyamakan warna latar belakang gambar */
+            }
+
+            .ev-demo-live-editor-section .ev-demo-header {
+                max-width: 680px;
+            }
+
+            .ev-demo-live-editor-section .ev-demo-video-container {
+                max-width: 1040px;
+                margin-inline: auto;
+            }
+
+            .ev-demo-live-editor-section .ev-demo-video-wrapper {
+                position: relative;
+                border-radius: 1rem;
+                overflow: hidden;
+                background-color: #eef0f5;
+            }
+
+            .ev-demo-live-editor-section .ev-demo-video {
+                display: block;
+                width: 100%;
+                height: auto;
+                aspect-ratio: 16 / 10;
+                object-fit: contain;
+                /* memakai contain agar MacBook Air tidak terpotong */
+                background-color: #eef0f5;
+            }
+        </style>
+        <section class="ev-demo-live-editor-section py-5" aria-labelledby="demoLiveEditorHeading">
+            <div class="container">
+                <header class="ev-demo-header text-center mx-auto mb-4 mb-lg-5 reveal">
+                    <span class="ev-section-subtitle d-inline-block fw-semibold text-uppercase small tracking-wide">
+                        Live Editor
+                    </span>
+                    <h2 id="demoLiveEditorHeading" class="ev-section-title fw-bold mt-2 mb-2">
+                        Atur Undangan &amp; Lihat Hasilnya Langsung
+                    </h2>
+                    <p class="ev-section-desc text-muted mb-0">
+                        Sesuaikan kisah cinta, kutipan, musik, hingga detail acara undangan Anda dan pantau tampilannya
+                        secara real-time di pratinjau.
+                    </p>
+                </header>
+
+                <div class="ev-demo-video-container reveal">
+                    <div class="ev-demo-video-wrapper">
+                        <video class="ev-demo-video" autoplay muted loop playsinline preload="metadata"
+                            aria-label="Demo langsung editor platform RuangUndang">
+                            <source src="{{ asset('downloads/demo.webm') }}" type="video/webm">
+                            Browser Anda tidak mendukung pemutaran video.
+                        </video>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- =======================================================================
+                                                                                                                         7. "SOMETHING FOR EVERY KIND OF HOST" (Evite Feature Solutions)
+                                                                                                                         ======================================================================= -->
+        <section class="ev-host-solutions-section">
+            <div class="container">
+                <div class="text-center reveal">
+                    <span class="ev-section-subtitle">Solusi Lengkap</span>
+                    <h2 class="ev-section-title">Fitur Terbaik untuk Setiap Tuan Rumah</h2>
+                    <p class="ev-section-desc">Dari undangan hingga ucapan selamat, kami pastikan momen Anda tersaji
+                        sempurna.</p>
+                </div>
+
+                <div class="ev-host-grid">
+                    <!-- Feature 1 -->
+                    <div class="ev-host-card reveal reveal-d1">
+                        <div>
+                            <div class="ev-host-icon-box">
+                                <i class="bi bi-phone"></i>
+                            </div>
+                            <h3 class="ev-host-card-title">Undangan Web Interaktif</h3>
+                            <p class="ev-host-card-text">
+                                Buka amplop digital dengan animasi eksklusif, countdown hitung mundur tanggal acara, Google
+                                Maps terintegrasi, dan pemutar musik autoplay.
+                            </p>
+                        </div>
+                        <a href="{{ route('pages.fitur') }}" class="ev-host-card-link">
+                            <span>Pelajari Fitur Web</span>
+                            <i class="bi bi-arrow-right"></i>
+                        </a>
+                    </div>
+
+                    <!-- Feature 2 -->
+                    <div class="ev-host-card reveal reveal-d2">
+                        <div>
+                            <div class="ev-host-icon-box">
+                                <i class="bi bi-gift"></i>
+                            </div>
+                            <h3 class="ev-host-card-title">Buku Tamu &amp; Amplop QRIS</h3>
+                            <p class="ev-host-card-text">
+                                Tamu dapat menyampaikan doa restu yang tampil real-time serta mengirimkan amplop hadiah
+                                melalui QRIS, transfer bank, atau dompet digital tanpa potongan.
+                            </p>
+                        </div>
+                        <a href="{{ route('pages.fitur') }}" class="ev-host-card-link">
+                            <span>Fitur Amplop Digital</span>
+                            <i class="bi bi-arrow-right"></i>
+                        </a>
+                    </div>
+
+                    <!-- Feature 3 -->
+                    <div class="ev-host-card reveal reveal-d3">
+                        <div>
+                            <div class="ev-host-icon-box">
+                                <i class="bi bi-gem"></i>
+                            </div>
+                            <h3 class="ev-host-card-title">Beli Paket Sekali, Bebas Pilih Tema</h3>
+                            <p class="ev-host-card-text">
+                                Cukup beli paket satu kali dan pilih tema undangan semaunya tanpa biaya berulang, lengkap
+                                dengan kustomisasi penuh dan akses praktis untuk acara Anda.
+                            </p>
+                        </div>
+                        <a href="{{ route('pages.harga') }}" class="ev-host-card-link">
+                            <span>Lihat Pilihan Paket</span>
+                            <i class="bi bi-arrow-right"></i>
+                        </a>
+                    </div>
+
+                    <!-- Feature 4 -->
+                    <div class="ev-host-card reveal reveal-d4">
+                        <div>
+                            <div class="ev-host-icon-box">
+                                <i class="bi bi-people"></i>
+                            </div>
+                            <h3 class="ev-host-card-title">Manajemen Tamu &amp; RSVP</h3>
+                            <p class="ev-host-card-text">
+                                Kelompokkan daftar tamu (VIP, keluarga, teman kantor), pantau jumlah hadir dan plus-one,
+                                serta ekspor data ke Excel dengan satu klik mudah.
+                            </p>
+                        </div>
+                        <a href="{{ route('pages.fitur') }}" class="ev-host-card-link">
+                            <span>Kelola Daftar Tamu</span>
+                            <i class="bi bi-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- =======================================================================
+                                                                                                                         8. "THERE'S MORE TO HOSTING THAN THE PARTY ITSELF" (Evite 3 Pillars)
+                                                                                                                         ======================================================================= -->
+        <section class="ev-pillars-section">
+            <div class="container">
+                <div class="ev-pillars-header reveal">
+                    <span class="text-uppercase fw-bold text-success-subtle small letter-spacing-1 d-block mb-2">KEMUDAHAN
+                        PENUH</span>
+                    <h2 class="ev-section-title">Lebih dari Sekadar Undangan. Kami Dampingi Kelancaran Acara Anda.</h2>
+                    <p>Mempersiapkan hari bahagia tidak perlu bikin stres. Kami hadirkan fitur praktis yang menghemat waktu
+                        dan biaya Anda.</p>
+                </div>
+
+                <div class="ev-pillars-grid">
+                    <!-- Pillar 1: Daftar Nama Pengantin -->
+                    <div class="ev-pillar-card reveal reveal-d1">
+                        <div class="ev-pillar-icon">
+                            <i class="bi bi-heart-fill"></i>
+                        </div>
+                        <h3 class="ev-pillar-title">Daftar Nama Pengantin</h3>
+                        <p class="ev-pillar-desc">
+                            Catat dan siapkan data pasangan pengantin, nama panggilan, hingga informasi keluarga inti sejak
+                            awal dengan rapi.
+                        </p>
+                    </div>
+
+                    <!-- Pillar 2: Edit Undangan -->
+                    <div class="ev-pillar-card reveal reveal-d2">
+                        <div class="ev-pillar-icon">
+                            <i class="bi bi-pencil-square"></i>
+                        </div>
+                        <h3 class="ev-pillar-title">Edit Sesuai Selera</h3>
+                        <p class="ev-pillar-desc">
+                            Atur tema, kisah cinta, kutipan, musik, hingga jadwal waktu dan lokasi acara langsung dari
+                            editor praktis.
+                        </p>
+                    </div>
+
+                    <!-- Pillar 3: Share Undangan -->
+                    <div class="ev-pillar-card reveal reveal-d3">
+                        <div class="ev-pillar-icon">
+                            <i class="bi bi-share"></i>
+                        </div>
+                        <h3 class="ev-pillar-title">Share ke Tamu Undangan</h3>
+                        <p class="ev-pillar-desc">
+                            Bagikan tautan undangan digital dengan cepat lewat WhatsApp atau media sosial agar tamu mudah
+                            membuka kapan saja.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- =======================================================================
+                                                                                                                         9. DYNAMIC TEMPLATES GALLERY (Evite-Style Card Grid)
+                                                                                                                         ======================================================================= -->
+        <section class="ev-templates-section" id="templates">
+            <div class="container">
+                <div class="ev-section-header reveal">
+                    <div class="ev-section-title-wrap">
+                        <span class="ev-section-subtitle">Galeri Desain</span>
+                        <h2 class="ev-section-title">Koleksi Template Undangan Unggulan</h2>
+                        <p class="ev-section-desc">Pilih tema favorit Anda dan langsung coba pratinjau interaktifnya.</p>
+                    </div>
+                    <a href="{{ route('pages.cari-tema') }}" class="ev-btn-hero-secondary d-none d-md-inline-flex">
+                        Lihat Semua Tema ({{ $templates->count() }}+) →
+                    </a>
+                </div>
+
+                <!-- Category Filter Tabs -->
+                <div class="ev-filter-tabs reveal">
+                    <button class="ev-filter-btn active" data-filter="all">Semua Tema</button>
+                    @foreach($categories->take(6) as $cat)
+                        <button class="ev-filter-btn" data-filter="{{ Str::slug($cat['name']) }}">
+                            {{ $cat['name'] }}
+                        </button>
+                    @endforeach
+                </div>
+
+                <!-- Template Cards Grid -->
+                <div class="ev-templates-grid" id="templateGrid">
+                    @php $featuredTemplates = $templates->take(8); @endphp
+                    @forelse($featuredTemplates as $template)
+                        @php
+                            $catSlug = $template->category ? Str::slug($template->category->name) : 'umum';
+                            $thumb = template_thumbnail_url($template, $template->updated_at->timestamp);
+                            $hasThumb = !empty($thumb) && !Str::contains($thumb, 'placehold.co');
+                        @endphp
+                        <div class="ev-template-card reveal" data-category="{{ $catSlug }}">
+                            <div class="ev-template-media">
+                                @if($hasThumb)
+                                    <img src="{{ $thumb }}" alt="{{ $template->name }}" loading="lazy">
+                                @else
+                                    <div class="ev-template-noimage">
+                                        <i class="bi bi-image"></i>
+                                        <span>No Image</span>
+                                    </div>
+                                @endif
+                                @if($template->templateType)
+                                    <span class="ev-template-badge"
+                                        style="background-color: {{ $template->templateType->color ?? '#425620' }}; color: #fff;">
+                                        {{ $template->templateType->name }}
+                                    </span>
+                                @else
+                                    <span class="ev-template-badge bg-white text-dark">
+                                        {{ $template->category->name ?? 'Wedding' }}
+                                    </span>
+                                @endif
+
+                                <!-- Hover Overlay with Action Buttons -->
+                                <div class="ev-template-overlay">
+                                    <a href="{{ route('template.frame', ['slug' => 'romeo-juliet', 'id' => $template->id]) }}"
+                                        target="_blank" rel="nofollow" class="ev-overlay-btn-preview">
+                                        <i class="bi bi-eye"></i> Pratinjau
+                                    </a>
+                                    <a href="{{ route('dashboard.user') }}?template_id={{ $template->id }}" rel="nofollow"
+                                        class="ev-overlay-btn-use">
+                                        <i class="bi bi-magic"></i> Gunakan Tema
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="ev-template-meta">
+                                <div class="ev-template-title-wrap">
+                                    <h4 class="ev-template-name" title="{{ $template->name }}">{{ $template->name }}</h4>
+                                    <span class="ev-template-cat-label">{{ $template->category->name ?? 'Pernikahan' }}</span>
+                                </div>
+                                <div class="ev-template-stats">
+                                    <span class="ev-stat-item" title="Dilihat">
+                                        <i class="bi bi-eye"></i> {{ number_format($template->views_count ?? 120) }}
+                                    </span>
+                                    <button class="ev-like-btn" data-id="{{ $template->id }}" title="Suka">
+                                        <i class="bi bi-heart-fill"></i>
+                                        <span class="likes-count">{{ number_format($template->likes_count ?? 24) }}</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    @empty
+                        <div class="col-12 text-center py-5">
+                            <i class="bi bi-folder-x text-muted display-3 opacity-50"></i>
+                            <h3 class="mt-3">Belum ada template aktif</h3>
+                            <p class="text-muted">Silakan cek kembali beberapa saat lagi.</p>
+                        </div>
+                    @endforelse
+                </div>
+
+                <div class="text-center mt-5">
+                    <a href="{{ route('pages.cari-tema') }}" class="ev-btn-hero-primary">
+                        <span>Jelajahi Semua Koleksi Desain</span>
+                        <i class="bi bi-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- =======================================================================
+                                                                                                                         10. "OUR HOSTS SAY THE MOST" (Evite Testimonials)
+                                                                                                                         ======================================================================= -->
+        <section class="ev-testimonials-section">
+            <div class="container">
+                <div class="text-center reveal">
+                    <span class="ev-section-subtitle">Ulasan Nyata</span>
+                    <h2 class="ev-section-title">Cerita Bahagia dari Para Tuan Rumah</h2>
+                    <p class="ev-section-desc">Ribuan pasangan dan keluarga telah mempercayakan momen terbaik mereka kepada
+                        RuangUndang.</p>
+                </div>
+
+                <div class="ev-testimonials-grid">
+                    <!-- Testimonial 1 -->
+                    <div class="ev-testimonial-card reveal reveal-d1">
+                        <div>
+                            <div class="ev-testi-stars">
+                                <i class="bi bi-star-fill"></i>
+                                <i class="bi bi-star-fill"></i>
+                                <i class="bi bi-star-fill"></i>
+                                <i class="bi bi-star-fill"></i>
+                                <i class="bi bi-star-fill"></i>
+                            </div>
+                            <blockquote class="ev-testi-quote">
+                                “Sangat mudah digunakan! Tamu kami sangat terkesan dengan musik latar dan amplop digitalnya.
+                                Kami bisa pantau konfirmasi kehadiran secara real-time via WhatsApp tanpa pusing.”
+                            </blockquote>
+                        </div>
+                        <div class="ev-testi-author">
+                            <div class="ev-author-avatar">
+                                <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&q=80"
+                                    alt="Dinda & Farhan">
+                            </div>
+                            <div>
+                                <h4 class="ev-author-name">Dinda &amp; Farhan</h4>
+                                <p class="ev-author-event">Pernikahan di Jakarta • Tema Rustic</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Testimonial 2 -->
+                    <div class="ev-testimonial-card reveal reveal-d2">
+                        <div>
+                            <div class="ev-testi-stars">
+                                <i class="bi bi-star-fill"></i>
+                                <i class="bi bi-star-fill"></i>
+                                <i class="bi bi-star-fill"></i>
+                                <i class="bi bi-star-fill"></i>
+                                <i class="bi bi-star-fill"></i>
+                            </div>
+                            <blockquote class="ev-testi-quote">
+                                “Desainnya sangat elegan dan modern, jauh dari kesan pasaran. Integrasi petanya presisi
+                                sekali, keluarga dari luar kota tidak ada yang tersasar ke lokasi resepsi.”
+                            </blockquote>
+                        </div>
+                        <div class="ev-testi-author">
+                            <div class="ev-author-avatar">
+                                <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=120&q=80"
+                                    alt="Rian & Syifa">
+                            </div>
+                            <div>
+                                <h4 class="ev-author-name">Rian &amp; Syifa</h4>
+                                <p class="ev-author-event">Pernikahan di Bandung • Tema Minimalist</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Testimonial 3 -->
+                    <div class="ev-testimonial-card reveal reveal-d3">
+                        <div>
+                            <div class="ev-testi-stars">
+                                <i class="bi bi-star-fill"></i>
+                                <i class="bi bi-star-fill"></i>
+                                <i class="bi bi-star-fill"></i>
+                                <i class="bi bi-star-fill"></i>
+                                <i class="bi bi-star-fill"></i>
+                            </div>
+                            <blockquote class="ev-testi-quote">
+                                “Hemat budget banyak dibanding cetak fisik, dan proses pembuatannya cuma butuh waktu 10
+                                menit. Fitur ucapan tamunya menghangatkan hati kami sekeluarga.”
+                            </blockquote>
+                        </div>
+                        <div class="ev-testi-author">
+                            <div class="ev-author-avatar">
+                                <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=120&q=80"
+                                    alt="Maya & Hendra">
+                            </div>
+                            <div>
+                                <h4 class="ev-author-name">Maya &amp; Hendra</h4>
+                                <p class="ev-author-event">Pernikahan di Surabaya • Tema Botanical</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- =======================================================================
+                                                                                                                         11. INSPIRATION & TIPS (Evite Editorial Blog Section)
+                                                                                                                         ======================================================================= -->
+        <section class="ev-blog-section">
+            <div class="container">
+                <div class="ev-section-header reveal">
+                    <div class="ev-section-title-wrap">
+                        <span class="ev-section-subtitle">Inspirasi &amp; Panduan</span>
+                        <h2 class="ev-section-title">Tips Menyelenggarakan Acara Sempurna</h2>
+                        <p class="ev-section-desc">Artikel pilihan seputar etika undangan, perencanaan pernikahan, dan
+                            manajemen tamu.</p>
+                    </div>
+                    <a href="{{ route('blog.index') }}" class="ev-btn-hero-secondary d-none d-md-inline-flex">
+                        Panduan Lengkap →
+                    </a>
+                </div>
+
+                <div class="ev-blog-grid">
+                    @forelse($blogs ?? [] as $blog)
+                        <a href="{{ route('blog.show', $blog->slug) }}"
+                            class="ev-blog-card reveal reveal-d{{ $loop->iteration <= 4 ? $loop->iteration : 1 }} text-decoration-none">
+                            <div class="ev-blog-img-box">
+                                @if($blog->image)
+                                    <img src="{{ Storage::url($blog->image) }}" alt="{{ $blog->title }}" loading="lazy">
+                                @else
+                                    <img src="https://picsum.photos/seed/{{ $blog->slug }}/500/320" alt="{{ $blog->title }}"
+                                        loading="lazy">
+                                @endif
+                            </div>
+                            <div class="ev-blog-body">
+                                <span class="ev-blog-tag">
+                                    {{ $blog->type === 'panduan' ? 'Panduan' : 'Inspirasi' }}
+                                </span>
+                                <h4 class="ev-blog-title">{{ $blog->title }}</h4>
+                                @if($blog->snippet)
+                                    <p class="ev-blog-excerpt">
+                                        {{ Str::limit($blog->snippet, 90, '......') }}
+                                    </p>
+                                @endif
+                                <span class="ev-blog-meta">
+                                    Bacaan {{ max(1, ceil(str_word_count(strip_tags($blog->content)) / 200)) }} Menit
                                 </span>
                             </div>
+                        </a>
+                    @empty
+                        <p class="text-muted">Belum ada artikel untuk ditampilkan.</p>
+                    @endforelse
+                </div>
+            </div>
+        </section>
+
+        <!-- =======================================================================
+                                                                                                                         12. FAQ ACCORDION (Clean Evite Accordion)
+                                                                                                                         ======================================================================= -->
+        <section class="ev-faq-section" id="faq">
+            <div class="container">
+                <div class="text-center reveal">
+                    <span class="ev-section-subtitle">Tanya Jawab</span>
+                    <h2 class="ev-section-title">Pertanyaan yang Sering Diajukan</h2>
+                    <p class="ev-section-desc">Punya pertanyaan seputar undangan digital? Temukan jawabannya di sini.</p>
+                </div>
+
+                <div class="ev-faq-container">
+                    <!-- Q1 -->
+                    <div class="ev-faq-item is-open reveal reveal-d1">
+                        <button class="ev-faq-question" type="button">
+                            <span>Apa itu RuangUndang dan bagaimana cara kerjanya?</span>
+                            <span class="ev-faq-icon"><i class="bi bi-plus-lg"></i></span>
+                        </button>
+                        <div class="ev-faq-answer">
+                            <p>
+                                RuangUndang adalah platform pembuatan undangan digital berbasis web yang memungkinkan Anda
+                                merancang undangan pernikahan, ulang tahun, dan acara spesial dengan tampilan modern dalam
+                                hitungan menit. Cukup pilih tema, isi detail acara &amp; foto, lalu sebarkan tautannya
+                                melalui WhatsApp.
+                            </p>
                         </div>
                     </div>
-                @endforeach
-            </div>
 
-            @if($featuredTemplates->isEmpty())
-                <div class="text-center py-5">
-                    <i class="bi bi-search text-muted display-1 opacity-25"></i>
-                    <h3 class="text-muted mt-3">Tema tidak ditemukan</h3>
-                    <p>Coba gunakan kata kunci lain atau lihat semua tema.</p>
-                    <a href="{{ route('pages.cari-tema') }}" class="btn btn-outline-dark mt-2 rounded-pill px-4">Lihat Semua
-                        Tema</a>
-                </div>
-            @else
-                <div class="text-center mt-4">
-                    <a href="{{ route('pages.cari-tema') }}" class="btn btn-outline-dark rounded-pill px-4">Lihat Semua
-                        Tema</a>
-                </div>
-            @endif
-        </div>
-    </section>
-    <!-- How It Works Section -->
-    <section class="how-it-works-section" id="how-it-works">
-        <div class="container">
-            <div class="section-header-center reveal">
-                <span class="section-subtitle">Mudah & Cepat</span>
-                <h2 class="section-title">Cara Membuat Undangan Digital</h2>
-                <p class="section-desc">Hanya 4 langkah sederhana untuk memiliki undangan pernikahan digital yang
-                    memukau.</p>
-            </div>
-
-            <div class="row g-4 mt-4">
-                <div class="col-lg-3 col-md-6 reveal" style="transition-delay: 0.1s;">
-                    <div class="step-card text-center">
-                        <div class="step-icon">
-                            <img src="{{ asset('assets/img/step/Registrasi.png') }}" alt="Registrasi">
+                    <!-- Q2 -->
+                    <div class="ev-faq-item reveal reveal-d2">
+                        <button class="ev-faq-question" type="button">
+                            <span>Apakah saya bisa mencoba membuat undangan secara gratis?</span>
+                            <span class="ev-faq-icon"><i class="bi bi-plus-lg"></i></span>
+                        </button>
+                        <div class="ev-faq-answer">
+                            <p>
+                                Ya, tentu saja! Anda bisa mendaftar secara gratis tanpa kartu kredit, memilih template
+                                gratis kami, dan melihat langsung bagaimana undangan Anda tampil sebelum memutuskan untuk
+                                upgrade ke paket Pro jika membutuhkan fitur tambahan.
+                            </p>
                         </div>
-                        <div class="step-number">1</div>
-                        <h4 class="step-title">Registrasi Akun</h4>
-                        <p class="step-desc">Daftar dan buat akun undangan kamu di sini untuk memulai.</p>
                     </div>
-                </div>
-                <div class="col-lg-3 col-md-6 reveal" style="transition-delay: 0.2s;">
-                    <div class="step-card text-center">
-                        <div class="step-icon">
-                            <img src="{{ asset('assets/img/step/isidata.png') }}" alt="Isi Data">
+
+                    <!-- Q3 -->
+                    <div class="ev-faq-item reveal reveal-d3">
+                        <button class="ev-faq-question" type="button">
+                            <span>Bagaimana tamu mengakses undangan? Apakah butuh install aplikasi?</span>
+                            <span class="ev-faq-icon"><i class="bi bi-plus-lg"></i></span>
+                        </button>
+                        <div class="ev-faq-answer">
+                            <p>
+                                Tamu tidak perlu mengunduh atau menginstal aplikasi apapun! Undangan dapat langsung dibuka
+                                lewat browser di ponsel, tablet, atau komputer dengan mengetuk tautan yang Anda kirimkan
+                                lewat WhatsApp atau media sosial.
+                            </p>
                         </div>
-                        <div class="step-number">2</div>
-                        <h4 class="step-title">Isi Data & Upload Foto</h4>
-                        <p class="step-desc">Isi info acara & profile serta upload foto/gallery. Customize undangan
-                            kamu.</p>
                     </div>
-                </div>
-                <div class="col-lg-3 col-md-6 reveal" style="transition-delay: 0.3s;">
-                    <div class="step-card text-center">
-                        <div class="step-icon">
-                            <img src="{{ asset('assets/img/step/design.png') }}" alt="Pilih Design">
+
+                    <!-- Q4 -->
+                    <div class="ev-faq-item reveal reveal-d4">
+                        <button class="ev-faq-question" type="button">
+                            <span>Bagaimana sistem amplop digital dan kado bekerja?</span>
+                            <span class="ev-faq-icon"><i class="bi bi-plus-lg"></i></span>
+                        </button>
+                        <div class="ev-faq-answer">
+                            <p>
+                                Anda dapat mencantumkan nomor rekening bank (BCA, Mandiri, BRI, BNI) atau barcode QRIS
+                                dompet digital (GoPay, OVO, ShopeePay, DANA). Tamu cukup memindai atau menyalin nomor
+                                rekening untuk mentransfer kado langsung ke rekening Anda tanpa potongan perantara.
+                            </p>
                         </div>
-                        <div class="step-number">3</div>
-                        <h4 class="step-title">Pilih Template</h4>
-                        <p class="step-desc">Pilih preset/template. Lihat daftar template eksklusif kami.</p>
                     </div>
-                </div>
-                <div class="col-lg-3 col-md-6 reveal" style="transition-delay: 0.4s;">
-                    <div class="step-card text-center">
-                        <div class="step-icon">
-                            <img src="{{ asset('assets/img/step/share.png') }}" alt="Sebarkan">
+
+                    <!-- Q5 -->
+                    <div class="ev-faq-item reveal">
+                        <button class="ev-faq-question" type="button">
+                            <span>Berapa lama masa aktif undangan digital setelah dibuat?</span>
+                            <span class="ev-faq-icon"><i class="bi bi-plus-lg"></i></span>
+                        </button>
+                        <div class="ev-faq-answer">
+                            <p>
+                                Undangan digital Anda akan tetap aktif hingga acara selesai dan tersimpan abadi sebagai
+                                kenang-kenangan digital yang dapat Anda buka kembali kapan saja.
+                            </p>
                         </div>
-                        <div class="step-number">4</div>
-                        <h4 class="step-title">Sebarkan Undangan</h4>
-                        <p class="step-desc">Aktifkan, dan undangan kamu siap untuk disebarkan ke tamu.</p>
-                    </div>
-                </div>
-    </section>
-
-    <!-- Features Section -->
-    <section class="features-section" id="features">
-        <div class="container">
-            <div class="section-header-center reveal">
-                <span class="section-subtitle">Keunggulan Kami</span>
-                <h2 class="section-title">Mengapa Memilih RuangUndang?</h2>
-                <p class="section-desc">Memberikan pengalaman terbaik untuk momen sekali seumur hidup Anda.</p>
-            </div>
-
-            <div class="features-scroll-wrapper">
-                <div class="features-scroll-track">
-                    <div class="feature-card">
-                        <div class="feature-icon"><i class="bi bi-clock-history"></i></div>
-                        <h4>Hitungan Mundur</h4>
-                        <p>Jangan sampai terlewatkan moment indah kamu, hitung mundur tanggal acara pernikahanmu.</p>
-                    </div>
-                    <div class="feature-card">
-                        <div class="feature-icon"><i class="bi bi-phone"></i></div>
-                        <h4>Design Modern dan Responsif</h4>
-                        <p>Say good bye untuk design jadul. Biar undanganmu makin wow.</p>
-                    </div>
-                    <div class="feature-card">
-                        <div class="feature-icon"><i class="bi bi-music-note-beamed"></i></div>
-                        <h4>Background Music</h4>
-                        <p>Pilih musik sesuai keinginan kamu agar undanganmu lebih eksklusif dan romantis.</p>
-                    </div>
-                    <div class="feature-card">
-                        <div class="feature-icon"><i class="bi bi-chat-heart"></i></div>
-                        <h4>Berbagi Momen Indah dan Ucapan</h4>
-                        <p>Tamu undangan bisa berbagi momen dengan mengirimkan gambar dan ucapan.</p>
-                    </div>
-                    <div class="feature-card">
-                        <div class="feature-icon"><i class="bi bi-gift"></i></div>
-                        <h4>Amplop Digital</h4>
-                        <p>Tamu undangan bisa mengirim amplop secara digital dengan mudah.</p>
-                    </div>
-                    <div class="feature-card">
-                        <div class="feature-icon"><i class="bi bi-heart"></i></div>
-                        <h4>Love Stories</h4>
-                        <p>Ceritakan Kisah Cinta kamu dengan leluasa.</p>
-                    </div>
-                    <div class="feature-card">
-                        <div class="feature-icon"><i class="bi bi-camera-video"></i></div>
-                        <h4>Live Streaming</h4>
-                        <p>Temui acara secara virtual agar jarang tidak membuat keterbatasan.</p>
-                    </div>
-                    <div class="feature-card">
-                        <div class="feature-icon"><i class="bi bi-map"></i></div>
-                        <h4>Google Maps Integrasi</h4>
-                        <p>Tamu tidak akan tersesat. Integrasi peta langsung memandu mereka ke lokasi acara dengan satu
-                            klik.</p>
-                    </div>
-                    <div class="feature-card">
-                        <div class="feature-icon"><i class="bi bi-people"></i></div>
-                        <h4>RSVP & Hitung Tamu</h4>
-                        <p>Ketahui pasti berapa tamu yang akan hadir. Sistem RSVP otomatis memudahkan Anda mempersiapkan
-                            acara.</p>
-                    </div>
-                    <div class="feature-card">
-                        <div class="feature-icon"><i class="bi bi-camera-reels"></i></div>
-                        <h4>Galeri Foto & Video</h4>
-                        <p>Bagikan momen pra-pernikan Anda melalui galeri foto interaktif dan video sinematik yang
-                            memukau.</p>
-                    </div>
-                    <div class="feature-card" aria-hidden="true">
-                        <div class="feature-icon"><i class="bi bi-clock-history"></i></div>
-                        <h4>Hitungan Mundur</h4>
-                        <p>Jangan sampai terlewatkan moment indah kamu, hitung mundur tanggal acara pernikahanmu.</p>
-                    </div>
-                    <div class="feature-card" aria-hidden="true">
-                        <div class="feature-icon"><i class="bi bi-phone"></i></div>
-                        <h4>Design Modern dan Responsif</h4>
-                        <p>Say good bye untuk design jadul. Biar undanganmu makin wow.</p>
-                    </div>
-                    <div class="feature-card" aria-hidden="true">
-                        <div class="feature-icon"><i class="bi bi-music-note-beamed"></i></div>
-                        <h4>Background Music</h4>
-                        <p>Pilih musik sesuai keinginan kamu agar undanganmu lebih eksklusif dan romantis.</p>
-                    </div>
-                    <div class="feature-card" aria-hidden="true">
-                        <div class="feature-icon"><i class="bi bi-chat-heart"></i></div>
-                        <h4>Berbagi Momen Indah dan Ucapan</h4>
-                        <p>Tamu undangan bisa berbagi momen dengan mengirimkan gambar dan ucapan.</p>
-                    </div>
-                    <div class="feature-card" aria-hidden="true">
-                        <div class="feature-icon"><i class="bi bi-gift"></i></div>
-                        <h4>Amplop Digital</h4>
-                        <p>Tamu undangan bisa mengirim amplop secara digital dengan mudah.</p>
-                    </div>
-                    <div class="feature-card" aria-hidden="true">
-                        <div class="feature-icon"><i class="bi bi-heart"></i></div>
-                        <h4>Love Stories</h4>
-                        <p>Ceritakan Kisah Cinta kamu dengan leluasa.</p>
-                    </div>
-                    <div class="feature-card" aria-hidden="true">
-                        <div class="feature-icon"><i class="bi bi-camera-video"></i></div>
-                        <h4>Live Streaming</h4>
-                        <p>Temui acara secara virtual agar jarang tidak membuat keterbatasan.</p>
-                    </div>
-                    <div class="feature-card" aria-hidden="true">
-                        <div class="feature-icon"><i class="bi bi-map"></i></div>
-                        <h4>Google Maps Integrasi</h4>
-                        <p>Tamu tidak akan tersesat. Integrasi peta langsung memandu mereka ke lokasi acara dengan satu
-                            klik.</p>
-                    </div>
-                    <div class="feature-card" aria-hidden="true">
-                        <div class="feature-icon"><i class="bi bi-people"></i></div>
-                        <h4>RSVP & Hitung Tamu</h4>
-                        <p>Ketahui pasti berapa tamu yang akan hadir. Sistem RSVP otomatis memudahkan Anda mempersiapkan
-                            acara.</p>
-                    </div>
-                    <div class="feature-card" aria-hidden="true">
-                        <div class="feature-icon"><i class="bi bi-camera-reels"></i></div>
-                        <h4>Galeri Foto & Video</h4>
-                        <p>Bagikan momen pra-pernikan Anda melalui galeri foto interaktif dan video sinematik yang
-                            memukau.</p>
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-
-
-
-
-    <!-- CTA Section -->
-    <section class="cta-section">
-        <div class="container">
-            <div class="cta-box reveal">
-                <h2>Siap Memulai Perjalanan Anda?</h2>
-                <p>Buat undangan digital impian Anda hari ini. Gratis untuk memulai, tanpa kartu kredit.</p>
-                <a href="{{ route('register') }}" rel="nofollow" class="btn-gold"
-                    style="font-size: 1rem; padding: 1rem 2.5rem;">
-                    Buat Undangan Sekarang <i class="bi bi-arrow-right ms-2"></i>
-                </a>
-            </div>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer>
-        <div class="container">
-            <!-- Styling Tambahan agar Tampil Rapi -->
-            <style>
-                .footer-payment-icons img {
-                    object-fit: contain;
-                    transition: opacity 0.2s ease-in-out;
-                    opacity: 0.85;
-                    align-self: start;
-                }
-
-                .footer-payment-icons img:hover {
-                    opacity: 1;
-                }
-            </style>
-            <div class="row gy-5">
-                <div class="col-lg-4 reveal">
-                    <a href="#" class="footer-logo">
-                        <img src="{{ asset('assets/logo-new.png') }}" alt="Logo RuangUndang">
-                    </a>
-                    <div
-                        class="footer-payment-icons d-flex align-items-center justify-content-center flex-wrap gap-3 py-3">
-
-                        <!-- GoPay -->
-                        <img src="https://thumb.wikimedia.org/wikipedia/commons/thumb/6/65/Gopay_logo_%282019%29.svg/3840px-Gopay_logo_%282019%29.svg.png?utm_source=id.wikipedia.org&utm_campaign=index&utm_content=thumbnail"
-                            alt="GoPay" height="24" title="GoPay">
-
-                        <!-- QRIS -->
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/e/e1/QRIS_logo.svg" alt="QRIS"
-                            height="26" title="QRIS">
-
-                        <!-- Bank Mandiri -->
-                        <img src="https://thumb.wikimedia.org/wikipedia/commons/thumb/a/ad/Bank_Mandiri_logo_2016.svg/1280px-Bank_Mandiri_logo_2016.svg.png?utm_source=id.wikipedia.org&utm_campaign=index&utm_content=thumbnail"
-                            alt="Mandiri" height="20" title="Bank Mandiri">
-
-                        <!-- Bank BNI -->
-                        <img src="https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f0/Bank_Negara_Indonesia_logo_%282004%29.svg/1280px-Bank_Negara_Indonesia_logo_%282004%29.svg.png?utm_source=id.wikipedia.org&utm_campaign=index&utm_content=thumbnail"
-                            alt="BNI" height="22" title="BNI">
-
-                        <!-- Bank BRI -->
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/5/5b/Logo_Bank_Rakyat_Indonesia.svg?utm_source=id.wikipedia.org&utm_campaign=index&utm_content=original"
-                            alt="BRI" height="20" title="Bank BRI">
-
-                        <!-- Permata Bank -->
-                        <img src="https://upload.wikimedia.org/wikipedia/en/archive/4/48/20250913151534%21PermataBank_logo.svg"
-                            alt="Permata" height="20" title="Permata Bank">
-
-                        <!-- DANA -->
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/5/52/Dana_logo.png?utm_source=id.wikipedia.org&utm_campaign=index&utm_content=original"
-                            alt="Dana" height="24" title="DANA">
-                    </div>
-
-
-                    <div class="footer-social">
-                        <a href="#" class="social-btn"><i class="bi bi-instagram"></i></a>
-                        <a href="#" class="social-btn"><i class="bi bi-facebook"></i></a>
-                        <a href="#" class="social-btn"><i class="bi bi-tiktok"></i></a>
-                        <a href="#" class="social-btn"><i class="bi bi-youtube"></i></a>
+        <!-- =======================================================================
+                                                                                                                         13. FINAL CALL-TO-ACTION (Warm Evite Card Banner)
+                                                                                                                         ======================================================================= -->
+        <section class="ev-cta-section" style="background-image: url('{{ asset('assets/cta-bg.jpg') }}');">
+            <div class="container">
+                <div class="ev-cta-card reveal">
+                    <h2 class="ev-cta-title">Siap Mewujudkan Undangan Impian Anda?</h2>
+                    <p class="ev-cta-desc">
+                        Bergabunglah dengan ribuan pasangan yang telah merasakan kemudahan berbagi kabar bahagia bersama
+                        RuangUndang. Gratis untuk memulai!
+                    </p>
+                    <div class="ev-cta-buttons">
+                        <a href="{{ route('register') }}" class="ev-btn-hero-primary" id="footerCtaRegisterBtn">
+                            <span>Buat Undangan Sekarang</span>
+                            <i class="bi bi-arrow-right"></i>
+                        </a>
+                        <a href="{{ route('pages.cari-tema') }}" class="ev-btn-hero-secondary">
+                            <span>Lihat Koleksi Desain</span>
+                        </a>
                     </div>
                 </div>
-                <div class="col-6 col-lg-2 offset-lg-1 reveal" style="transition-delay: 0.1s;">
-                    <h5 class="footer-heading">Layanan</h5>
-                    <ul class="footer-links">
-                        <li><a href="#">Undangan Pernikahan</a></li>
-                        <li><a href="#">Undangan Digital</a></li>
-                        <li><a href="#">Cetak Undangan</a></li>
-                        <li><a href="#">Video Undangan</a></li>
-                    </ul>
-                </div>
-                <div class="col-6 col-lg-2 reveal" style="transition-delay: 0.2s;">
-                    <h5 class="footer-heading">Tema Populer</h5>
-                    <ul class="footer-links">
-                        <li><a href="#">Tema Modern</a></li>
-                        <li><a href="#">Tema Rustic</a></li>
-                        <li><a href="#">Tema Floral</a></li>
-                        <li><a href="#">Tema Islami</a></li>
-                    </ul>
-                </div>
-                <div class="col-6 col-lg-2 reveal" style="transition-delay: 0.3s;">
-                    <h5 class="footer-heading">Informasi</h5>
-
-                    <ul class="footer-links">
-                        <li><a href="{{ route('pages.cara-pemesanan') }}">Cara Pemesanan</a></li>
-                        <li><a href="{{ route('pages.faq') }}">Pertanyaan (FAQ)</a></li>
-                        <li><a href="{{ route('pages.syarat-ketentuan') }}">Syarat & Ketentuan</a></li>
-                        <li><a href="{{ route('pages.kebijakan-privasi') }}">Kebijakan Privasi</a></li>
-
-                    </ul>
-                </div>
             </div>
-            <div class="footer-bottom">
-                <p>&copy; 2024 RuangUndang Digital Invitation. Dibuat dengan <i
-                        class="bi bi-heart-fill text-danger"></i>
-                    di Indonesia.</p>
-            </div>
-
-            <div class="text-center mt-4">
-                <a href="https://midtrans.com" target="_blank" rel="noopener noreferrer" class="midtrans-security"
-                    title="Pembayaran aman diproses oleh Midtrans">
-                    <span class="midtrans-icon">
-                        <i class="bi bi-shield-lock-fill"></i>
-                    </span>
-                    <span class="midtrans-label">Pembayaran Aman</span>
-                    <span class="midtrans-logo-text">Midtrans</span>
-                </a>
-            </div>
-        </div>
-    </footer>
-
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        // Navbar Scroll Effect
-        const navbar = document.getElementById('mainNav');
-        window.addEventListener('scroll', () => {
-            if (window.scrollY > 50) {
-                navbar.classList.add('scrolled');
-            } else {
-                navbar.classList.remove('scrolled');
-            }
-        });
-
-        // Hero Text Slider
-        const heroSlides = document.querySelectorAll('.hero-slide');
-        const heroDotsContainer = document.querySelector('.hero-slider-dots');
-        let currentHeroSlide = 0;
-        let heroInterval;
-
-        function createHeroDots() {
-            if (!heroDotsContainer) return;
-            heroDotsContainer.innerHTML = '';
-            heroSlides.forEach((_, index) => {
-                const dot = document.createElement('button');
-                dot.className = 'hero-slider-dot' + (index === 0 ? ' active' : '');
-                dot.setAttribute('aria-label', 'Slide ' + (index + 1));
-                dot.addEventListener('click', () => goToHeroSlide(index));
-                heroDotsContainer.appendChild(dot);
-            });
-        }
-
-        function goToHeroSlide(index) {
-            heroSlides[currentHeroSlide].classList.remove('active');
-            currentHeroSlide = index;
-            heroSlides[currentHeroSlide].classList.add('active');
-            updateHeroDots();
-            resetHeroAutoPlay();
-        }
-
-        function updateHeroDots() {
-            if (!heroDotsContainer) return;
-            const dots = heroDotsContainer.querySelectorAll('.hero-slider-dot');
-            dots.forEach((dot, index) => {
-                dot.classList.toggle('active', index === currentHeroSlide);
-            });
-        }
-
-        function nextHeroSlide() {
-            const next = (currentHeroSlide + 1) % heroSlides.length;
-            goToHeroSlide(next);
-        }
-
-        function startHeroAutoPlay() {
-            stopHeroAutoPlay();
-            heroInterval = setInterval(nextHeroSlide, 5000);
-        }
-
-        function stopHeroAutoPlay() {
-            clearInterval(heroInterval);
-        }
-
-        function resetHeroAutoPlay() {
-            stopHeroAutoPlay();
-            startHeroAutoPlay();
-        }
-
-        if (heroSlides.length > 0) {
-            createHeroDots();
-            startHeroAutoPlay();
-        }
-
-        // Scroll Reveal Animation (Intersection Observer)
-        const reveals = document.querySelectorAll('.reveal');
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('active');
-                    observer.unobserve(entry.target);
-                }
-            });
-        }, { threshold: 0.15 });
-
-        reveals.forEach(reveal => {
-            observer.observe(reveal);
-        });
-
-        // Like Button Logic
-        document.querySelectorAll('.like-btn').forEach(btn => {
-            btn.addEventListener('click', function (e) {
-                e.preventDefault();
-                const id = this.getAttribute('data-id');
-                const countSpan = this.querySelector('.likes-count');
-                const heartIcon = this.querySelector('i');
-
-                if (this.classList.contains('processing')) return;
-                this.classList.add('processing');
-
-                fetch(`/templates/${id}/like`, {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                        'Accept': 'application/json'
-                    }
-                })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            countSpan.textContent = data.likes_count.toLocaleString();
-                            heartIcon.classList.remove('bi-heart-fill');
-                            heartIcon.classList.add('bi-heart');
-                            setTimeout(() => {
-                                heartIcon.classList.remove('bi-heart');
-                                heartIcon.classList.add('bi-heart-fill');
-                            }, 200);
-                        }
-                        this.classList.remove('processing');
-                    })
-                    .catch(err => {
-                        console.error(err);
-                        this.classList.remove('processing');
-                    });
-            });
-        });
-
-        // Features Auto Scroll
-        const featuresScrollWrapper = document.querySelector('.features-scroll-wrapper');
-        const featuresScrollTrack = document.querySelector('.features-scroll-track');
-        if (featuresScrollWrapper && featuresScrollTrack) {
-            featuresScrollWrapper.addEventListener('mouseenter', () => {
-                featuresScrollTrack.style.animationPlayState = 'paused';
-            });
-            featuresScrollWrapper.addEventListener('mouseleave', () => {
-                featuresScrollTrack.style.animationPlayState = 'running';
-            });
-        }
-
-        // Couple List Live Preview Toggle
-        const coupleListItems = document.querySelectorAll('.couple-list-item[data-slug]');
-        const previewPanel = document.getElementById('couplePreviewPanel');
-        const previewFrame = document.getElementById('couplePreviewFrame');
-        const previewEmpty = document.getElementById('couplePreviewEmpty');
-        const previewCloseBtn = previewPanel ? previewPanel.querySelector('.couple-preview-close') : null;
-        let activeCoupleItem = null;
-
-        function openCouplePreview(item) {
-            if (!previewPanel || !previewFrame) return;
-
-            const slug = item.getAttribute('data-slug');
-            const templateId = item.getAttribute('data-template-id');
-            const previewUrl = `/template/frame/${slug}/${templateId}`;
-
-            previewFrame.src = previewUrl;
-            previewPanel.classList.remove('d-none');
-            if (previewEmpty) previewEmpty.classList.add('d-none');
-
-            if (activeCoupleItem && activeCoupleItem !== item) {
-                activeCoupleItem.classList.remove('active');
-            }
-            item.classList.add('active');
-            activeCoupleItem = item;
-        }
-
-        function closeCouplePreview() {
-            if (!previewPanel || !previewFrame) return;
-            previewFrame.src = '';
-            previewPanel.classList.add('d-none');
-            if (previewEmpty) previewEmpty.classList.remove('d-none');
-
-            if (activeCoupleItem) {
-                activeCoupleItem.classList.remove('active');
-                activeCoupleItem = null;
-            }
-        }
-
-        coupleListItems.forEach(item => {
-            item.addEventListener('click', function (e) {
-                e.preventDefault();
-                if (activeCoupleItem === this) {
-                    closeCouplePreview();
-                } else {
-                    openCouplePreview(this);
-                }
-            });
-        });
-
-        if (previewCloseBtn) {
-            previewCloseBtn.addEventListener('click', closeCouplePreview);
-        }
-    </script>
-
-    <!-- ============================================================= -->
+        </section>
+    </main>
 
 
 
+    <!-- =======================================================================
+                                                                                                                     PROMOTIONS POPUP MODAL (Preserved from original code)
+                                                                                                                     ======================================================================= -->
     @if($promotions->isNotEmpty())
         <div class="modal fade" id="promoModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
-
             <div class="modal-dialog modal-dialog-centered modal-lg">
-                <div class="modal-content border-0 shadow-lg promo-modal-content">
-
+                <div class="modal-content border-0 shadow-lg promo-modal-content rounded-4 overflow-hidden">
                     <div id="promoCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="5000">
-
-                        {{-- Banner --}}
                         <div class="carousel-inner">
-
                             @foreach($promotions as $index => $promotion)
                                 <div class="carousel-item {{ $index === 0 ? 'active' : '' }}">
-
                                     <div class="position-relative">
-
                                         <img src="{{ asset('storage/' . $promotion->image) }}"
                                             alt="{{ $promotion->title ?? 'Promosi' }}" class="w-100 promo-image">
-
-                                        {{-- Tombol Close --}}
-                                        <button type="button" class="promo-close" data-bs-dismiss="modal" aria-label="Tutup">
-                                            <span>×</span>
-                                        </button>
-
+                                        <button type="button"
+                                            class="btn-close position-absolute top-0 end-0 m-3 bg-white p-2 rounded-circle shadow"
+                                            data-bs-dismiss="modal" aria-label="Tutup"></button>
                                     </div>
-
                                 </div>
                             @endforeach
-
                         </div>
-
-                        {{-- Tombol Previous --}}
-                        @if($promotions->count() > 1)
-                            <button class="carousel-control-prev promo-control" type="button" data-bs-target="#promoCarousel"
-                                data-bs-slide="prev">
-
-                                <span class="promo-arrow">
-                                    ‹
-                                </span>
-
-                                <span class="visually-hidden">
-                                    Sebelumnya
-                                </span>
-                            </button>
-
-                            {{-- Tombol Next --}}
-                            <button class="carousel-control-next promo-control" type="button" data-bs-target="#promoCarousel"
-                                data-bs-slide="next">
-
-                                <span class="promo-arrow">
-                                    ›
-                                </span>
-
-                                <span class="visually-hidden">
-                                    Berikutnya
-                                </span>
-                            </button>
-                        @endif
-
-                        {{-- Indicator --}}
-                        @if($promotions->count() > 1)
-                            <div class="carousel-indicators promo-indicators">
-
-                                @foreach($promotions as $index => $promotion)
-                                    <button type="button" data-bs-target="#promoCarousel" data-bs-slide-to="{{ $index }}"
-                                        class="{{ $index === 0 ? 'active' : '' }}"
-                                        aria-current="{{ $index === 0 ? 'true' : 'false' }}" aria-label="Banner {{ $index + 1 }}">
-                                    </button>
-                                @endforeach
-
-                            </div>
-                        @endif
-
                     </div>
-
                 </div>
             </div>
         </div>
-    @endif
-
-
-    <style>
-        /* ================================
-       MODAL
-    ================================= */
-
-        .promo-modal-content {
-            border-radius: 16px;
-            overflow: hidden;
-            background: transparent;
-        }
-
-        .promo-image {
-            display: block;
-            width: 100%;
-            max-height: 500px;
-            object-fit: cover;
-        }
-
-
-        /* ================================
-       CLOSE BUTTON
-    ================================= */
-
-        .promo-close {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            z-index: 20;
-
-            width: 40px;
-            height: 40px;
-
-            border: 0;
-            border-radius: 50%;
-
-            display: flex;
-            align-items: center;
-            justify-content: center;
-
-            background: rgba(0, 0, 0, 0.55);
-            color: #fff;
-
-            font-size: 30px;
-            line-height: 1;
-
-            cursor: pointer;
-
-            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.4);
-
-            transition: all 0.2s ease;
-        }
-
-        .promo-close:hover {
-            background: rgba(0, 0, 0, 0.8);
-            transform: scale(1.08);
-        }
-
-        .promo-close span {
-            margin-top: -4px;
-        }
-
-
-        /* ================================
-       ARROW
-    ================================= */
-
-        .promo-control {
-            width: 55px;
-            opacity: 1;
-            z-index: 10;
-        }
-
-        .promo-arrow {
-            width: 38px;
-            height: 38px;
-
-            display: flex;
-            align-items: center;
-            justify-content: center;
-
-            border-radius: 50%;
-
-            background: rgba(0, 0, 0, 0.55);
-            color: #fff;
-
-            font-size: 32px;
-            line-height: 1;
-
-            transition: all 0.2s ease;
-        }
-
-        .promo-control:hover .promo-arrow {
-            background: rgba(0, 0, 0, 0.8);
-            transform: scale(1.08);
-        }
-
-
-        /* ================================
-       INDICATORS
-    ================================= */
-
-        .promo-indicators {
-            margin-bottom: 12px;
-            z-index: 15;
-        }
-
-        .promo-indicators button {
-            width: 8px;
-            height: 8px;
-
-            border: 0;
-            border-radius: 50%;
-
-            margin: 0 4px;
-
-            background-color: rgba(255, 255, 255, 0.65);
-
-            opacity: 1;
-
-            transition: all 0.2s ease;
-        }
-
-        .promo-indicators button.active {
-            width: 24px;
-            border-radius: 10px;
-            background-color: #fff;
-        }
-
-
-        /* ================================
-       BACKDROP BLUR
-    ================================= */
-
-        .modal-backdrop.show {
-            opacity: 1 !important;
-            background: rgba(0, 0, 0, 0.35) !important;
-
-            backdrop-filter: blur(15px) saturate(120%) !important;
-            -webkit-backdrop-filter: blur(15px) saturate(120%) !important;
-        }
-
-        .modal {
-            z-index: 1060 !important;
-        }
-
-        .modal-backdrop {
-            z-index: 1050 !important;
-        }
-
-
-        /* ================================
-       MODAL ANIMATION
-    ================================= */
-
-        #promoModal .modal-dialog {
-            animation: promoModalIn 0.35s ease-out;
-        }
-
-        @keyframes promoModalIn {
-            from {
-                opacity: 0;
-                transform: scale(0.92) translateY(10px);
-            }
-
-            to {
-                opacity: 1;
-                transform: scale(1) translateY(0);
-            }
-        }
-
-
-        /* ================================
-       MOBILE
-    ================================= */
-
-        @media (max-width: 576px) {
-
-            #promoModal .modal-dialog {
-                margin: 15px;
-            }
-
-            .promo-image {
-                max-height: 75vh;
-                object-fit: contain;
-                background: #111;
-            }
-
-            .promo-close {
-                top: 10px;
-                right: 10px;
-
-                width: 36px;
-                height: 36px;
-
-                font-size: 27px;
-            }
-
-            .promo-arrow {
-                width: 34px;
-                height: 34px;
-
-                font-size: 28px;
-            }
-
-            .promo-control {
-                width: 45px;
-            }
-        }
-    </style>
-
-    <script>
-        @if($promotions->isNotEmpty())
+        <script>
             document.addEventListener('DOMContentLoaded', function () {
                 setTimeout(function () {
-                    const promoModal = new bootstrap.Modal(document.getElementById('promoModal'));
-                    promoModal.show();
+                    const promoModalEl = document.getElementById('promoModal');
+                    if (promoModalEl && typeof bootstrap !== 'undefined') {
+                        const promoModal = new bootstrap.Modal(promoModalEl);
+                        promoModal.show();
+                    }
                 }, 1500);
             });
-        @endif
-    </script>
+        </script>
+    @endif
 
+    <!-- WhatsApp Floating Chat Component -->
     @include('components.wa-chat', [
         'phone' => '6285923431716',
         'message' => 'Halo RuangUndang, saya ingin bertanya tentang layanan undangan digital.',
         'title' => 'Chat WhatsApp RuangUndang',
         'mobileBottom' => 24
     ])
-</body>
 
-</html>
+    <!-- Bootstrap 5 Bundle JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" defer></script>
+
+    <!-- Hero Phone Slider -->
+    <script src="{{ asset('assets/js/landing-hero-slider.js') }}" defer></script>
+
+    <!-- Evite Interactive Scripts -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // 1. Sticky Header Scroll Shadow
+            const header = document.getElementById('mainHeader');
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 30) {
+                    header.classList.add('scrolled');
+                } else {
+                    header.classList.remove('scrolled');
+                }
+            }, { passive: true });
+
+            // 2. Mobile Drawer Navigation
+            const drawer = document.getElementById('mobileDrawer');
+            const backdrop = document.getElementById('drawerBackdrop');
+            const openBtn = document.getElementById('mobileDrawerOpenBtn');
+            const closeBtn = document.getElementById('mobileDrawerCloseBtn');
+
+            function openDrawer() {
+                drawer.classList.add('is-open');
+                backdrop.classList.add('is-open');
+                document.body.style.overflow = 'hidden';
+            }
+
+            function closeDrawer() {
+                drawer.classList.remove('is-open');
+                backdrop.classList.remove('is-open');
+                document.body.style.overflow = '';
+            }
+
+            if (openBtn) openBtn.addEventListener('click', openDrawer);
+            if (closeBtn) closeBtn.addEventListener('click', closeDrawer);
+            if (backdrop) backdrop.addEventListener('click', closeDrawer);
+
+            // 3. Search Modal
+            const searchModal = document.getElementById('searchModal');
+            const searchModalBackdrop = document.getElementById('searchModalBackdrop');
+            const searchTriggerBtn = document.getElementById('searchTriggerBtn');
+            const mobileSearchBtn = document.getElementById('mobileSearchBtn');
+            const searchModalClose = document.getElementById('searchModalClose');
+            const searchModalInput = document.getElementById('searchModalInput');
+            const searchModalClear = document.getElementById('searchModalClear');
+            const searchModalForm = document.getElementById('searchModalForm');
+            const searchRecentList = document.getElementById('searchRecentList');
+            const searchRecentSection = document.getElementById('searchRecentSection');
+
+            const RECENT_KEY = 'ru_recent_searches';
+
+            function getRecentSearches() {
+                try { return JSON.parse(localStorage.getItem(RECENT_KEY) || '[]'); } catch { return []; }
+            }
+
+            function saveRecentSearch(query) {
+                if (!query.trim()) return;
+                let arr = getRecentSearches().filter(q => q !== query);
+                arr.unshift(query);
+                arr = arr.slice(0, 5);
+                localStorage.setItem(RECENT_KEY, JSON.stringify(arr));
+            }
+
+            function renderRecent() {
+                const arr = getRecentSearches();
+                if (!searchRecentList || !searchRecentSection) return;
+                if (arr.length === 0) {
+                    searchRecentSection.style.display = 'none';
+                    return;
+                }
+                searchRecentSection.style.display = 'block';
+                searchRecentList.innerHTML = arr.map(q => `
+                                                                                                                                <li class="ev-search-recent-item">
+                                                                                                                                    <button type="button" class="ev-search-recent-btn" data-query="${q}">
+                                                                                                                                        <i class="bi bi-clock-history"></i>
+                                                                                                                                        <span>${q}</span>
+                                                                                                                                    </button>
+                                                                                                                                    <button type="button" class="ev-search-recent-remove" data-query="${q}" aria-label="Hapus">
+                                                                                                                                        <i class="bi bi-x"></i>
+                                                                                                                                    </button>
+                                                                                                                                </li>
+                                                                                                                            `).join('');
+
+                searchRecentList.querySelectorAll('.ev-search-recent-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const q = btn.getAttribute('data-query');
+                        if (searchModalInput) searchModalInput.value = q;
+                        if (searchModalForm) searchModalForm.submit();
+                    });
+                });
+                searchRecentList.querySelectorAll('.ev-search-recent-remove').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const q = btn.getAttribute('data-query');
+                        let arr2 = getRecentSearches().filter(x => x !== q);
+                        localStorage.setItem(RECENT_KEY, JSON.stringify(arr2));
+                        renderRecent();
+                    });
+                });
+            }
+
+            function openSearchModal() {
+                if (!searchModal) return;
+                searchModal.classList.add('is-open');
+                searchModalBackdrop.classList.add('is-open');
+                document.body.style.overflow = 'hidden';
+                renderRecent();
+                setTimeout(() => { if (searchModalInput) searchModalInput.focus(); }, 80);
+            }
+
+            function closeSearchModal() {
+                if (!searchModal) return;
+                searchModal.classList.remove('is-open');
+                searchModalBackdrop.classList.remove('is-open');
+                document.body.style.overflow = '';
+            }
+
+            if (searchTriggerBtn) searchTriggerBtn.addEventListener('click', openSearchModal);
+            if (mobileSearchBtn) mobileSearchBtn.addEventListener('click', openSearchModal);
+            if (searchModalClose) searchModalClose.addEventListener('click', closeSearchModal);
+            if (searchModalBackdrop) searchModalBackdrop.addEventListener('click', closeSearchModal);
+
+            // Clear button
+            if (searchModalInput && searchModalClear) {
+                searchModalInput.addEventListener('input', () => {
+                    searchModalClear.style.display = searchModalInput.value ? 'flex' : 'none';
+                });
+                searchModalClear.addEventListener('click', () => {
+                    searchModalInput.value = '';
+                    searchModalClear.style.display = 'none';
+                    searchModalInput.focus();
+                });
+            }
+
+            // Save on submit
+            if (searchModalForm && searchModalInput) {
+                searchModalForm.addEventListener('submit', () => {
+                    saveRecentSearch(searchModalInput.value);
+                });
+            }
+
+            // Filter pills toggle active state (visual)
+            document.querySelectorAll('.ev-search-filter-pill').forEach(pill => {
+                pill.addEventListener('click', function (e) {
+                    document.querySelectorAll('.ev-search-filter-pill').forEach(p => p.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+
+            // Keyboard shortcuts
+            document.addEventListener('keydown', (e) => {
+                if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+                    e.preventDefault();
+                    if (searchModal && searchModal.classList.contains('is-open')) {
+                        closeSearchModal();
+                    } else {
+                        openSearchModal();
+                    }
+                }
+                if (e.key === 'Escape' && searchModal && searchModal.classList.contains('is-open')) {
+                    closeSearchModal();
+                }
+            });
+
+            // Mega menu: switch theme groups when a category is hovered/clicked
+            const megaLinks = document.querySelectorAll('.mega-category-link');
+            const themeGroups = document.querySelectorAll('.ev-mega-theme-group');
+
+            function switchMegaCategory(catName) {
+                megaLinks.forEach(link => link.classList.remove('active'));
+                themeGroups.forEach(group => group.classList.remove('active'));
+                const targetLink = document.querySelector('.mega-category-link[data-category="' + catName + '"]');
+                const targetGroup = document.querySelector('.ev-mega-theme-group[data-category="' + catName + '"]');
+                if (targetLink) targetLink.classList.add('active');
+                if (targetGroup) targetGroup.classList.add('active');
+            }
+
+            megaLinks.forEach(link => {
+                link.addEventListener('mouseenter', function () {
+                    switchMegaCategory(this.getAttribute('data-category'));
+                });
+                link.addEventListener('click', function (e) {
+                    switchMegaCategory(this.getAttribute('data-category'));
+                });
+            });
+
+            // 4. Horizontal Categories Track Scroll Buttons
+            const catTrack = document.getElementById('catTrack');
+            const prevBtn = document.getElementById('catScrollPrev');
+            const nextBtn = document.getElementById('catScrollNext');
+
+            if (catTrack && prevBtn && nextBtn) {
+                prevBtn.addEventListener('click', () => {
+                    catTrack.scrollBy({ left: -320, behavior: 'smooth' });
+                });
+                nextBtn.addEventListener('click', () => {
+                    catTrack.scrollBy({ left: 320, behavior: 'smooth' });
+                });
+
+                function updateArrows() {
+                    prevBtn.disabled = catTrack.scrollLeft <= 10;
+                    nextBtn.disabled = catTrack.scrollLeft >= catTrack.scrollWidth - catTrack.clientWidth - 10;
+                }
+
+                catTrack.addEventListener('scroll', updateArrows, { passive: true });
+                updateArrows();
+            }
+
+            // 5. Popular Categories Interactive Switcher
+            const popItems = document.querySelectorAll('.ev-popcat-item');
+            const popPanels = document.querySelectorAll('.ev-preview-panel');
+
+            popItems.forEach(item => {
+                const targetId = item.getAttribute('data-target');
+
+                function activateCategory() {
+                    popItems.forEach(i => i.classList.remove('is-active'));
+                    popPanels.forEach(p => p.classList.remove('is-active'));
+
+                    item.classList.add('is-active');
+                    const targetPanel = document.getElementById(targetId);
+                    if (targetPanel) {
+                        targetPanel.classList.add('is-active');
+                    }
+                }
+
+                item.addEventListener('mouseenter', activateCategory);
+                item.addEventListener('click', activateCategory);
+            });
+
+            // 6. Template Category Filtering
+            const filterBtns = document.querySelectorAll('.ev-filter-btn');
+            const templateCards = document.querySelectorAll('.ev-template-card');
+
+            filterBtns.forEach(btn => {
+                btn.addEventListener('click', function () {
+                    filterBtns.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+
+                    const filter = this.getAttribute('data-filter');
+
+                    templateCards.forEach(card => {
+                        const cardCat = card.getAttribute('data-category');
+                        if (filter === 'all' || cardCat === filter || cardCat.includes(filter)) {
+                            card.style.display = 'flex';
+                            setTimeout(() => { card.style.opacity = '1'; }, 20);
+                        } else {
+                            card.style.opacity = '0';
+                            setTimeout(() => { card.style.display = 'none'; }, 250);
+                        }
+                    });
+                });
+            });
+
+            // 7. Interactive Like Button with AJAX
+            document.querySelectorAll('.ev-like-btn').forEach(btn => {
+                btn.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const id = this.getAttribute('data-id');
+                    const countSpan = this.querySelector('.likes-count');
+                    const heartIcon = this.querySelector('i');
+
+                    if (this.classList.contains('processing')) return;
+                    this.classList.add('processing');
+
+                    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+
+                    fetch(`/templates/${id}/like`, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': csrfToken || '',
+                            'Accept': 'application/json'
+                        }
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                countSpan.textContent = data.likes_count.toLocaleString();
+                                heartIcon.classList.add('bi-heart');
+                                heartIcon.classList.remove('bi-heart-fill');
+                                setTimeout(() => {
+                                    heartIcon.classList.remove('bi-heart');
+                                    heartIcon.classList.add('bi-heart-fill');
+                                }, 180);
+                            }
+                            this.classList.remove('processing');
+                        })
+                        .catch(err => {
+                            console.error(err);
+                            this.classList.remove('processing');
+                        });
+                });
+            });
+
+            // 8. FAQ Accordion Interaction
+            const faqItems = document.querySelectorAll('.ev-faq-item');
+            faqItems.forEach(item => {
+                const questionBtn = item.querySelector('.ev-faq-question');
+                if (questionBtn) {
+                    questionBtn.addEventListener('click', () => {
+                        const isOpen = item.classList.contains('is-open');
+                        faqItems.forEach(i => i.classList.remove('is-open'));
+                        if (!isOpen) {
+                            item.classList.add('is-open');
+                        }
+                    });
+                }
+            });
+
+            // 9. Scroll Reveal Observer
+            const reveals = document.querySelectorAll('.reveal');
+            if ('IntersectionObserver' in window) {
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('active');
+                            observer.unobserve(entry.target);
+                        }
+                    });
+                }, { threshold: 0.12 });
+
+                reveals.forEach(el => observer.observe(el));
+            } else {
+                reveals.forEach(el => el.classList.add('active'));
+            }
+
+            // Hero Background Music Toggle
+            const heroMusicToggle = document.getElementById('heroMusicToggle');
+            const heroMusicIcon = document.getElementById('heroMusicIcon');
+            const heroBgMusic = document.getElementById('heroBgMusic');
+
+            if (heroMusicToggle && heroBgMusic) {
+                heroMusicToggle.addEventListener('click', () => {
+                    if (heroBgMusic.paused) {
+                        heroBgMusic.play().then(() => {
+                            heroMusicIcon.classList.replace('bi-play-circle-fill', 'bi-pause-circle-fill');
+                        }).catch(() => { });
+                    } else {
+                        heroBgMusic.pause();
+                        heroMusicIcon.classList.replace('bi-pause-circle-fill', 'bi-play-circle-fill');
+                    }
+                });
+
+                heroBgMusic.addEventListener('ended', () => {
+                    heroMusicIcon.classList.replace('bi-pause-circle-fill', 'bi-play-circle-fill');
+                });
+            }
+        });
+    </script>
+@endsection
