@@ -137,6 +137,78 @@
         @endif
     </div>
 
+    <!-- Invitation Banner (ditampilkan saat halaman RSVP dibuka per-undangan) -->
+    @if(isset($showInvitation) && $showInvitation)
+        @php
+            $invCover = $showInvitation->gallery_cover
+                ? storage_url_with_fallback($showInvitation->gallery_cover, null, $showInvitation->updated_at?->timestamp)
+                : null;
+        @endphp
+        <div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-4">
+            <div class="row g-0">
+                <div class="col-12 col-md-4 col-lg-3"
+                    style="min-height: 190px; background: linear-gradient(135deg, #C6A962 0%, #A68B4B 100%);">
+                    @if($invCover)
+                        <img src="{{ $invCover }}" alt="Cover Undangan"
+                            class="w-100 h-100 object-fit-cover" style="min-height: 190px;">
+                    @else
+                        <div class="w-100 h-100 d-flex align-items-center justify-content-center text-white"
+                            style="min-height: 190px;">
+                            <i class="bi bi-envelope-heart" style="font-size: 3rem;"></i>
+                        </div>
+                    @endif
+                </div>
+                <div class="col-12 col-md-8 col-lg-9">
+                    <div class="card-body p-3 p-md-4">
+                        <div class="d-flex flex-wrap align-items-center gap-2 mb-2">
+                            <span class="badge rounded-pill px-3 py-2 small"
+                                style="background: rgba(198,169,98,.15); color:#A68B4B; border:1px solid rgba(198,169,98,.3);">
+                                <i class="bi bi-envelope-heart me-1"></i> Undangan
+                            </span>
+                            <span class="badge rounded-pill px-3 py-2 small text-uppercase
+                                {{ $showInvitation->status === 'published' ? 'bg-success-subtle text-success' : 'bg-secondary-subtle text-secondary' }}">
+                                {{ $showInvitation->status ?? 'draft' }}
+                            </span>
+                        </div>
+                        <h4 class="fw-bold mb-2" style="font-family:'Plus Jakarta Sans',sans-serif;">
+                            {{ $showInvitation->groom_nickname ?? $showInvitation->groom_name }}
+                            &amp;
+                            {{ $showInvitation->bride_nickname ?? $showInvitation->bride_name }}
+                        </h4>
+                        <div class="d-flex flex-wrap gap-3 text-muted small mb-3">
+                            <span>
+                                <i class="bi bi-calendar3 me-1"></i>
+                                {{ $showInvitation->wedding_date ? \Carbon\Carbon::parse($showInvitation->wedding_date)->translatedFormat('d M Y') : 'Tanggal belum ditentukan' }}
+                            </span>
+                            @if($showInvitation->akad_location)
+                                <span class="text-truncate">
+                                    <i class="bi bi-geo-alt me-1"></i>{{ $showInvitation->akad_location }}
+                                </span>
+                            @endif
+                            <span class="text-truncate">
+                                <i class="bi bi-link-45deg me-1"></i>/{{ $showInvitation->slug }}
+                            </span>
+                        </div>
+                        <div class="d-flex flex-wrap gap-2">
+                            <a href="{{ route('invitation.show', $showInvitation->slug) }}" target="_blank"
+                                class="btn btn-sm btn-outline-secondary rounded-pill">
+                                <i class="bi bi-eye me-1"></i> Lihat Undangan
+                            </a>
+                            <a href="{{ route('guest.camera', $showInvitation->slug) }}" target="_blank"
+                                class="btn btn-sm btn-outline-primary rounded-pill">
+                                <i class="bi bi-camera me-1"></i> Kamera Tamu
+                            </a>
+                            <a href="{{ route('guest.gallery', $showInvitation->slug) }}" target="_blank"
+                                class="btn btn-sm btn-outline-success rounded-pill">
+                                <i class="bi bi-images me-1"></i> Galeri Tamu
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
+
     <!-- Statistik Cards Grid -->
     <div class="row g-3 row-cols-2 row-cols-md-4 mb-4">
         <!-- Total Tamu -->
@@ -223,7 +295,7 @@
             </div>
 
             <div class="d-flex align-items-center gap-2 w-100 w-md-auto ms-auto" style="max-width: 380px;">
-                <form action="" method="GET" class="w-100">
+                <form action="{{ isset($showInvitation) ? route('rsvp.index') : '' }}" method="GET" class="w-100">
                     <select name="list" id="list" class="form-control" onchange="this.form.submit()">
                         <option value="">Semua Undangan</option>
                         @foreach ($invitations as $item)

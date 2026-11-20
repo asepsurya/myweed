@@ -39,8 +39,11 @@
                                     {{ Str::limit($blog->snippet, 120, '......') }}
                                 </p>
                             @endif
-                            <span class="ev-blog-meta">
-                                {{ $blog->created_at?->translatedFormat('d M Y') }}
+                            <span class="ev-blog-meta ev-blog-meta-stats">
+                                <span><i class="bi bi-calendar3 me-1"></i>{{ $blog->created_at?->translatedFormat('d M Y') }}</span>
+                                <span><i class="bi bi-eye me-1"></i>{{ number_format($blog->views_count ?? 0, 0, ',', '.') }}</span>
+                                <span><i class="bi bi-heart me-1"></i>{{ $blog->likes_count }}</span>
+                                <span><i class="bi bi-chat me-1"></i>{{ $blog->comments_count }}</span>
                             </span>
                         </div>
                     </a>

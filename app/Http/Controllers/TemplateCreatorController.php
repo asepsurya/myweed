@@ -39,14 +39,14 @@ class TemplateCreatorController extends Controller
         }
 
         $templates = $query->orderByDesc('is_user_template')->orderByDesc('created_at')->paginate(12);
-        $categories = Category::orderBy('name')->get();
+        $categories = Category::ordered()->get();
 
         return view('dashboard.template-creator.index', compact('templates', 'categories'));
     }
 
     public function create()
     {
-        $categories = Category::orderBy('name')->get();
+        $categories = Category::ordered()->get();
         $baseTemplates = Template::where('is_user_template', false)->where('is_active', true)->get();
 
         return view('dashboard.template-creator.create', [
@@ -259,7 +259,7 @@ PROMPT;
     {
         $this->authorizeTemplate($template);
 
-        $categories = Category::orderBy('name')->get();
+        $categories = Category::ordered()->get();
         $baseTemplates = Template::where('is_user_template', false)->where('is_active', true)->get();
 
         $r2Path = "templates/{$template->slug}/index.blade.php";

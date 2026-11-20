@@ -31,7 +31,7 @@ class AuthenticatedSessionController extends Controller
         if (auth()->user()->role == 'admin') {
             return redirect()->intended(route('dashboard'));
         } else {
-            return redirect()->intended(route('dashboard.user'));
+            return redirect()->intended(route('dashboard.saya'));
         }
 
         // Default fallback

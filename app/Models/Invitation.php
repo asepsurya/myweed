@@ -193,6 +193,11 @@ class Invitation extends Model
         return $this->hasMany(Rsvp::class);
     }
 
+    public function views()
+    {
+        return $this->hasMany(InvitationView::class);
+    }
+
     public function gifts()
     {
         return $this->hasMany(Gift::class);
@@ -369,5 +374,37 @@ class Invitation extends Model
         $this->deletion_error = null;
 
         return $this->save();
+    }
+
+    /**
+     * Jumlah kunjungan per jam selama N jam terakhir.
+     * Label waktu dikonversi ke timezone tampilan (default WIB).
+     */
+    public function hourlyViews(int $hours = 24, string $timezone = 'Asia/Jakarta'): array
+    {
+        $hours = max(1, min(72, $hours));
+        $start = now()->copy()->subHours($hours - 1)->startOfHour();
+
+        $rows = $this->views()
+            ->where('created_at', '>=', $start)
+            ->selectRaw("DATE_FORMAT(created_at, '%Y-%m-%d %H') as hour_key, COUNT(*) as total")
+            ->groupBy('hour_key')
+            ->get();
+
+        $counts = [];
+        foreach ($rows as $row) {
+            $counts[$row->hour_key] = (int) $row->total;
+        }
+
+        $result = [];
+        for ($i = 0; $i < $hours; $i++) {
+            $hour = $start->copy()->addHours($i);
+            $result[] = [
+                'label' => $hour->copy()->timezone($timezone)->format('H:00'),
+                'count' => $counts[$hour->format('Y-m-d H')] ?? 0,
+            ];
+        }
+
+        return $result;
     }
 }

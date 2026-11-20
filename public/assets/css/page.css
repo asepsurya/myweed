@@ -1062,3 +1062,20 @@
         font-size: 0.8rem;
     }
 }
+
+/* ===== Blog meta stats (view, like, komentar) ===== */
+.ev-blog-meta-stats {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem 0.9rem;
+}
+
+.ev-blog-meta-stats span {
+    display: inline-flex;
+    align-items: center;
+}
+
+.ev-blog-meta-stats i {
+    font-size: 0.85rem;
+}

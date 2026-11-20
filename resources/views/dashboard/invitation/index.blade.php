@@ -400,7 +400,7 @@
                                                 @if($category->thumbnail_url)
                                                     <img src="{{ $category->thumbnail_url }}" alt="{{ $category->name }}" style="max-width: 44px; max-height: 44px; object-fit: contain;">
                                                 @else
-                                                    <i class="bi {{ $category->icon ?? 'bi-folder' }} fs-3" style="color: #A68B4B;"></i>
+                                                    {!! category_icon_html($category, 'fs-3', 'style="color: #A68B4B;"') !!}
                                                 @endif
                                             </div>
                                             <div>

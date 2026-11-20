@@ -27,6 +27,7 @@ class DatabaseSeeder extends Seeder
         $this->call([WeddingPlanSeeder::class]);
         $this->call([FinancialOverviewSeeder::class]);
         $this->call([BlogSeeder::class]);
+        $this->call([AnnouncementSeeder::class]);
 
     }
 }

@@ -801,10 +801,15 @@
             }
 
             .ev-ct-sidebar {
-                position: static;
-                top: auto;
-                max-height: none;
-                overflow-y: visible;
+                display: none;
+            }
+
+            .ev-gallery-layout.filters-hidden .ev-ct-sidebar {
+                display: none;
+            }
+
+            .ev-ct-filter-toggle {
+                display: none;
             }
 
             .ev-gallery-layout .ev-templates-grid {
@@ -813,7 +818,7 @@
             }
 
             .ev-gallery-layout.filters-hidden .ev-templates-grid {
-                grid-template-columns: repeat(3, 1fr);
+                grid-template-columns: repeat(2, 1fr);
             }
         }
 

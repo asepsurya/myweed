@@ -35,6 +35,7 @@
     <link href="{{ asset('assets/css/app435e.css?1096aad991449c8654b2') }}" rel="stylesheet">
     <script defer src="{{ asset('assets/js/app435e.js?1096aad991449c8654b2') }}"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="{{ asset('assets/css/icon-picker.css') }}?v={{ @filemtime(public_path('assets/css/icon-picker.css')) }}">
 
     <!-- RuangUndang Theme Overrides -->
     <style>

@@ -21,6 +21,9 @@ Route::get('/music/{music}', [MusicController::class, 'apiShow']);
 Route::get('/youtube-music', [YoutubeMusicController::class, 'apiIndex']);
 
 // Guest Photo API Routes
-Route::post('/api/guest-photos', [GuestPhotoController::class, 'store']);
-Route::get('/api/guest-photos/{event_id}', [GuestPhotoController::class, 'show'])
+// Note: api.php is already registered with the "api" prefix, so do NOT add "/api" here
+// (otherwise the URL becomes /api/api/guest-photos).
+Route::post('/guest-photos', [GuestPhotoController::class, 'store']);
+Route::get('/guest-photos/{event_id}', [GuestPhotoController::class, 'show'])
     ->middleware('throttle:60,1');
+Route::delete('/guest-photos/{id}', [GuestPhotoController::class, 'destroy']);

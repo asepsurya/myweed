@@ -1,9 +1,11 @@
 <?php
 
+use App\Http\Controllers\AnnouncementController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\BudgetController;
+use App\Http\Controllers\BudgetCategoryController;
 use App\Http\Controllers\BudgetExpenseController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CouponController;
@@ -12,8 +14,10 @@ use App\Http\Controllers\DocumentationController;
 use App\Http\Controllers\EnvSettingController;
 use App\Http\Controllers\FinancialDashboardController;
 use App\Http\Controllers\GiftController;
+use App\Http\Controllers\GuestPhotoController;
 use App\Http\Controllers\LandingController;
 use App\Http\Controllers\MusicController;
+use App\Http\Controllers\PageController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PromotionController;
 use App\Http\Controllers\RsvpController;
@@ -34,6 +38,7 @@ use App\Http\Controllers\WeddingController;
 use App\Http\Controllers\WeedingPlanController;
 use App\Http\Controllers\YoutubeMusicController;
 use App\Models\Guest;
+use App\Models\GuestPhoto;
 use App\Models\Invitation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
@@ -44,6 +49,12 @@ Route::get('/', [LandingController::class, 'index'])->name('landing');
 
 Route::get('/blog', [BlogController::class, 'publicIndex'])->name('blog.index');
 Route::get('/blog/{slug}', [BlogController::class, 'publicShow'])->name('blog.show');
+Route::get('/pages', [PageController::class, 'publicIndex'])->name('pages.index');
+Route::get('/pages/{slug}', [PageController::class, 'publicShow'])->name('pages.show');
+Route::post('/blog/{slug}/like', [BlogController::class, 'toggleLike'])->name('blog.like');
+Route::post('/blog/{slug}/comments', [BlogController::class, 'storeComment'])
+    ->middleware('auth')
+    ->name('blog.comment');
 
 Route::get('/test-import-kontak', function () {
     return '<h1>Import Kontak Test</h1><p>Route ini jalan!</p><a href="/invitation/import-kontak">Buka Import Kontak</a>';
@@ -67,6 +78,11 @@ Route::get('/home', [DashboardController::class, 'indexUser'])
 Route::get('/dashboard/saya', [DashboardController::class, 'publishedDashboard'])
     ->middleware(['auth'])
     ->name('dashboard.saya');
+
+// Pemilik/admin hapus foto tamu (tanpa cek device)
+Route::delete('/dashboard/guest-photos/{id}', [\App\Http\Controllers\GuestPhotoController::class, 'destroy'])
+    ->middleware(['auth'])
+    ->name('dashboard.guest-photos.destroy');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -210,6 +226,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/', [CategoryController::class, 'adminIndex'])->name('index');
         Route::get('/create', [CategoryController::class, 'adminCreate'])->name('create');
         Route::post('/', [CategoryController::class, 'adminStore'])->name('store');
+        Route::post('/reorder', [CategoryController::class, 'reorder'])->name('reorder');
         Route::get('/{category}/edit', [CategoryController::class, 'adminEdit'])->name('edit');
         Route::put('/{category}', [CategoryController::class, 'adminUpdate'])->name('update');
         Route::patch('/{category}/toggle', [CategoryController::class, 'toggleStatus'])->name('toggle');
@@ -327,14 +344,36 @@ Route::middleware(['auth'])->group(function () {
         Route::delete('/{promotion}', [PromotionController::class, 'destroy'])->name('destroy');
     });
 
+    Route::middleware('role:admin')->prefix('admin/announcements')->name('announcements.')->group(function () {
+        Route::get('/', [AnnouncementController::class, 'index'])->name('index');
+        Route::get('/create', [AnnouncementController::class, 'create'])->name('create');
+        Route::post('/', [AnnouncementController::class, 'store'])->name('store');
+        Route::get('/{announcement}/edit', [AnnouncementController::class, 'edit'])->name('edit');
+        Route::put('/{announcement}', [AnnouncementController::class, 'update'])->name('update');
+        Route::delete('/{announcement}', [AnnouncementController::class, 'destroy'])->name('destroy');
+    });
+
     Route::middleware('role:admin')->prefix('admin/blogs')->name('admin.blogs.')->group(function () {
         Route::get('/', [BlogController::class, 'index'])->name('index');
+        Route::get('/comments', [BlogController::class, 'adminComments'])->name('comments');
+        Route::post('/comments/{comment}/reply', [BlogController::class, 'replyComment'])->name('comments.reply');
+        Route::delete('/comments/{comment}', [BlogController::class, 'destroyComment'])->name('comments.destroy');
         Route::get('/create', [BlogController::class, 'create'])->name('create');
         Route::post('/', [BlogController::class, 'store'])->name('store');
         Route::get('/{blog}/edit', [BlogController::class, 'edit'])->name('edit');
         Route::put('/{blog}', [BlogController::class, 'update'])->name('update');
         Route::patch('/{blog}/toggle', [BlogController::class, 'toggleStatus'])->name('toggle');
         Route::delete('/{blog}', [BlogController::class, 'destroy'])->name('destroy');
+    });
+
+    Route::middleware('role:admin')->prefix('admin/pages')->name('admin.pages.')->group(function () {
+        Route::get('/', [PageController::class, 'index'])->name('index');
+        Route::get('/create', [PageController::class, 'create'])->name('create');
+        Route::post('/', [PageController::class, 'store'])->name('store');
+        Route::get('/{page}/edit', [PageController::class, 'edit'])->name('edit');
+        Route::put('/{page}', [PageController::class, 'update'])->name('update');
+        Route::patch('/{page}/toggle', [PageController::class, 'toggleStatus'])->name('toggle');
+        Route::delete('/{page}', [PageController::class, 'destroy'])->name('destroy');
     });
 
     Route::middleware('role:admin')->prefix('admin/coupons')->name('coupons.')->group(function () {
@@ -440,14 +479,29 @@ Route::get('/kebijakan-privasi', [LandingController::class, 'kebijakanPrivasi'])
 
 Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
 
-Route::get('/guest/camera', function () {
-    return view('guest.camera');
-})->name('guest.camera');
+// Guest camera — buka dengan /guest/camera/{slug} atau /guest/camera?event={slug}
+Route::get('/guest/camera/{slug?}', [GuestPhotoController::class, 'camera'])->name('guest.camera');
 
 Route::get('/guest/photos/{event_id}', function ($event_id) {
-    $invitation = Invitation::where('slug', $event_id)->firstOrFail();
-    $photos = $invitation->galleries;
-    return view('guest.gallery', ['event_id' => $event_id, 'photos' => $photos]);
+    $invitation = Invitation::where('slug', $event_id)
+        ->orWhere('public_id', $event_id)
+        ->orWhere('id', $event_id)
+        ->firstOrFail();
+
+    $photos = GuestPhoto::where('event_id', $invitation->id)->latest()->get();
+
+    $isOwner = auth()->check() && (
+        auth()->id() === $invitation->user_id
+        || auth()->id() === $invitation->partner_user_id
+        || (auth()->user() && auth()->user()->role === 'admin')
+    );
+
+    return view('guest.gallery', [
+        'event_id' => $invitation->slug,
+        'photos' => $photos,
+        'invitation' => $invitation,
+        'isOwner' => $isOwner,
+    ]);
 })->name('guest.gallery');
 
 // QR Code Generation Route for Camera Access

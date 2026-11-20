@@ -123,6 +123,10 @@
                 <p class="text-muted mb-0 small">Kelola inspirasi dan panduan untuk website undangan ini</p>
             </div>
             <div class="d-flex gap-2">
+                <a href="{{ route('admin.blogs.comments') }}"
+                    class="btn btn-outline-secondary rounded-pill px-4 fw-semibold">
+                    <i class="bi bi-chat-dots me-1"></i> Komentar
+                </a>
                 <a href="{{ route('admin.blogs.create') }}"
                     class="btn text-white rounded-pill px-4 fw-semibold shadow-sm"
                     style="background: linear-gradient(135deg, #C6A962 0%, #A68B4B 100%); border: none;">
@@ -190,6 +194,16 @@
                                     {{ $blog->excerpt }}
                                 </p>
                             @endif
+
+                            <!-- Statistik -->
+                            <div class="d-flex align-items-center gap-3 text-muted small mb-3">
+                                <span title="Jumlah view"><i class="bi bi-eye me-1"></i>{{ number_format($blog->views_count ?? 0, 0, ',', '.') }}</span>
+                                <span title="Jumlah suka"><i class="bi bi-heart me-1"></i>{{ $blog->likes_count }}</span>
+                                <a href="{{ route('admin.blogs.comments', ['blog' => $blog->id]) }}"
+                                    class="text-decoration-none" title="Lihat komentar">
+                                    <i class="bi bi-chat me-1"></i>{{ $blog->comments_count }}
+                                </a>
+                            </div>
 
                             <!-- Action Buttons -->
                             <div class="mt-auto d-flex gap-2">

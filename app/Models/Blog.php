@@ -27,7 +27,18 @@ class Blog extends Model
         'image' => 'string',
         'sort_order' => 'integer',
         'is_active' => 'boolean',
+        'views_count' => 'integer',
     ];
+
+    public function likes(): HasMany
+    {
+        return $this->hasMany(BlogLike::class);
+    }
+
+    public function comments(): HasMany
+    {
+        return $this->hasMany(BlogComment::class);
+    }
 
     public function scopeInspirasi($query)
     {

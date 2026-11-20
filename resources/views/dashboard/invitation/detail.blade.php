@@ -344,7 +344,7 @@
                 <div class="card adminuiux-card overflow-hidden mb-4">
                     <div class="card-header d-flex justify-content-between align-items-center">
                         <h6 class="mb-0 fw-bold text-uppercase text-muted">Kamera Tamu Undangan</h6>
-                        <a href="{{ route('guest.camera') }}" class="btn btn-sm btn-outline-primary" target="_blank">
+                        <a href="{{ route('guest.camera', $invitation->slug) }}" class="btn btn-sm btn-outline-primary" target="_blank">
                             <i class="bi bi-qr-code me-1"></i> Buka Kamera Tamu
                         </a>
                     </div>
@@ -385,7 +385,7 @@
                         </div>
                         
                         <div class="text-end">
-                            <button class="btn btn-sm btn-outline-primary" onclick="window.open('{{ route('guest.camera') }}', '_blank')">
+                            <button class="btn btn-sm btn-outline-primary" onclick="window.open('{{ route('guest.camera', $invitation->slug) }}', '_blank')">
                                 <i class="bi bi-camera me-1"></i> Tambah Foto Tamu
                             </button>
                         </div>

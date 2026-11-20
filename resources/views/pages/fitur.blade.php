@@ -70,6 +70,13 @@
                 </div>
                 <div class="col-lg-4 col-md-6 reveal reveal-d1">
                     <div class="ev-feature-card">
+                        <div class="ev-feature-icon"><i class="bi bi-camera-fill"></i></div>
+                        <h4>Kamera Tamu &amp; Galeri Foto</h4>
+                        <p>Tamu cukup memindai QR untuk berfoto langsung dengan bingkai elegan (Polaroid, Rustic, Minimal, atau tanpa frame). Foto otomatis tersimpan ke galeri tamu — lengkap dengan lightbox, pencarian nama, dan kuota 5 foto per perangkat.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 reveal reveal-d1">
+                    <div class="ev-feature-card">
                         <div class="ev-feature-icon"><i class="bi bi-clock-history"></i></div>
                         <h4>Hitungan Mundur</h4>
                         <p>Jangan sampai terlewatkan momen indah, hitung mundur tanggal acara pernikahanmu.</p>

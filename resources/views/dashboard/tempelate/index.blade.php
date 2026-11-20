@@ -695,7 +695,7 @@
                                 class="card adminuiux-card category-filter style-none text-center h-100"
                                 data-category="{{ $cat->slug }}">
                                 <div class="card-body">
-                                    <i class="avatar avatar-40 text-theme-1 bi {{ $cat->icon ?? 'bi-folder' }} h3 mb-3"></i>
+                                    {!! category_icon_html($cat, 'avatar avatar-40 text-theme-1 h3 mb-3') !!}
                                     <p class="text-secondary small mb-0">{{ $cat->name }}</p>
                                 </div>
                             </a>
@@ -819,28 +819,61 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="addCategoryForm" class="mb-3">
-                        <div class="input-group">
-                            <input type="text" id="categoryName" class="form-control" placeholder="New category name..."
-                                required>
-                            <select id="categoryIcon" class="form-select" style="max-width: 150px;">
-                                <option value="bi-folder">Folder</option>
-                                <option value="bi-heart">Heart</option>
-                                <option value="bi-baby">Baby</option>
-                                <option value="bi-cake">Cake</option>
-                                <option value="bi-mortarboard">Graduation</option>
-                                <option value="bi-tree">Tree</option>
-                                <option value="bi-music-note-beamed">Music</option>
-                                <option value="bi-stars">Stars</option>
-                                <option value="bi-house-door">House</option>
-                                <option value="bi-sun">Sun</option>
-                                <option value="bi-people">People</option>
-                                <option value="bi-shield-check">Shield</option>
-                                <option value="bi-flower1">Flower</option>
-                            </select>
-                            <button class="btn btn-primary" type="submit">
-                                <i class="bi bi-plus-lg"></i> Add
+                    <form id="addCategoryForm" class="mb-4">
+                        <label class="form-label small fw-semibold mb-1">Nama Kategori</label>
+                        <div class="input-group mb-3">
+                            <input type="text" id="categoryName" class="form-control"
+                                placeholder="Contoh: Undangan Pernikahan" required>
+                            <button class="btn btn-primary px-3" type="submit">
+                                <i class="bi bi-plus-lg me-1"></i> Tambah
                             </button>
+                        </div>
+
+                        <label class="form-label small fw-semibold mb-1">Ikon Kategori</label>
+                        <input type="hidden" id="categoryIcon" value="bi-folder">
+                        <button type="button"
+                            class="btn w-100 d-flex align-items-center gap-3 text-start border rounded-3 p-2 bg-body-tertiary icon-picker-trigger"
+                            id="categoryIconPickerBtn" aria-expanded="false" aria-controls="categoryIconPickerPanel">
+                            <span class="rounded-3 d-flex align-items-center justify-content-center bg-white border flex-shrink-0"
+                                style="width: 42px; height: 42px;">
+                                <i class="bi bi-folder" id="categoryIconPickerIcon" style="font-size: 1.25rem;"></i>
+                                <img src="" alt="" id="categoryIconPickerSvgImg" class="d-none"
+                                    style="width: 1.25rem; height: 1.25rem; object-fit: contain;">
+                            </span>
+                            <span style="min-width: 0;">
+                                <span class="d-block fw-semibold small text-truncate" id="categoryIconPickerName">bi-folder</span>
+                                <span class="d-block text-muted" style="font-size: 0.7rem;">Klik untuk memilih ikon</span>
+                            </span>
+                            <i class="bi bi-chevron-down ms-auto text-muted"></i>
+                        </button>
+
+                        <div class="border rounded-3 p-3 mt-2 shadow-sm bg-body d-none icon-picker-panel"
+                            id="categoryIconPickerPanel">
+                            <div class="input-group input-group-sm mb-3">
+                                <span class="input-group-text bg-transparent border-0"><i class="bi bi-search"></i></span>
+                                <input type="text" class="form-control border-0" id="categoryIconPickerSearch"
+                                    placeholder="Cari ikon...">
+                                <span class="input-group-text bg-transparent border-0 text-muted small"
+                                    id="categoryIconPickerCount">0 ikon</span>
+                            </div>
+                            <div id="categoryIconPickerGrid"
+                                style="max-height: 220px; overflow-y: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(44px, 1fr)); gap: 6px; align-content: start;">
+                            </div>
+
+                            <div class="d-flex align-items-center gap-2 mt-3 pt-3 border-top flex-wrap">
+                                <input type="hidden" id="categoryIconSvg" value="">
+                                <button type="button" class="btn btn-sm btn-outline-secondary" id="categoryIconSvgBtn">
+                                    <i class="bi bi-upload me-1"></i>Upload SVG
+                                </button>
+                                <input type="file" id="categoryIconSvgFile" accept=".svg,image/svg+xml" class="d-none">
+                                <span class="small text-muted text-truncate" id="categoryIconSvgName"></span>
+                                <button type="button" class="btn btn-sm btn-outline-danger ms-auto d-none"
+                                    id="categoryIconSvgClear">
+                                    <i class="bi bi-x-lg me-1"></i>Hapus
+                                </button>
+                            </div>
+                            <div class="form-text">SVG opsional (maks 100 KB). Jika diisi, SVG dipakai menggantikan ikon Bootstrap.</div>
+                            <div class="text-danger small mt-1" id="categoryIconSvgError"></div>
                         </div>
                     </form>
                     <div class="list-group" id="categoryList">
@@ -848,13 +881,23 @@
                             <div class="list-group-item d-flex justify-content-between align-items-center category-item"
                                 data-id="{{ $cat->id }}" data-slug="{{ $cat->slug }}">
                                 <div class="d-flex align-items-center gap-2">
-                                    <i class="bi {{ $cat->icon ?? 'bi-folder' }} text-theme-1"></i>
+                                    {!! category_icon_html($cat, 'text-theme-1') !!}
                                     <span>{{ $cat->name }}</span>
                                 </div>
-                                <button type="button" class="btn btn-sm btn-outline-danger btn-delete-category"
-                                    data-id="{{ $cat->id }}">
-                                    <i class="bi bi-trash"></i>
-                                </button>
+                                <div class="d-flex align-items-center gap-1 flex-shrink-0">
+                                    <button type="button" class="btn btn-sm btn-outline-secondary btn-reorder-category"
+                                        data-id="{{ $cat->id }}" data-direction="up" title="Naikkan urutan">
+                                        <i class="bi bi-arrow-up"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-sm btn-outline-secondary btn-reorder-category"
+                                        data-id="{{ $cat->id }}" data-direction="down" title="Turunkan urutan">
+                                        <i class="bi bi-arrow-down"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-sm btn-outline-danger btn-delete-category"
+                                        data-id="{{ $cat->id }}">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
                             </div>
                         @endforeach
                     </div>
@@ -1205,8 +1248,151 @@
     <!-- ═══════════════════════════════════════════════════════════════ -->
     <!-- SCRIPT: Categories, Tabs, Import Code Editor                    -->
     <!-- ═══════════════════════════════════════════════════════════════ -->
+    <script src="{{ asset('assets/js/bootstrap-icons-list.js') }}?v={{ @filemtime(public_path('assets/js/bootstrap-icons-list.js')) }}"></script>
     <script>
         const categories = @json($categories);
+
+        /* ── Category Icon Picker ── */
+        (function () {
+            const btn = document.getElementById('categoryIconPickerBtn');
+            const hidden = document.getElementById('categoryIcon');
+            const iconEl = document.getElementById('categoryIconPickerIcon');
+            const svgImgEl = document.getElementById('categoryIconPickerSvgImg');
+            const panel = document.getElementById('categoryIconPickerPanel');
+            const search = document.getElementById('categoryIconPickerSearch');
+            const grid = document.getElementById('categoryIconPickerGrid');
+            const countEl = document.getElementById('categoryIconPickerCount');
+            const nameEl = document.getElementById('categoryIconPickerName');
+
+            const svgInput = document.getElementById('categoryIconSvg');
+            const svgBtn = document.getElementById('categoryIconSvgBtn');
+            const svgFile = document.getElementById('categoryIconSvgFile');
+            const svgName = document.getElementById('categoryIconSvgName');
+            const svgClear = document.getElementById('categoryIconSvgClear');
+            const svgError = document.getElementById('categoryIconSvgError');
+
+            if (!btn) return;
+            if (!window.BOOTSTRAP_ICONS) {
+                if (countEl) countEl.textContent = 'Daftar ikon gagal dimuat';
+                return;
+            }
+
+            let rendered = false;
+
+            function selectIcon(icon) {
+                hidden.value = icon;
+                iconEl.className = 'bi ' + icon;
+                nameEl.textContent = icon;
+                grid.querySelectorAll('.icon-picker-btn').forEach(function (b) {
+                    b.classList.toggle('active', b.dataset.icon === icon);
+                });
+            }
+
+            function setSvg(dataUri, label) {
+                svgInput.value = dataUri || '';
+                if (dataUri) {
+                    svgImgEl.src = dataUri;
+                    svgImgEl.classList.remove('d-none');
+                    iconEl.classList.add('d-none');
+                    svgName.textContent = label || 'SVG kustom';
+                    svgClear.classList.remove('d-none');
+                    nameEl.textContent = 'SVG kustom';
+                } else {
+                    svgImgEl.removeAttribute('src');
+                    svgImgEl.classList.add('d-none');
+                    iconEl.classList.remove('d-none');
+                    svgName.textContent = '';
+                    svgClear.classList.add('d-none');
+                    nameEl.textContent = hidden.value || 'bi-folder';
+                }
+            }
+
+            function renderIcons(filter) {
+                const q = (filter || '').toLowerCase().replace(/^bi-/, '').trim();
+                const icons = q
+                    ? window.BOOTSTRAP_ICONS.filter(function (n) { return n.replace('bi-', '').includes(q); })
+                    : window.BOOTSTRAP_ICONS;
+
+                countEl.textContent = icons.length + ' ikon';
+                grid.innerHTML = '';
+
+                const frag = document.createDocumentFragment();
+                icons.forEach(function (icon) {
+                    const name = icon.indexOf('bi-') === 0 ? icon : 'bi-' + icon;
+                    const b = document.createElement('button');
+                    b.type = 'button';
+                    b.className = 'icon-picker-btn';
+                    if (name === hidden.value) b.classList.add('active');
+                    b.dataset.icon = name;
+                    b.title = name;
+                    b.innerHTML = '<i class="bi ' + name + '"></i>';
+                    b.addEventListener('click', function () {
+                        selectIcon(name);
+                        setSvg('', '');
+                        panel.classList.add('d-none');
+                    });
+                    frag.appendChild(b);
+                });
+                grid.appendChild(frag);
+                rendered = true;
+            }
+
+            btn.addEventListener('click', function () {
+                const willOpen = panel.classList.contains('d-none');
+                panel.classList.toggle('d-none');
+                btn.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
+                if (willOpen) {
+                    if (!rendered) renderIcons(search.value);
+                    search.focus();
+                }
+            });
+
+            search.addEventListener('input', function () { renderIcons(search.value); });
+
+            /* ── Upload SVG ── */
+            if (svgBtn && svgFile) {
+                svgBtn.addEventListener('click', function () { svgFile.click(); });
+                svgFile.addEventListener('change', function () {
+                    const file = this.files && this.files[0];
+                    svgError.textContent = '';
+                    if (!file) return;
+
+                    if (!/\.svg$/i.test(file.name) && file.type !== 'image/svg+xml') {
+                        svgError.textContent = 'File harus berformat .svg';
+                        this.value = '';
+                        return;
+                    }
+                    if (file.size > 100 * 1024) {
+                        svgError.textContent = 'Ukuran SVG maksimal 100 KB';
+                        this.value = '';
+                        return;
+                    }
+
+                    const reader = new FileReader();
+                    reader.onload = function (e) { setSvg(e.target.result, file.name); };
+                    reader.readAsDataURL(file);
+                });
+            }
+
+            if (svgClear) {
+                svgClear.addEventListener('click', function () {
+                    setSvg('', '');
+                    svgError.textContent = '';
+                    if (svgFile) svgFile.value = '';
+                });
+            }
+
+            /* Reset picker (dipakai setelah kategori ditambah) */
+            window.resetCategoryIconPicker = function () {
+                selectIcon('bi-folder');
+                setSvg('', '');
+                svgError.textContent = '';
+                if (svgFile) svgFile.value = '';
+            };
+
+            selectIcon(hidden.value || 'bi-folder');
+            setSvg(svgInput.value || '', 'SVG kustom');
+        })();
 
         /* ── Category Modal ── */
         window.openCategoryModal = function () {
@@ -1217,8 +1403,10 @@
             e.preventDefault();
             const nameInput = document.getElementById('categoryName');
             const iconInput = document.getElementById('categoryIcon');
+            const svgInput = document.getElementById('categoryIconSvg');
             const name = nameInput.value.trim();
             const icon = iconInput.value;
+            const iconSvg = (svgInput && svgInput.value) ? svgInput.value : null;
             if (!name) return;
 
             fetch('{{ route("categories.store") }}', {
@@ -1227,12 +1415,14 @@
                     'Content-Type': 'application/json',
                     'X-CSRF-TOKEN': '{{ csrf_token() }}'
                 },
-                body: JSON.stringify({ name, icon })
+                body: JSON.stringify({ name, icon, icon_svg: iconSvg })
             })
                 .then(res => res.json())
                 .then(data => {
                     if (data.success) {
                         nameInput.value = '';
+                        if (window.resetCategoryIconPicker) window.resetCategoryIconPicker();
+
                         const list = document.getElementById('categoryList');
                         const item = document.createElement('div');
                         item.className = 'list-group-item d-flex justify-content-between align-items-center category-item';
@@ -1240,12 +1430,18 @@
                         item.dataset.slug = data.category.slug;
                         item.innerHTML = `
                     <div class="d-flex align-items-center gap-2">
-                        <i class="bi ${icon} text-theme-1"></i>
+                        ${data.category.icon_svg
+                            ? `<i class="category-icon-img text-theme-1" style="--category-icon:url('${data.category.icon_svg}')"></i>`
+                            : `<i class="bi ${icon} text-theme-1"></i>`}
                         <span>${name}</span>
                     </div>
-                    <button type="button" class="btn btn-sm btn-outline-danger btn-delete-category" data-id="${data.category.id}">
-                        <i class="bi bi-trash"></i>
-                    </button>`;
+                    <div class="d-flex align-items-center gap-1 flex-shrink-0">
+                        <button type="button" class="btn btn-sm btn-outline-secondary btn-reorder-category" data-id="${data.category.id}" data-direction="up" title="Naikkan urutan"><i class="bi bi-arrow-up"></i></button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary btn-reorder-category" data-id="${data.category.id}" data-direction="down" title="Turunkan urutan"><i class="bi bi-arrow-down"></i></button>
+                        <button type="button" class="btn btn-sm btn-outline-danger btn-delete-category" data-id="${data.category.id}">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </div>`;
                         list.appendChild(item);
 
                         const filterContainer = document.querySelector('#content-template .kategori-scroll');
@@ -1256,7 +1452,9 @@
                         class="card adminuiux-card category-filter style-none text-center h-100"
                         data-category="${data.category.slug}">
                         <div class="card-body">
-                            <i class="avatar avatar-40 text-theme-1 bi ${icon} h3 mb-3"></i>
+                            ${data.category.icon_svg
+                                ? `<i class="category-icon-img avatar avatar-40 text-theme-1 h3 mb-3" style="--category-icon:url('${data.category.icon_svg}')"></i>`
+                                : `<i class="avatar avatar-40 text-theme-1 bi ${icon} h3 mb-3"></i>`}
                             <p class="text-secondary small mb-0">${name}</p>
                         </div>
                     </a>`;
@@ -1271,6 +1469,74 @@
                         text: err.responseJSON?.message || 'Terjadi kesalahan'
                     });
                 });
+        });
+
+        /* ── Reorder Category ── */
+        function reorderCategory(id, direction) {
+            fetch('{{ route("admin.categories.reorder") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({ id: parseInt(id, 10), direction: direction })
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        applyCategoryOrder(data.order);
+                    } else if (data.message) {
+                        Swal.fire({
+                            icon: 'info',
+                            title: 'Info',
+                            text: data.message,
+                            timer: 1600,
+                            showConfirmButton: false
+                        });
+                    }
+                })
+                .catch(() => Swal.fire({ icon: 'error', title: 'Gagal', text: 'Terjadi kesalahan' }));
+        }
+
+        function applyCategoryOrder(order) {
+            if (!Array.isArray(order)) return;
+
+            const list = document.getElementById('categoryList');
+            if (list) {
+                order.forEach(function (id) {
+                    const item = list.querySelector('.category-item[data-id="' + id + '"]');
+                    if (item) list.appendChild(item);
+                });
+            }
+
+            const scroll = document.querySelector('#content-template .kategori-scroll');
+            if (!scroll) return;
+
+            const slugById = {};
+            categories.forEach(function (c) { slugById[c.id] = c.slug; });
+
+            const manageLink = scroll.querySelector('.category-filter[onclick*="openCategoryModal"]');
+            const anchor = manageLink ? manageLink.closest('.col-8, .col-sm-6, .col-md-3') : null;
+
+            order.forEach(function (id) {
+                const slug = slugById[id];
+                if (!slug) return;
+                const card = scroll.querySelector('.category-filter[data-category="' + slug + '"]');
+                if (!card) return;
+                const wrapper = card.closest('.col-8, .col-sm-6, .col-md-3');
+                if (!wrapper) return;
+                if (anchor && anchor.parentNode === scroll) {
+                    scroll.insertBefore(wrapper, anchor);
+                } else {
+                    scroll.appendChild(wrapper);
+                }
+            });
+        }
+
+        document.getElementById('modalCategory').addEventListener('click', function (e) {
+            const btn = e.target.closest('.btn-reorder-category');
+            if (!btn) return;
+            reorderCategory(btn.dataset.id, btn.dataset.direction);
         });
 
         function bindDeleteCategory() {

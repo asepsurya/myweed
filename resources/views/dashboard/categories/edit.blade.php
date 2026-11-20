@@ -48,10 +48,6 @@
                         <input type="text" name="slug" class="form-control" value="{{ old('slug', $category->slug) }}" required>
                     </div>
                     <div class="col-md-4">
-                        <label class="form-label fw-semibold">Ikon <span class="text-muted small">(Bootstrap Icons)</span></label>
-                        <input type="text" name="icon" class="form-control" value="{{ old('icon', $category->icon) }}">
-                    </div>
-                    <div class="col-md-4">
                         <label class="form-label fw-semibold">Urutan</label>
                         <input type="number" name="sort_order" class="form-control" value="{{ old('sort_order', $category->sort_order) }}" min="0">
                     </div>
@@ -67,6 +63,9 @@
                             <span class="text-muted small">Belum ada thumbnail</span>
                         @endif
                         <input type="file" name="thumbnail" class="form-control mt-2" accept="image/*">
+                    </div>
+                    <div class="col-12">
+                        @include('dashboard.categories.partials.icon-picker')
                     </div>
                     <div class="col-12">
                         <label class="form-label fw-semibold">Deskripsi</label>

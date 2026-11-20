@@ -1,178 +1,82 @@
 @extends('layouts.page')
 @section('content')
+    <style>
+        .ev-hero-title,
+        .ev-hero-desc {
+            transition: opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+                transform 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+                filter 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+            will-change: opacity, transform, filter;
+        }
 
-    <div class="ev-drawer-backdrop" id="drawerBackdrop"></div>
-    <div class="ev-mobile-drawer" id="mobileDrawer">
-        <div>
-            <div class="ev-drawer-header">
-                <img src="{{ asset('assets/logo-new.png') }}" alt="RuangUndang" height="32">
-                <button class="ev-drawer-close" id="mobileDrawerCloseBtn" aria-label="Tutup Menu">
-                    <i class="bi bi-x-lg"></i>
-                </button>
-            </div>
+        /* State saat teks keluar (menghilang ke atas + sedikit blur) */
+        .ev-text-exit {
+            opacity: 0;
+            transform: translateY(-16px);
+            filter: blur(4px);
+        }
 
-            <!-- Mobile Search -->
-            <form action="{{ route('pages.cari-tema') }}" method="GET" class="ev-search-form my-3">
-                <i class="bi bi-search ev-search-icon"></i>
-                <input type="text" name="search" class="ev-search-input" placeholder="Cari tema...">
-                <button type="submit" class="ev-search-submit">Cari</button>
-            </form>
+        /* State persiapan sebelum teks baru masuk (dari bawah) */
+        .ev-text-enter {
+            opacity: 0;
+            transform: translateY(16px);
+            filter: blur(4px);
+            transition: none !important;
+            /* Matikan transisi sesaat untuk reset posisi */
+        }
 
-            <div class="ev-drawer-nav">
-                <a href="{{ route('pages.cari-tema') }}" class="ev-drawer-link">
-                    <span>Koleksi Tema</span>
-                    <i class="bi bi-chevron-right small text-muted"></i>
-                </a>
-                <a href="{{ route('pages.fitur') }}" class="ev-drawer-link">
-                    <span>Fitur Unggulan</span>
-                    <i class="bi bi-chevron-right small text-muted"></i>
-                </a>
-                <a href="{{ route('pages.harga') }}" class="ev-drawer-link">
-                    <span>Paket Harga</span>
-                    <i class="bi bi-chevron-right small text-muted"></i>
-                </a>
-                <a href="{{ route('pages.cara-pemesanan') }}" class="ev-drawer-link">
-                    <span>Cara Pemesanan</span>
-                    <i class="bi bi-chevron-right small text-muted"></i>
-                </a>
-                <a href="{{ route('pages.bantuan') }}" class="ev-drawer-link">
-                    <span>Pusat Bantuan &amp; FAQ</span>
-                    <i class="bi bi-chevron-right small text-muted"></i>
-                </a>
-            </div>
-        </div>
+        .ev-blog-meta-stats {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 8px 12px;
+            margin-top: auto;
+            padding-top: 10px;
+        }
 
-        <div class="pt-3 border-top">
-            @auth
-                <a href="{{ auth()->user()->hasRole('admin') ? route('dashboard') : route('dashboard.user') }}"
-                    class="ev-btn-primary w-100 justify-content-center py-2 mb-2">
-                    <i class="bi bi-speedometer2"></i> Masuk Dashboard
-                </a>
-                <form action="{{ route('logout') }}" method="POST">
-                    @csrf
-                    <button type="submit" class="ev-btn-ghost w-100 text-center py-2 text-danger">
-                        Keluar (Logout)
-                    </button>
-                </form>
-            @else
-                <a href="{{ route('register') }}" class="ev-btn-primary w-100 justify-content-center py-2 mb-2">
-                    Mulai Buat Undangan
-                </a>
-                <a href="{{ route('login') }}" class="ev-btn-ghost w-100 justify-content-center py-2">
-                    Sudah Punya Akun? Masuk
-                </a>
-            @endauth
-        </div>
-    </div>
+        .ev-blog-stats-right {
+            display: inline-flex;
+            align-items: center;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-left: auto;
+        }
+
+        .ev-blog-meta-stats span {
+            display: inline-flex;
+            align-items: center;
+            white-space: nowrap;
+        }
+    </style>
 
     <!-- =======================================================================
-                                                                                                                     SEARCH MODAL (Spotlight-Style)
-                                                                                                                     ======================================================================= -->
-    <div class="ev-search-modal-backdrop" id="searchModalBackdrop"></div>
-    <div class="ev-search-modal" id="searchModal" role="dialog" aria-modal="true" aria-label="Pencarian Tema">
-        <div class="ev-search-modal-header">
-            <h2 class="ev-search-modal-title">Cari Tema Undangan</h2>
-            <button class="ev-search-modal-close" id="searchModalClose" aria-label="Tutup">
-                <i class="bi bi-x-lg"></i>
-            </button>
-        </div>
-
-        <!-- Search Input -->
-        <form action="{{ route('pages.cari-tema') }}" method="GET" id="searchModalForm">
-            <div class="ev-search-modal-input-wrap">
-                <i class="bi bi-search ev-search-modal-icon"></i>
-                <input type="text" name="search" id="searchModalInput" class="ev-search-modal-input"
-                    placeholder="Ketik nama tema atau acara..." autocomplete="off" autofocus>
-                <button type="button" class="ev-search-modal-clear" id="searchModalClear" aria-label="Hapus">
-                    <i class="bi bi-x-circle-fill"></i>
-                </button>
-            </div>
-        </form>
-
-        <!-- Filter Pills -->
-        <div class="ev-search-modal-filters">
-            <span class="ev-search-filter-label">Saya mencari...</span>
-            <div class="ev-search-filter-pills">
-                <a href="{{ route('pages.cari-tema', ['category' => 'Wedding']) }}" class="ev-search-filter-pill active">
-                    <span>💍</span> Pernikahan
-                </a>
-                <a href="{{ route('pages.cari-tema', ['category' => 'Birthday']) }}" class="ev-search-filter-pill">
-                    <span>🎂</span> Ulang Tahun
-                </a>
-                <a href="{{ route('pages.cari-tema', ['category' => 'Aqiqah']) }}" class="ev-search-filter-pill">
-                    <span>🌿</span> Aqiqah
-                </a>
-                <a href="{{ route('pages.cari-tema', ['category' => 'Khitan']) }}" class="ev-search-filter-pill">
-                    <span>🌙</span> Khitanan
-                </a>
-                <a href="{{ route('pages.cari-tema', ['category' => 'Graduation']) }}" class="ev-search-filter-pill">
-                    <span>🎓</span> Wisuda
-                </a>
-                <a href="{{ route('pages.cari-tema', ['category' => 'Seminar']) }}" class="ev-search-filter-pill">
-                    <span>💼</span> Seminar
-                </a>
-            </div>
-        </div>
-
-        <!-- Recent Searches -->
-        <div class="ev-search-modal-section" id="searchRecentSection">
-            <span class="ev-search-section-label">Pencarian Terakhir</span>
-            <ul class="ev-search-recent-list" id="searchRecentList">
-                <!-- JS will populate -->
-            </ul>
-        </div>
-
-        <!-- Trending / Popular Themes -->
-        <div class="ev-search-modal-section">
-            <span class="ev-search-section-label">Tema Populer</span>
-            <div class="ev-search-popular-grid">
-                @forelse($templates->take(12) as $template)
-                    @php
-                        $catSlug = $template->category ? Str::slug($template->category->name) : 'umum';
-                        $thumb = template_thumbnail_url($template, $template->updated_at->timestamp);
-                    @endphp
-                    <a href="{{ route('template.preview', ['slug' => $template->slug, 'id' => $template->id]) }}"
-                        class="ev-search-popular-item" data-category="{{ $catSlug }}">
-                        <div class="ev-search-popular-thumb" style="background-image: url('{{ $thumb }}');"></div>
-                        <span>{{ $template->name }}</span>
-                    </a>
-                @empty
-                    <a href="{{ route('pages.cari-tema', ['category' => 'Wedding']) }}" class="ev-search-popular-item">
-                        <div class="ev-search-popular-icon" style="background:#F4D9C8">💍</div>
-                        <span>Wedding Elegan</span>
-                    </a>
-                @endforelse
-            </div>
-        </div>
-
-        <!-- Keyboard Shortcut Hint -->
-        <div class="ev-search-modal-footer">
-            <span><kbd>↑</kbd><kbd>↓</kbd> Navigasi</span>
-            <span><kbd>↵</kbd> Buka</span>
-            <span><kbd>Esc</kbd> Tutup</span>
-        </div>
-    </div>
-
+                                                                                                                                                                         SEARCH MODAL (Spotlight-Style)
+                                                                                                                                                                         ======================================================================= -->
     <main id="mainContent">
 
         <!-- =======================================================================
-                                                                                                                         3. HERO SECTION (Evite Editorial Split Stage)
-                                                                                                                         ======================================================================= -->
+                                                                                                                                                                             3. HERO SECTION (Evite Editorial Split Stage)
+                                                                                                                                                                             ======================================================================= -->
         <section class="ev-hero-section">
             <div class="container">
                 <div class="ev-hero-grid">
                     <!-- Left Editorial Content -->
                     <div class="ev-hero-content reveal">
                         <span class="ev-hero-tag">
-                            <i class="bi bi-stars"></i> Platform Undangan Digital No. 1
+                            <i class="bi bi-stars"></i> Platform Undangan Digital
                         </span>
-                        <h1 class="ev-hero-title">
-                            Undangan Digital &amp; Kartu Acara untuk Setiap <em>Momen Berharga.</em>
-                        </h1>
-                        <p class="ev-hero-desc">
-                            Rancang undangan pernikahan, ulang tahun, dan syukuran dengan desain eksklusif, lagu romantis,
-                            buku tamu real-time, dan amplop digital. Bagikan via WhatsApp dalam hitungan detik.
-                        </p>
+                        <div class="ev-hero-content">
+                            <h1 class="ev-hero-title" id="hero-title">
+                                Undangan Digital &amp; Kartu Acara untuk Setiap <em>Momen Berharga.</em>
+                            </h1>
+                            <p class="ev-hero-desc" id="hero-desc">
+                                Rancang undangan pernikahan, ulang tahun, dan syukuran dengan desain eksklusif, lagu
+                                romantis,
+                                buku tamu real-time, dan amplop digital. Bagikan via WhatsApp dalam hitungan detik.
+                            </p>
+                        </div>
                         <div class="ev-hero-actions">
                             <a href="#templates" class="ev-btn-hero-primary" id="heroExploreBtn">
                                 <span>Jelajahi Tema Undangan</span>
@@ -186,7 +90,7 @@
                         <div class="ev-hero-trust">
                             <div class="ev-trust-item">
                                 <i class="bi bi-patch-check-fill"></i>
-                                <span>4.9/5 Rating Pengguna</span>
+                                <span>Tema Unik dan Menarik</span>
                             </div>
                             <div class="ev-trust-item">
                                 <i class="bi bi-whatsapp"></i>
@@ -194,7 +98,7 @@
                             </div>
                             <div class="ev-trust-item">
                                 <i class="bi bi-lightning-charge-fill"></i>
-                                <span>Siap dalam 5 Menit</span>
+                                <span>Fitur yang Lengkap</span>
                             </div>
                         </div>
                     </div>
@@ -276,8 +180,8 @@
         </section>
 
         <!-- =======================================================================
-                                                                                                                         4. HORIZONTAL CATEGORY CAROUSEL (Evite Invitation Categories)
-                                                                                                                         ======================================================================= -->
+                                                                                                                                                                             4. HORIZONTAL CATEGORY CAROUSEL (Evite Invitation Categories)
+                                                                                                                                                                             ======================================================================= -->
         <section class="ev-category-carousel-section" id="categories">
             <div class="container">
                 <div class="ev-section-header reveal">
@@ -316,14 +220,14 @@
                                 <a href="{{ route('pages.cari-tema', ['category' => $cat['name']]) }}"
                                     class="ev-category-card-inner">
                                     <div class="ev-category-icon-box">
-                                        @if($cat['icon'])
-                                            <i class="bi {{ $cat['icon'] }}"></i>
+                                        @if($cat['icon_svg'] || $cat['icon'])
+                                            {!! category_icon_html($cat) !!}
                                         @else
                                             <img src="{{ $cat['img'] }}" alt="Undangan {{ $cat['name'] }}" loading="lazy">
                                         @endif
                                     </div>
                                     <h4 class="ev-category-name">{{ $cat['name'] }}</h4>
-                                    <span class="ev-category-count">{{ $cat['count'] }}</span>
+                                    {{-- <span class="ev-category-count">{{ $cat['count'] }}</span> --}}
                                 </a>
                             </div>
                         @endforeach
@@ -333,8 +237,8 @@
         </section>
 
         <!-- =======================================================================
-                                                                                                                         5. "WHAT DO YOU WANT TO DO TODAY?" (Evite 3-Card Value Grid)
-                                                                                                                         ======================================================================= -->
+                                                                                                                                                                             5. "WHAT DO YOU WANT TO DO TODAY?" (Evite 3-Card Value Grid)
+                                                                                                                                                                             ======================================================================= -->
         <section class="ev-what-today-section">
             <div class="container">
                 <div class="text-center reveal">
@@ -408,8 +312,8 @@
         </section>
 
         <!-- =======================================================================
-                                                                                                                          6. PREVIEW DEMO LIVE EDITOR (Evite Signature Feature)
-                                                                                                                          ======================================================================= -->
+                                                                                                                                                                              6. PREVIEW DEMO LIVE EDITOR (Evite Signature Feature)
+                                                                                                                                                                              ======================================================================= -->
         <style>
             .ev-demo-live-editor-section {
                 background-color: #eef0f5;
@@ -470,8 +374,8 @@
         </section>
 
         <!-- =======================================================================
-                                                                                                                         7. "SOMETHING FOR EVERY KIND OF HOST" (Evite Feature Solutions)
-                                                                                                                         ======================================================================= -->
+                                                                                                                                                                             7. "SOMETHING FOR EVERY KIND OF HOST" (Evite Feature Solutions)
+                                                                                                                                                                             ======================================================================= -->
         <section class="ev-host-solutions-section">
             <div class="container">
                 <div class="text-center reveal">
@@ -558,8 +462,8 @@
         </section>
 
         <!-- =======================================================================
-                                                                                                                         8. "THERE'S MORE TO HOSTING THAN THE PARTY ITSELF" (Evite 3 Pillars)
-                                                                                                                         ======================================================================= -->
+                                                                                                                                                                             8. "THERE'S MORE TO HOSTING THAN THE PARTY ITSELF" (Evite 3 Pillars)
+                                                                                                                                                                             ======================================================================= -->
         <section class="ev-pillars-section">
             <div class="container">
                 <div class="ev-pillars-header reveal">
@@ -611,8 +515,8 @@
         </section>
 
         <!-- =======================================================================
-                                                                                                                         9. DYNAMIC TEMPLATES GALLERY (Evite-Style Card Grid)
-                                                                                                                         ======================================================================= -->
+                                                                                                                                                                             9. DYNAMIC TEMPLATES GALLERY (Evite-Style Card Grid)
+                                                                                                                                                                             ======================================================================= -->
         <section class="ev-templates-section" id="templates">
             <div class="container">
                 <div class="ev-section-header reveal">
@@ -625,7 +529,69 @@
                         Lihat Semua Tema ({{ $templates->count() }}+) →
                     </a>
                 </div>
+                <style>
+                    /* Tampilan Default (Desktop) */
+                    .ev-filter-tabs {
+                        display: flex;
+                        flex-wrap: wrap;
+                        justify-content: center;
+                        gap: 10px;
+                    }
 
+                    .ev-filter-btn {
+                        padding: 10px 20px;
+                        border-radius: 999px;
+                        border: 1px solid #e2e8f0;
+                        background-color: #ffffff;
+                        color: #334155;
+                        font-size: 14px;
+                        font-weight: 600;
+                        cursor: pointer;
+                        transition: all 0.2s ease;
+                    }
+
+                    .ev-filter-btn.active,
+                    .ev-filter-btn:hover {
+                        background-color: var(--ev-green);
+                        color: #ffffff;
+                        border-color: var(--ev-green);
+                    }
+
+                    /* Tampilan Mobile: 1 Jajar & Bisa Digeser (Swipe) */
+                    @media (max-width: 768px) {
+                        .ev-filter-tabs {
+                            flex-wrap: nowrap;
+                            /* Paksa tetap 1 baris */
+                            justify-content: flex-start;
+                            /* Mulai dari rata kiri agar tidak terpotong */
+                            overflow-x: auto;
+                            /* Aktifkan geser samping */
+                            -webkit-overflow-scrolling: touch;
+                            /* Scroll halus di iOS */
+                            padding: 4px 16px 12px 16px;
+                            /* Ruang bernapas di sisi kiri & kanan */
+                            gap: 8px;
+
+                            /* Sembunyikan scrollbar (Firefox & IE/Edge) */
+                            scrollbar-width: none;
+                            -ms-overflow-style: none;
+                        }
+
+                        /* Sembunyikan scrollbar (Chrome, Safari, Opera) */
+                        .ev-filter-tabs::-webkit-scrollbar {
+                            display: none;
+                        }
+
+                        .ev-filter-btn {
+                            flex: 0 0 auto;
+                            /* Mencegah tombol menyusut/gepeng */
+                            white-space: nowrap;
+                            /* Mencegah teks turun ke baris baru */
+                            padding: 8px 16px;
+                            font-size: 13px;
+                        }
+                    }
+                </style>
                 <!-- Category Filter Tabs -->
                 <div class="ev-filter-tabs reveal">
                     <button class="ev-filter-btn active" data-filter="all">Semua Tema</button>
@@ -652,7 +618,7 @@
                                 @else
                                     <div class="ev-template-noimage">
                                         <i class="bi bi-image"></i>
-                                        <span>No Image</span>
+                                        <span>Tidak Ada Gambar</span>
                                     </div>
                                 @endif
                                 @if($template->templateType)
@@ -713,8 +679,8 @@
         </section>
 
         <!-- =======================================================================
-                                                                                                                         10. "OUR HOSTS SAY THE MOST" (Evite Testimonials)
-                                                                                                                         ======================================================================= -->
+                                                                                                                                                                             10. "OUR HOSTS SAY THE MOST" (Evite Testimonials)
+                                                                                                                                                                             ======================================================================= -->
         <section class="ev-testimonials-section">
             <div class="container">
                 <div class="text-center reveal">
@@ -810,8 +776,8 @@
         </section>
 
         <!-- =======================================================================
-                                                                                                                         11. INSPIRATION & TIPS (Evite Editorial Blog Section)
-                                                                                                                         ======================================================================= -->
+                                                                                                                                                                             11. INSPIRATION & TIPS (Evite Editorial Blog Section)
+                                                                                                                                                                             ======================================================================= -->
         <section class="ev-blog-section">
             <div class="container">
                 <div class="ev-section-header reveal">
@@ -828,28 +794,43 @@
 
                 <div class="ev-blog-grid">
                     @forelse($blogs ?? [] as $blog)
+                        @php
+                            $delayClass = 'reveal-d' . ($loop->iteration <= 4 ? $loop->iteration : 1);
+                            $readingTime = max(1, (int) ceil(str_word_count(strip_tags($blog->content ?? '')) / 200));
+                            $tagLabel = $blog->type === 'panduan' ? 'Panduan' : 'Inspirasi';
+                        @endphp
+
                         <a href="{{ route('blog.show', $blog->slug) }}"
-                            class="ev-blog-card reveal reveal-d{{ $loop->iteration <= 4 ? $loop->iteration : 1 }} text-decoration-none">
+                            class="ev-blog-card reveal {{ $delayClass }} text-decoration-none">
                             <div class="ev-blog-img-box">
-                                @if($blog->image)
-                                    <img src="{{ Storage::url($blog->image) }}" alt="{{ $blog->title }}" loading="lazy">
-                                @else
-                                    <img src="https://picsum.photos/seed/{{ $blog->slug }}/500/320" alt="{{ $blog->title }}"
-                                        loading="lazy">
-                                @endif
+                                <img src="{{ $blog->image ? Storage::url($blog->image) : 'https://picsum.photos/seed/' . $blog->slug . '/500/320' }}"
+                                    alt="{{ $blog->title }}" loading="lazy">
                             </div>
+
                             <div class="ev-blog-body">
-                                <span class="ev-blog-tag">
-                                    {{ $blog->type === 'panduan' ? 'Panduan' : 'Inspirasi' }}
-                                </span>
+                                <span class="ev-blog-tag">{{ $tagLabel }}</span>
+
                                 <h4 class="ev-blog-title">{{ $blog->title }}</h4>
+
                                 @if($blog->snippet)
                                     <p class="ev-blog-excerpt">
-                                        {{ Str::limit($blog->snippet, 90, '......') }}
+                                        {{ Str::limit($blog->snippet, 90, '...') }}
                                     </p>
                                 @endif
-                                <span class="ev-blog-meta">
-                                    Bacaan {{ max(1, ceil(str_word_count(strip_tags($blog->content)) / 200)) }} Menit
+
+                                <span class="ev-blog-meta ev-blog-meta-stats">
+                                    <span class="ev-blog-read-time">
+                                        <i class="bi bi-clock me-1"></i>{{ $readingTime }} menit
+                                    </span>
+
+                                    <span class="ev-blog-stats-right">
+                                        {{-- <span><i class="bi bi-eye me-1"></i>{{ number_format($blog->views_count ?? 0, 0,
+                                            ',', '.') }}</span> --}}
+                                        <span><i
+                                                class="bi bi-heart me-1"></i>{{ number_format($blog->likes_count ?? 0, 0, ',', '.') }}</span>
+                                        <span><i
+                                                class="bi bi-chat me-1"></i>{{ number_format($blog->comments_count ?? 0, 0, ',', '.') }}</span>
+                                    </span>
                                 </span>
                             </div>
                         </a>
@@ -861,8 +842,8 @@
         </section>
 
         <!-- =======================================================================
-                                                                                                                         12. FAQ ACCORDION (Clean Evite Accordion)
-                                                                                                                         ======================================================================= -->
+                                                                                                                                                                             12. FAQ ACCORDION (Clean Evite Accordion)
+                                                                                                                                                                             ======================================================================= -->
         <section class="ev-faq-section" id="faq">
             <div class="container">
                 <div class="text-center reveal">
@@ -951,8 +932,8 @@
         </section>
 
         <!-- =======================================================================
-                                                                                                                         13. FINAL CALL-TO-ACTION (Warm Evite Card Banner)
-                                                                                                                         ======================================================================= -->
+                                                                                                                                                                             13. FINAL CALL-TO-ACTION (Warm Evite Card Banner)
+                                                                                                                                                                             ======================================================================= -->
         <section class="ev-cta-section" style="background-image: url('{{ asset('assets/cta-bg.jpg') }}');">
             <div class="container">
                 <div class="ev-cta-card reveal">
@@ -978,26 +959,44 @@
 
 
     <!-- =======================================================================
-                                                                                                                     PROMOTIONS POPUP MODAL (Preserved from original code)
-                                                                                                                     ======================================================================= -->
+                                                                                                                                                                         PROMOTIONS POPUP MODAL (Preserved from original code)
+                                                                                                                                                                         ======================================================================= -->
     @if($promotions->isNotEmpty())
         <div class="modal fade" id="promoModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
-            <div class="modal-dialog modal-dialog-centered modal-lg">
-                <div class="modal-content border-0 shadow-lg promo-modal-content rounded-4 overflow-hidden">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content promo-modal-content">
+                    <button type="button" class="btn-close promo-modal-close" data-bs-dismiss="modal"
+                        aria-label="Tutup"></button>
+
                     <div id="promoCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="5000">
+                        @if($promotions->count() > 1)
+                            <div class="carousel-indicators">
+                                @foreach($promotions as $index => $promotion)
+                                    <button type="button" data-bs-target="#promoCarousel" data-bs-slide-to="{{ $index }}"
+                                        class="{{ $index === 0 ? 'active' : '' }}" aria-label="Promo {{ $index + 1 }}"></button>
+                                @endforeach
+                            </div>
+                        @endif
+
                         <div class="carousel-inner">
                             @foreach($promotions as $index => $promotion)
                                 <div class="carousel-item {{ $index === 0 ? 'active' : '' }}">
-                                    <div class="position-relative">
-                                        <img src="{{ asset('storage/' . $promotion->image) }}"
-                                            alt="{{ $promotion->title ?? 'Promosi' }}" class="w-100 promo-image">
-                                        <button type="button"
-                                            class="btn-close position-absolute top-0 end-0 m-3 bg-white p-2 rounded-circle shadow"
-                                            data-bs-dismiss="modal" aria-label="Tutup"></button>
-                                    </div>
+                                    <img src="{{ asset('storage/' . $promotion->image) }}"
+                                        alt="{{ $promotion->title ?? 'Promosi' }}" class="promo-image d-block">
                                 </div>
                             @endforeach
                         </div>
+
+                        @if($promotions->count() > 1)
+                            <button class="carousel-control-prev" type="button" data-bs-target="#promoCarousel"
+                                data-bs-slide="prev">
+                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            </button>
+                            <button class="carousel-control-next" type="button" data-bs-target="#promoCarousel"
+                                data-bs-slide="next">
+                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            </button>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -1028,7 +1027,63 @@
 
     <!-- Hero Phone Slider -->
     <script src="{{ asset('assets/js/landing-hero-slider.js') }}" defer></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const heroSlides = [
+                {
+                    title: 'Undangan Digital &amp; Kartu Acara untuk Setiap <em>Momen Berharga.</em>',
+                    desc: 'Rancang undangan pernikahan, ulang tahun, dan syukuran dengan desain eksklusif, lagu romantis, buku tamu real-time, dan amplop digital. Bagikan via WhatsApp dalam hitungan detik.'
+                },
+                {
+                    title: 'Bagikan Kebahagiaan Pernikahan dengan <em>Desain Eksklusif.</em>',
+                    desc: 'Dilengkapi fitur galeri foto HD, hitung mundur acara, navigasi Google Maps akurat, serta konfirmasi kehadiran (RSVP) langsung terhubung ke WhatsApp.'
+                },
+                {
+                    title: 'Rayakan Ulang Tahun &amp; Syukuran Lebih <em>Praktis &amp; Berkesan.</em>',
+                    desc: 'Buat kartu undangan digital kekinian tanpa ribet cetak. Kirim ke ratusan tamu hanya dengan satu klik dan pantau ucapan doa secara real-time.'
+                }
+            ];
 
+            const titleEl = document.getElementById('hero-title');
+            const descEl = document.getElementById('hero-desc');
+            let currentIndex = 0;
+
+            function changeHeroText() {
+                // 1. Jalankan animasi keluar pada judul dan deskripsi (dengan jeda 100ms)
+                titleEl.classList.add('ev-text-exit');
+                setTimeout(() => {
+                    descEl.classList.add('ev-text-exit');
+                }, 100);
+
+                // 2. Setelah animasi keluar selesai (600ms), ganti konten teks
+                setTimeout(() => {
+                    currentIndex = (currentIndex + 1) % heroSlides.length;
+
+                    // Pindahkan posisi elemen ke bawah tanpa animasi
+                    titleEl.classList.remove('ev-text-exit');
+                    titleEl.classList.add('ev-text-enter');
+                    titleEl.innerHTML = heroSlides[currentIndex].title;
+
+                    descEl.classList.remove('ev-text-exit');
+                    descEl.classList.add('ev-text-enter');
+                    descEl.innerHTML = heroSlides[currentIndex].desc;
+
+                    // Paksa browser membaca ulang layout (reflow)
+                    void titleEl.offsetWidth;
+
+                    // 3. Jalankan animasi masuk ke posisi normal
+                    titleEl.classList.remove('ev-text-enter');
+                    setTimeout(() => {
+                        descEl.classList.remove('ev-text-enter');
+                    }, 120);
+
+                }, 650);
+            }
+
+            // Ganti teks setiap 4.5 detik (4500 ms)
+            setInterval(changeHeroText, 4500);
+        });
+    </script>
     <!-- Evite Interactive Scripts -->
     <script>
         document.addEventListener('DOMContentLoaded', function () {
@@ -1099,16 +1154,16 @@
                 }
                 searchRecentSection.style.display = 'block';
                 searchRecentList.innerHTML = arr.map(q => `
-                                                                                                                                <li class="ev-search-recent-item">
-                                                                                                                                    <button type="button" class="ev-search-recent-btn" data-query="${q}">
-                                                                                                                                        <i class="bi bi-clock-history"></i>
-                                                                                                                                        <span>${q}</span>
-                                                                                                                                    </button>
-                                                                                                                                    <button type="button" class="ev-search-recent-remove" data-query="${q}" aria-label="Hapus">
-                                                                                                                                        <i class="bi bi-x"></i>
-                                                                                                                                    </button>
-                                                                                                                                </li>
-                                                                                                                            `).join('');
+                                                                                                                                                                                    <li class="ev-search-recent-item">
+                                                                                                                                                                                        <button type="button" class="ev-search-recent-btn" data-query="${q}">
+                                                                                                                                                                                            <i class="bi bi-clock-history"></i>
+                                                                                                                                                                                            <span>${q}</span>
+                                                                                                                                                                                        </button>
+                                                                                                                                                                                        <button type="button" class="ev-search-recent-remove" data-query="${q}" aria-label="Hapus">
+                                                                                                                                                                                            <i class="bi bi-x"></i>
+                                                                                                                                                                                        </button>
+                                                                                                                                                                                    </li>
+                                                                                                                                                                                `).join('');
 
                 searchRecentList.querySelectorAll('.ev-search-recent-btn').forEach(btn => {
                     btn.addEventListener('click', () => {
@@ -1167,13 +1222,7 @@
                 });
             }
 
-            // Filter pills toggle active state (visual)
-            document.querySelectorAll('.ev-search-filter-pill').forEach(pill => {
-                pill.addEventListener('click', function (e) {
-                    document.querySelectorAll('.ev-search-filter-pill').forEach(p => p.classList.remove('active'));
-                    this.classList.add('active');
-                });
-            });
+            // Filter pills ditangani oleh script global (layouts/page.blade.php)
 
             // Keyboard shortcuts
             document.addEventListener('keydown', (e) => {

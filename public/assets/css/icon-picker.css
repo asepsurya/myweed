@@ -1,0 +1,122 @@
+/* ==========================================================================
+   Icon Picker (Bootstrap Icons visual picker)
+   Dipakai di: /theme (modal Manage Categories) & /admin/categories (create/edit)
+   ========================================================================== */
+
+/* Ikon kategori berbasis SVG kustom (base64) — ukuran & warna mengikuti ikon di sekitarnya */
+.category-icon-img {
+    width: 1em;
+    height: 1em;
+    display: inline-block;
+    vertical-align: -0.2em;
+    flex-shrink: 0;
+    background-color: currentColor;
+    -webkit-mask-image: var(--category-icon);
+    mask-image: var(--category-icon);
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+    mask-position: center;
+    -webkit-mask-size: contain;
+    mask-size: contain;
+}
+
+/* Saat dipakai bersama kelas avatar (avatar-40), tetap ikut ukuran font */
+.category-icon-img.avatar-40 {
+    width: 1em;
+    height: 1em;
+}
+
+.icon-picker-btn {
+    aspect-ratio: 1;
+    width: 100%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 !important;
+    font-size: 1.25rem;
+    line-height: 1;
+    color: var(--bs-body-color, #1B2A4A);
+    background-color: var(--bs-tertiary-bg, #F7F5F2);
+    border: 1px solid var(--bs-border-color, #E5E7EB) !important;
+    border-radius: 0.55rem;
+    cursor: pointer;
+    transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease,
+        transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.icon-picker-btn:hover {
+    background-color: rgba(198, 169, 98, 0.16);
+    border-color: rgba(198, 169, 98, 0.55) !important;
+    color: #A68B4B;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 6px rgba(198, 169, 98, 0.18);
+}
+
+.icon-picker-btn.active {
+    background: linear-gradient(135deg, #C6A962, #E8D5A3);
+    border-color: #C6A962 !important;
+    color: #1B2A4A;
+    box-shadow: 0 2px 8px rgba(198, 169, 98, 0.45);
+}
+
+.icon-picker-btn:focus-visible {
+    outline: 2px solid rgba(198, 169, 98, 0.65);
+    outline-offset: 1px;
+}
+
+.icon-picker-btn i {
+    pointer-events: none;
+}
+
+/* Scrollbar grid ikon */
+#categoryIconGrid::-webkit-scrollbar,
+#categoryIconPickerGrid::-webkit-scrollbar {
+    width: 6px;
+}
+
+#categoryIconGrid::-webkit-scrollbar-thumb,
+#categoryIconPickerGrid::-webkit-scrollbar-thumb {
+    background: rgba(198, 169, 98, 0.5);
+    border-radius: 6px;
+}
+
+/* Trigger (tombol pembuka panel di modal /theme) */
+.icon-picker-trigger {
+    transition: border-color 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+}
+
+.icon-picker-trigger:hover {
+    border-color: rgba(198, 169, 98, 0.6) !important;
+    background-color: rgba(198, 169, 98, 0.06) !important;
+}
+
+.icon-picker-trigger[aria-expanded="true"] {
+    border-color: #C6A962 !important;
+    box-shadow: 0 0 0 0.2rem rgba(198, 169, 98, 0.2);
+}
+
+.icon-picker-trigger .bi-chevron-down {
+    transition: transform 0.2s ease;
+}
+
+.icon-picker-trigger[aria-expanded="true"] .bi-chevron-down {
+    transform: rotate(180deg);
+}
+
+/* Panel dropdown ikon */
+.icon-picker-panel {
+    animation: iconPickerIn 0.18s ease-out;
+}
+
+@keyframes iconPickerIn {
+    from {
+        opacity: 0;
+        transform: translateY(-4px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

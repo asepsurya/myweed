@@ -2149,35 +2149,56 @@ class UserInvitationController extends Controller
         return redirect()->back()->with('success', 'Undangan telah dijadwalkan untuk penghapusan permanen.');
     }
 
-    public function generateQrCode(Invitation $invitation)
+    public function generateQrCode(Request $request, Invitation $invitation)
     {
         // Hanya undangan yang dipublikasikan
         if ($invitation->status !== 'published') {
-            return back()->with('error', 'Undangan belum dipublikasikan');
+            $msg = 'Undangan belum dipublikasikan';
+
+            return $request->wantsJson()
+                ? response()->json(['success' => false, 'error' => $msg], 422)
+                : back()->with('error', $msg);
         }
 
-        // URL kamera dengan slug undangan
-        $cameraUrl = 'http://127.0.0.1:8000/guest/camera/' . $invitation->slug;
+        // URL kamera dengan slug undangan (mengikuti domain aplikasi aktif)
+        $cameraUrl = route('guest.camera', $invitation->slug);
 
-        // Generate QR code using public API
-        $qrApiUrl = 'https://api.qrserver.com/v1/create-qr-code/?data=' . urlencode($cameraUrl) . '&size=300x300';
+        try {
+            // Generate QR code using public API
+            $qrApiUrl = 'https://api.qrserver.com/v1/create-qr-code/?data='.urlencode($cameraUrl).'&size=300x300';
+            $qrImage = @file_get_contents($qrApiUrl);
 
-        // Download and save QR code image
-        $qrImage = file_get_contents($qrApiUrl);
+            if ($qrImage === false || $qrImage === '') {
+                throw new \RuntimeException('Gagal mengunduh gambar QR dari layanan.');
+            }
 
-        if ($qrImage) {
-            $path = 'invitation-qr-codes/' . $invitation->slug . '.png';
-            Storage::put($path, $qrImage);
+            // Simpan QR code (disk public agar dapat diakses via /storage/...)
+            $path = 'invitation-qr-codes/'.$invitation->slug.'.png';
+            Storage::disk('public')->put($path, $qrImage);
 
             // Update invitation with QR code path
             $invitation->qr_code_path = $path;
             $invitation->save();
 
+            if ($request->wantsJson()) {
+                return response()->json([
+                    'success' => true,
+                    'qr-code-path' => $path,
+                    'url' => $cameraUrl,
+                ]);
+            }
+
             return back()
                 ->with('success', 'QR code berhasil dibuat!')
                 ->with('qr-code-path', $path);
-        }
+        } catch (\Throwable $e) {
+            report($e);
 
-        return back()->with('error', 'Gagal membuat QR code');
+            $msg = 'Gagal membuat QR code: '.$e->getMessage();
+
+            return $request->wantsJson()
+                ? response()->json(['success' => false, 'error' => $msg], 500)
+                : back()->with('error', $msg);
+        }
     }
 }

@@ -299,11 +299,29 @@
                 </li>
 
                 <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('announcements.*') ? 'active' : '' }}"
+                        href="{{ route('announcements.index') }}" data-bs-toggle="tooltip" data-bs-placement="right"
+                        title="Pengumuman (Banner Atas)">
+                        <i class="menu-icon bi bi-pin-angle-fill me-2"></i>
+                        <span class="menu-name">Pengumuman</span>
+                    </a>
+                </li>
+
+                <li class="nav-item">
                     <a class="nav-link {{ request()->routeIs('admin.blogs.*') ? 'active' : '' }}"
                         href="{{ route('admin.blogs.index') }}" data-bs-toggle="tooltip" data-bs-placement="right"
                         title="Kelola Post Blog">
                         <i class="menu-icon bi bi-chat-dots me-2"></i>
                         <span class="menu-name">Post Blog</span>
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('admin.pages.*') ? 'active' : '' }}"
+                        href="{{ route('admin.pages.index') }}" data-bs-toggle="tooltip" data-bs-placement="right"
+                        title="Kelola Halaman Statis">
+                        <i class="menu-icon bi bi-file-earmark-text me-2"></i>
+                        <span class="menu-name">Halaman Statis</span>
                     </a>
                 </li>
 

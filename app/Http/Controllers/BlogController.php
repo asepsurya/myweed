@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Blog;
+use App\Models\BlogComment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Storage;
@@ -12,7 +13,7 @@ class BlogController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Blog::ordered();
+        $query = Blog::withCount(['likes', 'comments'])->ordered();
 
         if ($request->filled('type')) {
             $query->where('type', $request->type);
@@ -123,7 +124,8 @@ class BlogController extends Controller
      */
     public function publicIndex()
     {
-        $blogs = Blog::where('is_active', true)
+        $blogs = Blog::withCount(['likes', 'comments'])
+            ->where('is_active', true)
             ->orderBy('sort_order')
             ->orderByDesc('id')
             ->paginate(12);
@@ -142,16 +144,35 @@ class BlogController extends Controller
      */
     public function publicShow($slug)
     {
-        $blog = Blog::where('slug', $slug)
+        $blog = Blog::withCount(['likes', 'comments'])
+            ->where('slug', $slug)
             ->where('is_active', true)
             ->firstOrFail();
 
-        $related = Blog::where('is_active', true)
+        // Hitung view sekali per sesi pengunjung agar tidak dobel saat refresh.
+        $viewKey = 'blog_viewed_'.$blog->id;
+        if (! session()->has($viewKey)) {
+            $blog->increment('views_count');
+            session([$viewKey => true]);
+        }
+
+        $related = Blog::withCount(['likes', 'comments'])
+            ->where('is_active', true)
             ->where('id', '!=', $blog->id)
             ->orderBy('sort_order')
             ->orderByDesc('id')
             ->take(3)
             ->get();
+
+        $comments = $blog->comments()
+            ->with(['user', 'replies.user'])
+            ->whereNull('parent_id')
+            ->oldest()
+            ->get();
+
+        $liked = $blog->likes()
+            ->where('visitor_key', $this->visitorKey())
+            ->exists();
 
         $seoTitle = $blog->title.' - RuangUndang';
         $seoDescription = $blog->excerpt ?: Str::limit(strip_tags($blog->content), 155);
@@ -161,8 +182,161 @@ class BlogController extends Controller
         $readingMinutes = max(1, (int) ceil(str_word_count(strip_tags($blog->content)) / 200));
 
         return view('pages.blog.show', compact(
-            'blog', 'related', 'seoTitle', 'seoDescription', 'seoKeywords', 'seoImage', 'readingMinutes'
+            'blog', 'related', 'comments', 'liked', 'seoTitle', 'seoDescription', 'seoKeywords', 'seoImage', 'readingMinutes'
         ));
+    }
+
+    /**
+     * Toggle like artikel oleh pengunjung (pengguna login atau tamu via sesi).
+     */
+    public function toggleLike($slug)
+    {
+        $blog = Blog::where('slug', $slug)
+            ->where('is_active', true)
+            ->firstOrFail();
+
+        $key = $this->visitorKey();
+        $like = $blog->likes()->where('visitor_key', $key)->first();
+
+        if ($like) {
+            $like->delete();
+            $liked = false;
+        } else {
+            $blog->likes()->create([
+                'visitor_key' => $key,
+                'user_id' => auth()->id(),
+            ]);
+            $liked = true;
+        }
+
+        return response()->json([
+            'success' => true,
+            'liked' => $liked,
+            'likes_count' => $blog->likes()->count(),
+        ]);
+    }
+
+    /**
+     * Simpan komentar baru pada artikel.
+     */
+    public function storeComment(Request $request, $slug)
+    {
+        $blog = Blog::where('slug', $slug)
+            ->where('is_active', true)
+            ->firstOrFail();
+
+        $validated = $request->validate([
+            'author_name' => 'nullable|string|max:100',
+            'content' => 'required|string|max:2000',
+            'parent_id' => 'nullable|integer|exists:blog_comments,id',
+        ]);
+
+        $parent = null;
+        if (! empty($validated['parent_id'])) {
+            $parent = BlogComment::where('id', $validated['parent_id'])
+                ->where('blog_id', $blog->id)
+                ->first();
+
+            if (! $parent) {
+                return back()->withErrors([
+                    'parent_id' => 'Komentar yang dibalas tidak ditemukan.',
+                ])->withInput();
+            }
+        }
+
+        $blog->comments()->create([
+            'user_id' => auth()->id(),
+            'parent_id' => $parent?->id,
+            'author_name' => ($validated['author_name'] ?? null) ?: auth()->user()->name,
+            'content' => $validated['content'],
+        ]);
+
+        return redirect()
+            ->route('blog.show', $blog->slug)
+            ->with('success', $parent
+                ? 'Balasan berhasil ditambahkan.'
+                : 'Komentar berhasil ditambahkan.');
+    }
+
+    /**
+     * Daftar komentar untuk admin (moderasi).
+     */
+    public function adminComments(Request $request)
+    {
+        $query = BlogComment::with(['user', 'blog', 'parent'])
+            ->orderByDesc('created_at');
+
+        if ($request->filled('blog')) {
+            $query->where('blog_id', $request->integer('blog'));
+        }
+
+        $comments = $query->paginate(20)->withQueryString();
+
+        $blogs = Blog::orderBy('title')->get(['id', 'title']);
+        $selectedBlog = $request->integer('blog') ?: null;
+
+        return view('dashboard.blogs.comments', compact('comments', 'blogs', 'selectedBlog'));
+    }
+
+    /**
+     * Admin membalas komentar pengunjung.
+     */
+    public function replyComment(Request $request, BlogComment $comment)
+    {
+        $validated = $request->validate([
+            'content' => 'required|string|max:2000',
+        ]);
+
+        $comment->replies()->create([
+            'blog_id' => $comment->blog_id,
+            'user_id' => auth()->id(),
+            'parent_id' => $comment->id,
+            'author_name' => auth()->user()->name,
+            'content' => $validated['content'],
+        ]);
+
+        return back()->with('success', 'Balasan berhasil dikirim.');
+    }
+
+    /**
+     * Hapus komentar beserta seluruh balasannya.
+     */
+    public function destroyComment(BlogComment $comment)
+    {
+        $this->deleteCommentTree($comment);
+
+        return back()->with('success', 'Komentar berhasil dihapus.');
+    }
+
+    /**
+     * Hapus komentar dan semua balasannya secara rekursif.
+     */
+    private function deleteCommentTree(BlogComment $comment): void
+    {
+        foreach ($comment->replies as $reply) {
+            $this->deleteCommentTree($reply);
+        }
+
+        $comment->delete();
+    }
+
+    /**
+     * Identitas unik pengunjung untuk keperluan like.
+     */
+    private function visitorKey(): string
+    {
+        if (auth()->check()) {
+            return 'user:'.auth()->id();
+        }
+
+        $guestId = session('blog_guest_id');
+
+        if (! $guestId) {
+            $guestId = (string) Str::uuid();
+            session(['blog_guest_id' => $guestId]);
+        }
+
+        return 'guest:'.$guestId;
     }
 
     public function toggleStatus(Blog $blog)

@@ -63,7 +63,7 @@
                             <div class="mb-3">
                                 <label class="form-label fw-semibold">Status</label>
                                 <div class="form-check form-switch mt-2">
-                                    <input class="form-check-input" type="checkbox" name="is_active" id="is_active" value="1" {{ old('is_active', isset($promotion) && $promotion->is_active ? 'checked' : '') ? 'checked' : '' }}>
+                                    <input class="form-check-input" type="checkbox" name="is_active" id="is_active" value="1" {{ old('is_active', isset($promotion) ? $promotion->is_active : true) ? 'checked' : '' }}>
                                     <label class="form-check-label fw-semibold" for="is_active">
                                         Aktif
                                     </label>

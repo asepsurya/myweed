@@ -156,6 +156,7 @@ class SubscriptionPlanController extends Controller
             'unlimited_recipients',
             'countdown_calendar',
             'gallery',
+            'guest_camera',
             'virtual_gift',
             'shareable',
             'background_music',

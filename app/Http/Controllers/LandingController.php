@@ -15,7 +15,7 @@ class LandingController extends Controller
 {
     public function index(Request $request)
     {
-        $realCategories = Category::orderBy('name')->get();
+        $realCategories = Category::ordered()->get();
 
         $query = Template::where('is_active', true)
             ->with('category', 'templateType')
@@ -49,6 +49,7 @@ class LandingController extends Controller
             return [
                 'name' => $cat->name,
                 'icon' => $cat->icon,
+                'icon_svg' => $cat->icon_svg,
                 'count' => Template::where('id_category', $cat->id)->count().'+',
                 'img' => 'https://picsum.photos/seed/'.strtolower($cat->name).'/400/300',
             ];
@@ -59,7 +60,8 @@ class LandingController extends Controller
             ->orderByDesc('id')
             ->get();
 
-        $blogs = Blog::where('is_active', true)
+        $blogs = Blog::withCount(['likes', 'comments'])
+            ->where('is_active', true)
             ->orderBy('sort_order')
             ->orderByDesc('id')
             ->take(4)
@@ -220,7 +222,7 @@ class LandingController extends Controller
 
     public function cariTema(Request $request)
     {
-        $realCategories = Category::orderBy('name')->get();
+        $realCategories = Category::ordered()->get();
         $realTypes = TemplateType::orderBy('name')->get();
 
         $query = Template::where('is_active', true)

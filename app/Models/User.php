@@ -267,6 +267,16 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(SavingsContribution::class, 'contributor_id');
     }
 
+    public function blogLikes()
+    {
+        return $this->hasMany(BlogLike::class);
+    }
+
+    public function blogComments()
+    {
+        return $this->hasMany(BlogComment::class);
+    }
+
     public function canAccessInvitation(Invitation $invitation): bool
     {
         if ($this->isAdmin()) {

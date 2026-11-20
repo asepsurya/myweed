@@ -75,13 +75,23 @@
             font-weight: 700;
             letter-spacing: 0.3px;
         }
-        .modal-theme-navy .modal-body {
-            background-color: var(--adminuiux-bg-2, #FFFFFF);
+        .modal-theme-navy .modal-body,
+        .modal-theme-navy .modal-footer {
+            background-color: #FFFFFF !important;
         }
         .modal-theme-navy .modal-footer {
-            background-color: var(--adminuiux-bg-2, #FFFFFF);
             border-top: 1px solid var(--bs-border-color);
             padding: 1rem 1.5rem;
+        }
+        [data-bs-theme="dark"] .modal-theme-navy .modal-body,
+        [data-bs-theme="dark"] .modal-theme-navy .modal-footer {
+            background-color: #1f2937 !important;
+        }
+        .modal-theme-navy .modal-content {
+            background-color: #FFFFFF !important;
+        }
+        [data-bs-theme="dark"] .modal-theme-navy .modal-content {
+            background-color: #1f2937 !important;
         }
 
         /* Category Card Selector */
@@ -460,7 +470,7 @@
                                                 @if($category->thumbnail_url)
                                                     <img src="{{ $category->thumbnail_url }}" alt="{{ $category->name }}" style="max-width: 44px; max-height: 44px; object-fit: contain;">
                                                 @else
-                                                    <i class="bi {{ $category->icon ?? 'bi-folder' }} fs-3" style="color: #A68B4B;"></i>
+                                                    {!! category_icon_html($category, 'fs-3', 'style="color: #A68B4B;"') !!}
                                                 @endif
                                             </div>
                                             <div>

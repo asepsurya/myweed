@@ -12,7 +12,7 @@ class CategoryController extends Controller
 {
     public function index(Request $request)
     {
-        $categories = Category::orderBy('name')->get();
+        $categories = Category::ordered()->get();
 
         return response()->json($categories);
     }
@@ -23,6 +23,9 @@ class CategoryController extends Controller
             'name' => 'required|string|max:255|unique:categories,name',
             'slug' => 'nullable|string|max:255|unique:categories,slug',
             'icon' => 'nullable|string|max:255',
+            'icon_svg' => ['nullable', 'string', 'max:200000', function ($attribute, $value, $fail) {
+                $this->validateSvgDataUri($attribute, $value, $fail);
+            }],
             'thumbnail' => 'nullable|file|image|max:2048',
             'description' => 'nullable|string|max:1000',
             'sort_order' => 'nullable|integer|min:0',
@@ -39,6 +42,7 @@ class CategoryController extends Controller
             'name' => $request->name,
             'slug' => $request->slug ?: Str::slug($request->name),
             'icon' => $request->icon ?? 'bi-folder',
+            'icon_svg' => $this->normalizeSvgDataUri($request->input('icon_svg')),
             'thumbnail' => $thumbnailPath,
             'description' => $request->description,
             'sort_order' => $request->sort_order ?? 0,
@@ -59,6 +63,9 @@ class CategoryController extends Controller
             'name' => 'sometimes|required|string|max:255|unique:categories,name,' . $category->id,
             'slug' => 'sometimes|required|string|max:255|unique:categories,slug,' . $category->id,
             'icon' => 'nullable|string|max:255',
+            'icon_svg' => ['nullable', 'string', 'max:200000', function ($attribute, $value, $fail) {
+                $this->validateSvgDataUri($attribute, $value, $fail);
+            }],
             'thumbnail' => 'nullable|file|image|max:2048',
             'description' => 'nullable|string|max:1000',
             'sort_order' => 'nullable|integer|min:0',
@@ -76,6 +83,9 @@ class CategoryController extends Controller
         }
         if ($request->has('icon')) {
             $data['icon'] = $request->icon;
+        }
+        if ($request->has('icon_svg')) {
+            $data['icon_svg'] = $this->normalizeSvgDataUri($request->input('icon_svg'));
         }
         if ($request->has('description')) {
             $data['description'] = $request->description;
@@ -160,6 +170,9 @@ class CategoryController extends Controller
             'name' => 'required|string|max:255|unique:categories,name',
             'slug' => 'required|string|max:255|unique:categories,slug',
             'icon' => 'nullable|string|max:255',
+            'icon_svg' => ['nullable', 'string', 'max:200000', function ($attribute, $value, $fail) {
+                $this->validateSvgDataUri($attribute, $value, $fail);
+            }],
             'thumbnail' => 'nullable|file|image|max:2048',
             'description' => 'nullable|string|max:1000',
             'sort_order' => 'nullable|integer|min:0',
@@ -175,6 +188,7 @@ class CategoryController extends Controller
         Category::create(array_merge($validated, [
             'thumbnail' => $thumbnailPath,
             'icon' => $validated['icon'] ?? 'bi-folder',
+            'icon_svg' => $this->normalizeSvgDataUri($request->input('icon_svg')),
             'sort_order' => $validated['sort_order'] ?? 0,
             'is_active' => $request->boolean('is_active', true),
             'dynamic_fields' => $validated['dynamic_fields'] ?? [],
@@ -195,6 +209,9 @@ class CategoryController extends Controller
             'name' => 'required|string|max:255|unique:categories,name,' . $category->id,
             'slug' => 'required|string|max:255|unique:categories,slug,' . $category->id,
             'icon' => 'nullable|string|max:255',
+            'icon_svg' => ['nullable', 'string', 'max:200000', function ($attribute, $value, $fail) {
+                $this->validateSvgDataUri($attribute, $value, $fail);
+            }],
             'thumbnail' => 'nullable|file|image|max:2048',
             'description' => 'nullable|string|max:1000',
             'sort_order' => 'nullable|integer|min:0',
@@ -206,6 +223,7 @@ class CategoryController extends Controller
             'name' => $validated['name'],
             'slug' => $validated['slug'],
             'icon' => $validated['icon'] ?? 'bi-folder',
+            'icon_svg' => $this->normalizeSvgDataUri($request->input('icon_svg')),
             'description' => $validated['description'] ?? null,
             'sort_order' => $validated['sort_order'] ?? 0,
             'is_active' => $request->boolean('is_active', true),
@@ -246,5 +264,105 @@ class CategoryController extends Controller
 
         return redirect()->route('admin.categories.index')
             ->with('success', 'Kategori berhasil dihapus.');
+    }
+
+    /**
+     * Ubah urutan kategori (naik/turun) lalu normalisasi sort_order.
+     */
+    public function reorder(Request $request)
+    {
+        $validated = $request->validate([
+            'id' => 'required|integer|exists:categories,id',
+            'direction' => 'required|in:up,down',
+        ]);
+
+        $categories = Category::ordered()->get()->values();
+
+        $index = $categories->search(function ($cat) use ($validated) {
+            return (int) $cat->id === (int) $validated['id'];
+        });
+
+        if ($index === false) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Kategori tidak ditemukan.',
+            ], 404);
+        }
+
+        $target = $validated['direction'] === 'up' ? $index - 1 : $index + 1;
+
+        if ($target < 0 || $target >= $categories->count()) {
+            return response()->json([
+                'success' => false,
+                'message' => $validated['direction'] === 'up'
+                    ? 'Kategori sudah berada di urutan teratas.'
+                    : 'Kategori sudah berada di urutan terbawah.',
+            ]);
+        }
+
+        $items = $categories->all();
+        [$items[$index], $items[$target]] = [$items[$target], $items[$index]];
+        $categories = collect($items);
+
+        $categories->each(function ($cat, $position) {
+            if ((int) $cat->sort_order !== $position + 1) {
+                $cat->sort_order = $position + 1;
+                $cat->save();
+            }
+        });
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Urutan kategori diperbarui.',
+            'order' => $categories->pluck('id')->all(),
+        ]);
+    }
+
+    /**
+     * Validasi data URI SVG (base64) pada field icon_svg.
+     * Menerima variasi MIME (image/svg+xml, charset, octet-stream, dll)
+     * selama isinya benar-benar SVG.
+     */
+    private function validateSvgDataUri(string $attribute, $value, callable $fail): void
+    {
+        if (empty($value)) {
+            return;
+        }
+
+        if (! is_string($value) || ! preg_match('#^data:[^,;]+(;[^,;]+)*;base64,#i', $value)) {
+            $fail('Format SVG tidak valid.');
+
+            return;
+        }
+
+        $base64 = substr($value, strpos($value, ';base64,') + 8);
+        $decoded = base64_decode($base64, true);
+
+        if ($decoded === false || stripos($decoded, '<svg') === false) {
+            $fail('File SVG tidak valid.');
+        }
+    }
+
+    /**
+     * Ubah data URI SVG ke format baku (data:image/svg+xml;base64,...) atau null.
+     */
+    private function normalizeSvgDataUri($value): ?string
+    {
+        if (empty($value) || ! is_string($value)) {
+            return null;
+        }
+
+        if (! preg_match('#^data:[^,;]+(;[^,;]+)*;base64,#i', $value, $m)) {
+            return null;
+        }
+
+        $base64 = substr($value, strlen($m[0]));
+        $decoded = base64_decode($base64, true);
+
+        if ($decoded === false || stripos($decoded, '<svg') === false) {
+            return null;
+        }
+
+        return 'data:image/svg+xml;base64,' . $base64;
     }
 }

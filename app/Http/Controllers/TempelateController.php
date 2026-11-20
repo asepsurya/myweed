@@ -21,7 +21,7 @@ class TempelateController extends Controller
     {
         $tempelate = Template::with(['category', 'templateType'])->get();
         $musics = Music::where('is_active', true)->get();
-        $categories = Category::orderBy('name')->get();
+        $categories = Category::ordered()->get();
         $templateTypes = \App\Models\TemplateType::orderBy('name')->get();
 
         return view('dashboard.tempelate.index', compact('tempelate', 'musics', 'categories', 'templateTypes'));
@@ -204,11 +204,18 @@ class TempelateController extends Controller
 
     public function preview($slug, $id, Request $request)
     {
-        $invitation = Invitation::updateOrCreate(
-            ['slug' => $slug],
-            [
-                'user_id' => 1,
-                'template_id' => $id,
+        $template = Template::findOrFail($id);
+        $template->increment('views_count');
+
+        // Pratinjau tidak boleh menyimpan data apa pun ke database.
+        // Gunakan data demo default (jika ada) sebagai basis, lalu ganti template hanya di memori.
+        $invitation = Invitation::with(['galleries', 'rsvps', 'gifts', 'user.subscription.plan'])
+            ->where('slug', 'romeo-juliet')
+            ->first();
+
+        if (! $invitation) {
+            $invitation = new Invitation([
+                'user_id' => auth()->id() ?? 1,
                 'is_default' => true,
                 'groom_name' => 'Romeo',
                 'groom_nickname' => 'Romeo',
@@ -225,21 +232,17 @@ class TempelateController extends Controller
                 'enable_music' => true,
                 'enable_video' => true,
                 'enable_love_story' => true,
-            ]
-        );
-
-        $template = Template::findOrFail($id);
-        $template->increment('views_count');
-
-        if (auth()->check() && $invitation->template_id != $template->id) {
-            $invitation->update([
-                'template_id' => $template->id,
             ]);
-            $invitation->load('template', 'user.subscription.plan');
-        } else {
-            $invitation->setRelation('template', $template);
-            $invitation->load('user.subscription.plan');
+            $invitation->id = 0;
+            $invitation->setRelation('galleries', collect());
+            $invitation->setRelation('rsvps', collect());
+            $invitation->setRelation('gifts', collect());
+            $invitation->setRelation('user', auth()->user());
         }
+
+        // Ganti template hanya di memori, tidak mengubah invitation di database.
+        $invitation->template_id = $template->id;
+        $invitation->setRelation('template', $template);
 
         $themeColor = $request->query('theme_color', '#3b82f6');
 
@@ -645,7 +648,7 @@ class TempelateController extends Controller
             $code = '';
         }
 
-        $categories = \App\Models\Category::orderBy('name')->get(['id', 'name']);
+        $categories = \App\Models\Category::ordered()->get(['id', 'name']);
         $templateTypes = \App\Models\TemplateType::orderBy('name')->get(['id', 'name', 'color', 'slug']);
 
         return response()->json([

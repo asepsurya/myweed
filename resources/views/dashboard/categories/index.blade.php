@@ -116,7 +116,7 @@
 
     <div class="row g-4">
         @forelse($categories as $category)
-        <div class="col-xl-3 col-lg-4 col-md-6">
+        <div class="col-xl-3 col-lg-4 col-md-6 category-col" data-id="{{ $category->id }}">
             <div class="category-card">
                 <!-- Thumbnail -->
                 <div class="category-thumb position-relative">
@@ -124,7 +124,7 @@
                         <img src="{{ $category->thumbnail_url }}" alt="{{ $category->name }}">
                     @else
                         <div class="category-no-thumb">
-                            <i class="bi {{ $category->icon ?? 'bi-folder' }} text-muted" style="font-size: 2.5rem; opacity: 0.4;"></i>
+                            {!! category_icon_html($category, 'text-muted', 'style="font-size: 2.5rem; opacity: 0.4;"') !!}
                         </div>
                     @endif
 
@@ -172,7 +172,19 @@
                     </div>
 
                     <!-- Action Buttons -->
-                    <div class="mt-auto d-flex gap-2">
+                    <div class="mt-auto d-flex gap-2 align-items-center">
+                        <div class="btn-group btn-group-sm" role="group" aria-label="Urutan kategori">
+                            <button type="button" class="btn btn-outline-secondary btn-reorder-cat"
+                                data-id="{{ $category->id }}" data-direction="up" title="Naikkan urutan"
+                                {{ $loop->first ? 'disabled' : '' }}>
+                                <i class="bi bi-arrow-up"></i>
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary btn-reorder-cat"
+                                data-id="{{ $category->id }}" data-direction="down" title="Turunkan urutan"
+                                {{ $loop->last ? 'disabled' : '' }}>
+                                <i class="bi bi-arrow-down"></i>
+                            </button>
+                        </div>
                         <a href="{{ route('admin.categories.edit', $category) }}" class="btn btn-sm btn-outline-primary flex-fill rounded-pill">
                             <i class="bi bi-pencil me-1"></i> Edit
                         </a>
@@ -238,4 +250,61 @@
         @endforelse
     </div>
 </div>
+
+@push('scripts')
+    <script>
+        (function () {
+            const csrf = '{{ csrf_token() }}';
+
+            function applyOrder(order) {
+                const row = document.querySelector('.row.g-4');
+                if (!row || !Array.isArray(order)) return;
+
+                order.forEach(function (id) {
+                    const col = row.querySelector('.category-col[data-id="' + id + '"]');
+                    if (col) row.appendChild(col);
+                });
+
+                const cols = row.querySelectorAll('.category-col[data-id]');
+                cols.forEach(function (col, i) {
+                    const up = col.querySelector('[data-direction="up"]');
+                    const down = col.querySelector('[data-direction="down"]');
+                    if (up) up.disabled = i === 0;
+                    if (down) down.disabled = i === cols.length - 1;
+                });
+            }
+
+            document.querySelectorAll('.btn-reorder-cat').forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                    if (btn.disabled) return;
+
+                    fetch('{{ route("admin.categories.reorder") }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': csrf
+                        },
+                        body: JSON.stringify({
+                            id: parseInt(btn.dataset.id, 10),
+                            direction: btn.dataset.direction
+                        })
+                    })
+                        .then(res => res.json())
+                        .then(data => {
+                            if (data.success) {
+                                applyOrder(data.order);
+                            } else if (data.message && typeof Swal !== 'undefined') {
+                                Swal.fire({ icon: 'info', title: 'Info', text: data.message, timer: 1600, showConfirmButton: false });
+                            }
+                        })
+                        .catch(() => {
+                            if (typeof Swal !== 'undefined') {
+                                Swal.fire({ icon: 'error', title: 'Gagal', text: 'Terjadi kesalahan' });
+                            }
+                        });
+                });
+            });
+        })();
+    </script>
+@endpush
 </x-app-layout>

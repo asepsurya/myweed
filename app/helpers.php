@@ -366,3 +366,50 @@ if (! function_exists('nanoid')) {
         return $id;
     }
 }
+
+if (! function_exists('category_icon_html')) {
+    /**
+     * Render ikon kategori.
+     *
+     * Memakai SVG kustom (base64 data URI) bila tersedia,
+     * jika tidak memakai Bootstrap Icon (mis. "bi-heart").
+     *
+     * @param  object|null  $category
+     * @param  string  $class       Class tambahan (mis. "fs-3 text-warning")
+     * @param  string  $attributes  Atribut HTML tambahan (mis. style="...")
+     */
+    function category_icon_html($category, string $class = '', string $attributes = ''): string
+    {
+        $attributes = $attributes ? ' ' . $attributes : '';
+
+        $icon = null;
+        $svg = null;
+
+        if (is_array($category)) {
+            $icon = $category['icon'] ?? null;
+            $svg = $category['icon_svg'] ?? null;
+        } elseif ($category) {
+            $icon = $category->icon ?? null;
+            $svg = $category->icon_svg ?? null;
+        }
+
+        if (! empty($svg)) {
+            $style = "--category-icon:url('" . $svg . "');";
+
+            $otherAttrs = $attributes;
+            if (preg_match('/style="([^"]*)"/', $attributes, $m)) {
+                $style = rtrim($m[1], '; ') . ';' . $style;
+                $otherAttrs = trim(preg_replace('/\s*style="[^"]*"/', '', $attributes));
+            }
+
+            $classes = trim('category-icon-img ' . $class);
+
+            return '<i class="' . e($classes) . '" style="' . $style . '"'
+                . ($otherAttrs ? ' ' . $otherAttrs : '') . '></i>';
+        }
+
+        $classes = trim('bi ' . ($icon ?: 'bi-folder') . ($class ? ' ' . $class : ''));
+
+        return '<i class="' . e($classes) . '"' . $attributes . '></i>';
+    }
+}

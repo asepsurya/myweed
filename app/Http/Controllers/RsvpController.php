@@ -75,15 +75,48 @@ class RsvpController extends Controller
         ]);
     }
 
-    public function getRsvps($invitationId)
+    public function getRsvps(Request $request, $invitationId)
     {
         $invitation = Invitation::where('slug', $invitationId)
             ->orWhere('public_id', $invitationId)
             ->orWhere('id', $invitationId)
             ->firstOrFail();
-        $rsvps = Rsvp::where('invitation_id', $invitation->id)->latest()->get();
 
-        return response()->json($rsvps);
+        $baseQuery = Rsvp::where('invitation_id', $invitation->id);
+
+        // Jika diminta via AJAX/API, tetap kembalikan JSON (kompatibilitas lama)
+        if ($request->wantsJson()) {
+            return response()->json($baseQuery->latest()->get());
+        }
+
+        $stats = [
+            'total' => (clone $baseQuery)->count(),
+            'hadir' => (clone $baseQuery)->where('attending', 1)->count(),
+            'tidak_hadir' => (clone $baseQuery)->where('attending', 2)->count(),
+            'ragu' => (clone $baseQuery)->where('attending', '!=', 1)->where('attending', '!=', 2)->count(),
+        ];
+
+        $rsvps = $baseQuery->latest()->paginate(10)->withQueryString();
+
+        $user = auth()->user();
+        if ($user && $user->isAdmin()) {
+            $invitations = Invitation::orderByDesc('id')->get();
+        } elseif ($user) {
+            $invitations = Invitation::where('user_id', $user->id)
+                ->orWhere('partner_user_id', $user->id)
+                ->orderByDesc('id')
+                ->get();
+        } else {
+            $invitations = collect([$invitation]);
+        }
+
+        return view('dashboard.rsvps.index', [
+            'rsvps' => $rsvps,
+            'stats' => $stats,
+            'invitations' => $invitations,
+            'activeInvitationId' => $invitation->id,
+            'showInvitation' => $invitation,
+        ]);
     }
 
     public function destroy(Rsvp $rsvp)

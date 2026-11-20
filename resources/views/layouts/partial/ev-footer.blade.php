@@ -33,12 +33,9 @@
             <div>
                 <h5 class="ev-footer-heading">Layanan</h5>
                 <ul class="ev-footer-links">
-                    <li><a href="{{ route('pages.cari-tema', ['category' => 'Wedding']) }}">Undangan Pernikahan</a></li>
-                    <li><a href="{{ route('pages.cari-tema', ['category' => 'Birthday']) }}">Undangan Ulang Tahun</a>
-                    </li>
-                    <li><a href="{{ route('pages.cari-tema', ['category' => 'Aqiqah']) }}">Undangan Aqiqah &amp;
-                            Bayi</a></li>
-                    <li><a href="{{ route('pages.cari-tema', ['category' => 'Khitan']) }}">Undangan Khitanan</a></li>
+                    @foreach(\App\Models\Category::query()->where('is_active', true)->ordered()->take(5)->get() as $footerCat)
+                        <li><a href="{{ route('pages.cari-tema', ['category' => $footerCat->name]) }}">{{ $footerCat->name }}</a></li>
+                    @endforeach
                     <li><a href="{{ route('pages.cari-tema') }}">Semua Koleksi Template</a></li>
                 </ul>
             </div>

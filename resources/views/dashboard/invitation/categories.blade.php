@@ -226,7 +226,7 @@
                     <img src="{{ $category->thumbnail_url }}" alt="{{ $category->name }}">
                 @else
                     <div class="category-icon-fallback">
-                        <i class="bi {{ $category->icon ?? 'bi-folder' }}"></i>
+                        {!! category_icon_html($category) !!}
                     </div>
                 @endif
                 @if($category->is_active)

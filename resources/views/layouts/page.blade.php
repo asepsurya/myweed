@@ -27,8 +27,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Evite Design System CSS -->
-    <link rel="stylesheet" href="{{ asset('assets/css/landing.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/css/page.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/landing.css') }}?v={{ @filemtime(public_path('assets/css/landing.css')) }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/page.css') }}?v={{ @filemtime(public_path('assets/css/page.css')) }}">
 
     @if(config('services.facebook.pixel_id'))
     <!-- Facebook Pixel Code -->
@@ -203,11 +203,53 @@
                 });
             }
 
-            if (searchModalForm && searchModalInput) {
-                searchModalForm.addEventListener('submit', () => {
-                    saveRecentSearch(searchModalInput.value);
-                });
+if (searchModalForm && searchModalInput) {
+            searchModalForm.addEventListener('submit', () => {
+                saveRecentSearch(searchModalInput.value);
+            });
+        }
+
+        // Filter pills: filter daftar tema populer di dalam modal (modal tetap terbuka)
+        const searchPopularItems = document.querySelectorAll('.ev-search-popular-item');
+
+        function applySearchPillFilter(slug) {
+            let visible = 0;
+
+            searchPopularItems.forEach(item => {
+                const match = !slug || (item.getAttribute('data-category') || '') === slug;
+                item.classList.toggle('is-filtered-out', !match);
+                if (match) visible++;
+            });
+
+            let empty = document.getElementById('searchFilterEmpty');
+            if (!empty) {
+                const grid = document.querySelector('.ev-search-popular-grid');
+                if (!grid) return;
+                empty = document.createElement('div');
+                empty.id = 'searchFilterEmpty';
+                empty.className = 'ev-search-empty-filter';
+                empty.textContent = 'Belum ada tema pada kategori ini.';
+                grid.appendChild(empty);
             }
+
+            empty.style.display = visible === 0 ? 'block' : 'none';
+        }
+
+        document.querySelectorAll('.ev-search-filter-pill').forEach(pill => {
+            pill.addEventListener('click', function (e) {
+                e.preventDefault();
+
+                const wasActive = this.classList.contains('active');
+                document.querySelectorAll('.ev-search-filter-pill').forEach(p => p.classList.remove('active'));
+
+                if (wasActive) {
+                    applySearchPillFilter('');
+                } else {
+                    this.classList.add('active');
+                    applySearchPillFilter(this.getAttribute('data-filter') || '');
+                }
+            });
+        });
 
             document.addEventListener('keydown', (e) => {
                 if ((e.metaKey || e.ctrlKey) && e.key === 'k') {

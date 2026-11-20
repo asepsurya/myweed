@@ -256,10 +256,11 @@ button {
     align-items: center;
     gap: 0.35rem;
     padding: 0.35rem 0.55rem;
-    font-size: 0.8rem;
+    font-size: clamp(0.7rem, 0.92vw, 0.84rem);
     font-weight: 500;
     color: var(--ev-text-secondary);
     border-radius: var(--ev-radius-pill);
+    white-space: nowrap;
     transition: var(--ev-transition);
 }
 
@@ -325,30 +326,37 @@ button {
 
 /* Mega Menu Dropdown */
 .ev-mega-dropdown {
-    max-width: 720px;
-    width: 100%;
-    padding: 1rem 0.75rem;
+    left: 0;
+    width: min(820px, calc(100vw - 260px));
+    max-width: none;
+    padding: 1.25rem 1.5rem;
 }
 
 .ev-mega-inner {
     display: flex;
-    gap: 1.25rem;
+    gap: 1.5rem;
     align-items: flex-start;
 }
 
 .ev-mega-categories {
-    width: 170px;
+    width: 210px;
     flex-shrink: 0;
     display: flex;
     flex-direction: column;
     gap: 0.15rem;
 }
 
+.mega-cat-label {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 .mega-category-link {
     display: flex;
     align-items: center;
     gap: 0.6rem;
-    padding: 0.55rem 1rem;
+    padding: 0.55rem 0.85rem;
     border-radius: var(--ev-radius-sm);
     font-size: 0.88rem;
     font-weight: 500;
@@ -367,9 +375,34 @@ button {
     color: var(--ev-bg-white);
 }
 
+/* Ikon kategori: lebar tetap agar label sejajar */
 .mega-cat-icon {
-    font-size: 1rem;
+    width: 1.2rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     flex-shrink: 0;
+    font-size: 1rem;
+}
+
+/* Panah: rata kanan pada semua item */
+.mega-cat-arrow {
+    margin-left: auto;
+    font-size: 0.72rem !important;
+    opacity: 0.55;
+    transition: var(--ev-transition);
+}
+
+.mega-category-link:hover .mega-cat-arrow,
+.mega-category-link.active .mega-cat-arrow {
+    opacity: 1;
+    transform: translateX(2px);
+}
+
+.mega-category-link.active .mega-cat-arrow,
+.mega-category-link.active .mega-cat-icon,
+.mega-category-link.active .mega-cat-icon > i {
+    color: var(--ev-bg-white);
 }
 
 .ev-mega-themes {
@@ -455,6 +488,7 @@ button {
 
 @media (max-width: 991px) {
     .ev-mega-dropdown {
+        width: calc(100vw - 32px);
         max-width: calc(100vw - 32px);
         padding: 0.75rem;
     }
@@ -1636,6 +1670,7 @@ button {
 
 .ev-template-media {
     position: relative;
+    aspect-ratio: 1 / 1;
     background-color: var(--ev-bg-search);
     overflow: hidden;
 }
@@ -1643,7 +1678,8 @@ button {
 .ev-template-media img {
     display: block;
     width: 100%;
-    height: auto;
+    height: 100%;
+    object-fit: cover;
     transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -1677,8 +1713,10 @@ button {
 
 /* No thumbnail placeholder */
 .ev-template-noimage {
-    aspect-ratio: 4 / 3;
+    position: absolute;
+    inset: 0;
     width: 100%;
+    height: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -2475,8 +2513,10 @@ button {
     background: var(--ev-bg-white);
     border-radius: var(--ev-radius-xl);
     box-shadow: 0 24px 80px rgba(18, 26, 21, 0.2), 0 4px 16px rgba(0, 0, 0, 0.08);
-    z-index: 3001;
-    overflow: hidden;
+z-index: 3001;
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
     display: flex;
     flex-direction: column;
     opacity: 0;
@@ -2727,6 +2767,19 @@ button {
     grid-template-columns: repeat(3, 1fr);
     gap: 0.65rem;
     padding-bottom: 0.5rem;
+}
+
+/* Filter pills: sembunyikan item yang tidak cocok */
+.ev-search-popular-item.is-filtered-out {
+    display: none !important;
+}
+
+.ev-search-empty-filter {
+    grid-column: 1 / -1;
+    padding: 1.5rem 1rem;
+    text-align: center;
+    font-size: 0.85rem;
+    color: var(--ev-text-muted);
 }
 
 .ev-search-popular-item {
@@ -3240,7 +3293,7 @@ button {
         padding: 0 1.2rem 1.25rem;
     }
 
-    /* Search Modal full screen on mobile */
+/* Search Modal full screen on mobile */
     .ev-search-modal {
         width: 100%;
         max-height: 100svh;
@@ -3250,6 +3303,8 @@ button {
         left: 0;
         transform: translateY(100%);
         transform-origin: bottom center;
+        -webkit-overflow-scrolling: touch;
+        padding-bottom: env(safe-area-inset-bottom, 0px);
     }
 
     .ev-search-modal.is-open {
@@ -3281,18 +3336,31 @@ button {
     position: fixed;
     top: 0;
     right: -100%;
-    width: 80%;
-    max-width: 320px;
+    width: 84%;
+    max-width: 340px;
     height: 100vh;
+    height: 100dvh;
     background: var(--ev-bg-white);
     box-shadow: -8px 0 30px rgba(0, 0, 0, 0.15);
     z-index: 2000;
-    padding: 1.2rem;
+    padding: 1.1rem 1.1rem calc(1.1rem + env(safe-area-inset-bottom, 0px));
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    gap: 0.75rem;
     transition: right 0.35s cubic-bezier(0.16, 1, 0.3, 1);
-    overflow-y: auto;
+    overflow-y: hidden;
+}
+
+/* Area atas (header + pencarian + navigasi) mengisi ruang tersisa */
+.ev-mobile-drawer > div:first-child {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+
+.ev-mobile-drawer > div:last-child {
+    flex-shrink: 0;
 }
 
 .ev-mobile-drawer.is-open {
@@ -3331,22 +3399,194 @@ button {
 .ev-drawer-nav {
     display: flex;
     flex-direction: column;
-    gap: 0.4rem;
-    padding: 1.1rem 0;
+    gap: 0.35rem;
+    padding: 0.85rem 0 0.4rem;
+    min-height: 0;
 }
 
 .ev-drawer-link {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0.7rem 0.9rem;
-    font-size: 0.93rem;
+    gap: 0.5rem;
+    padding: clamp(0.55rem, 2.2vh, 0.75rem) 0.9rem;
+    font-size: clamp(0.86rem, 3.6vw, 0.95rem);
     font-weight: 600;
+    line-height: 1.25;
     color: var(--ev-text-primary);
     border-radius: var(--ev-radius-md);
+}
+
+.ev-drawer-link span {
+    min-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+/* Fallback: hanya pada layar yang sangat pendek (mis. landscape kecil) */
+@media (max-height: 580px) {
+    .ev-mobile-drawer {
+        overflow-y: auto;
+    }
+
+    .ev-drawer-nav {
+        gap: 0.15rem;
+        padding: 0.5rem 0;
+    }
+
+    .ev-drawer-link {
+        padding: 0.45rem 0.75rem;
+    }
 }
 
 .ev-drawer-link:hover {
     background-color: var(--ev-bg-search);
     color: var(--ev-green);
+}
+
+/* ==========================================================================
+   Promo Modal
+   ========================================================================== */
+#promoModal .modal-dialog {
+    max-width: calc(100vw - 32px);
+    margin-inline: auto;
+    animation: promoModalIn 0.3s ease-out;
+}
+
+@keyframes promoModalIn {
+    from {
+        opacity: 0;
+        transform: scale(0.96) translateY(8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+#promoModal .promo-modal-content {
+    position: relative;
+    width: -webkit-fit-content;
+    width: fit-content;
+    max-width: 100%;
+    margin-inline: auto;
+    background: transparent;
+    border-radius: 0;
+    box-shadow: none;
+    overflow: visible;
+}
+
+#promoModal .promo-image {
+    display: block;
+    width: auto;
+    height: auto;
+    max-width: 100%;
+    max-height: 76vh;
+    margin-inline: auto;
+    background: transparent;
+    border-radius: 12px;
+}
+
+#promoModal .promo-modal-close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 6;
+    width: 34px;
+    height: 34px;
+    padding: 0;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.92);
+    background-position: center;
+    background-size: 0.7em;
+    box-shadow: 0 2px 8px rgba(17, 24, 39, 0.2);
+    opacity: 1;
+    transition: background-color 0.15s ease, transform 0.15s ease;
+}
+
+#promoModal .promo-modal-close:hover {
+    background-color: #ffffff;
+    transform: scale(1.06);
+}
+
+#promoModal .carousel-indicators {
+    margin-bottom: 0.5rem;
+}
+
+#promoModal .carousel-indicators [data-bs-target] {
+    width: 7px;
+    height: 7px;
+    border: 0;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.65);
+    box-shadow: 0 1px 3px rgba(17, 24, 39, 0.35);
+    opacity: 1;
+}
+
+#promoModal .carousel-indicators .active {
+    background-color: #ffffff;
+}
+
+#promoModal .carousel-control-prev,
+#promoModal .carousel-control-next {
+    width: 38px;
+    height: 38px;
+    bottom: auto;
+    top: 50%;
+    transform: translateY(-50%);
+    border-radius: 50%;
+    background-color: rgba(17, 24, 39, 0.45);
+    opacity: 0;
+    transition: opacity 0.2s ease, background-color 0.2s ease;
+}
+
+#promoModal .carousel-control-prev {
+    left: 10px;
+}
+
+#promoModal .carousel-control-next {
+    right: 10px;
+}
+
+#promoModal:hover .carousel-control-prev,
+#promoModal:hover .carousel-control-next {
+    opacity: 1;
+}
+
+#promoModal .carousel-control-prev:hover,
+#promoModal .carousel-control-next:hover {
+    background-color: rgba(17, 24, 39, 0.72);
+}
+
+#promoModal .carousel-control-prev-icon,
+#promoModal .carousel-control-next-icon {
+    width: 16px;
+    height: 16px;
+}
+/* ==========================================================================
+   Kategori: ikon SVG kustom (base64) — ukuran & warna mengikuti ikon di sekitarnya
+   ========================================================================== */
+.category-icon-img {
+    width: 1em;
+    height: 1em;
+    display: inline-block;
+    vertical-align: -0.2em;
+    flex-shrink: 0;
+    background-color: currentColor;
+    -webkit-mask-image: var(--category-icon);
+    mask-image: var(--category-icon);
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+    mask-position: center;
+    -webkit-mask-size: contain;
+    mask-size: contain;
+}
+
+/* Saat dipakai bersama kelas avatar (avatar-40), tetap ikut ukuran font */
+.category-icon-img.avatar-40 {
+    width: 1em;
+    height: 1em;
 }

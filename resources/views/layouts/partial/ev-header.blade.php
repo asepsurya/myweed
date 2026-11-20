@@ -1,10 +1,159 @@
-<aside class="ev-top-banner" aria-label="Pengumuman Penting">
-    <a href="{{ route('pages.cari-tema') }}" id="topBannerLink">
-        <span>✨ <strong>BARU:</strong> Buat &amp; personalisasi undangan digital pernikahan, ulang tahun, dan syukuran
-            dalam hitungan menit.</span>
-        <span class="banner-link-text">Coba Sekarang →</span>
-    </a>
-</aside>
+@php
+    $topAnnouncements = \App\Models\Announcement::query()
+        ->where('is_active', true)
+        ->orderByDesc('id')
+        ->get();
+
+    if ($topAnnouncements->isEmpty() && \App\Models\Announcement::query()->doesntExist()) {
+        $topAnnouncements = collect([(object) [
+            'message' => '✨ <strong>BARU:</strong> Buat &amp; personalisasi undangan digital pernikahan, ulang tahun, dan syukuran dalam hitungan menit.',
+            'link_text' => 'Coba Sekarang →',
+            'link_url' => route('pages.cari-tema'),
+        ]]);
+    }
+@endphp
+@if($topAnnouncements->isNotEmpty())
+    <aside class="ev-top-banner" aria-label="Pengumuman Penting">
+        <div class="ev-top-banner-viewport" id="evTopBannerViewport">
+            @foreach($topAnnouncements as $topAnnouncement)
+                <a href="{{ $topAnnouncement->link_url ?: route('pages.cari-tema') }}"
+                    class="ev-top-banner-slide {{ $loop->first ? 'is-active' : '' }}">
+                    <span>{!! $topAnnouncement->message !!}</span>
+                    @if($topAnnouncement->link_text)
+                        <span class="banner-link-text">{{ $topAnnouncement->link_text }}</span>
+                    @endif
+                </a>
+            @endforeach
+        </div>
+    </aside>
+
+    <style>
+        .ev-top-banner {
+            padding: 0.32rem 0.75rem;
+            font-size: 0.78rem;
+        }
+
+        .ev-top-banner .ev-top-banner-viewport {
+            position: relative;
+            overflow: hidden;
+            min-height: 1.9em;
+        }
+
+        .ev-top-banner .ev-top-banner-slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.4rem;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-105%);
+            transition: transform 0.45s cubic-bezier(0.22, 0.61, 0.36, 1),
+                opacity 0.45s cubic-bezier(0.22, 0.61, 0.36, 1);
+            will-change: transform, opacity;
+        }
+
+        .ev-top-banner .ev-top-banner-slide.is-active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .ev-top-banner .ev-top-banner-slide.is-leaving {
+            opacity: 0;
+            visibility: visible;
+            pointer-events: none;
+            transform: translateY(105%);
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .ev-top-banner .ev-top-banner-slide {
+                transition: none;
+            }
+        }
+    </style>
+
+    <script>
+        (function () {
+            var viewport = document.getElementById('evTopBannerViewport');
+            if (!viewport) return;
+
+            var slides = Array.prototype.slice.call(viewport.querySelectorAll('.ev-top-banner-slide'));
+            if (slides.length === 0) return;
+
+            var current = 0;
+            var timer = null;
+            var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+            function measure() {
+                var maxHeight = 0;
+                slides.forEach(function (slide) {
+                    slide.style.height = 'auto';
+                });
+                slides.forEach(function (slide) {
+                    maxHeight = Math.max(maxHeight, slide.offsetHeight);
+                });
+                slides.forEach(function (slide) {
+                    slide.style.height = maxHeight + 'px';
+                });
+                viewport.style.height = maxHeight + 'px';
+            }
+
+            measure();
+            window.addEventListener('resize', measure);
+            if (document.fonts && document.fonts.ready) {
+                document.fonts.ready.then(measure);
+            }
+
+            if (slides.length < 2 || reduceMotion) return;
+
+            function goTo(index) {
+                var outgoing = slides[current];
+                var incoming = slides[index];
+
+                if (outgoing && outgoing !== incoming) {
+                    outgoing.classList.remove('is-active');
+                    outgoing.classList.add('is-leaving');
+                    window.setTimeout(function () {
+                        outgoing.classList.remove('is-leaving');
+                    }, 500);
+                }
+
+                if (incoming) {
+                    incoming.classList.remove('is-leaving');
+                    void incoming.offsetWidth;
+                    incoming.classList.add('is-active');
+                }
+
+                current = index;
+            }
+
+            function next() {
+                goTo((current + 1) % slides.length);
+            }
+
+            function start() {
+                stop();
+                timer = window.setInterval(next, 4500);
+            }
+
+            function stop() {
+                if (timer) {
+                    window.clearInterval(timer);
+                    timer = null;
+                }
+            }
+
+            viewport.addEventListener('mouseenter', stop);
+            viewport.addEventListener('mouseleave', start);
+
+            start();
+        })();
+    </script>
+@endif
 {{-- <style>
     #navKoleksiUndangan {
         position: relative;
@@ -299,17 +448,16 @@
         overflow: visible !important;
     }
 
-    /* 4. Mega dropdown pas selebar header/layar tanpa melebar berlebih */
+    /* 4. Mega dropdown dengan jarak kiri-kanan dari tepi layar */
     .ev-mega-dropdown {
         position: absolute !important;
         top: 100% !important;
-        left: 0 !important;
-        right: 0 !important;
-        width: 100% !important;
-        max-width: 100% !important;
-        margin-left: 0 !important;
-        margin-right: 0 !important;
-        border-radius: 0 !important;
+        left: 20px !important;
+        right: 20px !important;
+        width: auto !important;
+        max-width: 1360px !important;
+        margin-inline: auto !important;
+        border-radius: 0 0 14px 14px !important;
         box-sizing: border-box !important;
         z-index: 1050;
     }
@@ -369,6 +517,7 @@
         display: flex;
         align-items: center;
         gap: 0.65rem;
+        width: 100%;
         padding: 0.6rem 0.75rem;
         border-radius: 0.5rem;
         color: #374151;
@@ -389,6 +538,12 @@
         margin-left: auto;
         font-size: 0.75rem;
         opacity: 0.55;
+    }
+
+    /* Ikon pada item aktif ikut warna teks (tidak hijau) */
+    .mega-category-link.active .mega-cat-icon,
+    .mega-category-link.active .mega-cat-icon > i {
+        color: inherit;
     }
 
     .ev-mega-footer-link {
@@ -497,12 +652,13 @@
             <!-- Desktop Nav Menu -->
             <ul class="ev-nav-menu">
                 @php
-                    $megaCategories = \App\Models\Category::orderBy('name')
+                    $megaCategories = \App\Models\Category::ordered()
                         ->get()
                         ->map(fn($c) => [
                             'name' => $c->name,
                             'label' => $c->name,
                             'icon' => $c->icon ?: 'bi-grid',
+                            'icon_svg' => $c->icon_svg,
                         ])
                         ->toArray();
 
@@ -516,7 +672,8 @@
 
                     $activeCategories = collect($megaCategories)
                         ->filter(fn($cat) => ($templatesByCategory[$cat['name']] ?? collect())->count() > 0)
-                        ->values();
+                        ->values()
+                        ->take(5);
                 @endphp
 
                 <li class="ev-nav-item ev-has-mega" id="navKoleksiUndangan">
@@ -540,7 +697,7 @@
                                                 class="ev-dropdown-link mega-category-link {{ $loop->first ? 'active' : '' }}"
                                                 data-category="{{ $cat['name'] }}">
                                                 <span class="mega-cat-icon">
-                                                    <i class="bi {{ $cat['icon'] }}"></i>
+                                                    {!! category_icon_html($cat) !!}
                                                 </span>
                                                 <span class="mega-cat-label">{{ $cat['label'] }}</span>
                                                 <i class="bi bi-chevron-right mega-cat-arrow"></i>

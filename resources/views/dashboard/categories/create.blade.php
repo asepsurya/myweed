@@ -53,16 +53,15 @@
                         <div class="form-text">Digunakan untuk URL dan identifikasi kategori.</div>
                     </div>
                     <div class="col-md-4">
-                        <label class="form-label fw-semibold">Ikon <span class="text-muted small">(Bootstrap Icons)</span></label>
-                        <input type="text" name="icon" class="form-control" value="{{ old('icon', 'bi-folder') }}" placeholder="bi-heart">
-                    </div>
-                    <div class="col-md-4">
                         <label class="form-label fw-semibold">Urutan</label>
                         <input type="number" name="sort_order" class="form-control" value="{{ old('sort_order', 0) }}" min="0">
                     </div>
                     <div class="col-md-4">
                         <label class="form-label fw-semibold">Thumbnail</label>
                         <input type="file" name="thumbnail" class="form-control" accept="image/*">
+                    </div>
+                    <div class="col-12">
+                        @include('dashboard.categories.partials.icon-picker')
                     </div>
                     <div class="col-12">
                         <label class="form-label fw-semibold">Deskripsi</label>

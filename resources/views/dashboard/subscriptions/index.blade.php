@@ -720,6 +720,17 @@
                                         <span>{{ $feature }}</span>
                                     </li>
                                 @endforeach
+                                @php
+                                    $descList = json_decode($plan->description ?? '[]', true) ?: [];
+                                    $hasGuestCamInDesc = collect($descList)->contains(fn ($f) => stripos($f, 'Kamera Tamu') !== false);
+                                @endphp
+                                @if(!$hasGuestCamInDesc)
+                                    <li>
+                                        <i class="bi {{ $plan->hasFeature('guest_camera') ? 'bi-check-circle-fill' : 'bi-x-circle' }}"
+                                            @if(!$plan->hasFeature('guest_camera')) style="color: #94A3B8;" @endif></i>
+                                        <span class="{{ $plan->hasFeature('guest_camera') ? '' : 'text-muted' }}">Kamera Tamu &amp; Galeri Tamu</span>
+                                    </li>
+                                @endif
                             </ul>
 
                             <div class="mt-auto w-100">

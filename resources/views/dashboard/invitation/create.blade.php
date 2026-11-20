@@ -517,7 +517,7 @@
                                      onclick="selectCategoryCard(this, {{ $category->id }}, '{{ $category->name }}')">
                                     <div class="position-relative">
                                         <div class="d-flex align-items-center justify-content-center bg-light" style="height: 100px;">
-                                            <i class="bi {{ $category->icon ?? 'bi-heart' }} fs-1 text-primary"></i>
+                                            {!! category_icon_html($category, 'fs-1 text-primary') !!}
                                         </div>
                                     </div>
                                     <div class="card-body p-2 text-center">

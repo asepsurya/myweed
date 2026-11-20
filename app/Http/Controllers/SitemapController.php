@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Invitation;
+use App\Models\Page;
 use App\Models\Template;
-use Illuminate\Http\Response;
 use Illuminate\Support\Carbon;
 
 class SitemapController extends Controller
@@ -36,6 +36,20 @@ class SitemapController extends Controller
             $urls[] = $page;
         }
 
+        $pages = Page::active()
+            ->orderBy('sort_order')
+            ->orderByDesc('id')
+            ->get(['slug', 'updated_at']);
+
+        foreach ($pages as $page) {
+            $urls[] = [
+                'loc' => $baseUrl.'/pages/'.$page->slug,
+                'lastmod' => $page->updated_at ? Carbon::parse($page->updated_at)->toAtomString() : $today,
+                'changefreq' => 'weekly',
+                'priority' => '0.6',
+            ];
+        }
+
         $templates = Template::where('is_active', true)
             ->orderByDesc('updated_at')
             ->get(['id', 'slug', 'name', 'updated_at']);
@@ -55,7 +69,7 @@ class SitemapController extends Controller
             ->where('is_default', false)
             ->where(function ($q) {
                 $q->where('status', 'published')
-                  ->orWhereNull('status');
+                    ->orWhereNull('status');
             })
             ->whereNotNull('wedding_date')
             ->orderByDesc('updated_at')

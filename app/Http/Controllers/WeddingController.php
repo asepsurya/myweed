@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Invitation;
+use App\Models\InvitationView;
 
 class WeddingController extends Controller
 {
@@ -128,7 +129,25 @@ class WeddingController extends Controller
         view()->share('jsonLd', $jsonLd);
 
         $guestName = request()->query('penerima');
-        $isOwner = auth()->check() && auth()->id() === $invitation->user_id;
+
+        // Catat kunjungan untuk statistik trafik. Pemilik & mitra tidak dihitung.
+        $viewerId = auth()->id();
+        $isOwner = $viewerId !== null
+            && ($viewerId === $invitation->user_id || $viewerId === $invitation->partner_user_id);
+
+        if (! $isOwner && $invitation->status === Invitation::STATUS_PUBLISHED) {
+            $sessionKey = 'invitation_viewed_'.$invitation->id;
+            $lastViewedAt = session()->get($sessionKey);
+
+            if (! $lastViewedAt || (now()->timestamp - (int) $lastViewedAt) >= 1800) {
+                InvitationView::create([
+                    'invitation_id' => $invitation->id,
+                    'visitor_hash' => hash('sha256', request()->ip().'|'.(request()->userAgent() ?? '')),
+                ]);
+
+                session()->put($sessionKey, now()->timestamp);
+            }
+        }
 
         return view($templateView, compact('invitation', 'guestName', 'customData', 'category', 'isWedding'));
     }
