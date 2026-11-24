@@ -82,6 +82,14 @@ body {
     overflow-x: hidden;
 }
 
+/* Zoom out 80% hanya untuk layar kecil laptop dan layar yang lebih kecil agar layout fit */
+@media screen and (max-width: 1440px) {
+    body {
+        zoom: 0.8;
+        -webkit-text-size-adjust: 100%;
+    }
+}
+
 a {
     color: inherit;
     text-decoration: none;
@@ -2533,6 +2541,10 @@ z-index: 3001;
     transform: translate(-50%, -50%);
 }
 
+.ev-search-sheet-handle {
+    display: none;
+}
+
 /* Modal Header */
 .ev-search-modal-header {
     display: flex;
@@ -3173,19 +3185,149 @@ z-index: 3001;
         text-align: center;
     }
 
-    /* Search Modal */
+    /* Search Modal - Bottom Sheet Premium on Mobile */
+    .ev-search-sheet-handle {
+        display: block;
+        width: 38px;
+        height: 4px;
+        border-radius: 9999px;
+        background: #D5D2C9;
+        margin: 10px auto 2px;
+        flex-shrink: 0;
+    }
+
     .ev-search-modal {
-        width: 96%;
-        max-height: 92vh;
-        border-radius: var(--ev-radius-lg);
+        position: fixed;
+        top: auto !important;
+        bottom: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        height: auto !important;
+        max-height: 88vh !important;
+        max-height: 88dvh !important;
+        border-radius: 20px 20px 0 0 !important;
+        border: 1px solid var(--ev-border-light) !important;
+        border-bottom: none !important;
+        box-shadow: 0 -12px 40px rgba(18, 26, 21, 0.22) !important;
+        transform: translateY(105%) !important;
+        transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease !important;
+        overscroll-behavior: contain;
+        -webkit-overflow-scrolling: touch;
+        padding-bottom: calc(1rem + env(safe-area-inset-bottom, 16px)) !important;
+    }
+
+    .ev-search-modal.is-open {
+        transform: translateY(0) !important;
+    }
+
+    .ev-search-modal-header {
+        padding: 0.6rem 1rem 0 !important;
+    }
+
+    .ev-search-modal-title {
+        font-size: 1.05rem !important;
+        font-weight: 700 !important;
+    }
+
+    .ev-search-modal-close {
+        width: 32px !important;
+        height: 32px !important;
+        font-size: 0.85rem !important;
+        background: var(--ev-bg-search) !important;
+    }
+
+    .ev-search-modal-input-wrap {
+        margin: 0.75rem 1rem 0.5rem !important;
+        padding: 0.65rem 0.85rem !important;
+        border-radius: 12px !important;
+        gap: 0.5rem !important;
+    }
+
+    .ev-search-modal-input {
+        font-size: 16px !important;
+    }
+
+    .ev-search-modal-filters {
+        padding: 0 1rem !important;
+        margin-bottom: 0.25rem !important;
+    }
+
+    .ev-search-filter-label,
+    .ev-search-section-label {
+        font-size: 0.7rem !important;
+        margin-bottom: 0.35rem !important;
+    }
+
+    .ev-search-filter-pills {
+        display: flex !important;
+        flex-wrap: nowrap !important;
+        overflow-x: auto !important;
+        gap: 0.45rem !important;
+        padding-bottom: 6px !important;
+        scrollbar-width: none !important;
+        -webkit-overflow-scrolling: touch !important;
+        margin: 0 -1rem !important;
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+    }
+
+    .ev-search-filter-pills::-webkit-scrollbar {
+        display: none !important;
+    }
+
+    .ev-search-filter-pill {
+        flex-shrink: 0 !important;
+        padding: 0.35rem 0.75rem !important;
+        font-size: 0.78rem !important;
+        border-radius: 9999px !important;
+    }
+
+    .ev-search-modal-section {
+        padding: 0.5rem 1rem 0 !important;
+    }
+
+    .ev-search-recent-btn {
+        padding: 0.45rem 0.6rem !important;
+        font-size: 0.85rem !important;
     }
 
     .ev-search-popular-grid {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 0.5rem !important;
+        padding-bottom: 1.5rem !important;
+    }
+
+    .ev-search-popular-item {
+        padding: 0.45rem 0.6rem !important;
+        gap: 0.5rem !important;
+        border-radius: 10px !important;
+        min-width: 0 !important;
+        background: #F8F7F4 !important;
+    }
+
+    .ev-search-popular-thumb,
+    .ev-search-popular-icon {
+        width: 32px !important;
+        height: 32px !important;
+        border-radius: 6px !important;
+        font-size: 0.95rem !important;
+        flex-shrink: 0 !important;
+    }
+
+    .ev-search-popular-item span {
+        font-size: 0.78rem !important;
+        font-weight: 600 !important;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        min-width: 0 !important;
+        flex: 1 !important;
     }
 
     .ev-search-modal-footer {
-        gap: 0.75rem;
+        display: none !important;
     }
 }
 
@@ -3291,32 +3433,6 @@ z-index: 3001;
 
     .ev-faq-item.is-open .ev-faq-answer {
         padding: 0 1.2rem 1.25rem;
-    }
-
-/* Search Modal full screen on mobile */
-    .ev-search-modal {
-        width: 100%;
-        max-height: 100svh;
-        border-radius: var(--ev-radius-lg) var(--ev-radius-lg) 0 0;
-        top: auto;
-        bottom: 0;
-        left: 0;
-        transform: translateY(100%);
-        transform-origin: bottom center;
-        -webkit-overflow-scrolling: touch;
-        padding-bottom: env(safe-area-inset-bottom, 0px);
-    }
-
-    .ev-search-modal.is-open {
-        transform: translateY(0);
-    }
-
-    .ev-search-popular-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-
-    .ev-search-modal-footer {
-        display: none;
     }
 
     /* Drawer tighter on very small mobile */
@@ -3446,122 +3562,269 @@ z-index: 3001;
 }
 
 /* ==========================================================================
-   Promo Modal
+   Promo Modal (overlay custom — kebal terhadap body { zoom: 0.8 })
    ========================================================================== */
-#promoModal .modal-dialog {
-    max-width: calc(100vw - 32px);
-    margin-inline: auto;
-    animation: promoModalIn 0.3s ease-out;
+#promoModal.promo-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 3200;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+    background: rgba(17, 24, 39, 0.62);
+    -webkit-backdrop-filter: blur(2px);
+    backdrop-filter: blur(2px);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.25s ease, visibility 0.25s ease;
 }
 
-@keyframes promoModalIn {
-    from {
-        opacity: 0;
-        transform: scale(0.96) translateY(8px);
-    }
-
-    to {
-        opacity: 1;
-        transform: scale(1) translateY(0);
-    }
+#promoModal.promo-overlay.is-open {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
 }
 
-#promoModal .promo-modal-content {
+#promoModal .promo-overlay__dialog {
     position: relative;
-    width: -webkit-fit-content;
     width: fit-content;
-    max-width: 100%;
+    max-width: 94vw;
+    max-height: 92vh;
     margin-inline: auto;
-    background: transparent;
-    border-radius: 0;
-    box-shadow: none;
-    overflow: visible;
+    transform: scale(0.96);
+    transition: transform 0.25s ease;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
 }
 
+#promoModal.is-open .promo-overlay__dialog {
+    transform: scale(1);
+}
+
+/* Carousel Grid Stack — posisi slide selalu terkunci di tengah saat transisi */
+#promoModal .carousel-inner {
+    display: grid !important;
+    grid-template-areas: "slide" !important;
+    align-items: center !important;
+    justify-items: center !important;
+    position: relative;
+    width: 100%;
+    max-width: min(850px, 92vw);
+    margin: 0 auto;
+    overflow: visible;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+#promoModal .carousel-item {
+    grid-area: slide !important;
+    float: none !important;
+    margin: 0 auto !important;
+    width: 100% !important;
+    height: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+    transform: none !important;
+    transition: opacity 0.35s ease-in-out, visibility 0.35s ease-in-out !important;
+}
+
+#promoModal .carousel-item.active,
+#promoModal .carousel-item.carousel-item-next.carousel-item-start,
+#promoModal .carousel-item.carousel-item-prev.carousel-item-end {
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+    transform: none !important;
+}
+
+#promoModal .carousel-item.active.carousel-item-start,
+#promoModal .carousel-item.active.carousel-item-end {
+    opacity: 0 !important;
+    transform: none !important;
+}
+
+/* Media promo transparan tanpa background & tanpa border (mendukung upload PNG transparan) */
 #promoModal .promo-image {
     display: block;
     width: auto;
     height: auto;
-    max-width: 100%;
-    max-height: 76vh;
+    max-width: min(850px, 92vw);
+    max-height: 82vh;
+    object-fit: contain;
     margin-inline: auto;
-    background: transparent;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    filter: drop-shadow(0 14px 32px rgba(0, 0, 0, 0.45));
+}
+
+#promoModal .promo-video-wrap,
+#promoModal .promo-video-link {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 100% !important;
+    text-decoration: none !important;
+    cursor: pointer;
+}
+
+#promoModal video.promo-video {
+    display: block;
+    width: auto;
+    height: auto;
+    max-width: 100%;
+    max-height: 82vh;
+    object-fit: contain;
+    margin-inline: auto;
+    border: 0;
     border-radius: 12px;
+    background: #000000;
+    box-shadow: 0 14px 32px rgba(0, 0, 0, 0.45);
+    pointer-events: none !important;
+}
+
+/* YouTube selalu 16:9, sembunyikan bar judul dan teks atas/bawah */
+#promoModal .promo-youtube-clean {
+    position: relative;
+    width: min(850px, 90vw);
+    aspect-ratio: 16 / 9;
+    overflow: hidden !important;
+    border-radius: 14px;
+    background: #000000;
+    box-shadow: 0 14px 32px rgba(0, 0, 0, 0.45);
+    margin: 0 auto;
+}
+
+#promoModal .promo-youtube-clean .promo-video-yt {
+    position: absolute;
+    top: -14%;
+    left: 0;
+    width: 100%;
+    height: 128%;
+    border: 0;
+    pointer-events: none;
 }
 
 #promoModal .promo-modal-close {
     position: absolute;
-    top: 10px;
-    right: 10px;
-    z-index: 6;
-    width: 34px;
-    height: 34px;
+    top: -16px;
+    right: -16px;
+    z-index: 20;
+    width: 38px;
+    height: 38px;
     padding: 0;
     border-radius: 50%;
-    background-color: rgba(255, 255, 255, 0.92);
+    background-color: #ffffff;
     background-position: center;
-    background-size: 0.7em;
-    box-shadow: 0 2px 8px rgba(17, 24, 39, 0.2);
+    background-size: 13px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+    border: 2px solid rgba(255, 255, 255, 0.95);
     opacity: 1;
+    cursor: pointer;
     transition: background-color 0.15s ease, transform 0.15s ease;
 }
 
 #promoModal .promo-modal-close:hover {
-    background-color: #ffffff;
-    transform: scale(1.06);
+    background-color: #f1f5f9;
+    transform: scale(1.1);
+}
+
+@media (max-width: 768px) {
+    #promoModal .promo-modal-close {
+        top: -8px;
+        right: -8px;
+    }
 }
 
 #promoModal .carousel-indicators {
-    margin-bottom: 0.5rem;
+    position: absolute;
+    bottom: -30px;
+    margin: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 6px;
+    z-index: 10;
 }
 
 #promoModal .carousel-indicators [data-bs-target] {
-    width: 7px;
-    height: 7px;
+    width: 8px;
+    height: 8px;
     border: 0;
     border-radius: 50%;
-    background-color: rgba(255, 255, 255, 0.65);
-    box-shadow: 0 1px 3px rgba(17, 24, 39, 0.35);
+    background-color: rgba(255, 255, 255, 0.45);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
     opacity: 1;
+    transition: all 0.25s ease;
+    cursor: pointer;
 }
 
 #promoModal .carousel-indicators .active {
+    width: 24px;
+    border-radius: 9999px;
     background-color: #ffffff;
 }
 
 #promoModal .carousel-control-prev,
 #promoModal .carousel-control-next {
-    width: 38px;
-    height: 38px;
+    width: 44px;
+    height: 44px;
     bottom: auto;
     top: 50%;
     transform: translateY(-50%);
     border-radius: 50%;
-    background-color: rgba(17, 24, 39, 0.45);
-    opacity: 0;
-    transition: opacity 0.2s ease, background-color 0.2s ease;
+    background-color: rgba(255, 255, 255, 0.92);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+    border: 1.5px solid rgba(255, 255, 255, 0.95);
+    opacity: 0.9;
+    z-index: 15;
+    transition: all 0.2s ease;
 }
 
 #promoModal .carousel-control-prev {
-    left: 10px;
+    left: -24px;
 }
 
 #promoModal .carousel-control-next {
-    right: 10px;
-}
-
-#promoModal:hover .carousel-control-prev,
-#promoModal:hover .carousel-control-next {
-    opacity: 1;
+    right: -24px;
 }
 
 #promoModal .carousel-control-prev:hover,
 #promoModal .carousel-control-next:hover {
-    background-color: rgba(17, 24, 39, 0.72);
+    opacity: 1;
+    background-color: #ffffff;
+    transform: translateY(-50%) scale(1.1);
 }
 
 #promoModal .carousel-control-prev-icon,
 #promoModal .carousel-control-next-icon {
+    filter: invert(1) grayscale(100);
+    width: 18px;
+    height: 18px;
+}
+
+@media (max-width: 768px) {
+    #promoModal .carousel-control-prev {
+        left: 6px;
+    }
+    #promoModal .carousel-control-next {
+        right: 6px;
+    }
+}
     width: 16px;
     height: 16px;
 }

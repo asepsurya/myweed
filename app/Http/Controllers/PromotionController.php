@@ -24,14 +24,29 @@ class PromotionController extends Controller
     {
         $validated = $request->validate([
             'title' => 'nullable|string|max:255',
-            'image' => 'required|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
             'link_url' => 'nullable|url|max:255',
+            'video_url' => 'nullable|url|max:255',
+            'video_file' => 'nullable|file|mimes:mp4,mov,webm,ogv,ogg,m4v|max:51200',
             'sort_order' => 'nullable|integer|min:0',
             'is_active' => 'nullable|boolean',
+        ], [
+            'image.required' => 'Unggah gambar atau video promosi terlebih dahulu.',
         ]);
+
+        // Ensure at least one media source is provided.
+        if (! $request->hasFile('image') && ! $request->hasFile('video_file') && ! $request->filled('video_url')) {
+            return back()->withErrors([
+                'image' => 'Unggah gambar, video, atau isi link YouTube promosi terlebih dahulu.',
+            ])->withInput();
+        }
 
         if ($request->hasFile('image')) {
             $validated['image'] = $request->file('image')->store('promotions', 'public');
+        }
+
+        if ($request->hasFile('video_file')) {
+            $validated['video_file'] = $request->file('video_file')->store('promotions', 'public');
         }
 
         $validated['is_active'] = $request->has('is_active');
@@ -52,6 +67,8 @@ class PromotionController extends Controller
             'title' => 'nullable|string|max:255',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
             'link_url' => 'nullable|url|max:255',
+            'video_url' => 'nullable|url|max:255',
+            'video_file' => 'nullable|file|mimes:mp4,mov,webm,ogv,ogg,m4v|max:51200',
             'sort_order' => 'nullable|integer|min:0',
             'is_active' => 'nullable|boolean',
         ]);
@@ -61,6 +78,26 @@ class PromotionController extends Controller
                 Storage::disk('public')->delete($promotion->image);
             }
             $validated['image'] = $request->file('image')->store('promotions', 'public');
+        }
+
+        if ($request->hasFile('video_file')) {
+            if ($promotion->video_file && Storage::disk('public')->exists($promotion->video_file)) {
+                Storage::disk('public')->delete($promotion->video_file);
+            }
+            $validated['video_file'] = $request->file('video_file')->store('promotions', 'public');
+        } elseif ($request->boolean('remove_video')) {
+            if ($promotion->video_file && Storage::disk('public')->exists($promotion->video_file)) {
+                Storage::disk('public')->delete($promotion->video_file);
+            }
+            $validated['video_file'] = null;
+            $validated['video_url'] = null;
+        }
+
+        if ($request->boolean('remove_image') && ! $request->hasFile('image')) {
+            if ($promotion->image && Storage::disk('public')->exists($promotion->image)) {
+                Storage::disk('public')->delete($promotion->image);
+            }
+            $validated['image'] = null;
         }
 
         $validated['is_active'] = $request->has('is_active');
@@ -74,6 +111,10 @@ class PromotionController extends Controller
     {
         if ($promotion->image && Storage::disk('public')->exists($promotion->image)) {
             Storage::disk('public')->delete($promotion->image);
+        }
+
+        if ($promotion->video_file && Storage::disk('public')->exists($promotion->video_file)) {
+            Storage::disk('public')->delete($promotion->video_file);
         }
 
         $promotion->delete();

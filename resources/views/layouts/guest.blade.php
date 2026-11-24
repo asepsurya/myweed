@@ -14,6 +14,16 @@
 
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+        <style>
+            /* Zoom out 80% hanya untuk layar kecil laptop dan layar yang lebih kecil agar layout fit */
+            @media screen and (max-width: 1440px) {
+                body {
+                    zoom: 0.8;
+                    -webkit-text-size-adjust: 100%;
+                }
+            }
+        </style>
     </head>
     <body class="font-sans text-gray-900 antialiased">
         <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-100">

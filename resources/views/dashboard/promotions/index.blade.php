@@ -50,7 +50,24 @@
             @forelse($promotions as $promo)
                 <div class="col-12 col-md-6 col-xl-4">
                     <div class="card promo-card shadow-sm border-0">
-                        <img src="{{ asset('storage/' . $promo->image) }}" alt="{{ $promo->title ?? 'Promosi' }}" class="promo-thumb">
+                        @if($promo->media_type === 'video' && $promo->video_file)
+                            <video class="promo-thumb" muted>
+                                <source src="{{ asset('storage/' . $promo->video_file) }}" type="video/mp4">
+                            </video>
+                        @elseif($promo->media_type === 'youtube' && $promo->embed_url)
+                            <div class="promo-thumb d-flex align-items-center justify-content-center bg-dark position-relative">
+                                <i class="bi bi-youtube text-danger" style="font-size: 2.5rem;"></i>
+                                <span class="position-absolute bottom-0 end-0 badge bg-danger-subtle text-danger border border-danger-subtle m-2">
+                                    YouTube
+                                </span>
+                            </div>
+                        @elseif($promo->image)
+                            <img src="{{ asset('storage/' . $promo->image) }}" alt="{{ $promo->title ?? 'Promosi' }}" class="promo-thumb">
+                        @else
+                            <div class="promo-thumb d-flex align-items-center justify-content-center bg-light">
+                                <i class="bi bi-image text-muted" style="font-size: 2rem;"></i>
+                            </div>
+                        @endif
                         <div class="card-body p-4 d-flex flex-column">
                             <div class="d-flex justify-content-between align-items-start mb-3">
                                 <div>
@@ -92,6 +109,21 @@
                             </form>
 
                             <div class="mb-3 text-muted small">
+                                <p class="mb-1 d-flex align-items-center gap-1">
+                                    <i class="bi bi-collection-play text-gold"></i> Tipe Media:
+                                    @if($promo->media_type === 'video')
+                                        <span class="badge bg-info-subtle text-info border border-info-subtle">Video</span>
+                                    @elseif($promo->media_type === 'youtube')
+                                        <span class="badge bg-danger-subtle text-danger border border-danger-subtle">YouTube</span>
+                                    @else
+                                        <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle">Gambar</span>
+                                    @endif
+                                </p>
+                                @if($promo->video_url)
+                                    <p class="mb-1 text-truncate d-flex align-items-center gap-1">
+                                        <i class="bi bi-youtube text-danger"></i> {{ $promo->video_url }}
+                                    </p>
+                                @endif
                                 @if($promo->link_url)
                                     <p class="mb-1 text-truncate d-flex align-items-center gap-1">
                                         <i class="bi bi-link-45deg text-primary"></i> {{ $promo->link_url }}

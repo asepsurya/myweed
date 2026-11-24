@@ -35,20 +35,56 @@
                         <input type="text" name="title" id="title" class="form-control" value="{{ old('title', $promotion->title ?? '') }}" placeholder="Contoh: Diskon Akhir Tahun">
                     </div>
 
+                    <div class="alert alert-light border small mb-4">
+                        <div class="fw-semibold mb-1">Pilih salah satu jenis media promosi:</div>
+                        <ul class="mb-0 ps-3">
+                            <li>Gambar (jpg, png, webp)</li>
+                            <li>Video (mp4, mov, webm, ogv, m4v) &mdash; otomatis diputar tanpa suara</li>
+                            <li>Link YouTube &mdash; otomatis diputar tanpa suara</li>
+                        </ul>
+                    </div>
+
                     <div class="mb-3">
                         <label for="image" class="form-label fw-semibold">Gambar Promosi</label>
-                        <input type="file" name="image" id="image" class="form-control" {{ isset($promotion) ? '' : 'required' }}>
+                        <input type="file" name="image" id="image" class="form-control" accept="image/*">
                         @if(isset($promotion) && $promotion->image)
-                            <div class="mt-3">
+                            <div class="mt-3 position-relative d-inline-block">
                                 <img src="{{ asset('storage/' . $promotion->image) }}" alt="Preview" style="max-height: 200px; border-radius: 12px; border: 1px solid var(--bs-border-color);">
+                            </div>
+                            <div class="form-check mt-2">
+                                <input class="form-check-input" type="checkbox" name="remove_image" id="remove_image" value="1">
+                                <label class="form-check-label small text-danger" for="remove_image">Hapus gambar saat ini</label>
                             </div>
                         @endif
                     </div>
 
                     <div class="mb-3">
-                        <label for="link_url" class="form-label fw-semibold">Link URL (Opsional)</label>
+                        <label for="video_file" class="form-label fw-semibold">Video Promosi</label>
+                        <input type="file" name="video_file" id="video_file" class="form-control" accept="video/*">
+                        @if(isset($promotion) && $promotion->video_file)
+                            <div class="mt-3">
+                                <video src="{{ asset('storage/' . $promotion->video_file) }}" controls muted style="max-height: 200px; border-radius: 12px; border: 1px solid var(--bs-border-color);"></video>
+                                <div class="form-text text-truncate">File saat ini: {{ basename($promotion->video_file) }}</div>
+                            </div>
+                        @endif
+                        @if(isset($promotion) && ($promotion->video_file || $promotion->video_url))
+                            <div class="form-check mt-2">
+                                <input class="form-check-input" type="checkbox" name="remove_video" id="remove_video" value="1">
+                                <label class="form-check-label small text-danger" for="remove_video">Hapus video / link YouTube saat ini</label>
+                            </div>
+                        @endif
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="video_url" class="form-label fw-semibold">Link YouTube (Opsional)</label>
+                        <input type="url" name="video_url" id="video_url" class="form-control" value="{{ old('video_url', $promotion->video_url ?? '') }}" placeholder="https://www.youtube.com/watch?v=...">
+                        <div class="form-text">Tempel link YouTube. Video akan diputar otomatis tanpa suara.</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="link_url" class="form-label fw-semibold">Link URL Tujuan (Opsional)</label>
                         <input type="url" name="link_url" id="link_url" class="form-control" value="{{ old('link_url', $promotion->link_url ?? '') }}" placeholder="https://contoh.com/promo">
-                        <div class="form-text">Kosongkan jika tidak ada link.</div>
+                        <div class="form-text">Link tujuan saat banner promosi diklik. Kosongkan jika tidak ada.</div>
                     </div>
 
                     <div class="row g-3">

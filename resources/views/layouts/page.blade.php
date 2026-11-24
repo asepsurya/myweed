@@ -30,6 +30,16 @@
     <link rel="stylesheet" href="{{ asset('assets/css/landing.css') }}?v={{ @filemtime(public_path('assets/css/landing.css')) }}">
     <link rel="stylesheet" href="{{ asset('assets/css/page.css') }}?v={{ @filemtime(public_path('assets/css/page.css')) }}">
 
+    <style>
+        /* Zoom out 80% hanya untuk layar kecil laptop dan layar yang lebih kecil agar layout fit */
+        @media screen and (max-width: 1440px) {
+            body {
+                zoom: 0.8;
+                -webkit-text-size-adjust: 100%;
+            }
+        }
+    </style>
+
     @if(config('services.facebook.pixel_id'))
     <!-- Facebook Pixel Code -->
     <script>

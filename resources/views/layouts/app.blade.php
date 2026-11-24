@@ -39,6 +39,14 @@
 
     <!-- RuangUndang Theme Overrides -->
     <style>
+        /* Zoom out 80% hanya untuk layar kecil laptop dan layar yang lebih kecil agar layout fit */
+        @media screen and (max-width: 1440px) {
+            body {
+                zoom: 0.8;
+                -webkit-text-size-adjust: 100%;
+            }
+        }
+
         :root,
         [data-bs-theme=light] {
             /* Font Profesional */

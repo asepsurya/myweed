@@ -881,6 +881,15 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
+        // Pindahkan drawer & backdrop keluar dari <body> yang di-zoom (body { zoom: 0.8 })
+        // agar .ev-mobile-drawer mengisi penuh tinggi viewport pada mode mobile.
+        ['mobileDrawer', 'drawerBackdrop'].forEach(function (id) {
+            var node = document.getElementById(id);
+            if (node && node.parentNode !== document.documentElement) {
+                document.documentElement.appendChild(node);
+            }
+        });
+
         // Mega menu: switch theme groups when a category is hovered/clicked
         var megaLinks = document.querySelectorAll('.mega-category-link');
         var themeGroups = document.querySelectorAll('.ev-mega-theme-group');

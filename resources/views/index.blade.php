@@ -962,53 +962,302 @@
                                                                                                                                                                          PROMOTIONS POPUP MODAL (Preserved from original code)
                                                                                                                                                                          ======================================================================= -->
     @if($promotions->isNotEmpty())
-        <div class="modal fade" id="promoModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content promo-modal-content">
-                    <button type="button" class="btn-close promo-modal-close" data-bs-dismiss="modal"
-                        aria-label="Tutup"></button>
+        <style>
+            #promoModal .promo-overlay__dialog {
+                position: relative;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: fit-content;
+                max-width: 94vw;
+                max-height: 92vh;
+                margin: auto;
+                background: transparent !important;
+                border: none !important;
+                box-shadow: none !important;
+            }
+            #promoModal #promoCarousel {
+                position: relative;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 100%;
+                margin: 0 auto;
+                background: transparent !important;
+            }
+            /* Kunci posisi selalu tepat di tengah: CSS Grid Stack */
+            #promoModal .carousel-inner {
+                display: grid !important;
+                grid-template-areas: "slide" !important;
+                align-items: center !important;
+                justify-items: center !important;
+                width: 100% !important;
+                max-width: min(850px, 92vw) !important;
+                margin: 0 auto !important;
+                overflow: visible !important;
+                background: transparent !important;
+                border: none !important;
+                box-shadow: none !important;
+            }
+            #promoModal .carousel-item {
+                grid-area: slide !important;
+                float: none !important;
+                margin: 0 auto !important;
+                width: 100% !important;
+                height: 100% !important;
+                display: flex !important;
+                flex-direction: column !important;
+                align-items: center !important;
+                justify-content: center !important;
+                text-align: center !important;
+                background: transparent !important;
+                border: none !important;
+                box-shadow: none !important;
+                opacity: 0 !important;
+                visibility: hidden !important;
+                pointer-events: none !important;
+                transform: none !important;
+                transition: opacity 0.35s ease-in-out, visibility 0.35s ease-in-out !important;
+            }
+            #promoModal .carousel-item.active,
+            #promoModal .carousel-item.carousel-item-next.carousel-item-start,
+            #promoModal .carousel-item.carousel-item-prev.carousel-item-end {
+                opacity: 1 !important;
+                visibility: visible !important;
+                pointer-events: auto !important;
+                transform: none !important;
+            }
+            #promoModal .carousel-item.active.carousel-item-start,
+            #promoModal .carousel-item.active.carousel-item-end {
+                opacity: 0 !important;
+                transform: none !important;
+            }
+            #promoModal .promo-image {
+                display: block !important;
+                width: auto !important;
+                height: auto !important;
+                max-width: min(850px, 90vw) !important;
+                max-height: 80vh !important;
+                object-fit: contain !important;
+                margin: 0 auto !important;
+                border: 0 !important;
+                border-radius: 0 !important;
+                background: transparent !important;
+                box-shadow: none !important;
+                filter: drop-shadow(0 14px 32px rgba(0, 0, 0, 0.45)) !important;
+            }
+            /* YouTube Promo Clean (Hide Judul, Logo & Teks YouTube) */
+            #promoModal .promo-youtube-clean {
+                position: relative;
+                width: min(850px, 90vw);
+                aspect-ratio: 16 / 9;
+                overflow: hidden !important;
+                border-radius: 14px;
+                background: #000000;
+                box-shadow: 0 14px 32px rgba(0, 0, 0, 0.45);
+                margin: 0 auto;
+            }
+            #promoModal .promo-youtube-clean .promo-video-yt {
+                position: absolute;
+                top: -14%;
+                left: 0;
+                width: 100%;
+                height: 128%;
+                border: 0;
+                pointer-events: none;
+            }
+            #promoModal .promo-video-wrap,
+            #promoModal .promo-video-link {
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                width: 100% !important;
+                text-decoration: none !important;
+                cursor: pointer;
+            }
+            #promoModal video.promo-video {
+                pointer-events: none !important;
+            }
+            #promoModal .promo-image-link {
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                width: 100% !important;
+                text-decoration: none !important;
+                cursor: pointer !important;
+            }
+            #promoModal a.promo-youtube-clean {
+                cursor: pointer !important;
+            }
+        </style>
+        <div id="promoModal" class="promo-overlay" role="dialog" aria-modal="true" aria-label="Promosi" aria-hidden="true">
+            <div class="promo-overlay__dialog">
+                <button type="button" class="btn-close promo-modal-close" aria-label="Tutup"></button>
 
-                    <div id="promoCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="5000">
-                        @if($promotions->count() > 1)
-                            <div class="carousel-indicators">
-                                @foreach($promotions as $index => $promotion)
-                                    <button type="button" data-bs-target="#promoCarousel" data-bs-slide-to="{{ $index }}"
-                                        class="{{ $index === 0 ? 'active' : '' }}" aria-label="Promo {{ $index + 1 }}"></button>
-                                @endforeach
-                            </div>
-                        @endif
-
-                        <div class="carousel-inner">
+                <div id="promoCarousel" class="carousel slide carousel-fade">
+                    @if($promotions->count() > 1)
+                        <div class="carousel-indicators">
                             @foreach($promotions as $index => $promotion)
-                                <div class="carousel-item {{ $index === 0 ? 'active' : '' }}">
-                                    <img src="{{ asset('storage/' . $promotion->image) }}"
-                                        alt="{{ $promotion->title ?? 'Promosi' }}" class="promo-image d-block">
-                                </div>
+                                <button type="button" data-bs-target="#promoCarousel" data-bs-slide-to="{{ $index }}"
+                                    class="{{ $index === 0 ? 'active' : '' }}" aria-label="Promo {{ $index + 1 }}"></button>
                             @endforeach
                         </div>
+                    @endif
 
-                        @if($promotions->count() > 1)
-                            <button class="carousel-control-prev" type="button" data-bs-target="#promoCarousel"
-                                data-bs-slide="prev">
-                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                            </button>
-                            <button class="carousel-control-next" type="button" data-bs-target="#promoCarousel"
-                                data-bs-slide="next">
-                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                            </button>
-                        @endif
+                    <div class="carousel-inner">
+                        @foreach($promotions as $index => $promotion)
+                            <div class="carousel-item {{ $index === 0 ? 'active' : '' }}">
+                                @if($promotion->media_type === 'video' && $promotion->video_file)
+                                    @if($promotion->link_url)
+                                        <a href="{{ $promotion->link_url }}" target="_blank" rel="noopener noreferrer" class="promo-video-link d-block">
+                                            <video class="promo-video d-block" autoplay muted loop playsinline preload="metadata"
+                                                disablepictureinpicture controlslist="nodownload nofullscreen noremoteplayback">
+                                                <source src="{{ asset('storage/' . $promotion->video_file) }}">
+                                                Browser Anda tidak mendukung pemutaran video.
+                                            </video>
+                                        </a>
+                                    @else
+                                        <div class="promo-video-wrap">
+                                            <video class="promo-video d-block" autoplay muted loop playsinline preload="metadata"
+                                                disablepictureinpicture controlslist="nodownload nofullscreen noremoteplayback">
+                                                <source src="{{ asset('storage/' . $promotion->video_file) }}">
+                                                Browser Anda tidak mendukung pemutaran video.
+                                            </video>
+                                        </div>
+                                    @endif
+                                @elseif($promotion->media_type === 'youtube' && $promotion->embed_url)
+                                    @if($promotion->link_url)
+                                        <a href="{{ $promotion->link_url }}" target="_blank" rel="noopener noreferrer" class="promo-youtube-clean d-block">
+                                            <iframe class="promo-video-yt" src="{{ $promotion->embed_url }}"
+                                                title="{{ $promotion->title ?? 'Promosi' }}" frameborder="0"
+                                                allow="autoplay; encrypted-media; picture-in-picture"
+                                                referrerpolicy="strict-origin-when-cross-origin"></iframe>
+                                        </a>
+                                    @else
+                                        <div class="promo-youtube-clean">
+                                            <iframe class="promo-video-yt" src="{{ $promotion->embed_url }}"
+                                                title="{{ $promotion->title ?? 'Promosi' }}" frameborder="0"
+                                                allow="autoplay; encrypted-media; picture-in-picture"
+                                                referrerpolicy="strict-origin-when-cross-origin"></iframe>
+                                        </div>
+                                    @endif
+                                @elseif($promotion->image)
+                                    @if($promotion->link_url)
+                                        <a href="{{ $promotion->link_url }}" target="_blank" rel="noopener noreferrer" class="promo-image-link">
+                                            <img src="{{ asset('storage/' . $promotion->image) }}"
+                                                alt="{{ $promotion->title ?? 'Promosi' }}" class="promo-image d-block">
+                                        </a>
+                                    @else
+                                        <img src="{{ asset('storage/' . $promotion->image) }}"
+                                            alt="{{ $promotion->title ?? 'Promosi' }}" class="promo-image d-block">
+                                    @endif
+                                @endif
+                            </div>
+                        @endforeach
                     </div>
+
+                    @if($promotions->count() > 1)
+                        <button class="carousel-control-prev" type="button" data-bs-target="#promoCarousel"
+                            data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#promoCarousel"
+                            data-bs-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        </button>
+                    @endif
                 </div>
             </div>
         </div>
         <script>
             document.addEventListener('DOMContentLoaded', function () {
                 setTimeout(function () {
-                    const promoModalEl = document.getElementById('promoModal');
-                    if (promoModalEl && typeof bootstrap !== 'undefined') {
-                        const promoModal = new bootstrap.Modal(promoModalEl);
-                        promoModal.show();
+                    var el = document.getElementById('promoModal');
+                    if (!el) return;
+
+                    // Render di luar <body> yang di-zoom (body { zoom: 0.8 }) agar
+                    // posisi fixed menutupi seluruh viewport dan modal tidak bergeser.
+                    if (el.parentNode !== document.documentElement) {
+                        document.documentElement.appendChild(el);
                     }
+
+                    var carouselEl = document.getElementById('promoCarousel');
+                    var carouselInstance = null;
+                    var body = document.body;
+                    var previousPadding = body.style.paddingRight;
+
+                    // Nonaktifkan geser otomatis: matikan auto-cycle Bootstrap sepenuhnya.
+                    if (carouselEl && typeof bootstrap !== 'undefined' && bootstrap.Carousel) {
+                        carouselInstance = bootstrap.Carousel.getOrCreateInstance(carouselEl, {
+                            interval: false,
+                            ride: false,
+                            pause: false,
+                            touch: true,
+                        });
+                        carouselInstance.pause();
+                    }
+
+                    function playActiveVideo() {
+                        if (!carouselEl) return;
+                        carouselEl.querySelectorAll('video').forEach(function (v) {
+                            v.pause();
+                        });
+                        var active = carouselEl.querySelector('.carousel-item.active video');
+                        if (active) {
+                            active.muted = true;
+                            var p = active.play();
+                            if (p && typeof p.catch === 'function') {
+                                p.catch(function () {});
+                            }
+                        }
+                    }
+
+                    function openPromo() {
+                        var scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+                        var zoom = parseFloat(getComputedStyle(body).zoom) || 1;
+                        if (scrollbarWidth > 0) {
+                            body.style.paddingRight = (scrollbarWidth / zoom) + 'px';
+                        }
+                        body.style.overflow = 'hidden';
+                        el.classList.add('is-open');
+                        el.setAttribute('aria-hidden', 'false');
+                        if (carouselInstance) {
+                            carouselInstance.pause();
+                        }
+                        playActiveVideo();
+                    }
+
+                    function closePromo() {
+                        el.classList.remove('is-open');
+                        el.setAttribute('aria-hidden', 'true');
+                        body.style.overflow = '';
+                        body.style.paddingRight = previousPadding;
+                        if (carouselEl) {
+                            carouselEl.querySelectorAll('video').forEach(function (v) {
+                                v.pause();
+                            });
+                        }
+                    }
+
+                    var closeBtn = el.querySelector('.promo-modal-close');
+                    if (closeBtn) closeBtn.addEventListener('click', closePromo);
+                    el.addEventListener('click', function (e) {
+                        if (e.target === el) closePromo();
+                    });
+                    document.addEventListener('keydown', function (e) {
+                        if (e.key === 'Escape' && el.classList.contains('is-open')) closePromo();
+                    });
+
+                    if (carouselEl) {
+                        carouselEl.addEventListener('slid.bs.carousel', playActiveVideo);
+                        carouselEl.addEventListener('slide.bs.carousel', function () {
+                            carouselEl.querySelectorAll('video').forEach(function (v) {
+                                v.pause();
+                            });
+                        });
+                    }
+
+                    openPromo();
                 }, 1500);
             });
         </script>
