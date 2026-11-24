@@ -963,6 +963,32 @@
                                                                                                                                                                          ======================================================================= -->
     @if($promotions->isNotEmpty())
         <style>
+            #promoModal:not(.is-open) {
+                display: none !important;
+                pointer-events: none !important;
+                visibility: hidden !important;
+                opacity: 0 !important;
+                z-index: 0 !important;
+            }
+            #promoModal:not(.is-open) *,
+            #promoModal:not(.is-open) .carousel-item,
+            #promoModal:not(.is-open) .carousel-item.active,
+            #promoModal:not(.is-open) .promo-image,
+            #promoModal:not(.is-open) .promo-video,
+            #promoModal:not(.is-open) .promo-video-yt {
+                display: none !important;
+                pointer-events: none !important;
+                visibility: hidden !important;
+                opacity: 0 !important;
+                z-index: 0 !important;
+            }
+            #promoModal.is-open {
+                display: flex !important;
+                pointer-events: auto !important;
+                visibility: visible !important;
+                opacity: 1 !important;
+                z-index: 99999 !important;
+            }
             #promoModal .promo-overlay__dialog {
                 position: relative;
                 display: flex;
@@ -1019,16 +1045,16 @@
                 transform: none !important;
                 transition: opacity 0.35s ease-in-out, visibility 0.35s ease-in-out !important;
             }
-            #promoModal .carousel-item.active,
-            #promoModal .carousel-item.carousel-item-next.carousel-item-start,
-            #promoModal .carousel-item.carousel-item-prev.carousel-item-end {
+            #promoModal.is-open .carousel-item.active,
+            #promoModal.is-open .carousel-item.carousel-item-next.carousel-item-start,
+            #promoModal.is-open .carousel-item.carousel-item-prev.carousel-item-end {
                 opacity: 1 !important;
                 visibility: visible !important;
                 pointer-events: auto !important;
                 transform: none !important;
             }
-            #promoModal .carousel-item.active.carousel-item-start,
-            #promoModal .carousel-item.active.carousel-item-end {
+            #promoModal.is-open .carousel-item.active.carousel-item-start,
+            #promoModal.is-open .carousel-item.active.carousel-item-end {
                 opacity: 0 !important;
                 transform: none !important;
             }
@@ -1090,9 +1116,9 @@
                 cursor: pointer !important;
             }
         </style>
-        <div id="promoModal" class="promo-overlay" role="dialog" aria-modal="true" aria-label="Promosi" aria-hidden="true">
+        <div id="promoModal" class="promo-overlay" style="display: none !important; z-index: 0 !important;" role="dialog" aria-modal="true" aria-label="Promosi" aria-hidden="true">
             <div class="promo-overlay__dialog">
-                <button type="button" class="btn-close promo-modal-close" aria-label="Tutup"></button>
+                <button type="button" class="btn-close promo-modal-close" aria-label="Tutup" onclick="window.closePromo && window.closePromo()"></button>
 
                 <div id="promoCarousel" class="carousel slide carousel-fade">
                     @if($promotions->count() > 1)
@@ -1219,6 +1245,9 @@
                             body.style.paddingRight = (scrollbarWidth / zoom) + 'px';
                         }
                         body.style.overflow = 'hidden';
+                        el.style.setProperty('z-index', '99999', 'important');
+                        el.style.display = 'flex';
+                        void el.offsetWidth;
                         el.classList.add('is-open');
                         el.setAttribute('aria-hidden', 'false');
                         if (carouselInstance) {
@@ -1230,6 +1259,8 @@
                     function closePromo() {
                         el.classList.remove('is-open');
                         el.setAttribute('aria-hidden', 'true');
+                        el.style.setProperty('display', 'none', 'important');
+                        el.style.setProperty('z-index', '0', 'important');
                         body.style.overflow = '';
                         body.style.paddingRight = previousPadding;
                         if (carouselEl) {
@@ -1238,11 +1269,20 @@
                             });
                         }
                     }
+                    window.closePromo = closePromo;
 
                     var closeBtn = el.querySelector('.promo-modal-close');
-                    if (closeBtn) closeBtn.addEventListener('click', closePromo);
+                    if (closeBtn) {
+                        closeBtn.addEventListener('click', function (e) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            closePromo();
+                        });
+                    }
                     el.addEventListener('click', function (e) {
-                        if (e.target === el) closePromo();
+                        if (e.target === el || e.target.classList.contains('promo-overlay__dialog') || e.target.classList.contains('carousel-item')) {
+                            closePromo();
+                        }
                     });
                     document.addEventListener('keydown', function (e) {
                         if (e.key === 'Escape' && el.classList.contains('is-open')) closePromo();

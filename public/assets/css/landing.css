@@ -409,7 +409,7 @@ button {
 
 .mega-category-link.active .mega-cat-arrow,
 .mega-category-link.active .mega-cat-icon,
-.mega-category-link.active .mega-cat-icon > i {
+.mega-category-link.active .mega-cat-icon>i {
     color: var(--ev-bg-white);
 }
 
@@ -727,12 +727,14 @@ button {
     z-index: 10;
     white-space: nowrap;
 }
+
 .hero-music-pill:hover {
     transform: scale(1.08);
     border-color: var(--ev-green);
     box-shadow: 0 10px 28px rgba(66, 86, 32, 0.18);
     background: #fff;
 }
+
 .hero-music-pill .ev-pill-icon {
     color: var(--ev-green);
 }
@@ -1116,10 +1118,12 @@ button {
     justify-content: center;
     color: var(--ev-green);
 }
+
 .ev-category-icon-box i {
     font-size: 2.2rem;
     opacity: 0.85;
 }
+
 .ev-category-card:hover .ev-category-icon-box {
     background-color: var(--ev-green-light);
     border-color: var(--ev-green);
@@ -1706,15 +1710,18 @@ button {
     justify-content: center;
     color: var(--ev-green);
 }
+
 .ev-template-icon-box i {
     font-size: 6rem;
     opacity: 0.35;
 }
+
 .ev-template-card:hover .ev-template-icon-box i {
     opacity: 0.5;
     transform: scale(1.05);
     transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.28s ease;
 }
+
 .ev-template-card:hover .ev-template-icon-box {
     background-color: var(--ev-green-light);
 }
@@ -2521,7 +2528,7 @@ button {
     background: var(--ev-bg-white);
     border-radius: var(--ev-radius-xl);
     box-shadow: 0 24px 80px rgba(18, 26, 21, 0.2), 0 4px 16px rgba(0, 0, 0, 0.08);
-z-index: 3001;
+    z-index: 3001;
     overflow-x: hidden;
     overflow-y: auto;
     overscroll-behavior: contain;
@@ -3469,13 +3476,13 @@ z-index: 3001;
 }
 
 /* Area atas (header + pencarian + navigasi) mengisi ruang tersisa */
-.ev-mobile-drawer > div:first-child {
+.ev-mobile-drawer>div:first-child {
     display: flex;
     flex-direction: column;
     min-height: 0;
 }
 
-.ev-mobile-drawer > div:last-child {
+.ev-mobile-drawer>div:last-child {
     flex-shrink: 0;
 }
 
@@ -3567,8 +3574,8 @@ z-index: 3001;
 #promoModal.promo-overlay {
     position: fixed;
     inset: 0;
-    z-index: 3200;
-    display: flex;
+    z-index: 0;
+    display: none;
     align-items: center;
     justify-content: center;
     padding: 1.5rem;
@@ -3582,9 +3589,32 @@ z-index: 3001;
 }
 
 #promoModal.promo-overlay.is-open {
+    display: flex !important;
     opacity: 1;
     visibility: visible;
     pointer-events: auto;
+    z-index: 99999 !important;
+}
+
+#promoModal:not(.is-open) {
+    display: none !important;
+    pointer-events: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    z-index: 0 !important;
+}
+
+#promoModal:not(.is-open) *,
+#promoModal:not(.is-open) .carousel-item,
+#promoModal:not(.is-open) .carousel-item.active,
+#promoModal:not(.is-open) .promo-image,
+#promoModal:not(.is-open) .promo-video,
+#promoModal:not(.is-open) .promo-video-yt {
+    display: none !important;
+    pointer-events: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    z-index: 0 !important;
 }
 
 #promoModal .promo-overlay__dialog {
@@ -3641,17 +3671,17 @@ z-index: 3001;
     transition: opacity 0.35s ease-in-out, visibility 0.35s ease-in-out !important;
 }
 
-#promoModal .carousel-item.active,
-#promoModal .carousel-item.carousel-item-next.carousel-item-start,
-#promoModal .carousel-item.carousel-item-prev.carousel-item-end {
+#promoModal.is-open .carousel-item.active,
+#promoModal.is-open .carousel-item.carousel-item-next.carousel-item-start,
+#promoModal.is-open .carousel-item.carousel-item-prev.carousel-item-end {
     opacity: 1 !important;
     visibility: visible !important;
     pointer-events: auto !important;
     transform: none !important;
 }
 
-#promoModal .carousel-item.active.carousel-item-start,
-#promoModal .carousel-item.active.carousel-item-end {
+#promoModal.is-open .carousel-item.active.carousel-item-start,
+#promoModal.is-open .carousel-item.active.carousel-item-end {
     opacity: 0 !important;
     transform: none !important;
 }
@@ -3821,13 +3851,12 @@ z-index: 3001;
     #promoModal .carousel-control-prev {
         left: 6px;
     }
+
     #promoModal .carousel-control-next {
         right: 6px;
     }
 }
-    width: 16px;
-    height: 16px;
-}
+
 /* ==========================================================================
    Kategori: ikon SVG kustom (base64) — ukuran & warna mengikuti ikon di sekitarnya
    ========================================================================== */
