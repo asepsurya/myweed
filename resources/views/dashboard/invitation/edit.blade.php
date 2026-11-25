@@ -117,6 +117,31 @@
             box-shadow: 0 0 15px rgba(198, 169, 98, 0.4);
         }
 
+        .nav-vertical-link::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            left: calc(100% + 10px);
+            top: 50%;
+            transform: translateY(-50%);
+            background: #1B2A4A;
+            color: #fff;
+            padding: 5px 10px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            line-height: 1.2;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.15s ease;
+            z-index: 2000;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .nav-vertical-link:hover::after {
+            opacity: 1;
+        }
+
         .premium-lock-icon {
             position: absolute;
             top: 2px;
@@ -390,6 +415,13 @@
 
             .nav-vertical-link i {
                 font-size: 1.15rem !important;
+            }
+
+            .nav-vertical-link::after {
+                left: 50%;
+                top: auto;
+                bottom: calc(100% + 10px);
+                transform: translateX(-50%);
             }
 
             .builder-canvas {
@@ -770,6 +802,13 @@
         }
     </style>
 
+    @php
+        $isWedding = $invitation->isWedding();
+        $navCategory = $invitation->category;
+        $hasDynamicFields = !$isWedding && $navCategory && count($navCategory->dynamic_fields ?? []) > 0;
+        $primaryPersonNav = $isWedding ? 'Pria' : 'Utama';
+    @endphp
+
     <div class="builder-wrapper mb-5">
         <!-- 1. SIDEBAR (KIRI) -->
         <div class="builder-sidebar shadow-sm">
@@ -783,15 +822,24 @@
                     <i class="bi bi-image"></i><span>Sampul</span>
                 </div>
 
-                <div class="nav-vertical-link" data-tab="tab-1" title="Pria">
-                    <i class="bi bi-person"></i><span>Pria</span>
+                <div class="nav-vertical-link" data-tab="tab-1" title="{{ $primaryPersonNav }}">
+                    <i class="bi bi-person"></i><span>{{ $primaryPersonNav }}</span>
                 </div>
-                <div class="nav-vertical-link" data-tab="tab-7" title="Wanita">
-                    <i class="bi bi-person-heart"></i><span>Wanita</span>
-                </div>
-                <div class="nav-vertical-link" data-tab="tab-6" title="Acara">
-                    <i class="bi bi-calendar-event"></i><span>Acara</span>
-                </div>
+
+                @if($hasDynamicFields)
+                    <div class="nav-vertical-link" data-tab="dynamic-fields" title="Data Acara">
+                        <i class="bi bi-calendar-event"></i><span>Data Acara</span>
+                    </div>
+                @endif
+
+                @if($isWedding)
+                    <div class="nav-vertical-link" data-tab="tab-7" title="Wanita">
+                        <i class="bi bi-person-heart"></i><span>Wanita</span>
+                    </div>
+                    <div class="nav-vertical-link" data-tab="tab-6" title="Acara">
+                        <i class="bi bi-calendar-event"></i><span>Acara</span>
+                    </div>
+                @endif
 
                 <div class="nav-vertical-link" data-tab="tab-3" title="Galeri">
                     <i class="bi bi-images"></i><span>Galeri</span>
@@ -803,7 +851,7 @@
                     </div>
                 @endif
 
-                @if(auth()->check() ? auth()->user()->hasFeature('love_story') : true)
+                @if($isWedding && (auth()->check() ? auth()->user()->hasFeature('love_story') : true))
                     <div class="nav-vertical-link" data-tab="tab-8" title="Kisah">
                         <i class="bi bi-journal-text"></i><span>Kisah</span>
                     </div>
@@ -821,9 +869,11 @@
                     </div>
                 @endif
 
-                <div class="nav-vertical-link" data-bs-toggle="modal" data-bs-target="#partnerModal" title="Pasangan">
-                    <i class="bi bi-person-hearts"></i><span>Pasangan</span>
-                </div>
+                @if($isWedding)
+                    <div class="nav-vertical-link" data-bs-toggle="modal" data-bs-target="#partnerModal" title="Pasangan">
+                        <i class="bi bi-person-hearts"></i><span>Pasangan</span>
+                    </div>
+                @endif
             </div>
 
             <div class="sidebar-content-pane">
@@ -895,6 +945,8 @@
                         @method('PUT')
                         <input type="hidden" name="id" value="{{ $invitation->id }}">
                         <input type="hidden" name="uploaded_gallery_ids" id="uploadedGalleryIds" value="">
+                        <input type="hidden" name="category_id" value="{{ $invitation->category_id }}">
+                        <input type="hidden" name="invitation_type" value="{{ $invitation->category ? ($invitation->category->isWeddingLike() ? 'wedding' : $invitation->category->slug) : ($invitation->invitation_type ?? 'wedding') }}">
                         @include('dashboard.invitation.form_tabs', ['invitation' => $invitation, 'music' => $music, 'youtubeMusic' => $youtubeMusic, 'templates' => $templates])
 
                         {{-- Dynamic Fields based on Category --}}
@@ -906,14 +958,14 @@
                                 $customData = json_decode($customData, true) ?? [];
                             }
                         @endphp
-                        @if(count($dynamicFields) > 0)
+                        @if($hasDynamicFields)
                         <div class="tab-content d-none" id="dynamic-fields">
                             <div class="card">
                                 <div class="card-header p-3 d-flex align-items-center gap-3">
                                     <div class="islami-icon">
                                         <i class="bi bi-sliders fs-5"></i>
                                     </div>
-                                    <h6 class="mb-0">Data Dinamis ({{ $category->name }})</h6>
+                                    <h6 class="mb-0">Data Acara — {{ $category->name }}</h6>
                                 </div>
                                 <div class="card-body">
                                     <div class="row g-3">
@@ -1260,6 +1312,12 @@
 
         // --- Tab Switching Logic ---
         function initTabs() {
+            // Ubah title menjadi tooltip kustom (hindari tooltip bawaan browser).
+            document.querySelectorAll('.nav-vertical-link[title]').forEach(function (el) {
+                el.setAttribute('data-tooltip', el.getAttribute('title'));
+                el.removeAttribute('title');
+            });
+
             const links = document.querySelectorAll('.nav-vertical-link');
             const contents = document.querySelectorAll('.tab-content');
 
@@ -1285,9 +1343,9 @@
             });
         }
 
-        const visibleTabs = Array.from(document.querySelectorAll('.nav-vertical-link')).map(link => link.getAttribute('data-tab'));
+        const visibleTabs = Array.from(document.querySelectorAll('.nav-vertical-link[data-tab]')).map(link => link.getAttribute('data-tab'));
         const tabOrder = visibleTabs;
-        const tabLabels = { 'tab-builder': 'Builder', 'tab-1': 'Pria', 'tab-2': 'Tema', 'tab-3': 'Galeri', 'tab-4': 'Musik', 'tab-5': 'RSVP', 'tab-6': 'Acara', 'tab-7': 'Wanita', 'tab-8': 'Kisah', 'tab-9': 'Hadiah', 'tab-10': 'Sampul' };
+        const tabLabels = { 'tab-builder': 'Builder', 'tab-1': '{{ $primaryPersonNav }}', 'tab-2': 'Tema', 'tab-3': 'Galeri', 'tab-4': 'Musik', 'tab-5': 'RSVP', 'tab-6': 'Acara', 'tab-7': 'Wanita', 'tab-8': 'Kisah', 'tab-9': 'Hadiah', 'tab-10': 'Sampul', 'dynamic-fields': 'Data Acara' };
 
         function updateMobileTabLabel(tabId) {
             const label = document.getElementById('mobileTabLabel');

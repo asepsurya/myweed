@@ -569,7 +569,7 @@
                                 {{-- Non-wedding generic fields --}}
                                 <div id="homeFormGeneric" class="d-none">
                                     <div class="mb-3">
-                                        <label class="form-label fw-semibold">Nama Kegiatan / Acara <span class="text-danger">*</span></label>
+                                        <label class="form-label fw-semibold">Nama Lengkap <span class="text-danger">*</span></label>
                                         <input type="text" name="groom_name" id="generic_groom_name" class="form-control py-2" placeholder="Contoh: Perayaan Ulang Tahun, Seminar, dll" disabled>
                                     </div>
                                     <div class="mb-3">

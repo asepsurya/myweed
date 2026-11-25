@@ -1,5 +1,13 @@
 @php
     $inv = $invitation ?? null;
+    $isWedding = $inv ? $inv->isWedding() : true;
+
+    $primaryTabTitle = $isWedding ? 'Data Mempelai Pria' : 'Data Utama';
+    $primaryTabSubtitle = $isWedding ? 'Lengkapi nama, foto, dan informasi mempelai pria' : 'Lengkapi nama, foto, dan informasi utama';
+    $primaryNameLabel = $isWedding ? 'Nama Lengkap' : 'Nama Lengkap / Keluarga';
+    $primaryNameHint = $isWedding ? 'Nama lengkap sesuai KTP.' : '';
+    $primaryNamePlaceholder = $isWedding ? 'Contoh: Ahmad Fauzan' : '';
+    $primaryPhotoLabel = $isWedding ? 'Foto Mempelai Pria' : 'Foto';
 @endphp
 
 <style>
@@ -378,19 +386,19 @@
                     <i class="bi bi-person-heart fs-5"></i>
                 </span>
                 <div>
-                    <h6 class="mb-0 fw-bold">Data Mempelai Pria</h6>
-                    <small class="text-muted">Lengkapi nama, foto, dan informasi mempelai pria</small>
+                    <h6 class="mb-0 fw-bold">{{ $primaryTabTitle }}</h6>
+                    <small class="text-muted">{{ $primaryTabSubtitle }}</small>
                 </div>
             </div>
         </div>
         <div class="card-body p-0">
             <div class="row g-3">
                 <div class="col-12">
-                    <label for="groom_name" class="form-label fw-semibold mb-2">Nama Lengkap</label>
+                    <label for="groom_name" class="form-label fw-semibold mb-2">{{ $primaryNameLabel }}</label>
                     <input type="text" id="groom_name" name="groom_name"
-                        value="{{ old('groom_name', optional($inv)->groom_name ?? '') }}" placeholder="Contoh: Ahmad Fauzan"
+                        value="{{ old('groom_name', optional($inv)->groom_name ?? '') }}" placeholder="{{ $primaryNamePlaceholder }}"
                         class="form-control">
-                    <small class="text-muted">Nama lengkap sesuai KTP.</small>
+                    <small class="text-muted">{{ $primaryNameHint }}</small>
                 </div>
                 <div class="col-12">
                     <label for="groom_nickname" class="form-label fw-semibold mb-2">Nama Panggilan</label>
@@ -443,7 +451,7 @@
                     <small class="text-muted">Username Instagram tanpa tanda @.</small>
                 </div>
                 <div class="col-12">
-                    <label class="form-label fw-semibold mb-2">Foto Mempelai Pria</label>
+                    <label class="form-label fw-semibold mb-2">{{ $primaryPhotoLabel }}</label>
                     <div class="upload-zone border rounded p-4 text-center {{ (!empty($inv) && $inv->foto_pria) ? 'd-none' : '' }}"
                         id="uploadBoxGroomContainer">
                         <label for="foto_pria" class="cursor-pointer mb-0 d-block">
@@ -893,6 +901,7 @@
     </div>
 </div>
 
+@if($isWedding)
 {{-- 6. TEMPAT & TANGGAL --}}
 <div id="tab-6" class="tab-content d-none">
     <div class="mb-3">
@@ -1197,6 +1206,8 @@
         </div>
     @endif
 @endauth
+
+@endif
 
 {{-- 9. HADIAH --}}
 @auth

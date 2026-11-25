@@ -176,11 +176,29 @@ class Invitation extends Model
     }
 
     /**
+     * Determine if the invitation uses a wedding category.
+     *
+     * The category is authoritative when present: a non-wedding category
+     * (birthday, graduation, ...) always wins over a stale invitation_type,
+     * which historically defaults to 'wedding' in the database.
+     */
+    public function isWedding(): bool
+    {
+        $category = $this->category;
+
+        if ($category) {
+            return $category->isWeddingLike();
+        }
+
+        return ($this->invitation_type ?? 'wedding') === 'wedding';
+    }
+
+    /**
      * Determine if the invitation uses a non-wedding category.
      */
     public function isNonWedding(): bool
     {
-        return $this->invitation_type !== 'wedding' || optional($this->category)->slug !== 'wedding';
+        return ! $this->isWedding();
     }
 
     public function galleries()

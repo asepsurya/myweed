@@ -157,7 +157,8 @@ class UserInvitationController extends Controller
     public function quickCreate(Request $request)
     {
         $categoryId = $request->input('category_id');
-        $isWedding = optional(Category::find($categoryId))->slug === 'wedding';
+        $category = Category::find($categoryId);
+        $isWedding = $category ? $category->isWeddingLike() : true;
 
         $rules = [
             'template_id' => 'nullable|exists:templates,id',
@@ -205,7 +206,12 @@ class UserInvitationController extends Controller
                 ->with('error', $message);
         }
 
-        $templateId = $request->template_id ?? 2;
+        $templateId = $request->input('template_id') ?: 2;
+
+        // Pastikan template valid; jika tidak, pakai template aktif pertama.
+        if (! Template::find($templateId)) {
+            $templateId = Template::where('is_active', true)->orderBy('id')->value('id') ?? 2;
+        }
 
         if ($templateId) {
             $template = Template::find($templateId);
@@ -232,6 +238,7 @@ class UserInvitationController extends Controller
             [
                 'template_id' => $templateId,
                 'category_id' => $categoryId,
+                'invitation_type' => $isWedding ? 'wedding' : ($category->slug ?? 'wedding'),
                 'theme_type' => $request->theme_type,
                 'groom_name' => $request->groom_name,
                 'groom_nickname' => $request->groom_nickname,
@@ -743,7 +750,9 @@ class UserInvitationController extends Controller
             });
         $templateTypes = TemplateType::orderBy('name')->get();
 
-        return view('dashboard.invitation.edit', compact('invitation', 'music', 'youtubeMusic', 'templates', 'templateTypes'));
+        $isWedding = $invitation->isWedding();
+
+        return view('dashboard.invitation.edit', compact('invitation', 'music', 'youtubeMusic', 'templates', 'templateTypes', 'isWedding'));
     }
 
     public function update(Request $request, Invitation $invitation)
@@ -828,9 +837,10 @@ class UserInvitationController extends Controller
             return redirect()->back()->with('error', 'Fitur Hadiah Digital hanya tersedia untuk paket berbayar.');
         }
 
-        $request->validate([
-            'bride_name' => 'required|string|max:255',
-            'groom_name' => 'required|string|max:255',
+        $invitation->load('category');
+        $isWedding = $invitation->isWedding();
+
+        $rules = [
             'wedding_date' => 'nullable|date',
             'template_id' => 'required|exists:templates,id',
             'theme_type' => 'nullable|string|in:basic,premium_exclusive,luxury',
@@ -844,14 +854,27 @@ class UserInvitationController extends Controller
             'foto_wanita' => 'nullable|file|mimes:jpeg,jpg,png,webp|max:10240',
             'groom_child_order' => 'nullable|string|max:255',
             'bride_child_order' => 'nullable|string|max:255',
-        ]);
+        ];
+
+        if ($isWedding) {
+            $rules['groom_name'] = 'required|string|max:255';
+            $rules['bride_name'] = 'required|string|max:255';
+        } else {
+            foreach (optional($invitation->category)->dynamic_fields ?? [] as $field) {
+                if (! empty($field['required']) && ! empty($field['name'])) {
+                    $rules['custom_data.'.$field['name']] = 'required';
+                }
+            }
+        }
+
+        $request->validate($rules);
 
         $uploadErrors = [];
 
         // ============================================
         // STEP 1: Save text data in transaction
         // ============================================
-        DB::transaction(function () use ($request, $invitation) {
+        DB::transaction(function () use ($request, $invitation, $isWedding) {
             $oldStories = is_string($invitation->love_story)
                 ? json_decode($invitation->love_story, true)
                 : $invitation->love_story;
@@ -873,20 +896,37 @@ class UserInvitationController extends Controller
                 }
             }
 
-            $baseSlug = Str::slug(
-                ($request->groom_nickname ?: $request->groom_name).'-'.($request->bride_nickname ?: $request->bride_name)
-            );
-            $slug = $baseSlug;
-            $counter = 1;
-            while (Invitation::where('slug', $slug)->where('id', '!=', $invitation->id)->exists()) {
-                $slug = $baseSlug.'-'.$counter;
-                $counter++;
+            $currentSlug = $invitation->slug;
+            if (! empty($currentSlug) && ! str_starts_with($currentSlug, 'draft-')) {
+                // Slug sudah bermakna — pertahankan agar preview tidak berubah/404.
+                $slug = $currentSlug;
+            } else {
+                if ($isWedding) {
+                    $baseSlug = Str::slug(
+                        ($request->groom_nickname ?: $request->groom_name).'-'.($request->bride_nickname ?: $request->bride_name)
+                    );
+                } else {
+                    $customData = $request->input('custom_data', []);
+                    $eventName = data_get($customData, 'celebrant_name') ?? data_get($customData, 'graduate_name')
+                        ?? data_get($customData, 'child_name') ?? data_get($customData, 'event_name')
+                        ?? data_get($customData, 'host_name') ?? 'undangan';
+                    $baseSlug = Str::slug($eventName.'-'.($invitation->category->slug ?? 'acara'));
+                }
+                if ($baseSlug === '') {
+                    $baseSlug = 'undangan';
+                }
+                $slug = $baseSlug;
+                $counter = 1;
+                while (Invitation::where('slug', $slug)->where('id', '!=', $invitation->id)->exists()) {
+                    $slug = $baseSlug.'-'.$counter;
+                    $counter++;
+                }
             }
 
             $updateData = [
                 'template_id' => $request->template_id,
-                'category_id' => $request->category_id,
-                'invitation_type' => $request->invitation_type ?: (optional(Category::find($request->category_id))->slug ?? 'wedding'),
+                'category_id' => $request->category_id ?: $invitation->category_id,
+                'invitation_type' => $request->invitation_type ?: (optional(Category::find($request->category_id ?: $invitation->category_id))->slug ?? ($invitation->invitation_type ?? 'wedding')),
                 'theme_type' => $request->theme_type,
                 'status' => $request->input('status', 'published'),
                 'primary_color' => $request->primary_color,
@@ -1518,6 +1558,19 @@ class UserInvitationController extends Controller
         // 'draft' saat autosave. Hanya undangan baru (belum ada) yang dimulai sebagai draft.
         $data['status'] = $invitation ? ($invitation->status ?? 'draft') : 'draft';
 
+        // Jaga kategori & tipe undangan agar tidak ter-null-kan saat autosave.
+        if (empty($data['category_id']) && $invitation) {
+            $data['category_id'] = $invitation->category_id;
+        }
+        if (empty($data['invitation_type'])) {
+            if ($invitation) {
+                $data['invitation_type'] = $invitation->invitation_type;
+            } elseif (! empty($data['category_id'])) {
+                $category = Category::find($data['category_id']);
+                $data['invitation_type'] = ($category && ! $category->isWeddingLike()) ? $category->slug : 'wedding';
+            }
+        }
+
         // --- MUSIC SOURCE HANDLING (AUTOSAVE) ---
         if ($request->has('enable_music') && $request->enable_music) {
             $musicSource = $request->input('music_source', 'library');
@@ -1582,22 +1635,24 @@ class UserInvitationController extends Controller
             $data['love_story'] = [];
         }
 
-        // Unique Slug for AutoSave
-        $baseSlug = 'draft-'.auth()->id();
-        if ($request->groom_name && $request->bride_name) {
-            $baseSlug = Str::slug(
-                ($request->groom_nickname ?: $request->groom_name).'-'.($request->bride_nickname ?: $request->bride_name)
-            );
-        }
+        // Unique Slug untuk AutoSave — hanya saat membuat undangan baru.
+        // Undangan yang sudah ada tidak boleh ganti slug (agar preview tidak 404).
+        if (! $invitation) {
+            $baseSlug = 'draft-'.auth()->id();
+            if ($request->groom_name && $request->bride_name) {
+                $baseSlug = Str::slug(
+                    ($request->groom_nickname ?: $request->groom_name).'-'.($request->bride_nickname ?: $request->bride_name)
+                );
+            }
 
-        $slug = $baseSlug;
-        $counter = 1;
-        $existingId = ($invitation) ? $invitation->id : 0;
-        while (Invitation::where('slug', $slug)->where('id', '!=', $existingId)->exists()) {
-            $slug = $baseSlug.'-'.$counter;
-            $counter++;
+            $slug = $baseSlug;
+            $counter = 1;
+            while (Invitation::where('slug', $slug)->exists()) {
+                $slug = $baseSlug.'-'.$counter;
+                $counter++;
+            }
+            $data['slug'] = $slug;
         }
-        $data['slug'] = $slug;
 
         // Khusus fields boolean/checkbox
         $data['enable_rsvp'] = $request->has('enable_rsvp');
@@ -1633,10 +1688,8 @@ class UserInvitationController extends Controller
         }
 
         if ($invitation) {
-            // Jika sudah ada, jangan ganti slugnya terus menerus kalau sudah punya nama
-            if ($invitation->groom_name && $invitation->bride_name && isset($data['slug'])) {
-                unset($data['slug']);
-            }
+            // Jangan pernah mengubah slug undangan yang sudah ada.
+            unset($data['slug']);
             $invitation->update($data);
         } else {
             $invitation = Invitation::create($data);

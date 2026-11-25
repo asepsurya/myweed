@@ -38,6 +38,22 @@ class Category extends Model
         return $this->hasMany(Template::class, 'id_category');
     }
 
+    /**
+     * Whether this category is a wedding-style invitation (wedding, engagement,
+     * lamaran, etc.) as opposed to a generic event (birthday, graduation, ...).
+     * Mirrors the homepage category heuristic.
+     */
+    public function isWeddingLike(): bool
+    {
+        $slug = strtolower((string) ($this->slug ?? ''));
+
+        return str_contains($slug, 'wedding')
+            || str_contains($slug, 'engagement')
+            || str_contains($slug, 'nikah')
+            || str_contains($slug, 'pernikahan')
+            || str_contains($slug, 'lamaran');
+    }
+
     public function invitations(): HasMany
     {
         return $this->hasMany(Invitation::class, 'category_id');

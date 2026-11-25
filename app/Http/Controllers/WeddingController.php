@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Invitation;
 use App\Models\InvitationView;
+use App\Models\Template;
 
 class WeddingController extends Controller
 {
@@ -24,13 +25,22 @@ class WeddingController extends Controller
             abort(404);
         }
 
-        if (! $invitation->template) {
-            abort(404, 'Template tidak ditemukan');
+        $templateView = $invitation->template
+            ? 'templates.'.$invitation->template->slug.'.index'
+            : null;
+
+        // Jika template tidak ada / view-nya hilang, jangan 404-kan preview:
+        // fallback ke template aktif pertama agar undangan tetap bisa dirender.
+        if (! $templateView || ! view()->exists($templateView)) {
+            $fallback = Template::where('is_active', true)->orderBy('id')->first();
+
+            if ($fallback) {
+                $invitation->setRelation('template', $fallback);
+                $templateView = 'templates.'.$fallback->slug.'.index';
+            }
         }
 
-        $templateView = 'templates.'.$invitation->template->slug.'.index';
-
-        if (! view()->exists($templateView)) {
+        if (! $templateView || ! view()->exists($templateView)) {
             abort(404, 'Template tidak ditemukan');
         }
 
@@ -58,7 +68,7 @@ class WeddingController extends Controller
             ?? data_get($customData, 'birthday_date')
             ?? data_get($customData, 'graduation_date');
 
-        $isWedding = ($invitation->invitation_type ?? 'wedding') === 'wedding' || ($category ? $category->slug === 'wedding' : false);
+        $isWedding = $invitation->isWedding();
 
         if ($isWedding) {
             $seoTitle = "Undangan {$primaryName} & {$secondaryName} - RuangUndang";
