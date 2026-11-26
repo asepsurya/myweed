@@ -1,4 +1,4 @@
-﻿<x-app-layout>
+<x-app-layout>
     <style>
         .readcrumb-card {
             display: none !important;
@@ -357,6 +357,15 @@
            RESPONSIVE (MOBILE)
         ============================================= */
         @media (max-width: 991px) {
+                    /* Reset global body zoom (0.8) agar editor full-screen tidak menyusut */
+            html,
+            body {
+                zoom: 1 !important;
+                -webkit-text-size-adjust: 100%;
+                width: 100% !important;
+                max-width: 100vw !important;
+                overflow: hidden !important;
+            }
             .hide {
                 display: none !important;
             }

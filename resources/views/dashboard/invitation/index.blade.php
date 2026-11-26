@@ -111,6 +111,45 @@
             background: rgba(198, 169, 98, 0.06);
             box-shadow: 0 0 0 0.2rem rgba(198, 169, 98, 0.25) !important;
         }
+
+        /* --- Dark mode: Create Invitation modal readability --- */
+        [data-bs-theme="dark"] .modal-theme-navy .modal-body,
+        [data-bs-theme="dark"] .modal-theme-navy .modal-footer {
+            background-color: var(--adminuiux-bg-2, #111827) !important;
+        }
+        [data-bs-theme="dark"] .modal-theme-navy .text-dark {
+            color: var(--adminuiux-text, #F1F5F9) !important;
+        }
+        [data-bs-theme="dark"] .modal-theme-navy .bg-white,
+        [data-bs-theme="dark"] .modal-theme-navy .bg-light {
+            background-color: rgba(255, 255, 255, 0.06) !important;
+        }
+        [data-bs-theme="dark"] .modal-theme-navy .category-option-card {
+            background: rgba(255, 255, 255, 0.04) !important;
+            border-color: rgba(255, 255, 255, 0.15) !important;
+        }
+        [data-bs-theme="dark"] .modal-theme-navy .category-option-card:hover {
+            border-color: rgba(198, 169, 98, 0.6) !important;
+        }
+        [data-bs-theme="dark"] .modal-theme-navy .category-option-card.selected {
+            background: rgba(198, 169, 98, 0.12) !important;
+            border-color: var(--adminuiux-theme-1, #C6A962) !important;
+        }
+        [data-bs-theme="dark"] .modal-theme-navy .badge.bg-light {
+            background-color: rgba(255, 255, 255, 0.08) !important;
+            color: #cbd5e1 !important;
+        }
+        [data-bs-theme="dark"] .modal-theme-navy .input-group-text {
+            background-color: rgba(255, 255, 255, 0.06);
+            border-color: rgba(255, 255, 255, 0.15);
+            color: var(--adminuiux-text, #F1F5F9);
+        }
+        [data-bs-theme="dark"] .modal-theme-navy .form-label {
+            color: var(--adminuiux-text, #F1F5F9);
+        }
+        [data-bs-theme="dark"] .modal-theme-navy .form-text {
+            color: #94a3b8 !important;
+        }
     </style>
 
     <!-- TAB 1: Aktivitas Undangan -->
@@ -584,53 +623,9 @@
 
         <!-- Modal: Share Invitation -->
         @if(auth()->user()->isPaidSubscribed())
-            <div class="modal fade" id="shareModalDynamic" tabindex="-1" aria-hidden="true">
-                <div class="modal-dialog modal-lg modal-dialog-centered">
-                    <div class="modal-content">
-                        <div class="modal-header bg-success text-white">
-                            <h5 class="modal-title"><i class="bi bi-share me-2"></i> Bagikan Undangan</h5>
-                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                                aria-label="Tutup"></button>
-                        </div>
-                        <div class="modal-body">
-                            <div class="form-floating mb-3">
-                                <input type="text" class="form-control" id="recipientNameDynamic"
-                                    placeholder="Nama penerima" required>
-                                <label for="recipientNameDynamic">Nama Penerima</label>
-                            </div>
-                            <div class="form-floating mb-3">
-                                <textarea class="form-control" id="shareMessageDynamic" placeholder="Pesan undangan"
-                                    style="height: 180px"></textarea>
-                                <label for="shareMessageDynamic">Pesan Undangan</label>
-                            </div>
-                            <div class="d-flex flex-wrap gap-2 mt-3">
-                                <button type="button" class="btn btn-success" onclick="shareToWhatsApp()">
-                                    <i class="bi bi-whatsapp me-1"></i> WhatsApp
-                                </button>
-                                <button type="button" class="btn btn-primary" onclick="shareToFacebook()">
-                                    <i class="bi bi-facebook me-1"></i> Facebook
-                                </button>
-                                <button type="button" class="btn btn-info text-white" onclick="shareToTwitter()">
-                                    <i class="bi bi-twitter-x me-1"></i> Twitter
-                                </button>
-                                <button type="button" class="btn btn-primary" onclick="shareToTelegram()">
-                                    <i class="bi bi-telegram me-1"></i> Telegram
-                                </button>
-                                <button type="button" class="btn btn-secondary" onclick="shareViaEmail()">
-                                    <i class="bi bi-envelope me-1"></i> Email
-                                </button>
-                                <button type="button" class="btn btn-outline-dark" onclick="copyInvitationLink()">
-                                    <i class="bi bi-link-45deg me-1"></i> Salin Tautan
-                                </button>
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            @include('layouts.partial.share-modal')
         @endif
+        @include('layouts.partial.share-modal-js')
 
         <script>
             document.addEventListener('DOMContentLoaded', function () {

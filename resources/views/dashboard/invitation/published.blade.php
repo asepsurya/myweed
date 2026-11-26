@@ -820,7 +820,7 @@
                                     <div class="col-6 col-sm">
                                         <button type="button"
                                             class="btn btn-light bg-light-subtle border-0 w-100 py-2 rounded-3 text-center d-flex flex-column align-items-center justify-content-center"
-                                            data-bs-toggle="modal" data-bs-target="#shareModalDynamic">
+                                            data-bs-toggle="modal" data-bs-target="#shareModalDynamic" data-id="{{ $invitation->public_id }}">
                                             <i class="bi bi-share text-gold fs-5 mb-1" aria-hidden="true"></i>
                                             <span class="small fw-semibold text-dark">Bagikan Undangan</span>
                                         </button>
@@ -1312,78 +1312,12 @@
         MODAL — Bagikan Undangan (dipakai oleh kartu undangan aktif)
         ========================================================================= --}}
         @if(!empty($invitation))
-            <div class="modal fade" id="shareModalDynamic" tabindex="-1" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-                    <div class="modal-content border-0 shadow-lg">
-
-                        {{-- Header tema emas agar konsisten dengan dashboard --}}
-                        <div class="modal-header px-4" style="background-color: var(--gold-primary); color: #fff;">
-                            <h5 class="modal-title fw-bold mb-0">
-                                <i class="bi bi-share me-2" aria-hidden="true"></i>
-                                Bagikan Undangan
-                            </h5>
-                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                                aria-label="Tutup"></button>
-                        </div>
-
-                        <div class="modal-body p-4">
-                            <div class="mb-4">
-                                <label for="recipientNameDynamic" class="form-label fw-semibold">
-                                    Nama Penerima / Keluarga
-                                </label>
-                                <input type="text" class="form-control" id="recipientNameDynamic"
-                                    placeholder="Nama penerima">
-                            </div>
-
-                            <div class="d-flex align-items-center mb-3">
-                                <div class="me-2 text-gold">
-                                    <i class="bi bi-chat-text-fill fs-4" aria-hidden="true"></i>
-                                </div>
-                                <div>
-                                    <h6 class="mb-0 fw-bold">Pesan Undangan</h6>
-                                    <small class="text-muted">Pesan yang akan dikirim kepada penerima</small>
-                                </div>
-                            </div>
-
-                            <div class="form-floating mb-4">
-                                <textarea class="form-control" id="shareMessageDynamic" placeholder="Pesan undangan"
-                                    style="height: 200px"></textarea>
-                                <label for="shareMessageDynamic">Pesan Undangan</label>
-                            </div>
-
-                            <div class="d-flex flex-wrap gap-2">
-                                <button type="button" class="btn btn-success" onclick="shareToWhatsApp()">
-                                    <i class="bi bi-whatsapp me-1" aria-hidden="true"></i> WhatsApp
-                                </button>
-                                <button type="button" class="btn btn-primary" onclick="shareToFacebook()">
-                                    <i class="bi bi-facebook me-1" aria-hidden="true"></i> Facebook
-                                </button>
-                                <button type="button" class="btn btn-info text-white" onclick="shareToTwitter()">
-                                    <i class="bi bi-twitter-x me-1" aria-hidden="true"></i> Twitter
-                                </button>
-                                <button type="button" class="btn btn-primary" onclick="shareToTelegram()">
-                                    <i class="bi bi-telegram me-1" aria-hidden="true"></i> Telegram
-                                </button>
-                                <button type="button" class="btn btn-secondary" onclick="shareViaEmail()">
-                                    <i class="bi bi-envelope me-1" aria-hidden="true"></i> Email
-                                </button>
-                                <button type="button" class="btn btn-outline-dark" onclick="copyInvitationLink()">
-                                    <i class="bi bi-link-45deg me-1" aria-hidden="true"></i> Salin Tautan
-                                </button>
-                            </div>
-                        </div>
-
-                        <div class="modal-footer px-4">
-                            <div class="me-auto small text-muted">
-                                <i class="bi bi-shield-check me-1" aria-hidden="true"></i>
-                                Data kontak tetap berada di perangkat Anda.
-                            </div>
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
-                        </div>
-                    </div>
-                </div>
+            <div id="wa-message-{{ $invitation->public_id }}" class="d-none">
+                @include('dashboard.invitation.pesan', ['inv' => $invitation])
             </div>
+            @include('layouts.partial.share-modal')
         @endif
+        @include('layouts.partial.share-modal-js')
 
         {{-- =========================================================================
         JAVASCRIPT — Diorganisasi per modul IIFE

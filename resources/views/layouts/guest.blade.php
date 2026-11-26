@@ -22,6 +22,12 @@
                     zoom: 0.8;
                     -webkit-text-size-adjust: 100%;
                 }
+
+                /* Counter body zoom (0.8) so fixed modal & backdrop cover the full viewport */
+                .modal,
+                .modal-backdrop {
+                    zoom: 1.25;
+                }
             }
         </style>
     </head>

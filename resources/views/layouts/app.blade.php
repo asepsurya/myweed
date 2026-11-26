@@ -45,6 +45,12 @@
                 zoom: 0.8;
                 -webkit-text-size-adjust: 100%;
             }
+
+            /* Counter body zoom (0.8) so fixed modal & backdrop cover the full viewport */
+            .modal,
+            .modal-backdrop {
+                zoom: 1.25;
+            }
         }
 
         :root,
@@ -1119,6 +1125,59 @@
                 collapse.hide();
             }
         }
+    </script>
+
+    <script>
+        /* Keep action dropdown menus visible inside overflow-hidden cards / .table-responsive
+           (they get clipped on mobile). Move the menu to <body> while open and counter the
+           body zoom so Popper positions it correctly, then restore it on hide. */
+        (function () {
+            function currentBodyZoom() {
+                var z = parseFloat(getComputedStyle(document.body).zoom);
+                return isNaN(z) || z === 0 ? 1 : z;
+            }
+            function isInsideClipper(el) {
+                return !!el.closest('.table-responsive, .overflow-hidden, .overflow-auto, .overflow-scroll');
+            }
+            function findMenu(toggle) {
+                var menu = toggle.nextElementSibling;
+                if (menu && menu.classList.contains('dropdown-menu')) return menu;
+                return toggle.parentElement ? toggle.parentElement.querySelector('.dropdown-menu') : null;
+            }
+
+            document.addEventListener('show.bs.dropdown', function (e) {
+                var toggle = e.target;
+                if (!isInsideClipper(toggle)) return;
+
+                var menu = findMenu(toggle);
+                if (!menu || toggle.__movedMenu) return;
+
+                toggle.__movedMenu = menu;
+                menu.__origParent = menu.parentNode;
+                menu.__origNext = menu.nextSibling;
+
+                var z = currentBodyZoom();
+                if (z !== 1) menu.style.zoom = (1 / z);
+                menu.style.zIndex = '1060';
+
+                document.body.appendChild(menu);
+            });
+
+            document.addEventListener('hide.bs.dropdown', function (e) {
+                var toggle = e.target;
+                var menu = toggle.__movedMenu;
+                if (!menu) return;
+
+                menu.style.zoom = '';
+                menu.style.zIndex = '';
+                if (menu.__origParent) {
+                    menu.__origParent.insertBefore(menu, menu.__origNext);
+                }
+                toggle.__movedMenu = null;
+                menu.__origParent = null;
+                menu.__origNext = null;
+            });
+        })();
     </script>
 
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>

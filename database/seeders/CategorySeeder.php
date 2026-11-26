@@ -219,6 +219,26 @@ class CategorySeeder extends Seeder
                     ['name' => 'gallery', 'label' => 'Gallery', 'type' => 'image', 'required' => false],
                 ],
             ],
+            [
+                'name' => 'Christmas Invitation',
+                'slug' => 'christmas',
+                'icon' => 'bi-tree',
+                'description' => 'Undangan perayaan Natal dan tahun baru dengan nuansa hangat.',
+                'sort_order' => 11,
+                'is_active' => true,
+                'dynamic_fields' => [
+                    ['name' => 'event_name', 'label' => 'Nama Acara', 'type' => 'text', 'required' => true, 'placeholder' => 'Contoh: Perayaan Natal Bersama'],
+                    ['name' => 'host_name', 'label' => 'Nama Penyelenggara', 'type' => 'text', 'required' => false, 'placeholder' => 'Nama keluarga atau panitia'],
+                    ['name' => 'banner', 'label' => 'Foto / Banner', 'type' => 'image', 'required' => false],
+                    ['name' => 'event_date', 'label' => 'Tanggal Acara', 'type' => 'date', 'required' => true],
+                    ['name' => 'event_time', 'label' => 'Waktu Acara', 'type' => 'time', 'required' => true],
+                    ['name' => 'event_location', 'label' => 'Lokasi Acara', 'type' => 'text', 'required' => true],
+                    ['name' => 'event_description', 'label' => 'Keterangan Acara', 'type' => 'textarea', 'required' => false],
+                    ['name' => 'dress_code', 'label' => 'Dress Code', 'type' => 'text', 'required' => false],
+                    ['name' => 'rsvp', 'label' => 'RSVP', 'type' => 'boolean', 'required' => false],
+                    ['name' => 'gallery', 'label' => 'Gallery', 'type' => 'image', 'required' => false],
+                ],
+            ],
         ];
 
         foreach ($categories as $category) {

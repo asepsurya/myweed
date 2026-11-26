@@ -110,12 +110,21 @@ Route::middleware(['auth'])->group(function () {
     Route::get('invitation/categories', [UserInvitationController::class, 'selectCategory'])->name('invitation.categories');
     Route::get('invitation/create/category/{category}', [UserInvitationController::class, 'createByCategory'])->name('invitation.create.category');
     Route::match(['get', 'post'], 'invitation/quick-create', [UserInvitationController::class, 'quickCreate'])->name('invitation.quick-create');
-    Route::get('invitation/import-kontak', function () {
+    Route::get('invitation/import-kontak', function (Request $request) {
         $guests = Guest::where('user_id', auth()->id())
             ->orderBy('created_at', 'desc')
             ->get();
 
-        return view('dashboard.invitation.import-kontak', compact('guests'));
+        $invitation = null;
+        if ($request->filled('invitation_id')) {
+            $invitation = Invitation::where('user_id', auth()->id())
+                ->find($request->input('invitation_id'));
+        }
+        if (! $invitation) {
+            $invitation = Invitation::where('user_id', auth()->id())->latest()->first();
+        }
+
+        return view('dashboard.invitation.import-kontak', compact('guests', 'invitation'));
     })->name('invitation.import-kontak');
 
     Route::post('invitation/import-kontak', function (Request $request) {

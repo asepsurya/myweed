@@ -202,6 +202,23 @@ class TempelateController extends Controller
         return back()->with('success', 'Template berhasil dihapus.');
     }
 
+    /**
+     * Cari template yang view blade-nya benar-benar tersedia (lokal atau R2).
+     * Jika template asal tidak punya view, jatuh ke template aktif pertama
+     * yang view-nya ada. Mengembalikan null bila tidak ada yang bisa dirender.
+     */
+    private function resolveRenderableTemplate(Template $template): ?Template
+    {
+        if (view()->exists('templates.'.$template->slug.'.index')) {
+            return $template;
+        }
+
+        return Template::where('is_active', true)
+            ->orderBy('id')
+            ->get()
+            ->first(fn (Template $t) => view()->exists('templates.'.$t->slug.'.index'));
+    }
+
     public function preview($slug, $id, Request $request)
     {
         $template = Template::findOrFail($id);
@@ -246,11 +263,15 @@ class TempelateController extends Controller
 
         $themeColor = $request->query('theme_color', '#3b82f6');
 
-        $templateView = 'templates.'.$invitation->template->slug.'.index';
-
-        if (! view()->exists($templateView)) {
+        // Jika view template spesifik belum tersedia (mis. template baru tanpa
+        // file blade di R2), fallback ke template aktif pertama yang view-nya ada
+        // agar pratinjau tidak 404.
+        $renderTemplate = $this->resolveRenderableTemplate($template);
+        if (! $renderTemplate) {
             abort(404, 'Template tidak ditemukan');
         }
+        $invitation->setRelation('template', $renderTemplate);
+        $templateView = 'templates.'.$renderTemplate->slug.'.index';
 
         $seoTitle = "Template {$template->name} - Undangan Digital | RuangUndang";
         $seoDescription = $template->description ?? "Pratinjau template undangan digital '{$template->name}'. Desain elegan dan modern untuk pernikahan impian Anda. Lihat tampilan live dan gunakan untuk undangan Anda.";
@@ -379,11 +400,14 @@ class TempelateController extends Controller
 
         $invitation->setRelation('template', $template);
 
-        $templateView = 'templates.'.$template->slug.'.index';
-
-        if (! view()->exists($templateView)) {
+        // Fallback ke template aktif yang view-nya tersedia agar demo tidak 404.
+        $renderTemplate = $this->resolveRenderableTemplate($template);
+        if (! $renderTemplate) {
             abort(404, 'File template tidak ditemukan');
         }
+        $invitation->setRelation('template', $renderTemplate);
+
+        $templateView = 'templates.'.$renderTemplate->slug.'.index';
 
         return view($templateView, compact('invitation'));
     }
