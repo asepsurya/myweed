@@ -1,52 +1,48 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="csrf-token" content="{{ csrf_token() }}">
-        <meta name="robots" content="noindex, nofollow">
-        <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
-        <title>{{ config('app.name', 'Laravel') }}</title>
 
-        <!-- Fonts -->
-        <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="robots" content="noindex, nofollow">
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+    <title>{{ config('app.name', 'Laravel') }}</title>
 
-        <!-- Scripts -->
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.bunny.net">
+    <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
 
-        <style>
-            /* Zoom out 80% hanya untuk layar kecil laptop dan layar yang lebih kecil agar layout fit */
-            @media screen and (max-width: 1440px) {
-                body {
-                    zoom: 0.8;
-                    -webkit-text-size-adjust: 100%;
-                }
+    <!-- Scripts -->
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 
-                /* Counter body zoom (0.8) so fixed modal & backdrop cover the full viewport */
-                .modal,
-                .modal-backdrop {
-                    zoom: 1.25;
-                }
+    <style>
+        /* Zoom out 80% hanya untuk layar kecil laptop dan layar yang lebih kecil agar layout fit */
+        @media screen and (max-width: 1440px) {
+            body {
+                zoom: 0.8;
+                -webkit-text-size-adjust: 100%;
             }
-        </style>
-    </head>
-    <body class="font-sans text-gray-900 antialiased">
-        <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-100">
-            <div>
-                <a href="/">
-                    <x-application-logo class="w-20 h-20 fill-current text-gray-500" />
-                </a>
-            </div>
+        }
+    </style>
+</head>
 
-            <div class="w-full sm:max-w-md mt-6 px-6 py-4 bg-white shadow-md overflow-hidden sm:rounded-lg">
-                {{ $slot }}
-            </div>
+<body class="font-sans text-gray-900 antialiased">
+    <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-100">
+        <div>
+            <a href="/">
+                <x-application-logo class="w-20 h-20 fill-current text-gray-500" />
+            </a>
         </div>
 
-        @include('components.wa-chat', ['mobileBottom' => 24])
+        <div class="w-full sm:max-w-md mt-6 px-6 py-4 bg-white shadow-md overflow-hidden sm:rounded-lg">
+            {{ $slot }}
+        </div>
+    </div>
 
-        @stack('scripts')
-    </body>
+    @include('components.wa-chat', ['mobileBottom' => 24])
+
+    @stack('scripts')
+</body>
+
 </html>
-

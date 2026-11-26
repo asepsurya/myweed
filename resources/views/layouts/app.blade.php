@@ -35,7 +35,8 @@
     <link href="{{ asset('assets/css/app435e.css?1096aad991449c8654b2') }}" rel="stylesheet">
     <script defer src="{{ asset('assets/js/app435e.js?1096aad991449c8654b2') }}"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link rel="stylesheet" href="{{ asset('assets/css/icon-picker.css') }}?v={{ @filemtime(public_path('assets/css/icon-picker.css')) }}">
+    <link rel="stylesheet"
+        href="{{ asset('assets/css/icon-picker.css') }}?v={{ @filemtime(public_path('assets/css/icon-picker.css')) }}">
 
     <!-- RuangUndang Theme Overrides -->
     <style>
@@ -44,12 +45,6 @@
             body {
                 zoom: 0.8;
                 -webkit-text-size-adjust: 100%;
-            }
-
-            /* Counter body zoom (0.8) so fixed modal & backdrop cover the full viewport */
-            .modal,
-            .modal-backdrop {
-                zoom: 1.25;
             }
         }
 
@@ -1125,59 +1120,6 @@
                 collapse.hide();
             }
         }
-    </script>
-
-    <script>
-        /* Keep action dropdown menus visible inside overflow-hidden cards / .table-responsive
-           (they get clipped on mobile). Move the menu to <body> while open and counter the
-           body zoom so Popper positions it correctly, then restore it on hide. */
-        (function () {
-            function currentBodyZoom() {
-                var z = parseFloat(getComputedStyle(document.body).zoom);
-                return isNaN(z) || z === 0 ? 1 : z;
-            }
-            function isInsideClipper(el) {
-                return !!el.closest('.table-responsive, .overflow-hidden, .overflow-auto, .overflow-scroll');
-            }
-            function findMenu(toggle) {
-                var menu = toggle.nextElementSibling;
-                if (menu && menu.classList.contains('dropdown-menu')) return menu;
-                return toggle.parentElement ? toggle.parentElement.querySelector('.dropdown-menu') : null;
-            }
-
-            document.addEventListener('show.bs.dropdown', function (e) {
-                var toggle = e.target;
-                if (!isInsideClipper(toggle)) return;
-
-                var menu = findMenu(toggle);
-                if (!menu || toggle.__movedMenu) return;
-
-                toggle.__movedMenu = menu;
-                menu.__origParent = menu.parentNode;
-                menu.__origNext = menu.nextSibling;
-
-                var z = currentBodyZoom();
-                if (z !== 1) menu.style.zoom = (1 / z);
-                menu.style.zIndex = '1060';
-
-                document.body.appendChild(menu);
-            });
-
-            document.addEventListener('hide.bs.dropdown', function (e) {
-                var toggle = e.target;
-                var menu = toggle.__movedMenu;
-                if (!menu) return;
-
-                menu.style.zoom = '';
-                menu.style.zIndex = '';
-                if (menu.__origParent) {
-                    menu.__origParent.insertBefore(menu, menu.__origNext);
-                }
-                toggle.__movedMenu = null;
-                menu.__origParent = null;
-                menu.__origNext = null;
-            });
-        })();
     </script>
 
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
